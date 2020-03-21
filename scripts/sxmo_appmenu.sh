@@ -20,11 +20,12 @@ programchoicesinit() {
   ")" && WINNAME=sys
 
   echo $WMCLASS | grep -i "applications" && CHOICES="$(echo "
-    Surf ^ 0 ^ surf
-    NetSurf ^ 0 ^ netsurf
-    St ^ 0 ^ st
-    Firefox ^ 0 ^ firefox
-    Foxtrotgps ^ 0 ^ foxtrotgps
+    Surf            ^ 0 ^ surf
+    NetSurf         ^ 0 ^ netsurf
+    St              ^ 0 ^ st
+    Firefox         ^ 0 ^ firefox
+    Foxtrotgps      ^ 0 ^ foxtrotgps
+    Timer           ^ 0 ^ sxmo_timer.sh
     Close Menu      ^ 0 ^ quit
   ")" && WINNAME=Apps
 
@@ -123,7 +124,7 @@ mainloop() {
       cut -d'^' -f1 | 
       sed '/^[[:space:]]*$/d' |
       awk '{$1=$1};1' |
-      dmenu -idx $DMENUIDX -l 10 -c -fn "Terminus-30" -p "$WINNAME"
+      dmenu -idx $DMENUIDX -l 14 -c -fn "Terminus-30" -p "$WINNAME"
     )
     LOOP=$(echo "$CHOICES" | grep "$PICKED" | cut -d '^' -f2)
     CMD=$(echo "$CHOICES" | grep "$PICKED" | cut -d '^' -f3)
