@@ -15,6 +15,7 @@ programchoicesinit() {
     Brightness ↓       ^ 1 ^ sxmo_brightness.sh down
     Wifi               ^ 0 ^ st -e "nmtui"
     Rotate             ^ 1 ^ rotate
+    Upgrade Pkgs       ^ 0 ^ st -e sxmo_upgrade.sh
     Logout             ^ 0 ^ pkill -9 dwm
     Close Menu         ^ 0 ^ quit
   ")" && WINNAME=sys
