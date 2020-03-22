@@ -26,7 +26,7 @@ programchoicesinit() {
     St              ^ 0 ^ st
     Firefox         ^ 0 ^ firefox
     Foxtrotgps      ^ 0 ^ foxtrotgps
-    Timer           ^ 0 ^ sxmo_timer.sh
+    Timer           ^ 0 ^ sxmo_timermenu.sh
     Close Menu      ^ 0 ^ quit
   ")" && WINNAME=Apps
 
