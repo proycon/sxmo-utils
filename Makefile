@@ -9,6 +9,7 @@ programs/sxmo_setpinebacklight:
 install: programs/sxmo_setpineled programs/sxmo_setpinebacklight
 	mkdir -p $(PREFIX)/share/sxmo
 	cp configs/* $(PREFIX)/share/sxmo
+	cp configs/asound.conf /etc/
 
 	mkdir -p $(PREFIX)/bin
 	cp scripts/* $(PREFIX)/bin
