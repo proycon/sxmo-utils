@@ -1,23 +1,26 @@
 #!/usr/bin/env sh
 
-# URL test passed from $1
-URL=${1:-$URL}
-
-# Surf
-WINDOW="$(xprop -root | sed -n '/^_NET_ACTIVE_WINDOW/ s/.* //p')"
-SURFURL=`xprop -id $WINDOW | grep URI | awk '{print $3}' | sed 's/\"//g'`
-if [[ ! -z "$SURFURL" ]]
+if [[ ! -z "$1" ]]
 then
-  URL="$SURFURL"
-fi
+  # E.g. passed liked: sxmo_urlhandler.sh http://foo.com
+  URL=$1
+else
+  # Surf
+  WINDOW="$(xprop -root | sed -n '/^_NET_ACTIVE_WINDOW/ s/.* //p')"
+  SURFURL=`xprop -id $WINDOW | grep URI | awk '{print $3}' | sed 's/\"//g'`
+  if [[ ! -z "$SURFURL" ]]
+  then
+    URL="$SURFURL"
+  fi
 
-# Is normal browser? (FF or Netsurf) - use Ctrl-L Ctrl-C to copy URL
-ISNORMBROWS=`xprop -id $(xdotool getactivewindow) | grep -E 'WM_CLASS.*(Netsurf|Firefox)'`
-if [[ ! -z "$ISNORMBROWS" ]]
-then
-  xdotool key --clearmodifiers --delay 20 "ctrl+l" "ctrl+c"
-  sleep 0.2
-  URL="$(xclip -o)"
+  # Is normal browser? (FF or Netsurf) - use Ctrl-L Ctrl-C to copy URL
+  ISNORMBROWS=`xprop -id $(xdotool getactivewindow) | grep -E 'WM_CLASS.*(Netsurf|Firefox)'`
+  if [[ ! -z "$ISNORMBROWS" ]]
+  then
+    xdotool key --clearmodifiers --delay 20 "ctrl+l" "ctrl+c"
+    sleep 0.2
+    URL="$(xclip -o)"
+  fi
 fi
 
 COMMAND=$(

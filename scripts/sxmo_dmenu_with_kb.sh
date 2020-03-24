@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-sxmo_keyboard.sh on &
+pidof svkbd-sxmo || svkbd-sxmo &
 OUTPUT="$(cat | dmenu -t $@)"
-sxmo_keyboard.sh off
+pkill svkbd-sxmo 
 echo "$OUTPUT"

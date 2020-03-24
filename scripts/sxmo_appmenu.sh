@@ -6,33 +6,61 @@ programchoicesinit() {
 
   # Default
   CHOICES="$(echo "
-    Push window tag →  ^ 0 ^ sxmo_lowpowermode.sh
-    Tag focus →        ^ 0 ^ sxmo_lowpowermode.sh
-    Applications       ^ 0 ^ sxmo_appmenu.sh applications
+    Scripts            ^ 0 ^ sxmo_appmenu.sh scripts
+    Apps               ^ 0 ^ sxmo_appmenu.sh applications
     Volume ↑           ^ 1 ^ sxmo_vol.sh up
     Volume ↓           ^ 1 ^ sxmo_vol.sh down
-    Brightesss ↑       ^ 1 ^ sxmo_brightness.sh up
-    Brightness ↓       ^ 1 ^ sxmo_brightness.sh down
+    Camera             ^ 0 ^ sxmo_camera.sh
     Wifi               ^ 0 ^ st -e "nmtui"
-    Rotate             ^ 1 ^ rotate
-    Upgrade Pkgs       ^ 0 ^ st -e sxmo_upgrade.sh
+    System Config      ^ 0 ^ sxmo_appmenu.sh control
     Logout             ^ 0 ^ pkill -9 dwm
     Close Menu         ^ 0 ^ quit
-  ")" && WINNAME=sys
+  ")" && WINNAME=Sys
 
   echo $WMCLASS | grep -i "applications" && CHOICES="$(echo "
     Surf            ^ 0 ^ surf
     NetSurf         ^ 0 ^ netsurf
+    Sacc            ^ 0 ^ st -e sacc i-logout.cz/1/bongusta
+    W3M             ^ 0 ^ st -e w3m duck.com
     St              ^ 0 ^ st
     Firefox         ^ 0 ^ firefox
     Foxtrotgps      ^ 0 ^ foxtrotgps
-    Timer           ^ 0 ^ sxmo_timermenu.sh
     Close Menu      ^ 0 ^ quit
   ")" && WINNAME=Apps
 
+  echo $WMCLASS | grep -i "scripts" && CHOICES="$(echo "
+    Timer           ^ 0 ^ sxmo_timermenu.sh
+    Youtube         ^ 0 ^ sxmo_youtube.sh
+    Youtube (Audio) ^ 0 ^ sxmo_youtube.sh
+    Weather         ^ 0 ^ sxmo_weather.sh
+    RSS             ^ 0 ^ sxmo_rss.sh
+    Close Menu      ^ 0 ^ quit
+  ")" && WINNAME=Scripts
+
+  echo $WMCLASS | grep -i "control" && CHOICES="$(echo "
+    Volume ↑           ^ 1 ^ sxmo_vol.sh up
+    Volume ↓           ^ 1 ^ sxmo_vol.sh down
+    Brightesss ↑       ^ 1 ^ sxmo_brightness.sh up
+    Brightness ↓       ^ 1 ^ sxmo_brightness.sh down
+    Rotate             ^ 1 ^ rotate
+    Wifi               ^ 0 ^ st -e "nmtui"
+    Upgrade Pkgs       ^ 0 ^ st -e sxmo_upgrade.sh
+    Close Menu         ^ 0 ^ quit
+  ")" && WINNAME=Control
 
   echo $WMCLASS | grep -i "mpv" && CHOICES="$(echo "
-   Pause ^ 0 ^ key space
+   Pause        ^ 0 ^ key space
+   Seek ←       ^ 1 ^ key Left
+   Seek →       ^ 1 ^ key Right
+   App Volume ↑ ^ 1 ^ key 0
+   App Volume ↓ ^ 1 ^ key 9
+   Speed ↑      ^ 1 ^ key bracketright
+   Speed ↓      ^ 1 ^ key bracketleft
+   Screenshot   ^ 1 ^ key s
+   Loopmark     ^ 1 ^ key l
+   Info         ^ 1 ^ key i
+   Seek Info    ^ 1 ^ key o
+   Close Menu   ^ 0 ^ quit
   ")" && WINNAME=Mpv
 
   #  St
@@ -44,6 +72,7 @@ programchoicesinit() {
       Zoom -          ^ 1 ^ key Ctrl+Shift+Next
       Scroll ↑        ^ 1 ^ key Shift+Prior
       Scroll ↓        ^ 1 ^ key Shift+Next
+      Invert          ^ 1 ^ key Ctrl+Shift+x
       Hotkeys         ^ 0 ^ sxmo_appmenu.sh sthotkeys
       Close Menu      ^ 0 ^ quit
   ")" && WINNAME=st

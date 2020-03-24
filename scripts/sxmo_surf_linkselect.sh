@@ -73,4 +73,9 @@ function link_select() {
     link_normalize $(xprop -id $SURF_WINDOW _SURF_URI | cut -d '"' -f 2)
 }
 
-link_select
+xset r off
+pidof svkbd-sxmo || svkbd-sxmo &
+VAL="$(link_select)"
+pkill svkbd-sxmo
+xset r on
+echo "$VAL"

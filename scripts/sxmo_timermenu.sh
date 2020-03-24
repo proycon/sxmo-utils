@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-sxmo_keyboard.sh on &
+pidof svkbd-sxmo || svkbd-sxmo &
 TIMEINPUT=$(
 echo "1h
 10m
@@ -15,7 +15,7 @@ echo "1h
 30s
 Close Menu" | dmenu -p Timer -c -fn "Terminus-30" -l 20
 )
-sxmo_keyboard.sh off &
+pkill svkbd-sxmo
 [ "Close Menu" = $TIMEINPUT ] && exit 0
 
 st -f Monospace-50 -e sxmo_timer.sh $TIMEINPUT

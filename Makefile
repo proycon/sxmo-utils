@@ -6,7 +6,10 @@ programs/sxmo_setpineled:
 programs/sxmo_setpinebacklight:
 	gcc -o programs/sxmo_setpinebacklight programs/sxmo_setpinebacklight.c
 
-install: programs/sxmo_setpineled programs/sxmo_setpinebacklight
+programs/sxmo_screenlock:
+	gcc -o programs/sxmo_screenlock programs/sxmo_screenlock.c -lX11
+
+install: programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_screenlock
 	mkdir -p $(PREFIX)/usr/share/sxmo
 	cp configs/* $(PREFIX)/usr/share/sxmo
 
@@ -23,3 +26,7 @@ install: programs/sxmo_setpineled programs/sxmo_setpinebacklight
 	chown root programs/sxmo_setpinebacklight
 	chmod u+s programs/sxmo_setpinebacklight
 	cp programs/sxmo_setpinebacklight $(PREFIX)/usr/bin
+
+	chown root programs/sxmo_screenlock
+	chmod u+s programs/sxmo_screenlock
+	cp programs/sxmo_screenlock $(PREFIX)/usr/bin

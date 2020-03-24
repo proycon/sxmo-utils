@@ -1,0 +1,32 @@
+#sfeedpath="$HOME/.sfeed/feeds"
+USERAGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.162 Safari/537.36"
+
+#[ -z "$https_proxy" ] && echo "Please set https_proxy" 2>&1 && exit 1
+#[ -z "$http_proxy" ] && echo "Please set http_proxy" 2>&1 && exit 1
+
+# fetch a feed via HTTP/HTTPS etc.
+# fetch(name, url, feedfile)
+fetch() {
+	# fail on redirects, hide User-Agent, timeout is 15 seconds.
+	curl -L --max-redirs 2 -H "User-Agent: $USERAGENT" -f -s -m 15 \
+		"$2" 2>/dev/null
+}
+
+# list of feeds to fetch:
+feeds() {
+	# feed <name> <feedurl> [basesiteurl] [encoding]
+	feed 'Tech/HN' 'https://news.ycombinator.com/rss'
+	feed 'Tech/Lobsters' 'https://lobste.rs/rss'
+	feed 'Tech/Pine64' 'https://www.pine64.org/blog/'
+	feed 'Tech/Slashdot' 'http://feeds.feedburner.com/SlashdotSitenews'
+	feed 'Tech/Suckless' 'http://git.suckless.org/sites/atom.xml'
+
+	feed 'Yt/Distrotube' 'https://www.youtube.com/feeds/videos.xml?channel_id=UCVls1GmFKf6WlTraIb_IaJg'
+	feed 'Yt/Budlabs' 'https://www.youtube.com/feeds/videos.xml?channel_id=UCi8XrDg1bK_MJ0goOnbpTMQ'
+	feed 'Yt/LukeSmith' 'https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA'
+	feed 'Yt/Rossman' 'https://www.youtube.com/feeds/videos.xml?channel_id=UCl2mFZoRqjw_ELax4Yisf6w'
+
+	feed 'MSM/CNN' 'http://rss.cnn.com/rss/cnn_topstories.rss'
+	feed 'MSM/Fox' 'http://feeds.foxnews.com/foxnews/latest'
+}
+
