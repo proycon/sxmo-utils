@@ -10,6 +10,7 @@ programchoicesinit() {
     Apps               ^ 0 ^ sxmo_appmenu.sh applications
     Volume ↑           ^ 1 ^ sxmo_vol.sh up
     Volume ↓           ^ 1 ^ sxmo_vol.sh down
+    Dialer             ^ 1 ^ sxmo_phonecaller.exp dial
     Camera             ^ 0 ^ sxmo_camera.sh
     Wifi               ^ 0 ^ st -e "nmtui"
     System Config      ^ 0 ^ sxmo_appmenu.sh control
@@ -42,6 +43,7 @@ programchoicesinit() {
     Volume ↓           ^ 1 ^ sxmo_vol.sh down
     Brightesss ↑       ^ 1 ^ sxmo_brightness.sh up
     Brightness ↓       ^ 1 ^ sxmo_brightness.sh down
+    Modem Info         ^ 1 ^ sxmo_phoneinfo.exp
     Rotate             ^ 1 ^ rotate
     Wifi               ^ 0 ^ st -e "nmtui"
     Upgrade Pkgs       ^ 0 ^ st -e sxmo_upgrade.sh

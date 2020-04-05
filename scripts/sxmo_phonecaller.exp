@@ -1,0 +1,82 @@
+#!/usr/bin/expect -f
+
+proc setup {} {
+  set timeout 5
+  exp_internal 1
+  # Cleanup - set DISPLAY & if screen to modem already on, kill it
+  set ::env(DISPLAY) :0
+  #spawn screen -XS dialer quit
+  spawn sh -c "screen -rx dialer || screen -S dialer /dev/ttyUSB2 115200"
+  return $spawn_id
+}
+
+proc dialermenu {} {
+  # Prompt user for number to dial
+  spawn sh -c "pidof svkbd-sxmo || svkbd-sxmo"
+  spawn sh -c "
+  	echo Test Number 804-222-1111 | 
+  	dmenu -l 10 -p Number -c -fn Terminus-20 |
+  	awk -F' ' '{print \$NF}' |
+  	tr -d -
+  "
+  wait
+  expect -re "(\\d+)"
+  return $expect_out(buffer)
+}
+
+proc call {modem_pid number} {
+  puts "Calling <$number>"
+  send -i $modem_pid "ATD$number;\r"
+  expect {
+    -i $modem_pid "OK" { incallmenu $modem_pid $number }
+  }
+  spawn sh -c "echo 'Failed to connect?' | dmenu -fn Terminus-20 -c"
+  wait
+  exit
+}
+
+proc incallmenu {modem_pid number} {
+  while 1 {
+    spawn sh -c "
+      echo -e '
+	Mute
+	Hangup
+        Lock Screen
+        Number Input
+      ' | sed -r '/^\s*$/d' | awk '{\$1=\$1};1' | dmenu -c -fn Terminus-20 -l 10 -p '$number'
+    "
+    wait
+    expect {
+      "Mute" mute
+      "Volume ↑" { spawn sxmo_vol.sh up }
+      "Volume ↓" { spawn sxmo_vol.sh down }
+      "Numberpad" { spawn sxmo_vol.sh down }
+      "Unmute" unmute
+      "Hangup" { hangup $modem_pid }
+    }
+  }
+}
+
+proc hangup {modem_pid} {
+  send -i $modem_pid "ATH;\r"
+  expect {
+    -i $modem_pid "OK" exit
+  }
+  puts "Failed to hangup?"
+  exit
+}
+
+proc dial {modem_pid} {
+  puts "Dialer"
+  set number [dialermenu]
+  call $modem_pid $number
+}
+
+proc pickup {modem_pid} {
+  puts "Pickup"
+}
+
+switch [lindex $argv 0] {
+  "pickup" {pickup [setup]}
+  "dial" {dial [setup]}
+}
