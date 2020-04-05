@@ -11,36 +11,38 @@ static int lastkeyn = 0;
 static int oldbrightness = 10;
 static int screenon = 1;
 static char screentogglecommand[100];
+static char pineledcommand[100];
+static char * brightnessfile = "/sys/devices/platform/backlight/backlight/backlight/brightness";
 
 
-void
-updatescreen() {
-        sprintf(
-                screentogglecommand,
-                "sh -c 'echo %d > /sys/devices/platform/backlight/backlight/backlight/brightness'",
-                screenon ? oldbrightness : 0
-        );
-        if (screenon) {
-          system("sh -c 'echo 1 > /sys/devices/platform/leds/leds/pinephone:blue:user/brightness'");
-          system("sh -c 'echo 0 > /sys/devices/platform/leds/leds/pinephone:red:user/brightness'");
-        } else {
-          system("sh -c 'echo 0 > /sys/devices/platform/leds/leds/pinephone:blue:user/brightness'");
-          system("sh -c 'echo 1 > /sys/devices/platform/leds/leds/pinephone:red:user/brightness'");
-        }
-        system(screentogglecommand);
+
+void updatepineled(int red, int brightness) {
+    sprintf(
+      pineledcommand, 
+      "sh -c 'echo %d > /sys/devices/platform/leds/leds/pinephone:%s:user/brightness'", 
+      brightness, 
+      red ? "red" : "blue"
+    );
+    system(pineledcommand);
 }
 
-void
-cleanupscreen() {
-    screenon = 1;
-    updatescreen();
-    system("sh -c 'echo 0 > /sys/devices/platform/leds/leds/pinephone:red:user/brightness'");
-    system("sh -c 'echo 0 > /sys/devices/platform/leds/leds/pinephone:blue:user/brightness'");
+void updatescreenon(int on) {
+    int b = on ? oldbrightness : 0;
+    sprintf(screentogglecommand, "sh -c 'echo %d > %s'", b, brightnessfile);
+    system(screentogglecommand);
+    updatepineled(0, b ? 1 : 0);
+    updatepineled(1, b ? 0 : 1);
+}
+
+void cleanup() {
+  updatescreenon(1);
+  updatepineled(1, 0);
+  updatepineled(0, 0);
 }
 
 static void die(const char *err, ...) {
         fprintf(stderr, "Error: %s", err);
-        cleanupscreen();
+        cleanup();
         exit(1);
 }
 static void usage(void) {
@@ -109,16 +111,12 @@ readinputloop(Display *dpy, int screen) {
 
                         switch (keysym) {
                         case XF86XK_AudioRaiseVolume:
-                              screenon = !screenon;
-                              updatescreen();
-
-                                break;
                         case XF86XK_AudioLowerVolume:
                               screenon = !screenon;
-                              updatescreen();
-                                break;
+                              updatescreenon(screenon);
+                              break;
                         case XF86XK_PowerOff:
-                              cleanupscreen();
+                              cleanup();
                               running = 0;
                               break;
                         }
@@ -128,19 +126,41 @@ readinputloop(Display *dpy, int screen) {
 }
 
 int
+getoldbrightness() {
+  char * buffer = 0;
+  long length;
+  FILE * f = fopen(brightnessfile, "rb");
+  if (f) {
+    fseek(f, 0, SEEK_END);
+    length = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    buffer = malloc(length);
+    if (buffer) {
+      fread(buffer, 1, length, f);
+    }
+    fclose(f);
+  }
+  if (buffer) {
+    oldbrightness = atoi(buffer);
+  }
+}
+
+int
 main(int argc, char **argv) {
         Display *dpy;
         Screen *screen;
 
+        
 
         if (setuid(0))
                 die("setuid(0) failed\n");
         if (!(dpy = XOpenDisplay(NULL)))
                 die("Cannot open display\n");
 
-        updatescreen();
         screen = XDefaultScreen(dpy);
         XSync(dpy, 0);
+        getoldbrightness();
+        updatescreenon(1);
         lockscreen(dpy, screen);
         XSync(dpy, 0);
         readinputloop(dpy, screen);

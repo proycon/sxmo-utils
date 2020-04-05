@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 WIN=$(xdotool getwindowfocus)
+INCOMINGCALL=$(cat /tmp/sxmo_incomingcall || echo NOCALL)
 
 programchoicesinit() {
   WMCLASS="${1:-$(xprop -id $(xdotool getactivewindow) | grep WM_CLASS | cut -d ' ' -f3-)}"
@@ -8,15 +9,21 @@ programchoicesinit() {
   CHOICES="$(echo "
     Scripts            ^ 0 ^ sxmo_appmenu.sh scripts
     Apps               ^ 0 ^ sxmo_appmenu.sh applications
-    Volume ↑           ^ 1 ^ sxmo_vol.sh up
-    Volume ↓           ^ 1 ^ sxmo_vol.sh down
+    Volume ↑         ^ 1 ^ sxmo_vol.sh up
+    Volume ↓         ^ 1 ^ sxmo_vol.sh down
     Dialer             ^ 1 ^ sxmo_phonecaller.exp dial
+    Texts              ^ 0 ^ sxmo_readtexts.sh
     Camera             ^ 0 ^ sxmo_camera.sh
     Wifi               ^ 0 ^ st -e "nmtui"
     System Config      ^ 0 ^ sxmo_appmenu.sh control
     Logout             ^ 0 ^ pkill -9 dwm
     Close Menu         ^ 0 ^ quit
   ")" && WINNAME=Sys
+
+  # E.g. for the system menu if there's an incoming call pop it on top of menu
+  echo "$INCOMINGCALL" | grep -v NOCALL && CHOICES="$(echo "
+	Pickup $INCOMINGCALL ^ 0 ^ sxmo_phonecaller.exp pickup $INCOMINGCALL
+  ")""$CHOICES"
 
   echo $WMCLASS | grep -i "applications" && CHOICES="$(echo "
     Surf            ^ 0 ^ surf
@@ -32,7 +39,7 @@ programchoicesinit() {
   echo $WMCLASS | grep -i "scripts" && CHOICES="$(echo "
     Timer           ^ 0 ^ sxmo_timermenu.sh
     Youtube         ^ 0 ^ sxmo_youtube.sh
-    Youtube (Audio) ^ 0 ^ sxmo_youtube.sh
+    Youtube (Audio) ^ 0 ^ sxmo_youtube.sh --no-video
     Weather         ^ 0 ^ sxmo_weather.sh
     RSS             ^ 0 ^ sxmo_rss.sh
     Close Menu      ^ 0 ^ quit
@@ -43,7 +50,7 @@ programchoicesinit() {
     Volume ↓           ^ 1 ^ sxmo_vol.sh down
     Brightesss ↑       ^ 1 ^ sxmo_brightness.sh up
     Brightness ↓       ^ 1 ^ sxmo_brightness.sh down
-    Modem Info         ^ 1 ^ sxmo_phoneinfo.exp
+    Modem Info         ^ 1 ^ st -e 'mmcli -m 0 && read'
     Rotate             ^ 1 ^ rotate
     Wifi               ^ 0 ^ st -e "nmtui"
     Upgrade Pkgs       ^ 0 ^ st -e sxmo_upgrade.sh
@@ -81,9 +88,9 @@ programchoicesinit() {
 
   #  St hotkeys
   echo $WMCLASS | grep -i "sthotkeys" && CHOICES="$(echo "
-      Send Ctrl-C      ^ 0 ^ key Ctrl+C
-      Send Ctrl-L      ^ 0 ^ key Ctrl+L
-      Send Ctrl-      ^ 0 ^ key Ctrl+L
+      Send Ctrl-C      ^ 0 ^ key Ctrl+c
+      Send Ctrl-L      ^ 0 ^ key Ctrl+l
+      Send Ctrl-D      ^ 0 ^ key Ctrl+d
       Close Menu       ^ 0 ^ quit
   ")" && WINNAME=st
 
@@ -135,14 +142,12 @@ key() {
 }
 
 quit() {
-  xset r off
   exit 0
 }
 
 boot() {
   DMENUIDX=0
   PICKED=""
-  xset r on
   pgrep -f sxmo_appmenu.sh | grep -Ev "^${$}$" | xargs kill -9
   pkill -9 dmenu
 }
@@ -169,3 +174,4 @@ mainloop() {
 boot
 programchoicesinit $@
 mainloop
+

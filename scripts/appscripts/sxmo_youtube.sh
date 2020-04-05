@@ -20,4 +20,4 @@ RESULT="$(
 [[ "CLOSE_MENU" == "$RESULT" ]] && exit 0
 
 URL=$(echo "$RESULT" | awk -F " " '{print $NF}')
-st -e mpv --ytdl-format='[height<420]' "$URL"
+st -e mpv --ytdl-format='[height<420]' $@ "$URL"

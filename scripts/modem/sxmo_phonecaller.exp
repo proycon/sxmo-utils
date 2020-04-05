@@ -1,0 +1,145 @@
+#!/usr/bin/expect -f
+
+proc setup {} {
+  set timeout 5
+  exp_internal 1
+  set ::env(DISPLAY) :0
+  spawn sh -c "screen -rx dialer || screen -S dialer /dev/ttyUSB2 115200"
+  set modem_pid $spawn_id
+  sleep 0.2
+  send -i $modem_pid "AT+QDAI=1,0,0,2,0,1,1,1;\r"
+  expect {
+    -i $modem_pid "OK" { return $modem_pid }
+  }
+  puts "Couldn't establish connection to modem?"
+  exit
+}
+
+proc dialermenu {} {
+  # Prompt user for number to dial
+  spawn sh -c "pidof svkbd-sxmo || svkbd-sxmo"
+  spawn sh -c "
+  	echo Test Number 804-222-1111 | 
+  	dmenu -l 10 -p Number -c -fn Terminus-20 |
+  	awk -F' ' '{print \$NF}' |
+  	tr -d -
+  "
+  wait
+  expect -re "(\\d+)"
+  return $expect_out(buffer)
+}
+
+proc call {modem_pid number} {
+  puts "Calling <$number>"
+  send -i $modem_pid "ATD$number;\r"
+  expect {
+    -i $modem_pid "OK" { incallmenu $modem_pid $number }
+  }
+  spawn sh -c "echo 'Failed to connect?' | dmenu -fn Terminus-20 -c"
+  wait
+  exit
+}
+
+proc lremove {l p} {
+  set p [lsearch -exact $l $p]
+  return "[lrange $l 0 $p-1] [lrange $l $p+1 end]"
+}
+proc iteminlist {l i} {
+  return [expr [lsearch -exact $l $i] >= 0]
+}
+
+proc applyaudiorouting {flags} {
+  puts "Applying audio routing flags: $flags"
+  spawn sxmo_megiaudioroute {*}$flags
+  wait
+}
+
+proc incallmenu {modem_pid number} {
+  # E.g. default earpiece to listen and mic to speak
+  set flags { -e -m }
+  applyaudiorouting $flags
+  lappend flags -2
+  applyaudiorouting $flags
+
+  while 1 {
+    set mutetext [expr {[iteminlist $flags -m] ? "Mute" : "Unmute"}]
+    set echotext [expr {[iteminlist $flags -z] ? "Echomic Off" : "Echomic On"}]
+    set earpiecetext [expr {[iteminlist $flags -e] ? "Earpiece Off" : "Earpiece On"}]
+    set headphonetext [expr {[iteminlist $flags -h] ? "Linejack Off" : "Linejack On"}]
+    set speakerphonetext  [expr {[iteminlist $flags -s] ? "Speakerphone Off" : "Speakerphone On"}]
+    spawn sh -c "
+      echo -e '
+        Volume ↑
+        Volume ↓
+        $mutetext
+        $echotext
+        $earpiecetext
+        $headphonetext
+        $speakerphonetext
+        Windowify
+        Hangup
+        Lock Screen
+        Number Input
+      ' | sed -r '/^\s*$/d' | awk '{\$1=\$1};1' | dmenu -c -fn Terminus-20 -l 10 -p '$number'
+    "
+    wait
+    expect {
+      "Mute"             { set flags [lremove $flags -m]; applyaudiorouting $flags }
+      "Unmute"           { lappend flags -m; applyaudiorouting $flags }
+
+      "Echomic Off"       { set flags [lremove $flags -z]; applyaudiorouting $flags }
+      "Echomic On"      { lappend flags -z; applyaudiorouting $flags }
+
+      "Earpiece Off"      { set flags [lremove $flags -e]; applyaudiorouting $flags }
+      "Earpiece On"     { lappend flags -e; applyaudiorouting $flags }
+
+      "Linejack Off"      { set flags [lremove $flags -h]; applyaudiorouting $flags }
+      "Linejack On"     { lappend flags -h; applyaudiorouting $flags }
+
+      "Speakerphone Off"  { set flags [lremove $flags -s]; applyaudiorouting $flags }
+      "Speakerphone On" { lappend flags -s; applyaudiorouting $flags }
+
+      "Volume ↑" { spawn sxmo_vol.sh up }
+      "Volume ↓" { spawn sxmo_vol.sh down }
+
+      "Numberpad" { spawn sxmo_vol.sh down }
+
+      "Lock Screen" { spawn sxmo_screenlock; wait }
+      "Windowify" { spawn sxmo_phonecallerwindowify.tcl; wait }
+
+      "Hangup" { hangup $modem_pid }
+    }
+  }
+}
+
+proc hangup {modem_pid} {
+  spawn sxmo_megiaudioroute -h
+  send -i $modem_pid "ATH;\r"
+  expect {
+    -i $modem_pid "OK" exit
+  }
+  puts "Failed to hangup?"
+  exit
+}
+
+proc dial {modem_pid} {
+  puts "Dialer"
+  set number [dialermenu]
+  call $modem_pid $number
+}
+
+proc pickup {modem_pid number} {
+  spawn rm -f /tmp/sxmo_incomingcall
+  puts "Pickup"
+  send -i $modem_pid "ATA;\r"
+  expect {
+    -i $modem_pid "OK" { incallmenu $modem_pid $number }
+  }
+  puts "Failed to pickup?"
+  exit
+}
+
+switch [lindex $argv 0] {
+  "pickup" {pickup [setup] [lindex $argv 1]}
+  "dial" {dial [setup]}
+}

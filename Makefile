@@ -9,7 +9,13 @@ programs/sxmo_setpinebacklight:
 programs/sxmo_screenlock:
 	gcc -o programs/sxmo_screenlock programs/sxmo_screenlock.c -lX11
 
-install: programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_screenlock
+programs/sxmo_megiaudioroute:
+	gcc -o programs/sxmo_megiaudioroute programs/sxmo_megiaudioroute.c
+
+programs/sxmo_pdudecode:
+	gcc -o programs/sxmo_pdudecode programs/sxmo_pdudecode.c -I/usr/include/gammu -lGammu -lm
+
+install: programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_screenlock programs/sxmo_megiaudioroute programs/sxmo_pdudecode
 	mkdir -p $(PREFIX)/usr/share/sxmo
 	cp configs/* $(PREFIX)/usr/share/sxmo
 
@@ -17,7 +23,7 @@ install: programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_s
 	cp configs/alsa_sxmo_enable_dmix.conf $(PREFIX)/etc/alsa/conf.d/
 
 	mkdir -p $(PREFIX)/usr/bin
-	cp scripts/* $(PREFIX)/usr/bin
+	cp scripts/*/* $(PREFIX)/usr/bin
 
 	chown root programs/sxmo_setpineled
 	chmod u+s programs/sxmo_setpineled
@@ -30,3 +36,6 @@ install: programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_s
 	chown root programs/sxmo_screenlock
 	chmod u+s programs/sxmo_screenlock
 	cp programs/sxmo_screenlock $(PREFIX)/usr/bin
+
+	cp programs/sxmo_megiaudioroute $(PREFIX)/usr/bin
+	cp programs/sxmo_pdudecode $(PREFIX)/usr/bin
