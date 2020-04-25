@@ -3,6 +3,7 @@ source /etc/profile
 which $TERM || export TERM=st
 which $BROWSER || export BROWSER=surf
 
+xmodmap /usr/share/sxmo/xmodmap_caps_esc
 xsetroot -mod 3 2 -fg '#000000' -bg '#888888'
 conky -c /usr/share/sxmo/conky.conf -d
 
