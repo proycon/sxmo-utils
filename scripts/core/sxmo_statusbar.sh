@@ -4,14 +4,14 @@ touch $UPDATEFILE
 
 while :
 do
-        PCT=$(cat /sys/class/power_supply/axp20x-battery/capacity)
+        PCT=$(cat /sys/class/power_supply/*-battery/capacity)
         BATSTATUS=$(
-                cat /sys/class/power_supply/axp20x-battery/status |
-                cut -b0
+                cat /sys/class/power_supply/*-battery/status |
+                cut -c1
         )
 
         VOL=$(
-                amixer sget Headphone |
+                echo "$(amixer sget Headphone || amixer sget Speaker)" |
                 grep -oE '([0-9]+)%' |
                 tr -d ' %' |
                 awk '{ s += $1; c++ } END { print s/c }'  |

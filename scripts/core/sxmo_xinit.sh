@@ -7,6 +7,10 @@ xmodmap /usr/share/sxmo/xmodmap_caps_esc
 xsetroot -mod 3 2 -fg '#000000' -bg '#888888'
 conky -c /usr/share/sxmo/conky.conf -d
 
+# E.g. for PBP
+synclient TapButton1=1 TapButton2=3 TapButton3=2
+keynav &
+
 lisgd &
 sxmo_statusbar.sh &
 xset s off -dpms
