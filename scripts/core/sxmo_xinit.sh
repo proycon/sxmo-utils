@@ -10,7 +10,7 @@ alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
 #xset r off
 
 # E.g. for PBP
-synclient TapButton1=1 TapButton2=3 TapButton3=2
+synclient TapButton1=1 TapButton2=3 TapButton3=2 MinSpeed=0.25
 keynav &
 
 conky -c /usr/share/sxmo/conky.conf -d

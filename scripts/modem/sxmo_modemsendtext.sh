@@ -1,8 +1,13 @@
 #!/usr/bin/env sh
 EDITOR=vis
 
-modem() {
-	mmcli -L | grep -o "Modem/[0-9]" | grep -o [0-9]$
+err() {
+	echo $1 | dmenu -fn Terminus-20 -c -l 10
+	exit 1
+}
+
+modem_n() {
+  mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 }
 
 editmsg() {
@@ -13,7 +18,7 @@ editmsg() {
 }
 
 sendmsg() {
-	MODEM=$(modem)
+	MODEM=$(modem_n)
 	SMSNO=$(
 		sudo mmcli -m $MODEM --messaging-create-sms="text='$2',number=$1" |
 		grep -o [0-9]*$
@@ -25,7 +30,7 @@ sendmsg() {
 }
 
 main() {
-	modem || st -e "echo Couldn't determine modem number - is modem online?"
+	modem_n || err "Couldn't determine modem number - is modem online?"
 
 	# Prompt for number
 	NUMBER=$(

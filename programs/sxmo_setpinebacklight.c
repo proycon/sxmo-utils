@@ -3,8 +3,18 @@
 #include <string.h>
 #include <unistd.h>
 
+char * pbpScreen = "/sys/class/backlight/edp-backlight/brightness";
+char * ppScreen = "/sys/devices/platform/backlight/backlight/backlight/brightness";
+
 void usage() {
-  fprintf(stderr, "Usage: setpinebacklight [0-10]\n");
+  fprintf(stderr, "Usage: sxmo_setpinebacklight [number]\n");
+}
+
+void writeFile(char *filepath, int brightness) {
+  FILE *f;
+  f = fopen(filepath, "w+");
+  fprintf(f, "%d\n", brightness);
+  fclose(f);
 }
 
 int main(int argc, char *argv[]) {
@@ -18,20 +28,18 @@ int main(int argc, char *argv[]) {
   argc--;
   brightness = atoi(argv[argc--]);
 
-  if (brightness < 0 || brightness > 10) {
-    usage();
+  if (setuid(0)) {
+    fprintf(stderr, "setuid(0) failed\n");
     return 1;
   }
 
-  command = malloc(100);
-  sprintf(
-    command,
-    "sh -c 'echo %d > /sys/devices/platform/backlight/backlight/backlight/brightness'",
-    brightness
-  );
-  if (setuid(0)) {
-    fprintf(stderr, "setuid(0) failed\n");
+  if (access(pbpScreen, F_OK) != -1) {
+    writeFile(pbpScreen, brightness);
+    fprintf(stderr, "Set PBP brightness to %d\n", brightness);
+  } else if (access(ppScreen, F_OK) != -1) {
+    writeFile(ppScreen, brightness);
+    fprintf(stderr, "Set PP brightness to %d\n", brightness);
   } else {
-    return system(command);
+    fprintf(stderr, "Neither PP or PBP Screen found!\n");
   }
 }

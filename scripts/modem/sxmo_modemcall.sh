@@ -5,6 +5,10 @@ err() {
 	exit 1
 }
 
+modem_n() {
+  mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
+}
+
 toggleflag() {
   TOGGLEFLAG=$1
   shift
@@ -29,30 +33,37 @@ dialmenu() {
 		tr -d -
 	)"
 	echo "Attempting to dial: $NUMBER" >&2
-	VID=$(
-		sudo mmcli -m 0 --voice-create-call "number=$NUMBER" | grep -Eo Call/[0-9]+ | grep -oE [0-9]+
-	)
+	VID="$(
+		sudo mmcli -m $(modem_n) --voice-create-call "number=$NUMBER" | grep -Eo Call/[0-9]+ | grep -oE [0-9]+
+	)"
 	echo "Starting call with VID: $VID" >&2
-
-	echo "$(startcall $VID)"
+	startcall $VID >&@
+	echo $VID
 }
 
 startcall() {
-  VID=$1
-	sudo mmcli -m 0 -o $VID --start | grep "successfully started" || err "Couldn't start call!"
-	echo $VID
+  VID="$1"
+  sudo mmcli --voice-status -o $VID
+	sudo mmcli -m $(modem_n) -o $VID --start | grep "successfully started" || err "Couldn't start call!"
+}
+
+acceptcall() {
+  VID="$1"
+  echo "Attempting to pickup VID $VID"
+  sudo mmcli --voice-status -o $VID
+	sudo mmcli -m $(modem_n) -o $VID --accept | grep "successfully" || err "Couldn't accept call!"
 }
 
 hangup() {
   VID=$1
-  sudo mmcli -m 0 -o $VID --hangup
+  sudo mmcli -m $(modem_n) -o $VID --hangup | grep "successfully hung up" || err "Failed to hangup the call?"
   exit 1
 }
 
 incallmenu() {
   DMENUIDX=0
   VID="$1"
-
+  NUMBER=$(mmcli -m $(modem_n) -o $VID -K | grep call.properties.number | cut -d ':' -f2 | tr -d  ' ')
   # E.g. Run once w/o -2, and then run once with -2
   FLAGS="-e -m"
   sxmo_megiaudioroute $FLAGS
@@ -77,7 +88,7 @@ incallmenu() {
         TSPEAKER ^ FLAGS="$(toggleflag "-s" "$FLAGS")"
         DTMF Tones ^ dtmfmenu $VID
         Hangup ^ hangup $VID
-        Lock Screen ^ hangup
+        Lock Screen ^ sxmo_screenlock
       ' | sed "s/TMUTE/$TMUTE/;s/TECHO/$TECHO/;s/TEARPIECE/$TEARPIECE/;s/TLINEJACK/$TLINEJACK/;s/TSPEAKER/$TSPEAKER/"
     )"
 
@@ -87,7 +98,7 @@ incallmenu() {
       cut -d'^' -f1 | 
       sed '/^[[:space:]]*$/d' |
       awk '{$1=$1};1' |
-      dmenu -idx $DMENUIDX -l 14 -c -fn "Terminus-30" -p "$VID"
+      dmenu -idx $DMENUIDX -l 14 -c -fn "Terminus-30" -p "$NUMBER"
     )
     CMD=$(echo "$CHOICES" | grep "$PICKED" | cut -d '^' -f2)
     DMENUIDX=$(echo $(echo "$CHOICES" | grep -n "$PICKED" | cut -d ':' -f1) - 1 | bc)
@@ -103,13 +114,13 @@ dtmfmenu() {
   while true
   do
     PICKED="$(
-      echo $NUMS | grep -o . | sed '1 iReturn to Call Menu' |
+      echo "$NUMS" | grep -o . | sed '1 iReturn to Call Menu' |
       dmenu -l 20 -fn Terminus-20 -c -idx $DMENUIDX -p "DTMF Tone"
     )"
-    DMENUIDX=$(echo $NUMS | grep -bo $PICKED | cut -d: -f1 | xargs -IN echo 2+N | bc)
+    DMENUIDX=$(echo "$NUMS" | grep -bo "$PICKED" | cut -d: -f1 | xargs -IN echo 2+N | bc)
 
-    echo $PICKED | grep "Return to Call Menu" && break
-    mmcli -m 0 -o $VID --send-dtmf="$PICKED"
+    echo "$PICKED" | grep "Return to Call Menu" && break
+    sudo mmcli -m $(modem_n) -o $VID --send-dtmf="$PICKED"
   done
 }
 
@@ -120,7 +131,9 @@ dial() {
 }
 
 pickup() {
-	startcall $1
+	acceptcall $1
+	incallmenu $1
 }
 
+modem_n || err "Couldn't determine modem number - is modem online?"
 $@

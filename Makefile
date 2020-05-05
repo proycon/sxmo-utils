@@ -12,10 +12,11 @@ programs/sxmo_screenlock:
 programs/sxmo_megiaudioroute:
 	gcc -o programs/sxmo_megiaudioroute programs/sxmo_megiaudioroute.c
 
-programs/sxmo_pdudecode:
-	gcc -o programs/sxmo_pdudecode programs/sxmo_pdudecode.c -I/usr/include/gammu -lGammu -lm
+programs/sxmo_vibratepine:
+	gcc -o programs/sxmo_vibratepine programs/sxmo_vibratepine.c
 
-install: programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_screenlock programs/sxmo_megiaudioroute programs/sxmo_pdudecode
+
+install: programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_screenlock programs/sxmo_megiaudioroute programs/sxmo_vibratepine
 	mkdir -p $(PREFIX)/usr/share/sxmo
 	cp configs/* $(PREFIX)/usr/share/sxmo
 
@@ -38,4 +39,4 @@ install: programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_s
 	cp programs/sxmo_screenlock $(PREFIX)/usr/bin
 
 	cp programs/sxmo_megiaudioroute $(PREFIX)/usr/bin
-	cp programs/sxmo_pdudecode $(PREFIX)/usr/bin
+	cp programs/sxmo_vibratepine $(PREFIX)/usr/bin

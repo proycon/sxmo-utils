@@ -1,15 +1,23 @@
 #!/usr/bin/env sh
+pgrep -f sxmo_statusbar.sh | grep -v $$ | xargs kill -9
+
 UPDATEFILE=/tmp/sxmo_bar
 touch $UPDATEFILE
 
 while :
 do
+        # M symbol if modem monitoring is on
+        MODEMMON=""
+        pgrep -f sxmo_modemmonitor.sh && MODEMMON="M "
+
+        # Battery pct
         PCT=$(cat /sys/class/power_supply/*-battery/capacity)
         BATSTATUS=$(
                 cat /sys/class/power_supply/*-battery/status |
                 cut -c1
         )
 
+        # Volume
         VOL=$(
                 echo "$(amixer sget Headphone || amixer sget Speaker)" |
                 grep -oE '([0-9]+)%' |
@@ -18,11 +26,12 @@ do
                 xargs printf %.0f
         )
 
+        # Time
         TIME=$(date +%R)
 
-        BAR=" V${VOL} ${BATSTATUS}${PCT}% ${TIME}"
+        BAR=" ${MODEMMON}V${VOL} ${BATSTATUS}${PCT}% ${TIME}"
         xsetroot -name "$BAR"
 
-        inotifywait -e MODIFY $UPDATEFILE & sleep 5 & wait -n
+        inotifywait -e MODIFY $UPDATEFILE & sleep 30 & wait -n
         pgrep -P $$ | xargs kill -9
 done

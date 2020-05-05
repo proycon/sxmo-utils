@@ -380,7 +380,7 @@ int main(int ac, char* av[])
                         audio_setup.dai2_en = 1;
                         break;
                 default: /* '?' */
-                        fprintf(stderr, "Usage: %s [-s] [-m] [-h] [-e] [-2]\n", av[0]);
+                        fprintf(stderr, "Usage: %s [-s] [-m] [-h] [-e] [-2] [-z]\n", av[0]);
                         exit(EXIT_FAILURE);
                 }
         }

@@ -1,23 +1,26 @@
 #!/usr/bin/env sh
 device() {
-  amixer sget Headphone && echo Headphone || echo Speaker
+  amixer sget Headphone > /dev/null && echo Headphone || echo Speaker
 }
 
-incvol() {
+notify() {
+  sxmo_notify.sh 200 "Volume $(
+    amixer get "$(device)" | 
+    grep -oE '([0-9]+)%' |
+    tr -d ' %' |
+    awk '{ s += $1; c++ } END { print s/c }'  |
+    xargs printf %.0f
+  )"
+  echo 1 > /tmp/sxmo_bar
+}
+
+up() {
   amixer set $(device) 1+
-  echo 1 > /tmp/sxmo_bar
+  notify
 }
-decvol() {
+down() {
   amixer set $(device) 1-
-  echo 1 > /tmp/sxmo_bar
+  notify
 }
 
-echo $1 | grep up && echo 1 > /tmp/sxmo_bar && incvol
-echo $1 | grep down && echo 1 > /tmp/sxmo_bar && decvol
-sxmo_notify.sh 200 "Volume $(
-  echo "$(amixer sget Headphone || amixer sget Speaker)" | 
-  grep -oE '([0-9]+)%' |
-  tr -d ' %' |
-  awk '{ s += $1; c++ } END { print s/c }'  |
-  xargs printf %.0f
-)"
+$@
