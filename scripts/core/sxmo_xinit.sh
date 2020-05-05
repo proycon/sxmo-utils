@@ -5,15 +5,16 @@ which $BROWSER || export BROWSER=surf
 
 xmodmap /usr/share/sxmo/xmodmap_caps_esc
 xsetroot -mod 3 2 -fg '#000000' -bg '#888888'
-conky -c /usr/share/sxmo/conky.conf -d
+xset s off -dpms
+alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
+#xset r off
 
 # E.g. for PBP
 synclient TapButton1=1 TapButton2=3 TapButton3=2
 keynav &
 
+conky -c /usr/share/sxmo/conky.conf -d
+autocutsel & autocutsel -selection PRIMARY &
 lisgd &
 sxmo_statusbar.sh &
-xset s off -dpms
-#xset r off
-alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
 exec dbus-run-session dwm 2> ~/.dwm.log
