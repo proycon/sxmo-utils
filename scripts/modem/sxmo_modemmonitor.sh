@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 TIMEOUT=3
+LOGDIR=/home/$USER/.sxmo
+ACTIVECALL="NONE"
 
 modem_n() {
   mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
@@ -7,6 +9,7 @@ modem_n() {
 
 newcall() {
 	VID="$1"
+	sxmo_vibratepine 2000 &
 	sxmo_setpineled green 1
 
 	for i in $(sudo mmcli -m $(modem_n) --voice-list-calls | grep terminated | grep -oE Call\/[0-9]+ | cut -d'/' -f2); do
@@ -19,8 +22,12 @@ newcall() {
 		grep call.properties.number |
 		cut -d ':' -f 2
 	)
+
+	TIME="$(date --iso-8601=seconds)"
+	echo -ne "$TIME\tcall_ring\t$NUMBER\n" >> $LOGDIR/modemlog.tsv
 	echo "$VID:$INCOMINGNUMBER" > /tmp/sxmo_incomingcall
 	echo "Number: $INCOMINGNUMBER (VID: $VID)"
+
 }
 
 newtexts() {
@@ -35,11 +42,44 @@ newtexts() {
 		TIME="$(echo "$DAT" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 		TEXTSIZE="$(echo $TEXT | wc -c)"
 
-		mkdir -p ~/.sxmo/$NUM
-		echo -ne "$NUM at $TIME:\n$TEXT\n\n" >> ~/.sxmo/$NUM/sms.txt
-		echo -ne "$TIME\trecv_txt\t$NUM\t$TEXTSIZE chars\n" >> ~/.sxmo/$NUM/log.tsv
+		mkdir -p "$LOGDIR/$NUM"
+		echo -ne "Received from $NUM at $TIME:\n$TEXT\n\n" >> $LOGDIR/$NUM/sms.txt
+		echo -ne "$TIME\trecv_txt\t$NUM\t$TEXTSIZE chars\n" >> $LOGDIR/modemlog.tsv
 		sudo mmcli -m $(modem_n) --messaging-delete-sms=$i
+
+		sxmo_vibratepine 300 && sleep 0.1
+		sxmo_vibratepine 300 && sleep 0.1
+		sxmo_vibratepine 300
 	done
+}
+
+killinprogresscall() {
+	echo "Kill the in progress call"
+	pkill -9 dmenu
+}
+
+inprogresscallchecker() {
+	# E.g. register current call in progress as ACTIVECALL
+	CURRENTCALLS="$(mmcli -m $(modem_n) --voice-list-calls)"
+
+	# E.g. if we've previously registered an ACTIVECALL, check if it
+	# was terminated by the otherside, if so kill the incall script
+	# and notify user
+	echo "$ACTIVECALL" | grep -E '[0-9]+' && $(
+		echo "$CURRENTCALLS" | 
+		grep -E "Call/${ACTIVECALL}.+terminated" && 
+		killinprogresscall
+	)
+
+	# Register the active call so we can check in future loops if
+	# other side hung up
+	ACTIVECALL="$(
+		echo "$CURRENTCALLS" | 
+		grep -oE "[0-9]+ (incoming|outgoing).+active" | 
+		cut -d' ' -f1
+	)"
+
+	echo "Set new Activecall:<$ACTIVECALL>"
 }
 
 while true
@@ -57,10 +97,11 @@ do
 		grep -Eo '[0-9]+'
 	)"
 
-	echo VIDS $VOICECALLID
-	echo TIDS $TEXTIDS
+	echo "Check status, VIDS: $VOICECALLID, TIDS: $TEXTIDS"
 
-	echo "$VOICECALLID" | grep . && newcall "$VOICECALLID" || rm /tmp/sxmo_incomingcall
+	inprogresscallchecker
+
+	echo "$VOICECALLID" | grep . && newcall "$VOICECALLID" || rm -f /tmp/sxmo_incomingcall
 	echo "$TEXTIDS" | grep . && newtexts "$TEXTIDS"
 	sleep $TIMEOUT
 done

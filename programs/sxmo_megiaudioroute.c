@@ -351,7 +351,7 @@ static struct audio_setup audio_setup = {
 
         .hp_vol = 15,
         .spk_vol = 15,
-        .ear_vol = 31,
+        .ear_vol = 15,
         .mic_gain = 1,
 };
 

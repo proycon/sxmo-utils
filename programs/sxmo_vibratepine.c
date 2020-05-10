@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 
   int durationMs, strength;
 
-  if (argc < 1) {
+  if (argc < 2) {
     usage();
     return 1;
   }

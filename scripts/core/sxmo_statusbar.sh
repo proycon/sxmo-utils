@@ -1,6 +1,11 @@
 #!/usr/bin/env sh
 pgrep -f sxmo_statusbar.sh | grep -v $$ | xargs kill -9
 
+audiodevice() {
+  amixer sget Earpiece | grep -E [[]on[]] && echo Earpiece > /dev/null && return
+  amixer sget Headphone > /dev/null && echo Headphone || echo Speaker
+}
+
 UPDATEFILE=/tmp/sxmo_bar
 touch $UPDATEFILE
 
@@ -19,7 +24,7 @@ do
 
         # Volume
         VOL=$(
-                echo "$(amixer sget Headphone || amixer sget Speaker)" |
+                echo "$(audiodevice)" |
                 grep -oE '([0-9]+)%' |
                 tr -d ' %' |
                 awk '{ s += $1; c++ } END { print s/c }'  |

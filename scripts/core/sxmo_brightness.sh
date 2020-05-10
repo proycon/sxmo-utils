@@ -4,7 +4,8 @@
 
 MAX=$(cat $DEV/max_brightness)
 MIN=2
-STEP=$(echo "($MAX - $MIN) / 10" | bc)
+MINSTEP=1
+STEP=$(echo "($MAX - $MIN) / 10" | bc | xargs -ISTP echo -e "$MINSTEP\nSTP" | sort -r | head -n1)
 
 setdelta() {
   sxmo_setpinebacklight $(

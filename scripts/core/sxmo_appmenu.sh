@@ -10,11 +10,11 @@ programchoicesinit() {
     Apps               ^ 0 ^ sxmo_appmenu.sh applications
     Volume ↑           ^ 1 ^ sxmo_vol.sh up
     Volume ↓           ^ 1 ^ sxmo_vol.sh down
-    Dialer             ^ 1 ^ sxmo_modemcall.sh dial
-    Texts              ^ 0 ^ sxmo_readtexts.sh
+    Dialer             ^ 0 ^ sxmo_modemcall.sh dial
+    Texts              ^ 0 ^ sxmo_modemtext.sh
     Camera             ^ 0 ^ sxmo_camera.sh
     Wifi               ^ 0 ^ st -e "nmtui"
-    System Config      ^ 0 ^ sxmo_appmenu.sh control
+    Config             ^ 0 ^ sxmo_appmenu.sh config
     Logout             ^ 0 ^ pkill -9 dwm
   ")" && WINNAME=Sys
 
@@ -32,24 +32,25 @@ programchoicesinit() {
   # Scripts menu
   echo $WMCLASS | grep -i "scripts" && CHOICES="$(echo "
     Timer           ^ 0 ^ sxmo_timermenu.sh
-    Youtube         ^ 0 ^ sxmo_youtube.sh
-    Youtube (Audio) ^ 0 ^ sxmo_youtube.sh --no-video
+    Youtube         ^ 0 ^ sxmo_youtube.sh video
+    Youtube (Audio) ^ 0 ^ sxmo_youtube.sh audio
     Weather         ^ 0 ^ sxmo_weather.sh
     RSS             ^ 0 ^ sxmo_rss.sh
   ")" && WINNAME=Scripts && return
 
   # System Control menu
-  echo $WMCLASS | grep -i "control" && CHOICES="$(echo "
+  echo $WMCLASS | grep -i "config" && CHOICES="$(echo "
     Volume ↑                   ^ 1 ^ sxmo_vol.sh up
     Volume ↓                   ^ 1 ^ sxmo_vol.sh down
     Brightesss ↑               ^ 1 ^ sxmo_brightness.sh up
     Brightness ↓               ^ 1 ^ sxmo_brightness.sh down
     Modem $(pgrep -f sxmo_modemmonitor.sh >/dev/null && echo -n "On → Off" || echo -n "Off → On") ^ 1 ^ sxmo_modemmonitortoggle.sh
-    Modem Info                 ^ 1 ^ sxmo_modeminfo.sh
+    Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
+    Modem Log                  ^ 0 ^ sxmo_modemlog.sh
     Rotate                     ^ 1 ^ rotate
     Wifi                       ^ 0 ^ st -e "nmtui"
     Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh
-  ")" && WINNAME=Control && return
+  ")" && WINNAME=Config && return
 
   # MPV
   echo $WMCLASS | grep -i "mpv" && CHOICES="$(echo "
@@ -68,8 +69,8 @@ programchoicesinit() {
 
   #  St
   echo $WMCLASS | grep -i "st-256color" && CHOICES="$(echo "
-      Pastecomplete   ^ 0 ^ key Ctrl+Shift+u
-      Copycomplete    ^ 0 ^ key Ctrl+Shift+i
+      Type complete   ^ 0 ^ key Ctrl+Shift+u
+      Copy complete   ^ 0 ^ key Ctrl+Shift+i
       Paste           ^ 0 ^ key Ctrl+Shift+v
       Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
       Zoom -          ^ 1 ^ key Ctrl+Shift+Next
@@ -117,7 +118,7 @@ programchoicesinit() {
       Zoom -            ^ 1 ^ key Ctrl+minus
       History  ←        ^ 1 ^ key Alt+Left
       History  →        ^ 1 ^ key Alt+Right
-  ")" && WINNAME=netsurf && return
+  ")" && WINNAME=firefox && return
 
   # Foxtrot GPS
   echo $WMCLASS | grep -i foxtrot && CHOICES="$(echo "
@@ -162,8 +163,8 @@ rotate() {
 }
 
 key() {
-  xdotool windowactivate $WIN
-  xdotool key --clearmodifiers $1
+  xdotool windowactivate "$WIN"
+  xdotool key --clearmodifiers "$1"
   #--window $WIN
 }
 
