@@ -12,8 +12,9 @@ newcall() {
 	sxmo_vibratepine 2000 &
 	sxmo_setpineled green 1
 
-	for i in $(sudo mmcli -m $(modem_n) --voice-list-calls | grep terminated | grep -oE Call\/[0-9]+ | cut -d'/' -f2); do
-		sudo mmcli -m $(modem_n) --voice-delete-call $i
+	# Delete all terminated calls
+	for i in $(mmcli -m $(modem_n) --voice-list-calls | grep terminated | grep -oE Call\/[0-9]+ | cut -d'/' -f2); do
+		mmcli -m $(modem_n) --voice-delete-call $i
 	done
 
 	echo "Incoming Call:"
@@ -45,7 +46,7 @@ newtexts() {
 		mkdir -p "$LOGDIR/$NUM"
 		echo -ne "Received from $NUM at $TIME:\n$TEXT\n\n" >> $LOGDIR/$NUM/sms.txt
 		echo -ne "$TIME\trecv_txt\t$NUM\t$TEXTSIZE chars\n" >> $LOGDIR/modemlog.tsv
-		sudo mmcli -m $(modem_n) --messaging-delete-sms=$i
+		mmcli -m $(modem_n) --messaging-delete-sms=$i
 
 		sxmo_vibratepine 300 && sleep 0.1
 		sxmo_vibratepine 300 && sleep 0.1

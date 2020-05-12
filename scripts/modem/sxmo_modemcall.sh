@@ -17,13 +17,13 @@ contacts() {
 
 modem_cmd_errcheck() {
 	ARGS="$@"
-	RES="$(sudo mmcli $ARGS 2>&1)"
+	RES="$(mmcli $ARGS 2>&1)"
 	[[ $? -eq 0 ]] || err "Problem executing mmcli command!\n$RES"
 	echo $RES
 }
 
 vid_to_number() {
-  sudo mmcli -m $(modem_n) -o $1 -K | grep call.properties.number | cut -d ':' -f2 | tr -d  ' '
+  mmcli -m $(modem_n) -o $1 -K | grep call.properties.number | cut -d ':' -f2 | tr -d  ' '
 }
 
 log_event() {
@@ -61,7 +61,7 @@ dialmenu() {
 
 	echo "Attempting to dial: $NUMBER" >&2
 	VID="$(
-		sudo mmcli -m $(modem_n) --voice-create-call "number=$NUMBER" | grep -Eo Call/[0-9]+ | grep -oE [0-9]+
+		mmcli -m $(modem_n) --voice-create-call "number=$NUMBER" | grep -Eo Call/[0-9]+ | grep -oE [0-9]+
 	)"
 	echo "Starting call with VID: $VID" >&2
 	startcall $VID >&@
@@ -78,7 +78,7 @@ startcall() {
 acceptcall() {
   VID="$1"
   echo "Attempting to pickup VID $VID"
-  #sudo mmcli --voice-status -o $VID
+  #mmcli --voice-status -o $VID
 	modem_cmd_errcheck -m $(modem_n) -o $VID --accept
 	log_event "call_pickup" $VID
 }

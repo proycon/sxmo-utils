@@ -29,12 +29,12 @@ sendmsg() {
 	TEXTSIZE="$(echo "$TEXT" | wc -c)"
 
 	SMSNO=$(
-		sudo mmcli -m $MODEM --messaging-create-sms="text='$TEXT',number=$NUMBER" |
+		mmcli -m $MODEM --messaging-create-sms="text='$TEXT',number=$NUMBER" |
 		grep -o [0-9]*$
 	)
-	sudo mmcli -s ${SMSNO} --send || err "Couldn't send text message"
+	mmcli -s ${SMSNO} --send || err "Couldn't send text message"
 	for i in $(mmcli -m $MODEM --messaging-list-sms | grep " (sent)" | cut -f5 -d' ') ; do
-	  sudo mmcli -m $MODEM --messaging-delete-sms=$i
+	  mmcli -m $MODEM --messaging-delete-sms=$i
 	done
 
 	TIME="$(date --iso-8601=seconds)"
