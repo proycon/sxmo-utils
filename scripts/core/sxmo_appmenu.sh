@@ -87,6 +87,15 @@ programchoicesinit() {
       Send Ctrl-D      ^ 0 ^ key Ctrl+d
   ")" && WINNAME=st && return
 
+  # Netsurf
+  echo $WMCLASS | grep -i netsurf && CHOICES="$(echo "
+      Pipe URL          ^ 0 ^ sxmo_urlhandler.sh
+      Zoom +            ^ 1 ^ key Ctrl+plus
+      Zoom -            ^ 1 ^ key Ctrl+minus
+      History  ←      ^ 1 ^ key Alt+Left
+      History  →   ^ 1 ^ key Alt+Right
+  ")" && WINNAME=netsurf && return
+
   # Surf
   echo $WMCLASS | grep surf && CHOICES="$(echo "
       Navigate    ^ 0 ^ key Ctrl+g
@@ -101,15 +110,6 @@ programchoicesinit() {
       History ←    ^ 1 ^ key Ctrl+h
       History →   ^ 1 ^ key Ctrl+l
   ")" && WINNAME=surf && return
-
-  # Netsurf
-  echo $WMCLASS | grep -i netsurf && CHOICES="$(echo "
-      Pipe URL          ^ 0 ^ sxmo_urlhandler.sh
-      Zoom +            ^ 1 ^ key Ctrl+plus
-      Zoom -            ^ 1 ^ key Ctrl+minus
-      History  ←      ^ 1 ^ key Alt+Left
-      History  →   ^ 1 ^ key Alt+Right
-  ")" && WINNAME=netsurf && return
 
   # Firefox
   echo $WMCLASS | grep -i firefox && CHOICES="$(echo "
