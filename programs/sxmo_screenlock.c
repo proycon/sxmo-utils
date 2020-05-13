@@ -19,7 +19,7 @@ static char * brightnessfile = "/sys/devices/platform/backlight/backlight/backli
 void updatepineled(int red, int brightness) {
     sprintf(
       pineledcommand, 
-      "sh -c 'echo %d > /sys/devices/platform/leds/leds/pinephone:%s:user/brightness'", 
+      "sh -c 'echo %d > /sys/class/leds/%s:indicator/brightness'",
       brightness, 
       red ? "red" : "blue"
     );
