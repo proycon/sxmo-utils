@@ -11,8 +11,9 @@ modem_n() {
 	mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 }
 
-contacts() {
-	cat $LOGDIR/modemlog.tsv | cut -f3 | sort | uniq | awk NF
+textcontacts() {
+	# TODO: is find automatically sorted by timestamp?
+	find $LOGDIR/* -type d -maxdepth 1 | awk -F'/' '{print $NF}' | tac
 }
 
 editmsg() {
@@ -24,7 +25,7 @@ editmsg() {
 
 sendmsg() {
 	MODEM=$(modem_n)
-	NUMBER="$1"
+	NUMBER="$(echo "$1" | sed 's/^[+]//' | sed 's/^1//')"
 	TEXT="$2"
 	TEXTSIZE="$(echo "$TEXT" | wc -c)"
 
@@ -38,7 +39,7 @@ sendmsg() {
 	done
 
 	TIME="$(date --iso-8601=seconds)"
-	mkdir -p ~/.sxmo/$NUMBER
+	mkdir -p $LOGDIR/$NUMBER
 	echo -ne "Sent to $NUMBER at $TIME:\n$TEXT\n\n" >> $LOGDIR/$NUMBER/sms.txt
 	echo -ne "$TIME\tsent_txt\t$NUMBER\t$TEXTSIZE chars\n" >> $LOGDIR/modemlog.tsv
 
@@ -50,7 +51,7 @@ sendtextmenu() {
 
 	# Prompt for number
 	NUMBER=$(
-		echo -e "\nCancel\n$(contacts)" | 
+		echo -e "\nCancel\n$(textcontacts)" | 
 		awk NF |
 		sxmo_dmenu_with_kb.sh -p "Number" -fn "Terminus-20" -l 10 -c
 	)
@@ -79,7 +80,7 @@ tailtextlog() {
 
 main() {
 	# Display
-	ENTRIES="$(echo -e "$(contacts)" | xargs -INUM echo NUM logfile)"
+	ENTRIES="$(echo -e "$(textcontacts)" | xargs -INUM echo NUM logfile)"
 	ENTRIES="$(echo -e "Close Menu\nSend a Text\n$ENTRIES")"
 	NUMBER="$(echo -e "$ENTRIES" | dmenu -p Texts -c -fn Terminus-20 -l 10)"
 	echo $NUMBER | grep "Close Menu" && exit 1

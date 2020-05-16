@@ -1,9 +1,12 @@
 #!/usr/bin/env sh
+PID=$$
 LOGDIR=/home/$USER/.sxmo
+trap "kill 0" SIGINT
 
 err() {
 	echo -e "$1" | dmenu -fn Terminus-20 -c -l 10
-	kill $$
+	alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
+	kill -9 0
 }
 
 modem_n() {
@@ -11,9 +14,10 @@ modem_n() {
 }
 
 contacts() {
-	cat $LOGDIR/modemlog.tsv | cut -f3 | sort | uniq | awk NF
+	RES="$(cat $LOGDIR/modemlog.tsv | cut -f3 | sort | uniq | awk NF)"
+	echo $RES
+	echo -e "$RES" | grep 8042221111 || echo Test Number 8042221111
 }
-
 
 modem_cmd_errcheck() {
 	ARGS="$@"
@@ -23,15 +27,16 @@ modem_cmd_errcheck() {
 }
 
 vid_to_number() {
-  mmcli -m $(modem_n) -o $1 -K | grep call.properties.number | cut -d ':' -f2 | tr -d  ' '
+  mmcli -m $(modem_n) -o $1 -K | grep call.properties.number | cut -d ':' -f2 | tr -d  ' ' | sed 's/^[+]//' | sed 's/^1//'
 }
 
 log_event() {
 	EVT_HANDLE="$1"
 	EVT_VID="$2"
-	NUMBER="$(vid_to_number $EVT_VID)"
+	NUM="$(vid_to_number $EVT_VID)"
 	TIME="$(date --iso-8601=seconds)"
-	echo -ne "$TIME\t$EVT_HANDLE\t$NUMBER\n" >> $LOGDIR/modemlog.tsv
+	mkdir -p $LOGDIR
+	echo -ne "$TIME\t$EVT_HANDLE\t$NUM\n" >> $LOGDIR/modemlog.tsv
 }
 
 toggleflag() {
@@ -52,12 +57,13 @@ toggleflag() {
 dialmenu() {
   CONTACTS="$(contacts)"
 	NUMBER="$(
-		echo -e "Close Menu\n$CONTACTS\nTest Number 804-222-1111" | 
-		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20 |
-		awk -F' ' '{print $NF}' |
-		tr -d -
+		echo -e "Close Menu\n$CONTACTS" | 
+		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20
 	)"
-	echo $NUMBER | grep "Close Menu" && kill $$
+	echo "$NUMBER" | grep "Close Menu" && kill 0
+
+	NUMBER="$(echo $NUMBER | awk -F' ' '{print $NF}' | tr -d -)"
+	echo "$NUMBER" | grep -E '^[0-9]+$'>  /dev/null || err "$NUMBER is not a number"
 
 	echo "Attempting to dial: $NUMBER" >&2
 	VID="$(
@@ -72,7 +78,7 @@ startcall() {
   VID="$1"
   #modem_cmd_errcheck --voice-status -o $VID
 	modem_cmd_errcheck -m $(modem_n) -o $VID --start
-	log_event "call_start" $VID
+	log_event "call_start" "$VID"
 }
 
 acceptcall() {
@@ -163,10 +169,9 @@ dtmfmenu() {
   done
 }
 
-
 dial() {
   VID="$(dialmenu)"
-	incallmenu $VID
+  incallmenu $VID
 }
 
 pickup() {

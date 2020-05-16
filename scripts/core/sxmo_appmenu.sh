@@ -40,13 +40,12 @@ programchoicesinit() {
 
   # System Control menu
   echo $WMCLASS | grep -i "config" && CHOICES="$(echo "
-    Volume ↑                   ^ 1 ^ sxmo_vol.sh up
-    Volume ↓                   ^ 1 ^ sxmo_vol.sh down
     Brightesss ↑               ^ 1 ^ sxmo_brightness.sh up
     Brightness ↓               ^ 1 ^ sxmo_brightness.sh down
     Modem $(pgrep -f sxmo_modemmonitor.sh >/dev/null && echo -n "On → Off" || echo -n "Off → On") ^ 1 ^ sxmo_modemmonitortoggle.sh
     Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
     Modem Log                  ^ 0 ^ sxmo_modemlog.sh
+    Flash $(cat /sys/class/leds/white:flash/brightness | grep -E '^0$' > /dev/null && echo -n "Off → On" || echo -n "On → Off") ^ 1 ^ sxmo_flashtoggle.sh
     Rotate                     ^ 1 ^ rotate
     Wifi                       ^ 0 ^ st -e "nmtui"
     Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh

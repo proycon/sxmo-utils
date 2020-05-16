@@ -21,10 +21,13 @@ newcall() {
 	INCOMINGNUMBER=$(
 		mmcli -m $(modem_n) --voice-list-calls -o "$VID" -K |
 		grep call.properties.number |
-		cut -d ':' -f 2
+		cut -d ':' -f 2 |
+		sed 's/^[+]//' | 
+		sed 's/^1//'
 	)
 
 	TIME="$(date --iso-8601=seconds)"
+	mkdir -p $LOGDIR
 	echo -ne "$TIME\tcall_ring\t$NUMBER\n" >> $LOGDIR/modemlog.tsv
 	echo "$VID:$INCOMINGNUMBER" > /tmp/sxmo_incomingcall
 	echo "Number: $INCOMINGNUMBER (VID: $VID)"
@@ -39,7 +42,13 @@ newtexts() {
 		DAT="$(mmcli -m $(modem_n) -s $i -K)"
 
 		TEXT="$(echo "$DAT" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
-		NUM="$(echo "$DAT" | grep sms.content.number | sed -E 's/^sms\.content\.number\s+:\s+[+]?//')"
+		NUM="$(
+			echo "$DAT" | 
+			grep sms.content.number | 
+			sed -E 's/^sms\.content\.number\s+:\s+[+]?//' |
+			sed 's/^[+]//' |
+			sed 's/^1//'
+		)"
 		TIME="$(echo "$DAT" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 		TEXTSIZE="$(echo $TEXT | wc -c)"
 

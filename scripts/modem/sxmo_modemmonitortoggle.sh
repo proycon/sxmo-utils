@@ -3,6 +3,6 @@ pgrep -f sxmo_modemmonitor.sh && pkill -9 -f sxmo_modemmonitor.sh || sxmo_modemm
 rm /tmp/sxmo_incomingcall
 
 # E.g. wait until process killed or started -- maybe there's a better way..
-sleep 0.2
+sleep 1
 
 echo 1 > /tmp/sxmo_bar

@@ -24,7 +24,7 @@ do
 
         # Volume
         VOL=$(
-                echo "$(audiodevice)" |
+                echo "$(amixer sget $(audiodevice))" |
                 grep -oE '([0-9]+)%' |
                 tr -d ' %' |
                 awk '{ s += $1; c++ } END { print s/c }'  |
