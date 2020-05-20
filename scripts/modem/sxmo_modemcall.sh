@@ -15,8 +15,8 @@ modem_n() {
 
 contacts() {
 	RES="$(cat $LOGDIR/modemlog.tsv | cut -f3 | sort | uniq | awk NF)"
-	echo $RES
-	echo -e "$RES" | grep 8042221111 || echo Test Number 8042221111
+	echo "$RES"
+	echo -e "$RES" | grep 8042221111 > /dev/null || echo "Test Number 8042221111"
 }
 
 modem_cmd_errcheck() {
