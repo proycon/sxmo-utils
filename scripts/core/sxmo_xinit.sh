@@ -16,6 +16,6 @@ keynav &
 
 conky -c /usr/share/sxmo/conky.conf -d
 autocutsel & autocutsel -selection PRIMARY &
-lisgd &
+lisgd -t 500 &
 sxmo_statusbar.sh &
 exec dbus-run-session dwm 2> ~/.dwm.log
