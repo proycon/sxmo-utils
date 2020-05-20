@@ -21,7 +21,7 @@ programchoicesinit() {
   # Apps menu
   echo $WMCLASS | grep -i "applications" && CHOICES="$(echo "
     Surf            ^ 0 ^ surf
-    NetSurf         ^ 0 ^ netsurf
+    Netsurf         ^ 0 ^ netsurf
     Sacc            ^ 0 ^ st -e sacc i-logout.cz/1/bongusta
     W3M             ^ 0 ^ st -e w3m duck.com
     St              ^ 0 ^ st
