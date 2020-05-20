@@ -102,10 +102,9 @@ programchoicesinit() {
       Pipe URL    ^ 0 ^ sxmo_urlhandler.sh
       Zoom +      ^ 1 ^ key Ctrl+Shift+k
       Zoom -      ^ 1 ^ key Ctrl+Shift+j
-      Scroll ↑    ^ 1 ^ key Ctrl+space
-      Scroll ↓    ^ 1 ^ key Ctrl+b
+      Scroll ↑    ^ 1 ^ key Shift+space
+      Scroll ↓    ^ 1 ^ key space
       JS Toggle   ^ 1 ^ key Ctrl+Shift+s
-      Search      ^ 1 ^ key Ctrl+f
       History ←    ^ 1 ^ key Ctrl+h
       History →   ^ 1 ^ key Ctrl+l
   ")" && WINNAME=surf && return

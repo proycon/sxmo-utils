@@ -6,7 +6,7 @@ audiodevice() {
   amixer sget Headphone > /dev/null && echo Headphone || echo Speaker
 }
 
-sleep 2
+sleep 1
 UPDATEFILE=/tmp/sxmo_bar
 touch $UPDATEFILE
 
