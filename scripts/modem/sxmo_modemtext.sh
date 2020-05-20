@@ -8,7 +8,9 @@ err() {
 }
 
 modem_n() {
-	mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
+  MODEMS="$(mmcli -L)"
+  echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' > /dev/null || err "Couldn't find modem - is you're modem enabled?"
+  echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 }
 
 textcontacts() {

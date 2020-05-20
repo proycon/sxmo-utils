@@ -7,7 +7,6 @@ xmodmap /usr/share/sxmo/xmodmap_caps_esc
 xsetroot -mod 3 2 -fg '#000000' -bg '#888888'
 xset s off -dpms
 alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
-sxmo_modemmonitor.sh &
 #xset r off
 
 # E.g. for PBP

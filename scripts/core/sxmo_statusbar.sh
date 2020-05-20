@@ -12,7 +12,7 @@ touch $UPDATEFILE
 
 while :
 do
-        # M symbol if modem monitoring is on
+        # M symbol if modem monitoring is on & modem present
         MODEMMON=""
         pgrep -f sxmo_modemmonitor.sh && MODEMMON="M "
 

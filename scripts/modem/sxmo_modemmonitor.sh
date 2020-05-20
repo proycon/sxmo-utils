@@ -2,9 +2,17 @@
 TIMEOUT=3
 LOGDIR=/home/$USER/.sxmo
 ACTIVECALL="NONE"
+trap "kill 0" SIGINT
+
+err() {
+	echo -e "$1" | dmenu -fn Terminus-20 -c -l 10
+	kill -9 0
+}
 
 modem_n() {
-  mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
+  MODEMS="$(mmcli -L)"
+  echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' > /dev/null || err "Couldn't find modem - is you're modem enabled?\nDisabling modem monitor"
+  echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 }
 
 newcall() {
