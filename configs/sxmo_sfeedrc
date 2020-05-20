@@ -17,16 +17,15 @@ feeds() {
 	# feed <name> <feedurl> [basesiteurl] [encoding]
 	feed 'Tech/HN' 'https://news.ycombinator.com/rss'
 	feed 'Tech/Lobsters' 'https://lobste.rs/rss'
-	feed 'Tech/Pine64' 'https://www.pine64.org/blog/'
+	feed 'Tech/Pine64'   'https://www.pine64.org/rss'
 	feed 'Tech/Slashdot' 'http://feeds.feedburner.com/SlashdotSitenews'
 	feed 'Tech/Suckless' 'http://git.suckless.org/sites/atom.xml'
+	feed 'Tech/Soylent'  'http://soylentnews.org/index.rss'
 
 	feed 'Yt/Distrotube' 'https://www.youtube.com/feeds/videos.xml?channel_id=UCVls1GmFKf6WlTraIb_IaJg'
 	feed 'Yt/Budlabs' 'https://www.youtube.com/feeds/videos.xml?channel_id=UCi8XrDg1bK_MJ0goOnbpTMQ'
 	feed 'Yt/LukeSmith' 'https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA'
 	feed 'Yt/Rossman' 'https://www.youtube.com/feeds/videos.xml?channel_id=UCl2mFZoRqjw_ELax4Yisf6w'
-
-	feed 'MSM/CNN' 'http://rss.cnn.com/rss/cnn_topstories.rss'
-	feed 'MSM/Fox' 'http://feeds.foxnews.com/foxnews/latest'
+	feed 'Yt/Brodie' 'https://www.youtube.com/feeds/videos.xml?channel_id=UCld68syR8Wi-GY_n4CaoJGA'
 }
 
