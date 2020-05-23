@@ -18,7 +18,6 @@ echo "Done with $@"
 
 while :;
         do notify-send  "Done with $@";
-        xset dpms force off
-        xset dpms force on
+        sxmo_vibratepine 1000
         sleep 0.5
 done
