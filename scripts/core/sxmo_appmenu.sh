@@ -22,10 +22,11 @@ programchoicesinit() {
   echo $WMCLASS | grep -i "applications" && CHOICES="$(echo "
     Surf            ^ 0 ^ surf
     Netsurf         ^ 0 ^ netsurf
+    Firefox         ^ 0 ^ firefox
     Sacc            ^ 0 ^ st -e sacc i-logout.cz/1/bongusta
     W3M             ^ 0 ^ st -e w3m duck.com
+    Xcalc           ^ 0 ^ xcalc
     St              ^ 0 ^ st
-    Firefox         ^ 0 ^ firefox
     Foxtrotgps      ^ 0 ^ foxtrotgps
   ")" && WINNAME=Apps && return
 
