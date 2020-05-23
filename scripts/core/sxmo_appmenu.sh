@@ -24,7 +24,7 @@ programchoicesinit() {
     Netsurf         ^ 0 ^ netsurf
     Firefox         ^ 0 ^ firefox
     Sacc            ^ 0 ^ st -e sacc i-logout.cz/1/bongusta
-    W3M             ^ 0 ^ st -e w3m duck.com
+    W3m             ^ 0 ^ st -e w3m duck.com
     Xcalc           ^ 0 ^ xcalc
     St              ^ 0 ^ st
     Foxtrotgps      ^ 0 ^ foxtrotgps
@@ -127,8 +127,6 @@ programchoicesinit() {
       Panel toggle      ^ 1 ^ key m
       Autocenter toggle ^ 0 ^ key a
       Route             ^ 0 ^ key r
-      Gmaps Transfer    ^ 0 ^ key o
-      Copy Cords        ^ 0 ^ key o
   ")" && WINNAME=gps && return
 }
 
