@@ -37,7 +37,7 @@ COMMAND=$(
     curl URL | vis -
     wget URL
     aria2c URL
-    " | sed "s/URL/'URL'/g" | sed -e '/^\s*$/d' | sed -e 's/^\s*//' | dmenu -fn Terminus-15 -p "Pipe URL" -c -l 10
+    " | sed "s/URL/'URL'/g" | sed -e '/^\s*$/d' | sed -e 's/^\s*//' | dmenu -fn Terminus-15 -p "Pipe URL" -c -l 20
 )
 [[ -z "$COMMAND" ]] && exit 1
 
