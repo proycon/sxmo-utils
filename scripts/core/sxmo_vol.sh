@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 device() {
   amixer sget Earpiece | grep -E '[[]on[]]' > /dev/null && echo Earpiece && return
-  amixer sget Headphone > /dev/null && echo Headphone || echo Speaker
+  amixer sget Headphone > /dev/null && echo Headphone || echo "Line Out"
 }
 
 notify() {
@@ -16,15 +16,15 @@ notify() {
 }
 
 up() {
-  amixer set $(device) 1+
+  amixer set "$(device)" 1+
   notify
 }
 down() {
-  amixer set $(device) 1-
+  amixer set "$(device)" 1-
   notify
 }
 setvol() {
-  amixer set $(device) $1
+  amixer set "$(device)" $1
 }
 
 $@

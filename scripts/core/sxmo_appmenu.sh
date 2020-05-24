@@ -52,6 +52,7 @@ programchoicesinit() {
     Bar Toggle                 ^ 1 ^ key Alt+b
     Rotate                     ^ 1 ^ rotate
     Wifi                       ^ 0 ^ st -e "nmtui"
+    Audio Out                  ^ 0 ^ sxmo_audiooutmenu.sh
     Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh
   ")" && WINNAME=Config && return
 
