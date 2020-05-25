@@ -2,8 +2,9 @@
 pgrep -f sxmo_statusbar.sh | grep -v $$ | xargs kill -9
 
 audiodevice() {
-  amixer sget Earpiece | grep -E [[]on[]] && echo Earpiece > /dev/null && return
-  amixer sget Headphone > /dev/null && echo Headphone || echo Speaker
+  amixer sget Earpiece | grep -E '\[on\]' > /dev/null && echo Earpiece && return
+  amixer sget Headphone | grep -E '\[on\]' > /dev/null && echo Headphone && return
+  echo "Line Out"
 }
 
 sleep 1
@@ -25,7 +26,7 @@ do
 
         # Volume
         VOL=$(
-                echo "$(amixer sget $(audiodevice))" |
+                echo "$(amixer sget "$(audiodevice)")" |
                 grep -oE '([0-9]+)%' |
                 tr -d ' %' |
                 awk '{ s += $1; c++ } END { print s/c }'  |
