@@ -72,6 +72,7 @@ programchoicesinit() {
   echo $WMCLASS | grep -i "st-256color" && CHOICES="$(echo "
       Type complete   ^ 0 ^ key Ctrl+Shift+u
       Copy complete   ^ 0 ^ key Ctrl+Shift+i
+      Copy selection  ^ 0 ^ key Ctrl+Shift+c
       Paste           ^ 0 ^ key Ctrl+Shift+v
       Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
       Zoom -          ^ 1 ^ key Ctrl+Shift+Next
