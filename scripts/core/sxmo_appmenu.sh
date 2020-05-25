@@ -82,14 +82,14 @@ programchoicesinit() {
       Scroll ↓        ^ 1 ^ key Ctrl+Shift+f
       Invert          ^ 1 ^ key Ctrl+Shift+x
       Hotkeys         ^ 0 ^ sxmo_appmenu.sh sthotkeys
-  ")" && WINNAME=st && return
+  ")" && WINNAME=St && return
 
   #  St hotkeys
   echo $WMCLASS | grep -i "sthotkeys" && CHOICES="$(echo "
       Send Ctrl-C      ^ 0 ^ key Ctrl+c
       Send Ctrl-L      ^ 0 ^ key Ctrl+l
       Send Ctrl-D      ^ 0 ^ key Ctrl+d
-  ")" && WINNAME=st && return
+  ")" && WINNAME=St && return
 
   # Netsurf
   echo $WMCLASS | grep -i netsurf && CHOICES="$(echo "
@@ -98,7 +98,7 @@ programchoicesinit() {
       Zoom -            ^ 1 ^ key Ctrl+minus
       History  ←      ^ 1 ^ key Alt+Left
       History  →   ^ 1 ^ key Alt+Right
-  ")" && WINNAME=netsurf && return
+  ")" && WINNAME=Netsurf && return
 
   # Surf
   echo $WMCLASS | grep surf && CHOICES="$(echo "
@@ -121,7 +121,7 @@ programchoicesinit() {
       Zoom -            ^ 1 ^ key Ctrl+minus
       History  ←        ^ 1 ^ key Alt+Left
       History  →        ^ 1 ^ key Alt+Right
-  ")" && WINNAME=firefox && return
+  ")" && WINNAME=Firefox && return
 
   # Foxtrot GPS
   echo $WMCLASS | grep -i foxtrot && CHOICES="$(echo "
@@ -130,7 +130,7 @@ programchoicesinit() {
       Panel toggle      ^ 1 ^ key m
       Autocenter toggle ^ 0 ^ key a
       Route             ^ 0 ^ key r
-  ")" && WINNAME=gps && return
+  ")" && WINNAME=Gps && return
 }
 
 getprogchoices() {
