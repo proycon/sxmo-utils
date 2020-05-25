@@ -2,7 +2,8 @@
 WIN=$(xdotool getwindowfocus)
 
 programchoicesinit() {
-  WMCLASS="${1:-$(xprop -id $(xdotool getactivewindow) | grep WM_CLASS | cut -d ' ' -f3-)}"
+  XPROPOUT="$(xprop -id $(xdotool getactivewindow))"
+  WMCLASS="${1:-$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3-)}"
 
   # Default system menu (no matches)
   CHOICES="$(echo "
@@ -69,10 +70,11 @@ programchoicesinit() {
   ")" && WINNAME=Mpv && return
 
   #  St
-  echo $WMCLASS | grep -i "st-256color" && CHOICES="$(echo "
+  echo $WMCLASS | grep -i "st-256color" && STSELMODEON="$(echo "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' ')" && CHOICES="$(echo "
       Type complete   ^ 0 ^ key Ctrl+Shift+u
       Copy complete   ^ 0 ^ key Ctrl+Shift+i
-      Copy selection  ^ 0 ^ key Ctrl+Shift+c
+      Selmode $([ $STSELMODEON == 1 ] && echo 'On → Off' || echo 'Off → On') ^ 0 ^ key Ctrl+Shift+s
+      $([ $STSELMODEON == 1 ] && echo 'Copy selection ^ 0 ^ key Ctrl+Shift+c')
       Paste           ^ 0 ^ key Ctrl+Shift+v
       Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
       Zoom -          ^ 1 ^ key Ctrl+Shift+Next
