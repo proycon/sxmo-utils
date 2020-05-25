@@ -49,6 +49,7 @@ programchoicesinit() {
     Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
     Modem Log                  ^ 0 ^ sxmo_modemlog.sh
     Flash $(cat /sys/class/leds/white:flash/brightness | grep -E '^0$' > /dev/null && echo -n "Off → On" || echo -n "On → Off") ^ 1 ^ sxmo_flashtoggle.sh
+    Bar Toggle                 ^ 1 ^ key Alt+b
     Rotate                     ^ 1 ^ rotate
     Wifi                       ^ 0 ^ st -e "nmtui"
     Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh
