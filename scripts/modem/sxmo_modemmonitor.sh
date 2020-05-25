@@ -36,7 +36,7 @@ newcall() {
 
 	TIME="$(date --iso-8601=seconds)"
 	mkdir -p $LOGDIR
-	echo -ne "$TIME\tcall_ring\t$NUMBER\n" >> $LOGDIR/modemlog.tsv
+	echo -ne "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> $LOGDIR/modemlog.tsv
 	echo "$VID:$INCOMINGNUMBER" > /tmp/sxmo_incomingcall
 	echo "Number: $INCOMINGNUMBER (VID: $VID)"
 
