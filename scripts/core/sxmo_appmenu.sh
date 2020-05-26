@@ -51,7 +51,6 @@ programchoicesinit() {
     Flash $(cat /sys/class/leds/white:flash/brightness | grep -E '^0$' > /dev/null && echo -n "Off → On" || echo -n "On → Off") ^ 1 ^ sxmo_flashtoggle.sh
     Bar Toggle                 ^ 1 ^ key Alt+b
     Rotate                     ^ 1 ^ sxmo_rotate.sh
-    Wifi                       ^ 0 ^ st -e "nmtui"
     Audio Out                  ^ 0 ^ sxmo_audiooutmenu.sh
     Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh
   ")" && WINNAME=Config && return
