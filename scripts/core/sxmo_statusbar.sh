@@ -25,18 +25,19 @@ do
         )
 
         # Volume
-        VOL=$(
-                echo "$(amixer sget "$(audiodevice)")" |
+        AUDIODEV="$(sxmo_audiocurrentdevice.sh)"
+        [[ $AUDIODEV == "None" ]] && VOL="" || VOL=$(echo "$AUDIODEV" | cut -c1 | tr L S)"$(
+                amixer sget "$AUDIODEV" |
                 grep -oE '([0-9]+)%' |
                 tr -d ' %' |
                 awk '{ s += $1; c++ } END { print s/c }'  |
                 xargs printf %.0f
-        )
+        )"
 
         # Time
         TIME=$(date +%R)
 
-        BAR=" ${MODEMMON}V${VOL} ${BATSTATUS}${PCT}% ${TIME}"
+        BAR=" ${MODEMMON}${VOL} ${BATSTATUS}${PCT}% ${TIME}"
         xsetroot -name "$BAR"
 
         inotifywait -e MODIFY $UPDATEFILE & sleep 30 & wait -n

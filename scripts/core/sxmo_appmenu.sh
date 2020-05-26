@@ -15,6 +15,7 @@ programchoicesinit() {
     Texts              ^ 0 ^ sxmo_modemtext.sh
     Camera             ^ 0 ^ sxmo_camera.sh
     Wifi               ^ 0 ^ st -e "nmtui"
+    Audio              ^ 0 ^ sxmo_appmenu.sh audioout
     Config             ^ 0 ^ sxmo_appmenu.sh config
     Logout             ^ 0 ^ pkill -9 dwm
   ")" && WINNAME=Sys
@@ -51,7 +52,6 @@ programchoicesinit() {
     Flash $(cat /sys/class/leds/white:flash/brightness | grep -E '^0$' > /dev/null && echo -n "Off → On" || echo -n "On → Off") ^ 1 ^ sxmo_flashtoggle.sh
     Bar Toggle                 ^ 1 ^ key Alt+b
     Rotate                     ^ 1 ^ sxmo_rotate.sh
-    Audio Out                  ^ 0 ^ sxmo_appmenu.sh audioout
     Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh
   ")" && WINNAME=Config && return
 
@@ -61,7 +61,7 @@ programchoicesinit() {
     Speaker $([[ "$CURRENTDEV" == "Line Out" ]] && echo "✓")      ^ 1 ^ sxmo_audioout.sh Speaker
     Earpiece $([[ "$CURRENTDEV" == "Earpiece" ]] && echo "✓")      ^ 1 ^ sxmo_audioout.sh Earpiece
     None $([[ "$CURRENTDEV" == "None" ]] && echo "✓")          ^ 1 ^ sxmo_audioout.sh None
-  ")"
+  ")" && WINNAME="Audio" && return
 
   # MPV
   echo $WMCLASS | grep -i "mpv" && CHOICES="$(echo "
