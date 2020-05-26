@@ -24,3 +24,4 @@ elif [[ "$OUTINPUT" = "Earpiece" ]]; then
   amixer set "$EARPIECE" unmute
 fi
 
+echo 1 > /tmp/sxmo_bar
