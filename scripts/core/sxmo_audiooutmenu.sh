@@ -1,6 +1,4 @@
 #!/usr/bin/env sh
-pidof svkbd-sxmo || svkbd-sxmo &
-
 OUTINPUT="$(
 echo "Speaker
 Headphones
@@ -8,7 +6,6 @@ Earpiece
 Close Menu" | dmenu -p "Audio Out" -c -fn "Terminus-30" -l 20
 )"
 
-pkill svkbd-sxmo
 [[ "Close Menu" == "$OUTINPUT" ]] && exit 0
 
 SPEAKER="Line Out"
