@@ -1,13 +1,7 @@
 #!/usr/bin/env sh
-device() {
-  amixer sget Earpiece | grep -E '\[on\]' > /dev/null && echo Earpiece && return
-  amixer sget Headphone | grep -E '\[on\]' > /dev/null && echo Headphone && return
-  echo "Line Out"
-}
-
 notify() {
   sxmo_notify.sh 200 "Volume $(
-    amixer get "$(device)" | 
+    amixer get "$(sxmo_audiocurrentdevice.sh)" | 
     grep -oE '([0-9]+)%' |
     tr -d ' %' |
     awk '{ s += $1; c++ } END { print s/c }'  |
@@ -17,15 +11,15 @@ notify() {
 }
 
 up() {
-  amixer set "$(device)" 1+
+  amixer set "$(sxmo_audiocurrentdevice.sh)" 1+
   notify
 }
 down() {
-  amixer set "$(device)" 1-
+  amixer set "$(sxmo_audiocurrentdevice.sh)" 1-
   notify
 }
 setvol() {
-  amixer set "$(device)" $1
+  amixer set "$(sxmo_audiocurrentdevice.sh)" $1
 }
 
 $@

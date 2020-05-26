@@ -1,12 +1,6 @@
 #!/usr/bin/env sh
 pgrep -f sxmo_statusbar.sh | grep -v $$ | xargs kill -9
 
-audiodevice() {
-  amixer sget Earpiece | grep -E '\[on\]' > /dev/null && echo Earpiece && return
-  amixer sget Headphone | grep -E '\[on\]' > /dev/null && echo Headphone && return
-  echo "Line Out"
-}
-
 sleep 1
 UPDATEFILE=/tmp/sxmo_bar
 touch $UPDATEFILE
