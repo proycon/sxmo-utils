@@ -121,7 +121,7 @@ programchoicesinit() {
       JS Toggle   ^ 1 ^ key Ctrl+Shift+s
       History ←    ^ 1 ^ key Ctrl+h
       History →   ^ 1 ^ key Ctrl+l
-  ")" && WINNAME=surf && return
+  ")" && WINNAME=Surf && return
 
   # Firefox
   echo $WMCLASS | grep -i firefox && CHOICES="$(echo "
