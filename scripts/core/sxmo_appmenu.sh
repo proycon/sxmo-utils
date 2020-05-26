@@ -51,9 +51,17 @@ programchoicesinit() {
     Flash $(cat /sys/class/leds/white:flash/brightness | grep -E '^0$' > /dev/null && echo -n "Off → On" || echo -n "On → Off") ^ 1 ^ sxmo_flashtoggle.sh
     Bar Toggle                 ^ 1 ^ key Alt+b
     Rotate                     ^ 1 ^ sxmo_rotate.sh
-    Audio Out                  ^ 0 ^ sxmo_audiooutmenu.sh
+    Audio Out                  ^ 0 ^ sxmo_appmenu.sh audioout
     Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh
   ")" && WINNAME=Config && return
+
+  # Audio Out menu
+  echo $WMCLASS | grep -i "audioout" && CURRENTDEV="$(sxmo_audiocurrentdevice.sh)" && CHOICES="$(echo "
+    Headphones $([[ "$CURRENTDEV" == "Headphone" ]] && echo "✓") ^ 1 ^ sxmo_audioout.sh Headphones
+    Speaker $([[ "$CURRENTDEV" == "Line Out" ]] && echo "✓")      ^ 1 ^ sxmo_audioout.sh Speaker
+    Earpiece $([[ "$CURRENTDEV" == "Earpiece" ]] && echo "✓")      ^ 1 ^ sxmo_audioout.sh Earpiece
+    None $([[ "$CURRENTDEV" == "None" ]] && echo "✓")          ^ 1 ^ sxmo_audioout.sh None
+  ")"
 
   # MPV
   echo $WMCLASS | grep -i "mpv" && CHOICES="$(echo "

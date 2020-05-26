@@ -1,12 +1,5 @@
 #!/usr/bin/env sh
-OUTINPUT="$(
-echo "Speaker
-Headphones
-Earpiece
-Close Menu" | dmenu -p "Audio Out" -c -fn "Terminus-30" -l 20
-)"
-
-[[ "Close Menu" == "$OUTINPUT" ]] && exit 0
+ARG="$1"
 
 SPEAKER="Line Out"
 HEADPHONE="Headphone"
@@ -16,11 +9,11 @@ amixer set "$SPEAKER" mute
 amixer set "$HEADPHONE" mute
 amixer set "$EARPIECE" mute
 
-if [[ "$OUTINPUT" = "Speaker" ]]; then
+if [[ "$ARG" = "Speaker" ]]; then
   amixer set "$SPEAKER" unmute
-elif [[ "$OUTINPUT" = "Headphones" ]]; then
+elif [[ "$ARG" = "Headphones" ]]; then
   amixer set "$HEADPHONE" unmute
-elif [[ "$OUTINPUT" = "Earpiece" ]]; then
+elif [[ "$ARG" = "Earpiece" ]]; then
   amixer set "$EARPIECE" unmute
 fi
 
