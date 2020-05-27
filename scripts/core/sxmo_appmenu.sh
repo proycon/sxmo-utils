@@ -51,6 +51,7 @@ programchoicesinit() {
     Modem Log                  ^ 0 ^ sxmo_modemlog.sh
     Flash $(cat /sys/class/leds/white:flash/brightness | grep -E '^0$' > /dev/null && echo -n "Off → On" || echo -n "On → Off") ^ 1 ^ sxmo_flashtoggle.sh
     Bar Toggle                 ^ 1 ^ key Alt+b
+    Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
     Rotate                     ^ 1 ^ sxmo_rotate.sh
     Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh
   ")" && WINNAME=Config && return
