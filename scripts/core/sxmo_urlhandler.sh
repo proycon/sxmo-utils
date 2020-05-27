@@ -31,7 +31,7 @@ COMMAND=$(
     firefox -new-window URL
     netsurf URL
     surf URL
-    echo URL | xclip -i
+    echo URL | xsel -i
     youtube-dl -o- URL | mpv -v -
     youtube-dl URL
     curl URL | vis -
