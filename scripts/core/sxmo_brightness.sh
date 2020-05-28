@@ -15,7 +15,8 @@ setdelta() {
     xargs -INUM echo -e "$MIN\nNUM" | sort -n | tail -n1 |
     xargs -INUM echo -e "$MAX\nNUM" | sort -n | head -n1
   )
-  sxmo_notify.sh 200 "Backlight $(cat $DEV/brightness)/${MAX}"
+
+  dunstify -i 0 -u normal -r 999 "☀ $(cat $DEV/brightness)/${MAX}"
 }
 
 up() {

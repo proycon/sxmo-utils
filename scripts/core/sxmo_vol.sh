@@ -1,12 +1,13 @@
 #!/usr/bin/env sh
 notify() {
-  sxmo_notify.sh 200 "Volume $(
+  VOL="$(
     amixer get "$(sxmo_audiocurrentdevice.sh)" | 
     grep -oE '([0-9]+)%' |
     tr -d ' %' |
     awk '{ s += $1; c++ } END { print s/c }'  |
     xargs printf %.0f
   )"
+  dunstify -i 0 -u normal -r 998 "♫ $VOL"
   echo 1 > /tmp/sxmo_bar
 }
 

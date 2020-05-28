@@ -18,6 +18,5 @@ keynav &
 
 conky -c /usr/share/sxmo/conky.conf -d
 autocutsel & autocutsel -selection PRIMARY &
-lisgd -t 500 &
 sxmo_statusbar.sh &
-exec dbus-run-session dwm 2> ~/.dwm.log
+exec dbus-run-session sh -c "dunst -conf /usr/share/sxmo/dunst.conf & lisgd -t 500 & dwm 2> ~/.dwm.log"
