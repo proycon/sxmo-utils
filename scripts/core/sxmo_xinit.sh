@@ -2,6 +2,7 @@
 source /etc/profile
 which $TERM || export TERM=st
 which $BROWSER || export BROWSER=surf
+[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 
 xmodmap /usr/share/sxmo/xmodmap_caps_esc
 xsetroot -mod 3 2 -fg '#000000' -bg '#888888'
