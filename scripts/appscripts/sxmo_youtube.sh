@@ -7,7 +7,7 @@ menu() {
   )"
   pkill svkbd-sxmo
 
-  IDIOTRESULTS="$(idiotbox-cli "$SEARCHTERMS")"
+  IDIOTRESULTS="$(youtube-cli "$SEARCHTERMS")"
   RESULT="$(
           echo "$IDIOTRESULTS" |
           grep -Ev '^(Channelid|Atom feed|Channel title|Published|Viewcount|Userid):' |
