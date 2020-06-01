@@ -22,4 +22,4 @@ pkill lisgd
 conky -c /usr/share/sxmo/conky.conf -d
 autocutsel & autocutsel -selection PRIMARY &
 sxmo_statusbar.sh &
-exec dbus-run-session sh -c "dunst -conf /usr/share/sxmo/dunst.conf & lisgd -t 500 & dwm 2> ~/.dwm.log"
+exec dbus-run-session sh -c "dunst -conf /usr/share/sxmo/dunst.conf & lisgd & dwm 2> ~/.dwm.log"
