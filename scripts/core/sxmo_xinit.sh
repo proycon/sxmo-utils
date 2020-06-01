@@ -17,6 +17,8 @@ xrdb /usr/share/sxmo/xresources_xcalc.xr
 synclient TapButton1=1 TapButton2=3 TapButton3=2 MinSpeed=0.25
 keynav &
 
+pkill lisgd
+
 conky -c /usr/share/sxmo/conky.conf -d
 autocutsel & autocutsel -selection PRIMARY &
 sxmo_statusbar.sh &
