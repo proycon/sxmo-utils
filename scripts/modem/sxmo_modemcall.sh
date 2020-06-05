@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 PID=$$
-LOGDIR=/home/$USER/.sxmo
+LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
 trap "kill 0" SIGINT
 
 err() {

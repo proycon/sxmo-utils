@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 TIMEOUT=3
-LOGDIR=/home/$USER/.sxmo
+LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
 ACTIVECALL="NONE"
 trap "kill 0" SIGINT
 

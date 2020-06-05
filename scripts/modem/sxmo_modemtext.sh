@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 EDITOR=vis
-LOGDIR=/home/$USER/.sxmo
+LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
 
 err() {
 	echo $1 | dmenu -fn Terminus-20 -c -l 10
