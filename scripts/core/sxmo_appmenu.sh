@@ -9,6 +9,7 @@ programchoicesinit() {
   CHOICES="$(echo "
     Scripts            ^ 0 ^ sxmo_appmenu.sh scripts
     Apps               ^ 0 ^ sxmo_appmenu.sh applications
+    $([ -d $XDG_CONFIG_HOME/sxmo/userscripts ] && [ -n "$(ls -A $XDG_CONFIG_HOME/sxmo/userscripts)" ] && echo 'Userscripts        ^ 0 ^ sxmo_appmenu.sh userscripts')
     Volume ↑           ^ 1 ^ sxmo_vol.sh up
     Volume ↓           ^ 1 ^ sxmo_vol.sh down
     Dialer             ^ 0 ^ sxmo_modemcall.sh dial
@@ -19,6 +20,12 @@ programchoicesinit() {
     Config             ^ 0 ^ sxmo_appmenu.sh config
     Logout             ^ 0 ^ pkill -9 dwm
   ")" && WINNAME=Sys
+
+  # Userscripts menu
+  echo $WMCLASS | grep -i "userscripts" &&
+  CHOICES="$(ls -1 $XDG_CONFIG_HOME/sxmo/userscripts | sed 's/ /\\ /' |
+  awk '{printf "%s\t^ 0 ^ sh $XDG_CONFIG_HOME/sxmo/userscripts/%s \n", $0, $0}')" &&
+  WINNAME=Userscripts && return
 
   # Apps menu
   echo $WMCLASS | grep -i "applications" && CHOICES="$(echo "
