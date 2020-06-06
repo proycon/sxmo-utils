@@ -150,8 +150,6 @@ main(int argc, char **argv) {
         Display *dpy;
         Screen *screen;
 
-        
-
         if (setuid(0))
                 die("setuid(0) failed\n");
         if (!(dpy = XOpenDisplay(NULL)))
@@ -160,9 +158,8 @@ main(int argc, char **argv) {
         screen = XDefaultScreen(dpy);
         XSync(dpy, 0);
         getoldbrightness();
-        updatescreenon(1);
         lockscreen(dpy, screen);
-        XSync(dpy, 0);
+        updatescreenon(1);
         readinputloop(dpy, screen);
         return 0;
 }
