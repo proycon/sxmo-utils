@@ -1,5 +1,10 @@
 PREFIX:=/
 
+.PHONY: install shellcheck
+
+shellcheck:
+	shellcheck scripts/*/*
+
 programs/sxmo_setpineled:
 	gcc -o programs/sxmo_setpineled programs/sxmo_setpineled.c
 
@@ -14,7 +19,6 @@ programs/sxmo_megiaudioroute:
 
 programs/sxmo_vibratepine:
 	gcc -o programs/sxmo_vibratepine programs/sxmo_vibratepine.c
-
 
 install: programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_screenlock programs/sxmo_megiaudioroute programs/sxmo_vibratepine
 	mkdir -p $(PREFIX)/usr/share/sxmo
