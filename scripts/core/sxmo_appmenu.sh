@@ -7,25 +7,40 @@ programchoicesinit() {
 
   # Default system menu (no matches)
   CHOICES="$(echo "
-    Scripts            ^ 0 ^ sxmo_appmenu.sh scripts
-    Apps               ^ 0 ^ sxmo_appmenu.sh applications
-    $([ -d $XDG_CONFIG_HOME/sxmo/userscripts ] && [ -n "$(ls -A $XDG_CONFIG_HOME/sxmo/userscripts)" ] && echo 'Userscripts        ^ 0 ^ sxmo_appmenu.sh userscripts')
-    Volume ↑           ^ 1 ^ sxmo_vol.sh up
-    Volume ↓           ^ 1 ^ sxmo_vol.sh down
-    Dialer             ^ 0 ^ sxmo_modemcall.sh dial
-    Texts              ^ 0 ^ sxmo_modemtext.sh
-    Camera             ^ 0 ^ sxmo_camera.sh
-    Wifi               ^ 0 ^ st -e "nmtui"
-    Audio              ^ 0 ^ sxmo_appmenu.sh audioout
-    Config             ^ 0 ^ sxmo_appmenu.sh config
-    Logout             ^ 0 ^ pkill -9 dwm
+    $(
+      [ -n "$(ls -A $XDG_CONFIG_HOME/sxmo/userscripts)" ] && 
+      echo 'Userscripts  ^ 0 ^ sxmo_appmenu.sh userscripts'
+    )
+    Scripts              ^ 0 ^ sxmo_appmenu.sh scripts
+    Apps                 ^ 0 ^ sxmo_appmenu.sh applications
+    Volume ↑             ^ 1 ^ sxmo_vol.sh up
+    Volume ↓             ^ 1 ^ sxmo_vol.sh down
+    Dialer               ^ 0 ^ sxmo_modemcall.sh dial
+    Texts                ^ 0 ^ sxmo_modemtext.sh
+    Camera               ^ 0 ^ sxmo_camera.sh
+    Wifi                 ^ 0 ^ st -e "nmtui"
+    Audio                ^ 0 ^ sxmo_appmenu.sh audioout
+    Config               ^ 0 ^ sxmo_appmenu.sh config
+    Logout               ^ 0 ^ pkill -9 dwm
   ")" && WINNAME=Sys
 
   # Userscripts menu
-  echo $WMCLASS | grep -i "userscripts" &&
-  CHOICES="$(ls -1 $XDG_CONFIG_HOME/sxmo/userscripts | sed 's/ /\\ /' |
-  awk '{printf "%s\t^ 0 ^ sh $XDG_CONFIG_HOME/sxmo/userscripts/%s \n", $0, $0}')" &&
-  WINNAME=Userscripts && return
+  echo $WMCLASS | grep -i "userscripts" && CHOICES="$(
+    ls -1 $XDG_CONFIG_HOME/sxmo/userscripts |
+    sed 's/ /\\ /' |
+    awk '{printf "%s\t^ 0 ^ sh $XDG_CONFIG_HOME/sxmo/userscripts/%s \n", $0, $0}'
+  )" && WINNAME=Userscripts && return
+
+  # Scripts menu
+  echo $WMCLASS | grep -i "scripts" && CHOICES="$(echo "
+    Web Search      ^ 0 ^ sxmo_websearch.sh
+    Files           ^ 0 ^ sxmo_files.sh
+    Timer           ^ 0 ^ sxmo_timer.sh
+    Youtube         ^ 0 ^ sxmo_youtube.sh video
+    Youtube (Audio) ^ 0 ^ sxmo_youtube.sh audio
+    Weather         ^ 0 ^ sxmo_weather.sh
+    RSS             ^ 0 ^ sxmo_rss.sh
+  ")" && WINNAME=Scripts && return
 
   # Apps menu
   echo $WMCLASS | grep -i "applications" && CHOICES="$(echo "
@@ -39,17 +54,6 @@ programchoicesinit() {
     Foxtrotgps      ^ 0 ^ foxtrotgps
   ")" && WINNAME=Apps && return
 
-  # Scripts menu
-  echo $WMCLASS | grep -i "scripts" && CHOICES="$(echo "
-    Web Search      ^ 0 ^ sxmo_websearch.sh
-    Files           ^ 0 ^ sxmo_files.sh
-    Timer           ^ 0 ^ sxmo_timer.sh
-    Youtube         ^ 0 ^ sxmo_youtube.sh video
-    Youtube (Audio) ^ 0 ^ sxmo_youtube.sh audio
-    Weather         ^ 0 ^ sxmo_weather.sh
-    RSS             ^ 0 ^ sxmo_rss.sh
-  ")" && WINNAME=Scripts && return
-
   # System Control menu
   echo $WMCLASS | grep -i "config" && CHOICES="$(echo "
     Brightesss ↑               ^ 1 ^ sxmo_brightness.sh up
@@ -57,7 +61,12 @@ programchoicesinit() {
     Modem Toggle               ^ 1 ^ sxmo_modemmonitortoggle.sh
     Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
     Modem Log                  ^ 0 ^ sxmo_modemlog.sh
-    Flash $(cat /sys/class/leds/white:flash/brightness | grep -E '^0$' > /dev/null && echo -n "Off → On" || echo -n "On → Off") ^ 1 ^ sxmo_flashtoggle.sh
+    Flash $(
+      cat /sys/class/leds/white:flash/brightness | 
+      grep -E '^0$' > /dev/null && 
+      echo -n "Off → On" || echo -n "On → Off";
+      echo -n "^ 1 ^ sxmo_flashtoggle.sh"
+    )
     Bar Toggle                 ^ 1 ^ key Alt+b
     Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
     Rotate                     ^ 1 ^ sxmo_rotate.sh
@@ -67,9 +76,9 @@ programchoicesinit() {
   # Audio Out menu
   echo $WMCLASS | grep -i "audioout" && CURRENTDEV="$(sxmo_audiocurrentdevice.sh)" && CHOICES="$(echo "
     Headphones $([[ "$CURRENTDEV" == "Headphone" ]] && echo "✓") ^ 1 ^ sxmo_audioout.sh Headphones
-    Speaker $([[ "$CURRENTDEV" == "Line Out" ]] && echo "✓")      ^ 1 ^ sxmo_audioout.sh Speaker
-    Earpiece $([[ "$CURRENTDEV" == "Earpiece" ]] && echo "✓")      ^ 1 ^ sxmo_audioout.sh Earpiece
-    None $([[ "$CURRENTDEV" == "None" ]] && echo "✓")          ^ 1 ^ sxmo_audioout.sh None
+    Speaker $([[ "$CURRENTDEV" == "Line Out" ]] && echo "✓")     ^ 1 ^ sxmo_audioout.sh Speaker
+    Earpiece $([[ "$CURRENTDEV" == "Earpiece" ]] && echo "✓")    ^ 1 ^ sxmo_audioout.sh Earpiece
+    None $([[ "$CURRENTDEV" == "None" ]] && echo "✓")            ^ 1 ^ sxmo_audioout.sh None
   ")" && WINNAME="Audio" && return
 
   # MPV
@@ -91,7 +100,10 @@ programchoicesinit() {
   echo $WMCLASS | grep -i "st-256color" && STSELMODEON="$(echo "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' ')" && CHOICES="$(echo "
       Type complete   ^ 0 ^ key Ctrl+Shift+u
       Copy complete   ^ 0 ^ key Ctrl+Shift+i
-      Selmode $([ $STSELMODEON == 1 ] && echo 'On → Off' || echo 'Off → On') ^ 0 ^ key Ctrl+Shift+s
+      Selmode $(
+        [ $STSELMODEON == 1 ] && printf %b 'On → Off' || printf %b 'Off → On';
+        printf %b '^ 0 ^ key Ctrl+Shift+s'
+      )               
       $([ $STSELMODEON == 1 ] && echo 'Copy selection ^ 0 ^ key Ctrl+Shift+c')
       Paste           ^ 0 ^ key Ctrl+Shift+v
       Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
