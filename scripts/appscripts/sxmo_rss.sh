@@ -46,7 +46,7 @@ FOLDER="/tmp/sfeed_$(echo "$TIMESPAN" | sed 's/ /_/g')"
 prep_temp_folder_with_items
 
 # Show list of items
-PICKED=$(echo "$(list_items)" | dmenu -p "RSS" -c -l 20 -fn Terminus-15)
+PICKED=$(list_items | dmenu -p "RSS" -c -l 20 -fn Terminus-15)
 
 # Handle picked item
 URL="$(echo "$PICKED" | gawk -F " " '{print $NF}')"

@@ -2,7 +2,7 @@
 
 pidof svkbd-sxmo || svkbd-sxmo &
 ZIP=$(
-  echo -e "
+  printf %b "
     10025 - NYC
     60007 - Chicago
     94016 - San Francisco
@@ -15,9 +15,9 @@ ZIP=$(
 )
 pkill svkbd-sxmo
 
-LATLON=$(cat /usr/share/sxmo/zipcodes_for_weather.csv | grep "^$ZIP")
-LAT=$(echo $LATLON | cut -d, -f2 | tr -d ' ')
-LON=$(echo $LATLON | cut -d, -f3 | tr -d ' ')
+LATLON="$(grep "^$ZIP" /usr/share/sxmo/zipcodes_for_weather.csv)"
+LAT=$(echo "$LATLON" | cut -d, -f2 | tr -d ' ')
+LON=$(echo "$LATLON" | cut -d, -f3 | tr -d ' ')
 URL="https://forecast.weather.gov/MapClick.php?lat=${LAT}&lon=${LON}&unit=0&lg=english&FcstType=text&TextType=1"
 
 st -f Monospace-20 -e w3m "$URL"
