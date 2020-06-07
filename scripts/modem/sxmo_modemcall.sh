@@ -132,7 +132,7 @@ incallmenu() {
         TSPEAKER    ^ FLAGS="$(toggleflag "-s" "$FLAGS")"
         DTMF Tones  ^ dtmfmenu $VID
         Hangup      ^ hangup $VID
-        Lock Screen ^ sh -c 'pkill -9 lisgd; sxmo_screenlock; lisgd &'
+        Lock Screen ^ sh -c "pkill -9 lisgd; sxmo_screenlock; lisgd &"
       ' | sed "s/TMUTE/$TMUTE/;s/TECHO/$TECHO/;s/TEARPIECE/$TEARPIECE/;s/TLINEJACK/$TLINEJACK/;s/TSPEAKER/$TSPEAKER/"
     )"
 
