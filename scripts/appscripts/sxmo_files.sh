@@ -3,8 +3,10 @@ EDITOR=vis
 cd "/home/$USER/" || exit 1
 
 handlefiles() {
-	if echo "$1" | grep -iE ".(wav|webm|mp4|ogg|opus|m4a|flac|mov|avi)$"; then
+	if echo "$1" | grep -iE ".(webm|ogg|mp4|mov|avi)$"; then
 		st -e mpv "$@"
+	elif echo "$1" | grep -iE ".(wav|opus|m4a|flac|mp3)$"; then
+		st -e mpv --vid=no -v "$@"
 	elif echo "$1" | grep -iE ".(jpg|png|gif)$"; then
 		st -e sxiv "$@"
 	else
