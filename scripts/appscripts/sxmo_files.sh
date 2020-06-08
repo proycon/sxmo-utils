@@ -3,9 +3,14 @@ EDITOR=vis
 cd "/home/$USER/" || exit 1
 
 handlefiles() {
-	echo "$1" | grep -iE ".(wav|webm|mp4|ogg|opus|m4a|flac|mov|avi)$" && st -e mpv "$@" && exit
-	echo "$1" | grep -iE ".(jpg|png|gif)$" && st -e sxiv "$@" && exit
-	st -e sh -ic "$EDITOR $*" && exit
+	if echo "$1" | grep -iE ".(wav|webm|mp4|ogg|opus|m4a|flac|mov|avi)$"; then
+		st -e mpv "$@"
+	elif echo "$1" | grep -iE ".(jpg|png|gif)$"; then
+		st -e sxiv "$@"
+	else
+		st -e sh -ic "$EDITOR $*"
+	fi
+	exit 0
 }
 
 while true; do
