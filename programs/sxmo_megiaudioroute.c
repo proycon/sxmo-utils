@@ -359,7 +359,7 @@ int main(int ac, char* av[])
 {
         int opt;
 
-        while ((opt = getopt(ac, av, "smhe2")) != -1) {
+        while ((opt = getopt(ac, av, "smhez2")) != -1) {
                 switch (opt) {
                 case 's':
                         audio_setup.spk_on = 1;
