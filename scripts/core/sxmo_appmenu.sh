@@ -28,7 +28,7 @@ programchoicesinit() {
   echo $WMCLASS | grep -i "userscripts" && CHOICES="$(
     ls -1 $XDG_CONFIG_HOME/sxmo/userscripts |
     sed 's/ /\\ /' |
-    awk '{printf "%s\t^ 0 ^ sh $XDG_CONFIG_HOME/sxmo/userscripts/%s \n", $0, $0}'
+    awk '{printf "%s\t^ 0 ^ $XDG_CONFIG_HOME/sxmo/userscripts/%s \n", $0, $0}'
   )" && WINNAME=Userscripts && return
 
   # Scripts menu
