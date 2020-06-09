@@ -156,8 +156,8 @@ main(int argc, char **argv) {
 	screen = XDefaultScreen(dpy);
 	XSync(dpy, 0);
 	getoldbrightness();
-	lockscreen(dpy, screen);
 	updatescreenon(1);
+	lockscreen(dpy, screen);
 	readinputloop(dpy, screen);
 	return 0;
 }
