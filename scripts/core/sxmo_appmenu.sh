@@ -35,6 +35,7 @@ programchoicesinit() {
   echo $WMCLASS | grep -i "scripts" && CHOICES="$(echo "
     Web Search      ^ 0 ^ sxmo_websearch.sh
     Files           ^ 0 ^ sxmo_files.sh
+    Record          ^ 0 ^ sxmo_record.sh
     Timer           ^ 0 ^ sxmo_timer.sh
     Youtube         ^ 0 ^ sxmo_youtube.sh video
     Youtube (Audio) ^ 0 ^ sxmo_youtube.sh audio
