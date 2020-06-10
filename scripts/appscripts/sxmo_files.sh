@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 EDITOR=vis
-cd "/home/$USER/" || exit 1
+DIR="$1"
+[ -z "$DIR" ] && DIR="/home/$USER/"
+cd "$DIR" || exit 1
 
 handlefiles() {
 	if echo "$1" | grep -iE ".(webm|ogg|mp4|mov|avi)$"; then
