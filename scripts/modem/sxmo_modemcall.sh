@@ -1,114 +1,115 @@
 #!/usr/bin/env sh
-PID=$$
 LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
-trap "kill 0" SIGINT
+trap "kill 0" INT
 
 err() {
-	echo -e "$1" | dmenu -fn Terminus-20 -c -l 10
+	printf %b "$1" | dmenu -fn Terminus-20 -c -l 10
 	alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
 	kill -9 0
 }
 
 modem_n() {
-  MODEMS="$(mmcli -L)"
-  echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' > /dev/null || err "Couldn't find modem - is your modem enabled?"
-  echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
+	MODEMS="$(mmcli -L)"
+	echo "$MODEMS" | grep -qoE 'Modem\/([0-9]+)' || err "Couldn't find modem - is your modem enabled?"
+	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 }
 
 contacts() {
-	RES="$(cat $LOGDIR/modemlog.tsv | cut -f3 | sort | uniq | awk NF)"
+	RES="$(cut -f3 "$LOGDIR/modemlog.tsv" | sort | uniq | awk NF)"
 	echo "$RES"
-	echo -e "$RES" | grep 8042221111 > /dev/null || echo "Test Number 8042221111"
+	printf %b "$RES" | grep -q 8042221111 || echo "Test Number 8042221111"
 }
 
 modem_cmd_errcheck() {
 	ARGS="$@"
 	RES="$(mmcli $ARGS 2>&1)"
-	[[ $? -eq 0 ]] || err "Problem executing mmcli command!\n$RES"
-	echo $RES
+	[ $? -eq 0 ] || err "Problem executing mmcli command!\n$RES"
+	echo "$RES"
 }
 
 vid_to_number() {
-  mmcli -m $(modem_n) -o $1 -K | grep call.properties.number | cut -d ':' -f2 | tr -d  ' ' | sed 's/^[+]//' | sed 's/^1//'
+  mmcli -m "$(modem_n)" -o "$1" -K | grep call.properties.number | cut -d ':' -f2 | tr -d  ' ' | sed 's/^[+]//' | sed 's/^1//'
 }
 
 log_event() {
 	EVT_HANDLE="$1"
 	EVT_VID="$2"
-	NUM="$(vid_to_number $EVT_VID)"
+	NUM="$(vid_to_number "$EVT_VID")"
 	TIME="$(date --iso-8601=seconds)"
-	mkdir -p $LOGDIR
-	echo -ne "$TIME\t$EVT_HANDLE\t$NUM\n" >> $LOGDIR/modemlog.tsv
+	mkdir -p "$LOGDIR"
+	printf %b "$TIME\t$EVT_HANDLE\t$NUM\n" >> "$LOGDIR/modemlog.tsv"
 }
 
 toggleflag() {
-  TOGGLEFLAG=$1
-  shift
-  FLAGS="$@"
+	TOGGLEFLAG=$1
+	shift
+	FLAGS="$@"
 
-  echo -- "$FLAGS" | grep -- "$TOGGLEFLAG" >&2 && 
-    NEWFLAGS="$(echo -- "$FLAGS" | sed "s/$TOGGLEFLAG//g")" ||
-    NEWFLAGS="$(echo -- "$FLAGS $TOGGLEFLAG")"
+	echo -- "$FLAGS" | grep -- "$TOGGLEFLAG" >&2 && 
+		NEWFLAGS="$(echo -- "$FLAGS" | sed "s/$TOGGLEFLAG//g")" ||
+		NEWFLAGS="$(echo -- "$FLAGS $TOGGLEFLAG")"
 
-  NEWFLAGS="$(echo -- "$NEWFLAGS" | sed "s/--//g; s/  / /g")"
+	NEWFLAGS="$(echo -- "$NEWFLAGS" | sed "s/--//g; s/  / /g")"
 
-  sxmo_megiaudioroute $NEWFLAGS
-  echo -- $NEWFLAGS
+	sxmo_megiaudioroute $NEWFLAGS
+	echo -- "$NEWFLAGS"
 }
 
 toggleflagset() {
-  FLAGS="$(toggleflag "$1" "$FLAGS")"
+	FLAGS="$(toggleflag "$1" "$FLAGS")"
 }
 
 
 dialmenu() {
   CONTACTS="$(contacts)"
 	NUMBER="$(
-		echo -e "Close Menu\n$CONTACTS" | 
+		printf %b "Close Menu\n$CONTACTS" | 
 		grep . |
 		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20
 	)"
 	echo "$NUMBER" | grep "Close Menu" && kill 0
 
-	NUMBER="$(echo $NUMBER | awk -F' ' '{print $NF}' | tr -d -)"
-	echo "$NUMBER" | grep -E '^[0-9]+$'>  /dev/null || err "$NUMBER is not a number"
+	NUMBER="$(echo "$NUMBER" | awk -F' ' '{print $NF}' | tr -d -)"
+	echo "$NUMBER" | grep -qE '^[0-9]+$' || err "$NUMBER is not a number"
 
 	echo "Attempting to dial: $NUMBER" >&2
 	VID="$(
-		mmcli -m $(modem_n) --voice-create-call "number=$NUMBER" | grep -Eo Call/[0-9]+ | grep -oE [0-9]+
+		mmcli -m "$(modem_n)" --voice-create-call "number=$NUMBER" | 
+		grep -Eo "Call/[0-9]+" | 
+		grep -oE "[0-9]+"
 	)"
 	echo "Starting call with VID: $VID" >&2
-	startcall $VID >&@
-	echo $VID
+	startcall "$VID" >&@
+	echo "$VID"
 }
 
 startcall() {
   VID="$1"
   #modem_cmd_errcheck --voice-status -o $VID
-	modem_cmd_errcheck -m $(modem_n) -o $VID --start
+	modem_cmd_errcheck -m "$(modem_n)" -o "$VID" --start
 	log_event "call_start" "$VID"
 }
 
 acceptcall() {
-  VID="$1"
-  echo "Attempting to pickup VID $VID"
-  #mmcli --voice-status -o $VID
-	modem_cmd_errcheck -m $(modem_n) -o $VID --accept
-	log_event "call_pickup" $VID
+	VID="$1"
+	echo "Attempting to pickup VID $VID"
+	#mmcli --voice-status -o $VID
+	modem_cmd_errcheck -m "$(modem_n)" -o "$VID" --accept
+	log_event "call_pickup" "$VID"
 }
 
 hangup() {
-  VID=$1
-  modem_cmd_errcheck -m $(modem_n) -o $VID --hangup
-	log_event "call_hangup" $VID
+	VID="$1"
+	modem_cmd_errcheck -m "$(modem_n)" -o "$VID" --hangup
+	log_event "call_hangup" "$VID"
 	err "Call hungup ok"
-  exit 1
+	exit 1
 }
 
 incallmenu() {
   DMENUIDX=0
   VID="$1"
-  NUMBER="$(vid_to_number $VID)"
+  NUMBER="$(vid_to_number "$VID")"
 
   # E.g. There's some bug with the modem that' requires us to toggle the
   # DAI a few times before starting the call for it to kick in
@@ -155,7 +156,7 @@ incallmenu() {
 }
 
 dtmfmenu() {
-  VID=$1
+  VID="$1"
   DTMFINDEX=0
   NUMS="0123456789*#ABCD"
 
@@ -167,13 +168,13 @@ dtmfmenu() {
     )"
     echo "$PICKED" | grep "Return to Call Menu" && return
     DTMFINDEX=$(echo "$NUMS" | grep -bo "$PICKED" | cut -d: -f1 | xargs -IN echo 2+N | bc)
-    modem_cmd_errcheck -m $(modem_n) -o $VID --send-dtmf="$PICKED"
+    modem_cmd_errcheck -m "$(modem_n)" -o "$VID" --send-dtmf="$PICKED"
   done
 }
 
 dial() {
-  VID="$(dialmenu)"
-  incallmenu $VID
+	VID="$(dialmenu)"
+	incallmenu "$VID"
 }
 
 pickup() {
