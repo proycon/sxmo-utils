@@ -56,6 +56,11 @@ toggleflag() {
   echo -- $NEWFLAGS
 }
 
+toggleflagset() {
+  FLAGS="$(toggleflag "$1" "$FLAGS")"
+}
+
+
 dialmenu() {
   CONTACTS="$(contacts)"
 	NUMBER="$(
@@ -108,33 +113,27 @@ incallmenu() {
   # E.g. There's some bug with the modem that' requires us to toggle the
   # DAI a few times before starting the call for it to kick in
   FLAGS=" "
-  FLAGS="$(toggleflag "-e" "$FLAGS")"
-  FLAGS="$(toggleflag "-m" "$FLAGS")"
-  FLAGS="$(toggleflag "-2" "$FLAGS")"
-  FLAGS="$(toggleflag "-2" "$FLAGS")"
-  FLAGS="$(toggleflag "-2" "$FLAGS")"
+  toggleflagset "-e"
+  toggleflagset "-m"
+  toggleflagset "-2"
+  toggleflagset "-2"
+  toggleflagset "-2"
 
   while true
   do
-    echo -- "$FLAGS" | grep -- "-m" && TMUTE="Mute" || TMUTE="Unmute"
-    echo -- "$FLAGS" | grep -- "-z" && TECHO="Echomic Off" || TECHO="Echomic On"
-    echo -- "$FLAGS" | grep -- "-e" && TEARPIECE="Earpiece Off" || TEARPIECE="Earpiece On"
-    echo -- "$FLAGS" | grep -- "-h" && TLINEJACK="Linejack Off" || TLINEJACK="Linejack On"
-    echo -- "$FLAGS" | grep -- "-s" && TSPEAKER="Speakerphone Off" || TSPEAKER="Speakerphone On"
-
-    CHOICES="$(echo -ne '
-        Volume ↑    ^ sxmo_vol.sh up
-        Volume ↓    ^ sxmo_vol.sh down
-        TMUTE       ^ FLAGS="$(toggleflag "-m" "$FLAGS")"
-        TECHO       ^ FLAGS="$(toggleflag "-z" "$FLAGS")"
-        TEARPIECE   ^ FLAGS="$(toggleflag "-e" "$FLAGS")"
-        TLINEJACK   ^ FLAGS="$(toggleflag "-h" "$FLAGS")"
-        TSPEAKER    ^ FLAGS="$(toggleflag "-s" "$FLAGS")"
-        DTMF Tones  ^ dtmfmenu $VID
-        Hangup      ^ hangup $VID
-        Lock Screen ^ sh -c "pkill -9 lisgd; sxmo_screenlock; lisgd &"
-      ' | sed "s/TMUTE/$TMUTE/;s/TECHO/$TECHO/;s/TEARPIECE/$TEARPIECE/;s/TLINEJACK/$TLINEJACK/;s/TSPEAKER/$TSPEAKER/"
-    )"
+    CHOICES="
+      Volume ↑    ^ sxmo_vol.sh up
+      Volume ↓    ^ sxmo_vol.sh down
+      Mic $(echo -- $FLAGS | grep -q -- -m && echo ✓)          ^ toggleflagset -m
+      Linemic $(echo -- $FLAGS | grep -q -- -l && echo ✓)      ^ toggleflagset -l
+      Echomic $(echo -- $FLAGS | grep -q -- -z && echo ✓)      ^ toggleflagset -z
+      Earpiece $(echo -- $FLAGS | grep -q -- -e && echo ✓)     ^ toggleflagset -e
+      Linejack $(echo -- $FLAGS | grep -q -- -h && echo ✓)     ^ toggleflagset -h
+      Speakerphone $(echo -- $FLAGS | grep -q -- -s && echo ✓) ^ toggleflagset -s
+      DTMF Tones  ^ dtmfmenu $VID
+      Hangup      ^ hangup $VID
+      Lock Screen ^ sh -c 'pkill -9 lisgd; sxmo_screenlock; lisgd &'
+    "
 
     PICKED=""
     PICKED=$(
