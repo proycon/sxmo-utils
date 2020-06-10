@@ -205,6 +205,7 @@ struct audio_setup {
         bool spk_on;
         bool hp_on;
         bool ear_on;
+        bool hpmic_on;
 
         // when sending audio to modem from AIF1 R, also play that back
         // to me locally (just like AIF1 L plays just to me)
@@ -223,6 +224,7 @@ struct audio_setup {
         bool dai2_en;
 
         int mic_gain;
+        int hpmic_gain;
         int spk_vol;
         int ear_vol;
         int hp_vol;
@@ -239,7 +241,7 @@ static void audio_set_controls(struct audio_setup* s)
                 { .name = "Mic1 Boost Volume",                              .vals.i = { s->mic_gain } },
 
                 // Mic 2 (headphones)
-                { .name = "Mic2 Boost Volume",                              .vals.i = { 0 } },
+                { .name = "Mic2 Boost Volume",                              .vals.i = { s->hpmic_gain } },
 
                 // Line in (unused on PP)
                 // no controls yet
@@ -247,7 +249,7 @@ static void audio_set_controls(struct audio_setup* s)
                 // Input mixers before ADC
 
                 { .name = "Mic1 Capture Switch",                            .vals.i = { !!s->mic_on, !!s->mic_on } },
-                { .name = "Mic2 Capture Switch",                            .vals.i = { 0, 0 } },
+                { .name = "Mic2 Capture Switch",                            .vals.i = { !!s->hpmic_on, !!s->hpmic_on } },
                 { .name = "Line In Capture Switch",                         .vals.i = { 0, 0 } }, // Out Mix -> In Mix
                 { .name = "Mixer Capture Switch",                           .vals.i = { 0, 0 } },
                 { .name = "Mixer Reversed Capture Switch",                  .vals.i = { 0, 0 } },
@@ -353,13 +355,14 @@ static struct audio_setup audio_setup = {
         .spk_vol = 15,
         .ear_vol = 15,
         .mic_gain = 1,
+        .hpmic_gain = 1,
 };
 
 int main(int ac, char* av[])
 {
         int opt;
 
-        while ((opt = getopt(ac, av, "smhez2")) != -1) {
+        while ((opt = getopt(ac, av, "smhlez2")) != -1) {
                 switch (opt) {
                 case 's':
                         audio_setup.spk_on = 1;
@@ -369,6 +372,9 @@ int main(int ac, char* av[])
                         break;
                 case 'h':
                         audio_setup.hp_on = 1;
+                        break;
+                case 'l':
+                        audio_setup.hpmic_on = 1;
                         break;
                 case 'e':
                         audio_setup.ear_on = 1;
@@ -380,7 +386,7 @@ int main(int ac, char* av[])
                         audio_setup.dai2_en = 1;
                         break;
                 default: /* '?' */
-                        fprintf(stderr, "Usage: %s [-s] [-m] [-h] [-e] [-2] [-z]\n", av[0]);
+                        fprintf(stderr, "Usage: %s [-s] [-m] [-h] [-l] [-e] [-2] [-z]\n", av[0]);
                         exit(EXIT_FAILURE);
                 }
         }
