@@ -47,7 +47,7 @@ record() {
 }
 
 while true; do
-	NRECORDINGS="$(ls -1 "$RECDIR" | wc -l)"
+	NRECORDINGS="$(find "$RECDIR" -type f | wc -l)"
 	OPTION="$(
 		printf %b "Line Jack\nMicrophone\n($NRECORDINGS) Recordings\nClose Menu" |
 		dmenu -fn Terminus-30 -c -p "Record" -l 20

@@ -21,14 +21,16 @@ contacts() {
 }
 
 modem_cmd_errcheck() {
-	ARGS="$@"
-	RES="$(mmcli $ARGS 2>&1)"
-	[ $? -eq 0 ] || err "Problem executing mmcli command!\n$RES"
+	# shellcheck disable=SC2068
+	RES="$(mmcli $@ 2>&1)"
+	OK="$?"
+	echo "Command: mmcli $*"
+	if [ "$OK" != 0 ]; then err "Problem executing mmcli command!\n$RES"; fi
 	echo "$RES"
 }
 
 vid_to_number() {
-  mmcli -m "$(modem_n)" -o "$1" -K | grep call.properties.number | cut -d ':' -f2 | tr -d  ' ' | sed 's/^[+]//' | sed 's/^1//'
+	mmcli -m "$(modem_n)" -o "$1" -K | grep call.properties.number | cut -d ':' -f2 | tr -d  ' ' | sed 's/^[+]//' | sed 's/^1//'
 }
 
 log_event() {
@@ -43,7 +45,7 @@ log_event() {
 toggleflag() {
 	TOGGLEFLAG=$1
 	shift
-	FLAGS="$@"
+	FLAGS="$*"
 
 	echo -- "$FLAGS" | grep -- "$TOGGLEFLAG" >&2 && 
 		NEWFLAGS="$(echo -- "$FLAGS" | sed "s/$TOGGLEFLAG//g")" ||
@@ -51,6 +53,7 @@ toggleflag() {
 
 	NEWFLAGS="$(echo -- "$NEWFLAGS" | sed "s/--//g; s/  / /g")"
 
+	# shellcheck disable=SC2086
 	sxmo_megiaudioroute $NEWFLAGS
 	echo -- "$NEWFLAGS"
 }
@@ -79,7 +82,7 @@ dialmenu() {
 		grep -oE "[0-9]+"
 	)"
 	echo "Starting call with VID: $VID" >&2
-	startcall "$VID" >&@
+	startcall "$VID" >&2
 	echo "$VID"
 }
 
@@ -107,69 +110,67 @@ hangup() {
 }
 
 incallmenu() {
-  DMENUIDX=0
-  VID="$1"
-  NUMBER="$(vid_to_number "$VID")"
+	DMENUIDX=0
+	VID="$1"
+	NUMBER="$(vid_to_number "$VID")"
 
-  # E.g. There's some bug with the modem that' requires us to toggle the
-  # DAI a few times before starting the call for it to kick in
-  FLAGS=" "
-  toggleflagset "-e"
-  toggleflagset "-m"
-  toggleflagset "-2"
-  toggleflagset "-2"
-  toggleflagset "-2"
+	# E.g. There's some bug with the modem that' requires us to toggle the
+	# DAI a few times before starting the call for it to kick in
+	FLAGS=" "
+	toggleflagset "-e"
+	toggleflagset "-m"
+	toggleflagset "-2"
+	toggleflagset "-2"
+	toggleflagset "-2"
 
-  while true
-  do
-    CHOICES="
-      Volume ↑    ^ sxmo_vol.sh up
-      Volume ↓    ^ sxmo_vol.sh down
-      Mic $(echo -- $FLAGS | grep -q -- -m && echo ✓)          ^ toggleflagset -m
-      Linemic $(echo -- $FLAGS | grep -q -- -l && echo ✓)      ^ toggleflagset -l
-      Echomic $(echo -- $FLAGS | grep -q -- -z && echo ✓)      ^ toggleflagset -z
-      Earpiece $(echo -- $FLAGS | grep -q -- -e && echo ✓)     ^ toggleflagset -e
-      Linejack $(echo -- $FLAGS | grep -q -- -h && echo ✓)     ^ toggleflagset -h
-      Speakerphone $(echo -- $FLAGS | grep -q -- -s && echo ✓) ^ toggleflagset -s
-      DTMF Tones  ^ dtmfmenu $VID
-      Hangup      ^ hangup $VID
-      Lock Screen ^ sh -c 'pkill -9 lisgd; sxmo_screenlock; lisgd &'
-    "
+	while true; do
+		CHOICES="
+			Volume ↑    ^ sxmo_vol.sh up
+			Volume ↓    ^ sxmo_vol.sh down
+			Mic $(echo -- "$FLAGS" | grep -q -- -m && echo ✓)          ^ toggleflagset -m
+			Linemic $(echo -- "$FLAGS" | grep -q -- -l && echo ✓)      ^ toggleflagset -l
+			Echomic $(echo -- "$FLAGS" | grep -q -- -z && echo ✓)      ^ toggleflagset -z
+			Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo ✓)     ^ toggleflagset -e
+			Linejack $(echo -- "$FLAGS" | grep -q -- -h && echo ✓)     ^ toggleflagset -h
+			Speakerphone $(echo -- "$FLAGS" | grep -q -- -s && echo ✓) ^ toggleflagset -s
+			DTMF Tones  ^ dtmfmenu $VID
+			Hangup      ^ hangup $VID
+			Lock Screen ^ sh -c 'pkill -9 lisgd; sxmo_screenlock; lisgd &'
+		"
 
-    PICKED=""
-    PICKED=$(
-      echo "$CHOICES" | 
-      xargs -0 echo | 
-      cut -d'^' -f1 | 
-      sed '/^[[:space:]]*$/d' |
-      awk '{$1=$1};1' |
-      dmenu -idx $DMENUIDX -l 14 -c -fn "Terminus-30" -p "$NUMBER"
+		PICKED=""
+		PICKED=$(
+			echo "$CHOICES" | 
+			xargs -0 echo | 
+			cut -d'^' -f1 | 
+			sed '/^[[:space:]]*$/d' |
+			awk '{$1=$1};1' |
+			dmenu -idx $DMENUIDX -l 14 -c -fn "Terminus-30" -p "$NUMBER"
     )
 
-    # E.g. in modem watcher script we just kill dmenu if the other side hangsup
-    echo "$PICKED" | grep -Ev "." && err "$NUMBER hung up the call"
+		# E.g. in modem watcher script we just kill dmenu if the other side hangsup
+		echo "$PICKED" | grep -Ev "." && err "$NUMBER hung up the call"
 
-    CMD=$(echo "$CHOICES" | grep "$PICKED" | cut -d '^' -f2)
-    DMENUIDX=$(echo $(echo "$CHOICES" | grep -n "$PICKED" | cut -d ':' -f1) - 1 | bc)
-    eval $CMD
-  done
+		CMD=$(echo "$CHOICES" | grep "$PICKED" | cut -d '^' -f2)
+		DMENUIDX=$(echo "$(echo "$CHOICES" | grep -n "$PICKED" | cut -d ':' -f1)" - 1 | bc)
+		eval "$CMD"
+	done
 }
 
 dtmfmenu() {
-  VID="$1"
-  DTMFINDEX=0
-  NUMS="0123456789*#ABCD"
+	VID="$1"
+	DTMFINDEX=0
+	NUMS="0123456789*#ABCD"
 
-  while true
-  do
-    PICKED="$(
-      echo "$NUMS" | grep -o . | sed '1 iReturn to Call Menu' |
-      dmenu -l 20 -fn Terminus-20 -c -idx $DTMFINDEX -p "DTMF Tone"
-    )"
-    echo "$PICKED" | grep "Return to Call Menu" && return
-    DTMFINDEX=$(echo "$NUMS" | grep -bo "$PICKED" | cut -d: -f1 | xargs -IN echo 2+N | bc)
-    modem_cmd_errcheck -m "$(modem_n)" -o "$VID" --send-dtmf="$PICKED"
-  done
+	while true; do
+		PICKED="$(
+			echo "$NUMS" | grep -o . | sed '1 iReturn to Call Menu' |
+			dmenu -l 20 -fn Terminus-20 -c -idx $DTMFINDEX -p "DTMF Tone"
+		)"
+		echo "$PICKED" | grep "Return to Call Menu" && return
+		DTMFINDEX=$(echo "$NUMS" | grep -bo "$PICKED" | cut -d: -f1 | xargs -IN echo 2+N | bc)
+		modem_cmd_errcheck -m "$(modem_n)" -o "$VID" --send-dtmf="$PICKED"
+	done
 }
 
 dial() {
@@ -178,9 +179,9 @@ dial() {
 }
 
 pickup() {
-	acceptcall $1
-	incallmenu $1
+	acceptcall "$1"
+	incallmenu "$1"
 }
 
 modem_n || err "Couldn't determine modem number - is modem online?"
-$@
+"$1" "$2"

@@ -6,4 +6,4 @@ echo "Upgrading all packages"
 sudo apk upgrade
 
 echo "Upgrade complete - reboot for all change to take effect"
-read
+read -r

@@ -1,21 +1,25 @@
 #!/usr/bin/env sh
 
 change() {
-  echo "Changing timezone to $1"
-  sudo setup-timezone -z "$1"
-  echo 1 > /tmp/sxmo_bar
-  echo Timezone changed ok
-  read
+	echo "Changing timezone to $1"
+	sudo setup-timezone -z "$1"
+	echo 1 > /tmp/sxmo_bar
+	echo Timezone changed ok
+	read -r
 }
 
 menu() {
-  T="$(
-    find /usr/share/zoneinfo -type f | 
-    sed  's#^/usr/share/zoneinfo/##g' |
-    sort |
-    sxmo_dmenu_with_kb.sh -p Timezone -c -l 10 -fn Terminus-20 -i
-  )"
-  st -e "$0" change "$T"
+	T="$(
+		find /usr/share/zoneinfo -type f | 
+		sed  's#^/usr/share/zoneinfo/##g' |
+		sort |
+		sxmo_dmenu_with_kb.sh -p Timezone -c -l 10 -fn Terminus-20 -i
+	)"
+	st -e "$0" change "$T"
 }
 
-[ $# -gt 0 ] && $@ || menu
+if [ $# -gt 0 ]; then
+	"$1" "$2"
+else
+	menu
+fi

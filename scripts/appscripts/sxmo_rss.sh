@@ -1,31 +1,42 @@
 #!/usr/bin/env sh
-SFEEDCONF=/usr/share/sxmo/sxmo_sfeedrc
+if [ -f "$XDG_CONFIG_HOME/sxmo/sfeedrc" ]; then
+	SFEEDCONF="$XDG_CONFIG_HOME/sxmo/sfeedrc"
+elif [ -f "$HOME/.sfeed/sfeedrc" ]; then
+	SFEEDCONF="$HOME/.sfeed/sfeedrc"
+else
+	SFEEDCONF=/usr/share/sxmo/sxmo_sfeedrc
+fi
+
+die() {
+	echo "Error: $1"
+	exit 1
+}
 
 tflt() {
-  # Date with feature like "1 day ago" etc main reason
-  # coreutils is a dep...
-  TIME=$(eval date -d \""$TIMESPAN"\" +%s)
-  cat | gawk "\$1 > $TIME"
+	# Date with feature like "1 day ago" etc main reason
+	# coreutils is a dep...
+	TIME=$(eval date -d \""$TIMESPAN"\" +%s)
+	cat | gawk "\$1 > $TIME"
 }
 
 prep_temp_folder_with_items() {
-    mkdir -p $FOLDER
-    rm -rf $FOLDER/*
-    cd ~/.sfeed/feeds/
-    for f in $(ls)
-    do
-      cat $f | tflt $@ > $FOLDER/$f
-      [ -s $FOLDER/$f ] || rm $FOLDER/$f
-    done
+	mkdir -p "$FOLDER"
+	rm -rf "${FOLDER:?}/*"
+	cd ~/.sfeed/feeds/ || die "Could cd to ~/.sfeed/feeds/"
+	for f in ./*; do
+		fclean="$(basename "$f")"
+		tflt < "$fclean" > "$FOLDER/$fclean"
+		[ -s "$FOLDER/$fclean" ] || rm "${FOLDER:?}/$fclean"
+	done
 }
 
 list_items() {
-    cd $FOLDER
-    gawk -F'\t' '{print $1 " " FILENAME " | " $2 ": " $3}' * |\
-    grep -E '^[0-9]{5}' |\
-    sort -nk1 |\
-    sort -r |\
-    gawk -F' ' '{printf strftime("%y/%m/%d %H:%M",$1); $1=""; print $0}'
+	cd "$FOLDER" || die "Couldn't cd to $FOLDER"
+	gawk -F'\t' '{print $1 " " substr(FILENAME, 3) " | " $2 ": " $3}' ./* |\
+	grep -E '^[0-9]{5}' |\
+	sort -nk1 |\
+	sort -r |\
+	gawk -F' ' '{printf strftime("%y/%m/%d %H:%M",$1); $1=""; print $0}'
 }
 
 # Update Sfeed

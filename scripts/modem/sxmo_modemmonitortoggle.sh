@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
-pgrep -f sxmo_modemmonitor.sh && pkill -9 -f sxmo_modemmonitor.sh || sxmo_modemmonitor.sh &
+if pgrep -f sxmo_modemmonitor.sh; then
+	pkill -9 -f sxmo_modemmonitor.sh
+else
+	sxmo_modemmonitor.sh &
+fi
+
 rm /tmp/sxmo_incomingcall
 
 # E.g. wait until process killed or started -- maybe there's a better way..

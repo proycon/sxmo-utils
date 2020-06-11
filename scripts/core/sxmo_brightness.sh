@@ -8,24 +8,22 @@ MINSTEP=1
 STEP=$(echo "($MAX - $MIN) / 10" | bc | xargs -ISTP echo -e "$MINSTEP\nSTP" | sort -r | head -n1)
 
 setdelta() {
-  sxmo_setpinebacklight $(
-    cat $DEV/brightness |
-    xargs -IB echo B $1 |
-    bc |
-    xargs -INUM echo -e "$MIN\nNUM" | sort -n | tail -n1 |
-    xargs -INUM echo -e "$MAX\nNUM" | sort -n | head -n1
-  )
+	sxmo_setpinebacklight "$(
+		xargs -IB echo B "$1" < $DEV/brightness |
+		bc |
+		xargs -INUM echo -e "$MIN\nNUM" | sort -n | tail -n1 |
+		xargs -INUM echo -e "$MAX\nNUM" | sort -n | head -n1
+	)"
 
-  dunstify -i 0 -u normal -r 999 "☀ $(cat $DEV/brightness)/${MAX}"
+	dunstify -i 0 -u normal -r 999 "☀ $(cat $DEV/brightness)/${MAX}"
 }
 
 up() {
-  setdelta "+${STEP}"
-  
+	setdelta "+${STEP}"
 }
 
 down() {
-  setdelta "-${STEP}"
+	setdelta "-${STEP}"
 }
 
-$1 $2
+"$1" "$2"

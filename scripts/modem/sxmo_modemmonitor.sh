@@ -2,10 +2,10 @@
 TIMEOUT=3
 LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
 ACTIVECALL="NONE"
-trap "kill 0" SIGINT
+trap "kill 0" INT
 
 err() {
-	echo -e "$1" | dmenu -fn Terminus-20 -c -l 10
+	printf %b "$1" | dmenu -fn Terminus-20 -c -l 10
 	kill -9 0
 }
 
@@ -21,13 +21,13 @@ newcall() {
 	sxmo_setpineled green 1
 
 	# Delete all terminated calls
-	for i in $(mmcli -m $(modem_n) --voice-list-calls | grep terminated | grep -oE Call\/[0-9]+ | cut -d'/' -f2); do
-		mmcli -m $(modem_n) --voice-delete-call $i
+	for i in $(mmcli -m "$(modem_n)" --voice-list-calls | grep terminated | grep -oE "Call\/[0-9]+" | cut -d'/' -f2); do
+		mmcli -m "$(modem_n)" --voice-delete-call "$i"
 	done
 
 	echo "Incoming Call:"
 	INCOMINGNUMBER=$(
-		mmcli -m $(modem_n) --voice-list-calls -o "$VID" -K |
+		mmcli -m "$(modem_n)" --voice-list-calls -o "$VID" -K |
 		grep call.properties.number |
 		cut -d ':' -f 2 |
 		sed 's/^[+]//' | 
@@ -35,8 +35,8 @@ newcall() {
 	)
 
 	TIME="$(date --iso-8601=seconds)"
-	mkdir -p $LOGDIR
-	echo -ne "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> $LOGDIR/modemlog.tsv
+	mkdir -p "$LOGDIR"
+	printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 	echo "$VID:$INCOMINGNUMBER" > /tmp/sxmo_incomingcall
 	echo "Number: $INCOMINGNUMBER (VID: $VID)"
 
@@ -46,8 +46,8 @@ newtexts() {
 	sxmo_setpineled green 1
 
 	echo "New Texts:"
-	for i in $(echo -e "$1") ; do
-		DAT="$(mmcli -m $(modem_n) -s $i -K)"
+	for i in $(printf %b "$1") ; do
+		DAT="$(mmcli -m "$(modem_n)" -s "$i" -K)"
 
 		TEXT="$(echo "$DAT" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
 		NUM="$(
@@ -58,12 +58,12 @@ newtexts() {
 			sed 's/^1//'
 		)"
 		TIME="$(echo "$DAT" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
-		TEXTSIZE="$(echo $TEXT | wc -c)"
+		TEXTSIZE="${#TEXT}"
 
 		mkdir -p "$LOGDIR/$NUM"
-		echo -ne "Received from $NUM at $TIME:\n$TEXT\n\n" >> $LOGDIR/$NUM/sms.txt
-		echo -ne "$TIME\trecv_txt\t$NUM\t$TEXTSIZE chars\n" >> $LOGDIR/modemlog.tsv
-		mmcli -m $(modem_n) --messaging-delete-sms=$i
+		printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
+		printf %b "$TIME\trecv_txt\t$NUM\t$TEXTSIZE chars\n" >> "$LOGDIR/modemlog.tsv"
+		mmcli -m "$(modem_n)" --messaging-delete-sms="$i"
 
 		sxmo_vibratepine 300 && sleep 0.1
 		sxmo_vibratepine 300 && sleep 0.1
@@ -78,16 +78,15 @@ killinprogresscall() {
 
 inprogresscallchecker() {
 	# E.g. register current call in progress as ACTIVECALL
-	CURRENTCALLS="$(mmcli -m $(modem_n) --voice-list-calls)"
+	CURRENTCALLS="$(mmcli -m "$(modem_n)" --voice-list-calls)"
 
 	# E.g. if we've previously registered an ACTIVECALL, check if it
 	# was terminated by the otherside, if so kill the incall script
 	# and notify user
-	echo "$ACTIVECALL" | grep -E '[0-9]+' && $(
-		echo "$CURRENTCALLS" | 
-		grep -E "Call/${ACTIVECALL}.+terminated" && 
+	if echo "$ACTIVECALL" | grep -E '[0-9]+'; then
+		echo "$CURRENTCALLS" | grep -E "Call/${ACTIVECALL}.+terminated" && 
 		killinprogresscall
-	)
+	fi
 
 	# Register the active call so we can check in future loops if
 	# other side hung up
@@ -104,13 +103,13 @@ while true
 do
 	sxmo_setpineled green 0
 	VOICECALLID="$(
-		mmcli -m $(modem_n) --voice-list-calls -a |
+		mmcli -m "$(modem_n)" --voice-list-calls -a |
 		grep -Eo '[0-9]+ incoming \(ringing-in\)' |
 		grep -Eo '[0-9]+'
 	)"
 
 	TEXTIDS="$(
-		mmcli -m $(modem_n) --messaging-list-sms |
+		mmcli -m "$(modem_n)" --messaging-list-sms |
 		grep -Eo '/SMS/[0-9]+ \(received\)' |
 		grep -Eo '[0-9]+'
 	)"
@@ -119,7 +118,13 @@ do
 
 	inprogresscallchecker
 
-	echo "$VOICECALLID" | grep . && newcall "$VOICECALLID" || rm -f /tmp/sxmo_incomingcall
+	if echo "$VOICECALLID" | grep .; then
+		newcall "$VOICECALLID"
+	else
+		rm -f /tmp/sxmo_incomingcall
+	fi
+
 	echo "$TEXTIDS" | grep . && newtexts "$TEXTIDS"
+
 	sleep $TIMEOUT
 done

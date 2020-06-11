@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 audiodevice() {
-  amixer sget "Earpiece" | grep -E '\[on\]' > /dev/null && echo Earpiece && return
-  amixer sget "Headphone" | grep -E '\[on\]' > /dev/null && echo Headphone && return
-  amixer sget "Line Out" | grep -E '\[on\]' > /dev/null && echo Line Out && return
-  echo "None"
+	amixer sget "Earpiece" | grep -qE '\[on\]' && echo Earpiece && return
+	amixer sget "Headphone" | grep -qE '\[on\]' && echo Headphone && return
+	amixer sget "Line Out" | grep -qE '\[on\]' && echo Line Out && return
+	echo "None"
 }
 
 audiodevice

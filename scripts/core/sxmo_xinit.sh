@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 # Env vars
+# shellcheck disable=SC1091
 . /etc/profile
 which "$TERM" || export TERM=st
 which "$BROWSER" || export BROWSER=surf

@@ -2,16 +2,16 @@
 
 pidof svkbd-sxmo || svkbd-sxmo &
 ZIP=$(
-  printf %b "
-    10025 - NYC
-    60007 - Chicago
-    94016 - San Francisco
-    97035 - Portland, OR
-  " |
-  awk 'NF' |
-  awk '{$1=$1};1' |
-  dmenu -fn Terminus-20 -i -c -l 10 -p "US Zipcode" |
-  awk -F " " '{print $1}'
+	printf %b "
+		10025 - NYC
+		60007 - Chicago
+		94016 - San Francisco
+		97035 - Portland, OR
+	" |
+	awk 'NF' |
+	awk '{$1=$1};1' |
+	dmenu -fn Terminus-20 -i -c -l 10 -p "US Zipcode" |
+	awk -F " " '{print $1}'
 )
 pkill svkbd-sxmo
 
