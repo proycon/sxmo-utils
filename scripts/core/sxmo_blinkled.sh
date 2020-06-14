@@ -1,4 +1,12 @@
 #!/usr/bin/env sh
-sxmo_setpineled "$1" 150
-sleep 0.01
-sxmo_setpineled "$1" 0
+PIDS=""
+for i in "$@"; do
+	sxmo_setpineled "$i" 150 &
+	PIDS="$PIDS $!"
+done
+
+echo "$PIDS" | grep -E '[^ ]+' | xargs wait
+
+for i in "$@"; do
+	sxmo_setpineled "$i" 0
+done
