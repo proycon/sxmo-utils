@@ -66,6 +66,8 @@ programchoicesinit() {
 			Speaker $([ "$CURRENTDEV" = "Line Out" ] && echo "✓")     ^ 1 ^ sxmo_audioout.sh Speaker
 			Earpiece $([ "$CURRENTDEV" = "Earpiece" ] && echo "✓")    ^ 1 ^ sxmo_audioout.sh Earpiece
 			None $([ "$CURRENTDEV" = "None" ] && echo "✓")            ^ 1 ^ sxmo_audioout.sh None
+			Volume ↑                                                  ^ 1 ^ sxmo_vol.sh up
+			Volume ↓                                                  ^ 1 ^ sxmo_vol.sh down
 		"
 		WINNAME="Audio"
 	elif echo "$WMCLASS" | grep -i "mpv"; then
@@ -170,8 +172,6 @@ programchoicesinit() {
 			)
 			Scripts              ^ 0 ^ sxmo_appmenu.sh scripts
 			Apps                 ^ 0 ^ sxmo_appmenu.sh applications
-			Volume ↑             ^ 1 ^ sxmo_vol.sh up
-			Volume ↓             ^ 1 ^ sxmo_vol.sh down
 			Dialer               ^ 0 ^ sxmo_modemcall.sh dial
 			Texts                ^ 0 ^ sxmo_modemtext.sh
 			Camera               ^ 0 ^ sxmo_camera.sh
