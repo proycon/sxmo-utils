@@ -73,7 +73,7 @@ dialmenu() {
 	echo "$NUMBER" | grep "Close Menu" && kill 0
 
 	NUMBER="$(echo "$NUMBER" | awk -F' ' '{print $NF}' | tr -d -)"
-	echo "$NUMBER" | grep -qE '^[0-9]+$' || err "$NUMBER is not a number"
+	echo "$NUMBER" | grep -qE '^[+0-9]+$' || err "$NUMBER is not a number"
 
 	echo "Attempting to dial: $NUMBER" >&2
 	VID="$(
