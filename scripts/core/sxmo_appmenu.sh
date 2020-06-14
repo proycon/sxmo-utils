@@ -17,7 +17,6 @@ programchoicesinit() {
 		# Scripts menu
 		CHOICES="
 			Web Search      ^ 0 ^ sxmo_websearch.sh
-			Files           ^ 0 ^ sxmo_files.sh
 			Record          ^ 0 ^ sxmo_record.sh
 			Timer           ^ 0 ^ sxmo_timer.sh
 			Youtube         ^ 0 ^ sxmo_youtube.sh video
@@ -172,6 +171,7 @@ programchoicesinit() {
 			)
 			Scripts              ^ 0 ^ sxmo_appmenu.sh scripts
 			Apps                 ^ 0 ^ sxmo_appmenu.sh applications
+			Files                ^ 0 ^ sxmo_files.sh
 			Dialer               ^ 0 ^ sxmo_modemcall.sh dial
 			Texts                ^ 0 ^ sxmo_modemtext.sh
 			Camera               ^ 0 ^ sxmo_camera.sh
