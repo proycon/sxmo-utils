@@ -11,7 +11,9 @@ restoreaudio() {
 record() {
 	TEMPFILE="$(mktemp --suffix=.wav)"
 	NOW="$(date '+%y%m%d_%H%M%S')"
+	sxmo_megiaudioroute "$1"
 	st -e arecord -vv -f cd -c 1 "$TEMPFILE"
+	restoreaudio
 	DUR="$(
 		mediainfo "$TEMPFILE" | 
 		grep ^Duration | 
@@ -34,7 +36,6 @@ record() {
 			dmenu -p "$DUR" -fn Terminus-18 -c -l 10
 		)"
 		if echo "$PICK" | grep "Playback"; then
-			restoreaudio
 			st -e mpv -v "$FILE"
 		elif echo "$PICK" | grep "Delete Recording"; then
 			rm "$FILE"
@@ -54,16 +55,12 @@ while true; do
 	)"
 
 	if [ "$OPTION" = "Line Jack" ]; then
-		sxmo_megiaudioroute -l
-		record
+		record -l
 	elif [ "$OPTION" = "Microphone" ]; then
-		sxmo_megiaudioroute -m
-		record
+		record -m
 	elif echo "$OPTION" | grep "Recordings$"; then
-		restoreaudio
 		sxmo_files.sh "$RECDIR"
 	elif [ "$OPTION" = "Close Menu" ]; then
-		restoreaudio
 		exit 0
 	fi
 done
