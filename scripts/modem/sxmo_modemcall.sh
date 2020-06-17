@@ -109,10 +109,19 @@ hangup() {
 	exit 1
 }
 
+togglewindowify() {
+	if [ "$WINDOWIFIED" = "0" ]; then
+		WINDOWIFIED=1
+	else
+		WINDOWIFIED=0
+	fi
+}
+
 incallmenu() {
 	DMENUIDX=0
 	VID="$1"
 	NUMBER="$(vid_to_number "$VID")"
+	WINDOWIFIED=0
 
 	# E.g. There's some bug with the modem that' requires us to toggle the
 	# DAI a few times before starting the call for it to kick in
@@ -135,7 +144,7 @@ incallmenu() {
 			Speakerphone $(echo -- "$FLAGS" | grep -q -- -s && echo ✓) ^ toggleflagset -s
 			DTMF Tones  ^ dtmfmenu $VID
 			Hangup      ^ hangup $VID
-			Lock Screen ^ sh -c 'pkill -9 lisgd; sxmo_screenlock; lisgd &'
+			$([ "$WINDOWIFIED" = 0 ] && echo Windowify || echo Unwindowify) ^ togglewindowify
 		"
 
 		PICKED=""
@@ -145,7 +154,7 @@ incallmenu() {
 			cut -d'^' -f1 | 
 			sed '/^[[:space:]]*$/d' |
 			awk '{$1=$1};1' |
-			dmenu -idx $DMENUIDX -l 14 -c -fn "Terminus-30" -p "$NUMBER"
+			dmenu -idx $DMENUIDX -l 14 $([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm") -fn "Terminus-30" -p "$NUMBER"
     )
 
 		# E.g. in modem watcher script we just kill dmenu if the other side hangsup
