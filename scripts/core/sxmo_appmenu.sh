@@ -14,7 +14,7 @@ programchoicesinit() {
 	if echo "$WMCLASS" | grep -i "userscripts"; then
 		# Userscripts menu
 		CHOICES="$(
-			find "$XDG_CONFIG_HOME/sxmo/userscripts" -type f -print0 | 
+			find "$XDG_CONFIG_HOME/sxmo/userscripts" \( -type f -o -type l \) -print0 | 
 			xargs -IF basename F | 
 			awk '{printf "%s\t^ 0 ^ $XDG_CONFIG_HOME/sxmo/userscripts/%s \n", $0, $0}'
 		)"
