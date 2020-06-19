@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 if pgrep -f sxmo_modemmonitor.sh; then
-	pkill -9 -f sxmo_modemmonitor.sh
+	pgrep -f sxmo_modemmonitor.sh | grep -Ev "^${$}$" | xargs -IP kill -TERM P
 else
 	sxmo_modemmonitor.sh &
 fi

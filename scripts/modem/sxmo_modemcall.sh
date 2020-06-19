@@ -1,16 +1,23 @@
 #!/usr/bin/env sh
 LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
-trap "kill 0" INT
+trap "gracefulexit" INT TERM
 
-err() {
-	printf %b "$1" | dmenu -fn Terminus-20 -c -l 10
+fatalerr() {
+	# E.g. hangup all calls, switch back to default audio, notify user, and die
+	sxmo_vibratepine 1000
+	mmcli -m "$(mmcli -L | grep -qoE 'Modem\/([0-9]+)')" --voice-hangup-all
 	alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
+	notify-send "$1"
 	kill -9 0
+}
+
+gracefulexit() {
+	fatalerr "Terminated via SIGTERM/SIGINT"
 }
 
 modem_n() {
 	MODEMS="$(mmcli -L)"
-	echo "$MODEMS" | grep -qoE 'Modem\/([0-9]+)' || err "Couldn't find modem - is your modem enabled?"
+	echo "$MODEMS" | grep -qoE 'Modem\/([0-9]+)' || fatalerr "Couldn't find modem - is your modem enabled?"
 	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 }
 
@@ -25,7 +32,7 @@ modem_cmd_errcheck() {
 	RES="$(mmcli $@ 2>&1)"
 	OK="$?"
 	echo "Command: mmcli $*"
-	if [ "$OK" != 0 ]; then err "Problem executing mmcli command!\n$RES"; fi
+	if [ "$OK" != 0 ]; then fatalerr "Problem executing mmcli command!\n$RES"; fi
 	echo "$RES"
 }
 
@@ -64,7 +71,7 @@ toggleflagset() {
 
 
 dialmenu() {
-  CONTACTS="$(contacts)"
+	CONTACTS="$(contacts)"
 	NUMBER="$(
 		printf %b "Close Menu\n$CONTACTS" | 
 		grep . |
@@ -73,39 +80,39 @@ dialmenu() {
 	echo "$NUMBER" | grep "Close Menu" && kill 0
 
 	NUMBER="$(echo "$NUMBER" | awk -F' ' '{print $NF}' | tr -d -)"
-	echo "$NUMBER" | grep -qE '^[+0-9]+$' || err "$NUMBER is not a number"
+	echo "$NUMBER" | grep -qE '^[+0-9]+$' || fatalerr "$NUMBER is not a number"
 
 	echo "Attempting to dial: $NUMBER" >&2
-	VID="$(
+	CALLID="$(
 		mmcli -m "$(modem_n)" --voice-create-call "number=$NUMBER" | 
 		grep -Eo "Call/[0-9]+" | 
 		grep -oE "[0-9]+"
 	)"
-	echo "Starting call with VID: $VID" >&2
-	startcall "$VID" >&2
-	echo "$VID"
+	echo "Starting call with CALLID: $CALLID" >&2
+	startcall "$CALLID" >&2
+	echo "$CALLID"
 }
 
 startcall() {
-  VID="$1"
-  #modem_cmd_errcheck --voice-status -o $VID
-	modem_cmd_errcheck -m "$(modem_n)" -o "$VID" --start
-	log_event "call_start" "$VID"
+	CALLID="$1"
+	#modem_cmd_errcheck --voice-status -o $CALLID
+	modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --start
+	log_event "call_start" "$CALLID"
 }
 
 acceptcall() {
-	VID="$1"
-	echo "Attempting to pickup VID $VID"
-	#mmcli --voice-status -o $VID
-	modem_cmd_errcheck -m "$(modem_n)" -o "$VID" --accept
-	log_event "call_pickup" "$VID"
+	CALLID="$1"
+	echo "Attempting to pickup CALLID $CALLID"
+	#mmcli --voice-status -o $CALLID
+	modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --accept
+	log_event "call_pickup" "$CALLID"
 }
 
 hangup() {
-	VID="$1"
-	modem_cmd_errcheck -m "$(modem_n)" -o "$VID" --hangup
-	log_event "call_hangup" "$VID"
-	err "Call hungup ok"
+	CALLID="$1"
+	modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --hangup
+	log_event "call_hangup" "$CALLID"
+	fatalerr "Call hungup ok"
 	exit 1
 }
 
@@ -117,12 +124,11 @@ togglewindowify() {
 	fi
 }
 
-incallmenu() {
+incallsetup() {
 	DMENUIDX=0
-	VID="$1"
-	NUMBER="$(vid_to_number "$VID")"
+	CALLID="$1"
+	NUMBER="$(vid_to_number "$CALLID")"
 	WINDOWIFIED=0
-
 	# E.g. There's some bug with the modem that' requires us to toggle the
 	# DAI a few times before starting the call for it to kick in
 	FLAGS=" "
@@ -131,43 +137,51 @@ incallmenu() {
 	toggleflagset "-2"
 	toggleflagset "-2"
 	toggleflagset "-2"
+}
 
+incallmonitor() {
+	CALLID="$1"
 	while true; do
-		CHOICES="
-			Volume ↑    ^ sxmo_vol.sh up
-			Volume ↓    ^ sxmo_vol.sh down
-			Mic $(echo -- "$FLAGS" | grep -q -- -m && echo ✓)          ^ toggleflagset -m
-			Linemic $(echo -- "$FLAGS" | grep -q -- -l && echo ✓)      ^ toggleflagset -l
-			Echomic $(echo -- "$FLAGS" | grep -q -- -z && echo ✓)      ^ toggleflagset -z
-			Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo ✓)     ^ toggleflagset -e
-			Linejack $(echo -- "$FLAGS" | grep -q -- -h && echo ✓)     ^ toggleflagset -h
-			Speakerphone $(echo -- "$FLAGS" | grep -q -- -s && echo ✓) ^ toggleflagset -s
-			DTMF Tones  ^ dtmfmenu $VID
-			Hangup      ^ hangup $VID
-			$([ "$WINDOWIFIED" = 0 ] && echo Windowify || echo Unwindowify) ^ togglewindowify
-		"
-
-		PICKED=""
-		PICKED=$(
-			echo "$CHOICES" | 
-			xargs -0 echo | 
-			cut -d'^' -f1 | 
-			sed '/^[[:space:]]*$/d' |
-			awk '{$1=$1};1' |
-			dmenu -idx $DMENUIDX -l 14 $([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm") -fn "Terminus-30" -p "$NUMBER"
-    )
-
-		# E.g. in modem watcher script we just kill dmenu if the other side hangsup
-		echo "$PICKED" | grep -Ev "." && err "$NUMBER hung up the call"
-
-		CMD=$(echo "$CHOICES" | grep "$PICKED" | cut -d '^' -f2)
-		DMENUIDX=$(echo "$(echo "$CHOICES" | grep -n "$PICKED" | cut -d ':' -f1)" - 1 | bc)
-		eval "$CMD"
+		if mmcli -m "$(modem_n)" -K -o "$CALLID" | grep -E "^call.properties.state.+terminated"; then
+			fatalerr "$NUMBER hung up the call"
+		fi
+		echo "Call still in progress"
+		sleep 3
 	done
 }
 
+incallmenuloop() {
+	CHOICES="
+		Volume ↑    ^ sxmo_vol.sh up
+		Volume ↓    ^ sxmo_vol.sh down
+		Mic $(echo -- "$FLAGS" | grep -q -- -m && echo ✓)          ^ toggleflagset -m
+		Linemic $(echo -- "$FLAGS" | grep -q -- -l && echo ✓)      ^ toggleflagset -l
+		Echomic $(echo -- "$FLAGS" | grep -q -- -z && echo ✓)      ^ toggleflagset -z
+		Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo ✓)     ^ toggleflagset -e
+		Linejack $(echo -- "$FLAGS" | grep -q -- -h && echo ✓)     ^ toggleflagset -h
+		Speakerphone $(echo -- "$FLAGS" | grep -q -- -s && echo ✓) ^ toggleflagset -s
+		DTMF Tones  ^ dtmfmenu $CALLID
+		Hangup      ^ hangup $CALLID
+		$([ "$WINDOWIFIED" = 0 ] && echo Windowify || echo Unwindowify) ^ togglewindowify
+	"
+	echo "$CHOICES" | 
+		xargs -0 echo | 
+		cut -d'^' -f1 | 
+		sed '/^[[:space:]]*$/d' |
+		awk '{$1=$1};1' |
+		dmenu -idx $DMENUIDX -l 14 "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -fn "Terminus-30" -p "$NUMBER" |
+		(
+			PICKED="$(cat)";
+			echo "$PICKED" | grep -Ev "." && fatalerr "$NUMBER hung up the call"
+			CMD=$(echo "$CHOICES" | grep "$PICKED" | cut -d '^' -f2)
+			DMENUIDX=$(echo "$(echo "$CHOICES" | grep -n "$PICKED" | cut -d ':' -f1)" - 1 | bc)
+			eval "$CMD"
+			incallmenuloop
+		) & wait # E.g. bg & wait to allow for SIGINT propogation
+}
+
 dtmfmenu() {
-	VID="$1"
+	CALLID="$1"
 	DTMFINDEX=0
 	NUMS="0123456789*#ABCD"
 
@@ -178,19 +192,24 @@ dtmfmenu() {
 		)"
 		echo "$PICKED" | grep "Return to Call Menu" && return
 		DTMFINDEX=$(echo "$NUMS" | grep -bo "$PICKED" | cut -d: -f1 | xargs -IN echo 2+N | bc)
-		modem_cmd_errcheck -m "$(modem_n)" -o "$VID" --send-dtmf="$PICKED"
+		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --send-dtmf="$PICKED"
 	done
 }
 
+
 dial() {
-	VID="$(dialmenu)"
-	incallmenu "$VID"
+	CALLID="$(dialmenu)"
+	incallsetup "$CALLID"
+	incallmonitor "$CALLID" &
+	incallmenuloop "$CALLID"
 }
 
 pickup() {
 	acceptcall "$1"
-	incallmenu "$1"
+	incallsetup "$1"
+	incallmonitor "$1" &
+	incallmenuloop "$1"
 }
 
-modem_n || err "Couldn't determine modem number - is modem online?"
+modem_n || fatalerr "Couldn't determine modem number - is modem online?"
 "$1" "$2"

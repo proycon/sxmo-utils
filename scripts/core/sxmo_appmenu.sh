@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
+signal gracefulexit INT TERM
 WIN=$(xdotool getwindowfocus)
+
+gracefulexit() {
+	echo "Gracefully exiting $0"
+	kill -9 0
+}
 
 programchoicesinit() {
 	XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
@@ -221,29 +227,27 @@ quit() {
 }
 
 mainloop() {
-	DMENUIDX=0
-	PICKED=""
-	ARGS="$*"
-
-	while :
-	do
-		# E.g. sets PROGCHOICES
-		getprogchoices "$ARGS"
-
-		PICKED="$(
-			echo "$PROGCHOICES" |
-			cut -d'^' -f1 | 
-			dmenu -idx $DMENUIDX -l 14 -c -fn "Terminus-30" -p "$WINNAME"
-		)"
+	getprogchoices "$ARGS"
+	echo "$PROGCHOICES" |
+	cut -d'^' -f1 | 
+	dmenu -idx "$DMENUIDX" -l 14 -c -fn "Terminus-30" -p "$WINNAME" | (
+		PICKED="$(cat)"
 		LOOP="$(echo "$PROGCHOICES" | grep -F "$PICKED" | cut -d '^' -f2)"
 		CMD="$(echo "$PROGCHOICES" | grep -F "$PICKED" | cut -d '^' -f3)"
 		DMENUIDX="$(echo "$PROGCHOICES" | grep -F -n "$PICKED" | cut -d ':' -f1)"
 		echo "Eval: <$CMD> from picked <$PICKED> with loop <$LOOP>"
-		eval "$CMD"
-		echo "$LOOP" | grep 1 || quit
-	done
+		if echo "$LOOP" | grep 1; then
+			eval "$CMD"
+			mainloop
+		else
+			eval "$CMD" &
+			quit
+		fi
+	) & wait
 }
 
-pgrep -f sxmo_appmenu.sh | grep -Ev "^${$}$" | xargs kill -9
-pkill -9 dmenu
-mainloop "$@"
+pgrep -f sxmo_appmenu.sh  | grep -Ev "^${$}$" | xargs kill -TERM
+DMENUIDX=0
+PICKED=""
+ARGS="$*"
+mainloop
