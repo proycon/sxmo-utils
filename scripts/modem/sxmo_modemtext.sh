@@ -13,11 +13,6 @@ modem_n() {
 	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 }
 
-textcontacts() {
-	# TODO: is find automatically sorted by timestamp?
-	find "$LOGDIR"/* -type d -maxdepth 1 | awk -F'/' '{print $NF}' | tac
-}
-
 editmsg() {
 	TMP="$(mktemp --suffix "$1_msg")"
 	echo "$2" > "$TMP"
@@ -81,12 +76,12 @@ tailtextlog() {
 
 main() {
 	# Display
-	ENTRIES="$(printf %b "$(textcontacts)" | xargs -INUM echo NUM logfile)"
+	ENTRIES="$(printf %b "$(sxmo_contacts.sh)" | xargs -INUM echo NUM logfile)"
 	ENTRIES="$(printf %b "Close Menu\nSend a Text\n$ENTRIES")"
-	NUMBER="$(printf %b "$ENTRIES" | dmenu -p Texts -c -fn Terminus-20 -l 10)"
-	echo "$NUMBER" | grep "Close Menu" && exit 1
-	echo "$NUMBER" | grep "Send a Text" && sendtextmenu && exit 1
-	tailtextlog "$(echo "$NUMBER" | sed 's/ logfile//g')"
+	CONTACTIDANDNUM="$(printf %b "$ENTRIES" | dmenu -p Texts -c -fn Terminus-20 -l 10)"
+	echo "$CONTACTIDANDNUM" | grep "Close Menu" && exit 1
+	echo "$CONTACTIDANDNUM" | grep "Send a Text" && sendtextmenu && exit 1
+	tailtextlog "$(echo "$CONTACTIDANDNUM" | grep -Eo "[0-9]{3,}")"
 }
 
 main

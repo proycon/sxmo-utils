@@ -17,7 +17,7 @@ modem_n() {
 }
 
 dialmenu() {
-	CONTACTS="$(contacts)"
+	CONTACTS="$(sxmo_contacts.sh)"
 	NUMBER="$(
 		printf %b "Close Menu\n$CONTACTS" | 
 		grep . |
@@ -25,7 +25,12 @@ dialmenu() {
 	)"
 	echo "$NUMBER" | grep "Close Menu" && kill 0
 
-	NUMBER="$(echo "$NUMBER" | awk -F' ' '{print $NF}' | tr -d -)"
+	NUMBER="$(
+		echo "$NUMBER" | 
+		awk -F' ' '{print $NF}' |
+		tr -d - |
+		cut -f2
+	)"
 	echo "$NUMBER" | grep -qE '^[+0-9]+$' || fatalerr "$NUMBER is not a number"
 
 	echo "Attempting to dial: $NUMBER" >&2

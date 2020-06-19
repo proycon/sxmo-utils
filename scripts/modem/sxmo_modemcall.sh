@@ -22,12 +22,6 @@ modem_n() {
 	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 }
 
-contacts() {
-	RES="$(cut -f3 "$LOGDIR/modemlog.tsv" | sort | uniq | awk NF)"
-	echo "$RES"
-	printf %b "$RES" | grep -q 8042221111 || echo "Test Number 8042221111"
-}
-
 modem_cmd_errcheck() {
 	RES="$(mmcli "$@" 2>&1)"
 	OK="$?"
