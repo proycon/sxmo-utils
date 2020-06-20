@@ -2,23 +2,28 @@
 menu() {
 	pidof svkbd-sxmo || svkbd-sxmo &
 	SEARCHTERMS="$(
-		echo "Search term" |
+		echo "Close Menu\n" |
 		dmenu -p "Yt Search" -c -l 10 -fn Terminus-20
 	)"
 	pkill svkbd-sxmo
+	[ "CLOSE_MENU" = "$SEARCHTERMS" ] && exit 0
 
 	IDIOTRESULTS="$(youtube-cli "$SEARCHTERMS")"
-	RESULT="$(
+	FMTRESULTS="$(
 		echo "$IDIOTRESULTS" |
 		grep -Ev '^(Channelid|Atom feed|Channel title|Published|Viewcount|Userid):' |
 		sed -E 's/^(URL|Duration):\s+/\t/g' |
 		tr -d '\n' |
 		sed 's/===/\n/g' |
 		gawk -F'\t' '{ print $3 " " $1 " " $2}' |
-		dmenu -c -l 10 -fn Terminus-20
 	)"
 
+	URL="$(
+		printf %b "Close Menu\n$FMTRESULTS" |
+		dmenu -c -l 10 -fn Terminus-20
+	)"
 	[ "CLOSE_MENU" = "$RESULT" ] && exit 0
+
 	URL=$(echo "$RESULT" | awk -F " " '{print $NF}')
 }
 
