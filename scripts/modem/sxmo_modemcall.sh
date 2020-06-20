@@ -5,7 +5,7 @@ trap "gracefulexit" INT TERM
 fatalerr() {
 	# E.g. hangup all calls, switch back to default audio, notify user, and die
 	sxmo_vibratepine 1000
-	mmcli -m "$(mmcli -L | grep -qoE 'Modem\/([0-9]+)')" --voice-hangup-all
+	mmcli -m "$(mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2)" --voice-hangup-all
 	alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
 	notify-send "$1"
 	kill -9 0
