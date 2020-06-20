@@ -1,29 +1,34 @@
 #!/usr/bin/env sh
-RECDIR=~/Recordings
-OLDAUDIOF="$(mktemp)"
-alsactl --file "$OLDAUDIOF" store
-mkdir -p "$RECDIR"
+[ -z "$SXMO_RECDIR" ] && SXMO_RECDIR=~/Recordings
+mkdir -p "$SXMO_RECDIR"
 
-restoreaudio() {
-	alsactl --file "$OLDAUDIOF" restore
+getdur() {
+	mediainfo "$1" | 
+	grep ^Duration | 
+	head -n1 | 
+	cut -d: -f2 | 
+	tr -d " " |
+	sed -E 's/[0-9]+ms//'
 }
 
 record() {
+	PRETTYNAME="$1"
+	DEVICE="$2"
+	CHANNELS="$3"
+
 	TEMPFILE="$(mktemp --suffix=.wav)"
 	NOW="$(date '+%y%m%d_%H%M%S')"
-	sxmo_megiaudioroute "$1"
-	st -e arecord -vv -f cd -c 1 "$TEMPFILE"
-	restoreaudio
-	DUR="$(
-		mediainfo "$TEMPFILE" | 
-		grep ^Duration | 
-		head -n1 | 
-		cut -d: -f2 |
-		tr -d " "
-	)"
-	FILENAME="${NOW}_${DUR}.wav"
-	FILE="${RECDIR}/${FILENAME}"
+	st -e arecord -D plug:"$DEVICE" -vv -f cd -c "$CHANNELS" "$TEMPFILE"
+	FILENAME="${NOW}_${PRETTYNAME}_$(getdur).wav"
+	FILE="${SXMO_RECDIR}/${FILENAME}"
 	mv "$TEMPFILE" "$FILE"
+	echo "$FILE"
+}
+
+recordconfirm() {
+	FILE="$1"
+	FILENAME="$(basename "$FILE")"
+	DUR="$(getdur "$FILE")"
 
 	while true; do
 		PICK="$(
@@ -47,20 +52,51 @@ record() {
 	done
 }
 
-while true; do
-	NRECORDINGS="$(find "$RECDIR" -type f | wc -l)"
-	OPTION="$(
-		printf %b "Line Jack\nMicrophone\n($NRECORDINGS) Recordings\nClose Menu" |
-		dmenu -fn Terminus-30 -c -p "Record" -l 20
-	)"
 
-	if [ "$OPTION" = "Line Jack" ]; then
-		record -l
-	elif [ "$OPTION" = "Microphone" ]; then
-		record -m
-	elif echo "$OPTION" | grep "Recordings$"; then
-		sxmo_files.sh "$RECDIR"
-	elif [ "$OPTION" = "Close Menu" ]; then
-		exit 0
-	fi
-done
+recordmenu() {
+	while true; do
+		NRECORDINGS="$(find "$SXMO_RECDIR" -type f | wc -l)"
+		OPTIONS="
+			Line Jack
+			Microphone
+			System Audio
+			($NRECORDINGS) Recordings
+			Close Menu
+		"
+		OPTION="$(
+			printf %b "$OPTIONS" |
+			xargs -0 echo |
+			sed '/^[[:space:]]*$/d' | 
+			awk '{$1=$1};1' |
+			dmenu -fn Terminus-30 -c -p "Record" -l 20
+		)"
+	
+		if [ "$OPTION" = "Line Jack" ]; then
+			OLDAUDIOF="$(mktemp)"
+			alsactl --file "$OLDAUDIOF" store
+			sxmo_megiaudioroute -l
+			FILE="$(record line dsnoop 1)"
+			alsactl --file "$OLDAUDIOF" restore
+			recordconfirm "$FILE"
+
+		elif [ "$OPTION" = "Microphone" ]; then
+			OLDAUDIOF="$(mktemp)"
+			alsactl --file "$OLDAUDIOF" store
+			sxmo_megiaudioroute -m
+			FILE="$(record mic dsnoop 1)"
+			alsactl --file "$OLDAUDIOF" restore
+			recordconfirm "$FILE"
+
+		elif echo "$OPTION" | grep "Recordings$"; then
+			sxmo_files.sh "$SXMO_RECDIR"
+		elif [ "$OPTION" = "Close Menu" ]; then
+			exit 0
+		fi
+	done
+}
+
+if [ -z "$1" ]; then
+  recordmenu
+else
+  "$1" "$2" "$3"
+fi
