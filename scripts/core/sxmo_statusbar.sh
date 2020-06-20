@@ -5,6 +5,20 @@ UPDATEFILE=/tmp/sxmo_bar
 touch "$UPDATEFILE"
 
 update() {
+	# In-call.. show length of call
+	CALLINFO=" "
+	if pgrep -f sxmo_modemcall.sh; then
+		NOWS="$(date +"%s")"
+		CALLSTARTS="$(date +"%s" -d "$(
+			cat ~/.config/sxmo/modem/modemlog.tsv |
+			grep call_start |
+			tail -n1 |
+			cut -f1
+		)")"
+		CALLSECONDS="$(echo $NOWS - $CALLSTARTS | bc)"
+		CALLINFO=" ${CALLSECONDS}s "
+	fi
+  
 	# M symbol if modem monitoring is on & modem present
 	MODEMMON=""
 	pgrep -f sxmo_modemmonitor.sh && MODEMMON="M "
@@ -29,7 +43,7 @@ update() {
 	# Time
 	TIME="$(date +%R)"
 
-	BAR=" ${MODEMMON}${VOL} ${BATSTATUS}${PCT}% ${TIME}"
+	BAR="${CALLINFO}${MODEMMON}${VOL} ${BATSTATUS}${PCT}% ${TIME}"
 	xsetroot -name "$BAR"
 }
 

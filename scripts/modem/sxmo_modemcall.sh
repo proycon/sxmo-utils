@@ -142,6 +142,7 @@ incallsetup() {
 incallmonitor() {
 	CALLID="$1"
 	while true; do
+		echo 1 > /tmp/sxmo_bar
 		if mmcli -m "$(modem_n)" -K -o "$CALLID" | grep -E "^call.properties.state.+terminated"; then
 			fatalerr "$NUMBER hung up the call"
 		fi
