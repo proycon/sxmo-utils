@@ -29,6 +29,7 @@ programchoicesinit() {
 			Youtube (Audio) ^ 0 ^ sxmo_youtube.sh audio
 			Weather         ^ 0 ^ sxmo_weather.sh
 			RSS             ^ 0 ^ sxmo_rss.sh
+			Reddit          ^ 0 ^ sxmo_reddit.sh
 		"
 		WINNAME=Scripts
 	elif echo "$WMCLASS" | grep -i "applications"; then
