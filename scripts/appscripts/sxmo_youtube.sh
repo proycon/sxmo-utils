@@ -15,16 +15,16 @@ menu() {
 		sed -E 's/^(URL|Duration):\s+/\t/g' |
 		tr -d '\n' |
 		sed 's/===/\n/g' |
-		gawk -F'\t' '{ print $3 " " $1 " " $2}' |
+		gawk -F'\t' '{ print $3 " " $1 " " $2}'
 	)"
 
-	URL="$(
+	PICKED="$(
 		printf %b "Close Menu\n$FMTRESULTS" |
 		dmenu -c -l 10 -fn Terminus-20
 	)"
-	[ "CLOSE_MENU" = "$RESULT" ] && exit 0
+	[ "CLOSE_MENU" = "$PICKED" ] && exit 0
 
-	URL=$(echo "$RESULT" | awk -F " " '{print $NF}')
+	URL="$(echo "$PICKED" | awk -F " " '{print $NF}')"
 }
 
 video() {
