@@ -4,10 +4,11 @@ trap "gracefulexit" INT TERM
 
 fatalerr() {
 	# E.g. hangup all calls, switch back to default audio, notify user, and die
-	sxmo_vibratepine 1000
+	sxmo_vibratepine 1000 &
 	mmcli -m "$(mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2)" --voice-hangup-all
 	alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
 	notify-send "$1"
+	(sleep 0.5; echo 1 > /tmp/sxmo_bar) &
 	kill -9 0
 }
 
@@ -69,7 +70,6 @@ toggleflagset() {
 	FLAGS="$(toggleflag "$1" "$FLAGS")"
 }
 
-
 dialmenu() {
 	CONTACTS="$(contacts)"
 	NUMBER="$(
@@ -112,7 +112,7 @@ hangup() {
 	CALLID="$1"
 	modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --hangup
 	log_event "call_hangup" "$CALLID"
-	fatalerr "Call hungup ok"
+	fatalerr "Call with $NUMBER terminated"
 	exit 1
 }
 
@@ -144,7 +144,7 @@ incallmonitor() {
 	while true; do
 		echo 1 > /tmp/sxmo_bar
 		if mmcli -m "$(modem_n)" -K -o "$CALLID" | grep -E "^call.properties.state.+terminated"; then
-			fatalerr "$NUMBER hung up the call"
+			fatalerr "Call with $NUMBER terminated"
 		fi
 		echo "Call still in progress"
 		sleep 3
@@ -152,18 +152,20 @@ incallmonitor() {
 }
 
 incallmenuloop() {
+	echo "Current flags are $FLAGS"
 	CHOICES="
-		Volume ↑    ^ sxmo_vol.sh up
-		Volume ↓    ^ sxmo_vol.sh down
-		Mic $(echo -- "$FLAGS" | grep -q -- -m && echo ✓)          ^ toggleflagset -m
-		Linemic $(echo -- "$FLAGS" | grep -q -- -l && echo ✓)      ^ toggleflagset -l
-		Echomic $(echo -- "$FLAGS" | grep -q -- -z && echo ✓)      ^ toggleflagset -z
-		Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo ✓)     ^ toggleflagset -e
-		Linejack $(echo -- "$FLAGS" | grep -q -- -h && echo ✓)     ^ toggleflagset -h
-		Speakerphone $(echo -- "$FLAGS" | grep -q -- -s && echo ✓) ^ toggleflagset -s
-		DTMF Tones  ^ dtmfmenu $CALLID
-		Hangup      ^ hangup $CALLID
-		$([ "$WINDOWIFIED" = 0 ] && echo Windowify || echo Unwindowify) ^ togglewindowify
+		$([ "$WINDOWIFIED" = 0 ] && echo Windowify || echo Unwindowify)   ^ togglewindowify
+		$([ "$WINDOWIFIED" = 0 ] && echo 'Screenlock                      ^ togglewindowify; sxmo_screenlock &')
+		Volume ↑                                                          ^ sxmo_vol.sh up
+		Volume ↓                                                          ^ sxmo_vol.sh down
+		Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo ✓)            ^ toggleflagset -e
+		Mic $(echo -- "$FLAGS" | grep -q -- -m && echo ✓)                 ^ toggleflagset -m
+		Linejack $(echo -- "$FLAGS" | grep -q -- -h && echo ✓)            ^ toggleflagset -h
+		Linemic  $(echo -- "$FLAGS" | grep -q -- -l && echo ✓)            ^ toggleflagset -l
+		Speakerphone $(echo -- "$FLAGS" | grep -q -- -s && echo ✓)        ^ toggleflagset -s
+		Echomic $(echo -- "$FLAGS" | grep -q -- -z && echo ✓)             ^ toggleflagset -z
+		DTMF Tones                                                        ^ dtmfmenu $CALLID
+		Hangup                                                            ^ hangup $CALLID
 	"
 	echo "$CHOICES" | 
 		xargs -0 echo | 
@@ -173,9 +175,11 @@ incallmenuloop() {
 		dmenu -idx $DMENUIDX -l 14 "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -fn "Terminus-30" -p "$NUMBER" |
 		(
 			PICKED="$(cat)";
-			echo "$PICKED" | grep -Ev "." && fatalerr "$NUMBER hung up the call"
-			CMD=$(echo "$CHOICES" | grep "$PICKED" | cut -d '^' -f2)
+			echo "Picked is $PICKED"
+			echo "$PICKED" | grep -Ev "."
+			CMD=$(echo "$CHOICES" | grep "$PICKED" | cut -d'^' -f2)
 			DMENUIDX=$(echo "$(echo "$CHOICES" | grep -n "$PICKED" | cut -d ':' -f1)" - 1 | bc)
+			echo "Eval in call context: $CMD"
 			eval "$CMD"
 			incallmenuloop
 		) & wait # E.g. bg & wait to allow for SIGINT propogation
@@ -189,7 +193,7 @@ dtmfmenu() {
 	while true; do
 		PICKED="$(
 			echo "$NUMS" | grep -o . | sed '1 iReturn to Call Menu' |
-			dmenu -l 20 -fn Terminus-20 -c -idx $DTMFINDEX -p "DTMF Tone"
+			dmenu "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -l 20 -fn Terminus-20 -c -idx $DTMFINDEX -p "DTMF Tone"
 		)"
 		echo "$PICKED" | grep "Return to Call Menu" && return
 		DTMFINDEX=$(echo "$NUMS" | grep -bo "$PICKED" | cut -d: -f1 | xargs -IN echo 2+N | bc)

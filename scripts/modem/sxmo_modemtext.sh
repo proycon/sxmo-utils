@@ -76,7 +76,7 @@ sendtextmenu() {
 }
 
 tailtextlog() {
-  st -e tail -f "$LOGDIR/$1/sms.txt"
+  st -e tail -n9999 -f "$LOGDIR/$1/sms.txt"
 }
 
 main() {
