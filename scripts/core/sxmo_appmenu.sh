@@ -42,7 +42,6 @@ programchoicesinit() {
 			W3m             ^ 0 ^ st -e w3m duck.com
 			Xcalc           ^ 0 ^ xcalc
 			St              ^ 0 ^ st
-			Foxtrotgps      ^ 0 ^ foxtrotgps
 		"
 		WINNAME=Apps
 	elif echo "$WMCLASS" | grep -i "config"; then
@@ -147,6 +146,7 @@ programchoicesinit() {
 			JS Toggle   ^ 1 ^ key Ctrl+Shift+s
 			History ←   ^ 1 ^ key Ctrl+h
 			History →   ^ 1 ^ key Ctrl+l
+			Refresh     ^ 0 ^ key Ctrl+Shift+r
 		"
 		WINNAME=Surf
 	elif echo "$WMCLASS" | grep -i firefox; then
@@ -157,18 +157,26 @@ programchoicesinit() {
 			Zoom -            ^ 1 ^ key Ctrl+minus
 			History  ←        ^ 1 ^ key Alt+Left
 			History  →        ^ 1 ^ key Alt+Right
+			Refresh     ^ 0 ^ key Ctrl+Shift+r
 		"
 		WINNAME=Firefox
 	elif echo "$WMCLASS" | grep -i foxtrot; then
 		# Foxtrot GPS
-		CHOICES="
-			Zoom +            ^ 1 ^ key i
-			Zoom -            ^ 1 ^ key o
-			Panel toggle      ^ 1 ^ key m
-			Autocenter toggle ^ 0 ^ key a
-			Route             ^ 0 ^ key r
-		"
-		WINNAME=Gps
+		CHOICES='
+		  Locations           ^ 0 ^ sxmo_gpsutil.sh menulocations
+			Copy                ^ 1 ^ sxmo_gpsutil.sh copy
+			Paste               ^ 1 ^ sxmo_gpsutil.sh paste
+		  Drop Pin            ^ 0 ^ sxmo_gpsutil.sh droppin
+			Region Search       ^ 0 ^ sxmo_gpsutil.sh menuregionsearch
+			Region Details      ^ 0 ^ sxmo_gpsutil.sh details
+			Zoom +              ^ 1 ^ key i
+			Zoom -              ^ 1 ^ key o
+			Map Type            ^ 0 ^ sxmo_gpsutil.sh menumaptype
+			Panel Toggle        ^ 1 ^ key m
+			GPSD Toggle         ^ 1 ^ key a
+			Locate Me           ^ 0 ^ sxmo_gpsutil.sh locateme
+		'
+		WINNAME=Maps
 	else
 		# Default system menu (no matches)
 		CHOICES="
@@ -179,6 +187,7 @@ programchoicesinit() {
 			Scripts              ^ 0 ^ sxmo_appmenu.sh scripts
 			Apps                 ^ 0 ^ sxmo_appmenu.sh applications
 			Files                ^ 0 ^ sxmo_files.sh
+			Maps                 ^ 0 ^ foxtrotgps
 			Dialer               ^ 0 ^ sxmo_modemcall.sh dial
 			Texts                ^ 0 ^ sxmo_modemtext.sh
 			Camera               ^ 0 ^ sxmo_camera.sh
