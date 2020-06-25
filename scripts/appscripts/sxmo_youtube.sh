@@ -2,7 +2,7 @@
 menu() {
 	pidof svkbd-sxmo || svkbd-sxmo &
 	SEARCHTERMS="$(
-		echo "Close Menu\n" |
+		echo "Close Menu" |
 		dmenu -p "Yt Search" -c -l 10 -fn Terminus-20
 	)"
 	pkill svkbd-sxmo

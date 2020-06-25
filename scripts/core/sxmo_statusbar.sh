@@ -10,12 +10,11 @@ update() {
 	if pgrep -f sxmo_modemcall.sh; then
 		NOWS="$(date +"%s")"
 		CALLSTARTS="$(date +"%s" -d "$(
-			cat ~/.config/sxmo/modem/modemlog.tsv |
-			grep call_start |
+			grep call_start ~/.config/sxmo/modem/modemlog.tsv |
 			tail -n1 |
 			cut -f1
 		)")"
-		CALLSECONDS="$(echo $NOWS - $CALLSTARTS | bc)"
+		CALLSECONDS="$(echo "$NOWS" - "$CALLSTARTS" | bc)"
 		CALLINFO=" ${CALLSECONDS}s "
 	fi
   

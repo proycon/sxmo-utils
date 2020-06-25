@@ -2,8 +2,8 @@
 # Env vars
 # shellcheck disable=SC1091
 . /etc/profile
-which "$TERM" || export TERM=st
-which "$BROWSER" || export BROWSER=surf
+command -v "$TERM" || export TERM=st
+command -v "$BROWSER" || export BROWSER=surf
 [ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 [ -z "$XDG_CONFIG_HOME" ] && export XDG_CONFIG_HOME=~/.config
 
