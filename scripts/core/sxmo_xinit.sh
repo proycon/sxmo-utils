@@ -15,11 +15,13 @@ xset s off -dpms
 xrdb /usr/share/sxmo/xresources_xcalc.xr
 synclient TapButton1=1 TapButton2=3 TapButton3=2 MinSpeed=0.25
 
-# Kill old hanging daemons
-pkill conky
-
 # Start daemons
-conky -c /usr/share/sxmo/conky.conf -d
+pkill conky
+if [ -e "$XDG_CONFIG_HOME/sxmo/conky.conf" ]; then
+	conky -c $XDG_CONFIG_HOME/sxmo/conky.conf -d
+else
+	conky -c /usr/share/sxmo/conky.conf -d
+fi
 keynav &
 autocutsel &
 autocutsel -selection PRIMARY &
