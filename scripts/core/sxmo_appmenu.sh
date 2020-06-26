@@ -14,8 +14,8 @@ programchoicesinit() {
 	if echo "$WMCLASS" | grep -i "userscripts"; then
 		# Userscripts menu
 		CHOICES="$(
-			find "$XDG_CONFIG_HOME/sxmo/userscripts" \( -type f -o -type l \) -print0 | 
-			xargs -IF basename F | 
+			find "$XDG_CONFIG_HOME/sxmo/userscripts" \( -type f -o -type l \) -print0 |
+			xargs -IF basename F |
 			awk '{printf "%s\t^ 0 ^ $XDG_CONFIG_HOME/sxmo/userscripts/%s \n", $0, $0}'
 		)"
 		WINNAME=Userscripts
@@ -54,7 +54,7 @@ programchoicesinit() {
 			Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
 			Modem Log                  ^ 0 ^ sxmo_modemlog.sh
 			Flash $(
-				grep -qE '^0$' /sys/class/leds/white:flash/brightness && 
+				grep -qE '^0$' /sys/class/leds/white:flash/brightness &&
 				printf %b "Off → On" ||  printf %b "On → Off";
 				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 			)
@@ -101,11 +101,11 @@ programchoicesinit() {
 			Type complete   ^ 0 ^ key Ctrl+Shift+u
 			Copy complete   ^ 0 ^ key Ctrl+Shift+i
 			Selmode $(
-			  [ "$STSELMODEON" = 1 ] && 
-			  printf %b 'On → Off' || 
+			  [ "$STSELMODEON" = 1 ] &&
+			  printf %b 'On → Off' ||
 			  printf %b 'Off → On'
 			  printf %b '^ 0 ^ key Ctrl+Shift+s'
-			)               
+			)
 			$([ "$STSELMODEON" = 1 ] && echo 'Copy selection ^ 0 ^ key Ctrl+Shift+c')
 			Paste           ^ 0 ^ key Ctrl+Shift+v
 			Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
@@ -186,7 +186,7 @@ programchoicesinit() {
 		# Default system menu (no matches)
 		CHOICES="
 			$(
-				[ -n "$(ls -A "$XDG_CONFIG_HOME"/sxmo/userscripts)" ] && 
+				[ -n "$(ls -A "$XDG_CONFIG_HOME"/sxmo/userscripts)" ] &&
 				echo 'Userscripts  ^ 0 ^ sxmo_appmenu.sh userscripts'
 			)
 			Scripts              ^ 0 ^ sxmo_appmenu.sh scripts
@@ -251,7 +251,7 @@ quit() {
 mainloop() {
 	getprogchoices "$ARGS"
 	echo "$PROGCHOICES" |
-	cut -d'^' -f1 | 
+	cut -d'^' -f1 |
 	dmenu -idx "$DMENUIDX" -l 14 -c -fn "Terminus-30" -p "$WINNAME" | (
 		PICKED="$(cat)"
 		echo "$PICKED" | grep . || quit
