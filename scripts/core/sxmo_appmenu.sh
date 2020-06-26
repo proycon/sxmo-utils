@@ -47,7 +47,7 @@ programchoicesinit() {
 	elif echo "$WMCLASS" | grep -i "config"; then
 		# System Control menu
 		CHOICES="
-			Brightesss ↑               ^ 1 ^ sxmo_brightness.sh up
+			Brightness ↑               ^ 1 ^ sxmo_brightness.sh up
 			Brightness ↓               ^ 1 ^ sxmo_brightness.sh down
 			Modem Toggle               ^ 1 ^ sxmo_modemmonitortoggle.sh
 			Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
