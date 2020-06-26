@@ -153,6 +153,8 @@ programchoicesinit() {
 		# Firefox
 		CHOICES="
 			Pipe URL          ^ 0 ^ sxmo_urlhandler.sh
+			New Tab           ^ 0 ^ key Ctrl+t
+			New Window        ^ 0 ^ key Ctrl+n
 			Zoom +            ^ 1 ^ key Ctrl+plus
 			Zoom -            ^ 1 ^ key Ctrl+minus
 			History  ←        ^ 1 ^ key Alt+Left
