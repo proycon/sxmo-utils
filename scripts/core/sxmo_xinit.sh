@@ -16,7 +16,7 @@ xrdb /usr/share/sxmo/xresources_xcalc.xr
 synclient TapButton1=1 TapButton2=3 TapButton3=2 MinSpeed=0.25
 
 # Kill old hanging daemons
-pkill lisgd && pkill conky
+pkill conky
 
 # Start daemons
 conky -c /usr/share/sxmo/conky.conf -d
@@ -31,6 +31,6 @@ sxmo_statusbar.sh &
 # Startup dbus, dunst in dbus path, lisgd in dbus path, and finally dwm
 exec dbus-run-session sh -c "
 	dunst -conf /usr/share/sxmo/dunst.conf &
-	lisgd &
+	sxmo_lisgdstart.sh &
 	dwm 2> ~/.dwm.log
 "

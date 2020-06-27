@@ -16,7 +16,7 @@ rotnormal() {
 	xrandr -o normal
 	applyptrmatrix 0 0 0 0 0 0 0 0 0
 	pkill lisgd
-	lisgd -o 0 &
+	sxmo_lisgdstart.sh -o 0 &
 	exit 0
 }
 
@@ -24,7 +24,7 @@ rotright() {
 	xrandr -o right
 	applyptrmatrix 0 1 0 -1 0 1 0 0 1
 	pkill lisgd
-	lisgd -o 1 &
+	sxmo_lisgdstart.sh -o 1 &
 	exit 0
 }
 
