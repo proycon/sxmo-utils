@@ -174,7 +174,7 @@ programchoicesinit() {
 			Map Type            ^ 0 ^ sxmo_gpsutil.sh menumaptype
 			Panel Toggle        ^ 1 ^ key m
 			GPSD Toggle         ^ 1 ^ key a
-			Locate Me           ^ 0 ^ sxmo_gpsutil.sh locateme
+			Locate Me           ^ 0 ^ sxmo_gpsutil.sh gpsgeoclueset
 		'
 		WINNAME=Maps
 	else

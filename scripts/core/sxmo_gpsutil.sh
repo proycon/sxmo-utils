@@ -55,6 +55,9 @@ killexistingfoxtrotgps() {
 	ACTIVEWIN="$(xdotool getactivewindow)"
 	WMCLASS="$(xprop -id "$ACTIVEWIN" | grep WM_CLASS | cut -d ' ' -f3-)"
 	if echo "$WMCLASS" | grep -i foxtrot; then
+		# E.g. by focusing back and refocuing forward we preserve ordering in stack
+		xdotool key Alt+k
+		xdotool key Alt+j
 		xdotool windowkill "$ACTIVEWIN" && return 0
 		return 1
 	else
@@ -98,9 +101,24 @@ gpslatlonset() {
 	gsettings set org.foxtrotgps global-y "$Y"
 	killexistingfoxtrotgps && st -e foxtrotgps --lat="$LAT" --lon="$LON" &
 }
-gpsgeoclueget() {
+gpsgeoclueset() {
 	# Will retrieve and set latlon from geoclue
-	echo foo
+	LATLON="$(
+		( /usr/libexec/geoclue-2.0/demos/where-am-i -t 10 & ) |
+		grep -E "Latitude|Longitude:" -m2 |
+		cut -d: -f2 |
+		tr -d " "
+	)"
+	pkill -f where-am-i
+
+	if echo "$LATLON" | grep .; then
+		LAT="$(echo "$LATLON" | head -n1)"
+		LON="$(echo "$LATLON" | tail -n1)"
+		notify-send "You're at $LAT $LON, refocusing map"
+		gpslatlonset "$LAT $LON 14"
+	else
+		notify-send "Failed to retrieve coordinates from geoclue"
+	fi
 }
 copy() {
 	COORDS="$(gpslatlonget)"
