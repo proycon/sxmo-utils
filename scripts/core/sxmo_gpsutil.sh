@@ -11,6 +11,7 @@ CPI=3.14159265358979323846
 lat2px() {
 	DEGREES="$1"; ZOOM="$2"
 	echo "
+		scale=5;
 		define atanh(x) { return((l(1 + x) - l(1 - x))/2) };
 		-( \
 			atanh(s(($DEGREES * $CPI / 180))) * \
@@ -21,15 +22,17 @@ lat2px() {
 lon2px() {
 	DEGREES="$1"; ZOOM="$2"
 	echo "
-	( \
-		($DEGREES * $CPI / 180) * $CTILESIZE *  \
-		e($ZOOM * $CLN2) / (2 * $CPI) \
-	) + (e($ZOOM * $CLN2) * ($CTILESIZE / 2))
+		scale=5;
+		( \
+			($DEGREES * $CPI / 180) * $CTILESIZE *  \
+			e($ZOOM * $CLN2) / (2 * $CPI) \
+		) + (e($ZOOM * $CLN2) * ($CTILESIZE / 2))
 	" | bc -l 
 }
 px2lat() {
 	PX="$1"; ZOOM="$2"
 	echo "
+		scale=5;
 		define asin(x) {
 			if(x==1) return($CPI/2); if(x==-1) return(-$CPI/2); return(a(x/sqrt(1-(x^2))));
 		}
@@ -43,10 +46,11 @@ px2lat() {
 px2lon() {
 	PX="$1"; ZOOM="$2"
 	echo "
-	( \
-		($PX - (e($ZOOM * $CLN2) * ($CTILESIZE / 2))) * 2 * $CPI / \
-		($CTILESIZE * e($ZOOM * $CLN2)) \
-	) / $CPI * 180
+		scale=5;
+		( \
+			($PX - (e($ZOOM * $CLN2) * ($CTILESIZE / 2))) * 2 * $CPI / \
+			($CTILESIZE * e($ZOOM * $CLN2)) \
+		) / $CPI * 180
 	" | bc -l
 }
 
