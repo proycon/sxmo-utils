@@ -47,5 +47,4 @@ menu() {
 	st -f Monospace-50 -e "$0" timerrun "$TIMEINPUT"
 }
 
-# shellcheck disable=SC2068
-if [ $# -gt 0 ]; then $@; else menu; fi
+if [ $# -gt 0 ]; then "$@"; else menu; fi

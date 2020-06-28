@@ -29,8 +29,7 @@ contacts() {
 }
 
 modem_cmd_errcheck() {
-	# shellcheck disable=SC2068
-	RES="$(mmcli $@ 2>&1)"
+	RES="$(mmcli "$@" 2>&1)"
 	OK="$?"
 	echo "Command: mmcli $*"
 	if [ "$OK" != 0 ]; then fatalerr "Problem executing mmcli command!\n$RES"; fi
