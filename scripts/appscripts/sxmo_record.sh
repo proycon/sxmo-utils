@@ -19,7 +19,7 @@ record() {
 	TEMPFILE="$(mktemp --suffix=.wav)"
 	NOW="$(date '+%y%m%d_%H%M%S')"
 	st -e arecord -D plug:"$DEVICE" -vv -f cd -c "$CHANNELS" "$TEMPFILE"
-	FILENAME="${NOW}_${PRETTYNAME}_$(getdur).wav"
+	FILENAME="${NOW}_${PRETTYNAME}_$(getdur "$TEMPFILE").wav"
 	FILE="${SXMO_RECDIR}/${FILENAME}"
 	mv "$TEMPFILE" "$FILE"
 	echo "$FILE"
