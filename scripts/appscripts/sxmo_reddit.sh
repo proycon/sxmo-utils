@@ -17,7 +17,7 @@ menu() {
 			tr -d '\n' | 
 			sed 's/===/\n/g' | 
 			sed 's/^\t//g' |
-			sort -t$'\t' -rnk4 |
+			sort -t"$(printf '%b' '\t')" -rnk4 |
 			awk -F'\t' '{ printf "↑%4s", $3; print " " $4 " " $1 " " $2 }'
 	)"
 
