@@ -188,7 +188,7 @@ programchoicesinit() {
 			Apps                 ^ 0 ^ sxmo_appmenu.sh applications
 			Files                ^ 0 ^ sxmo_files.sh
 			Maps                 ^ 0 ^ foxtrotgps
-			Dialer               ^ 0 ^ sxmo_modemcall.sh dial
+			Dialer               ^ 0 ^ sxmo_modemdial.sh
 			Texts                ^ 0 ^ sxmo_modemtext.sh
 			Camera               ^ 0 ^ sxmo_camera.sh
 			Wifi                 ^ 0 ^ st -e nmtui

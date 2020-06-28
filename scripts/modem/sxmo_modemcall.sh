@@ -37,7 +37,12 @@ modem_cmd_errcheck() {
 }
 
 vid_to_number() {
-	mmcli -m "$(modem_n)" -o "$1" -K | grep call.properties.number | cut -d ':' -f2 | tr -d  ' ' | sed 's/^[+]//' | sed 's/^1//'
+	mmcli -m "$(modem_n)" -o "$1" -K | 
+	grep call.properties.number | 
+	cut -d ':' -f2 | 
+	tr -d  ' ' | 
+	sed 's/^[+]//' |
+	sed 's/^1//'
 }
 
 log_event() {
@@ -69,42 +74,24 @@ toggleflagset() {
 	FLAGS="$(toggleflag "$1" "$FLAGS")"
 }
 
-dialmenu() {
-	CONTACTS="$(contacts)"
-	NUMBER="$(
-		printf %b "Close Menu\n$CONTACTS" | 
-		grep . |
-		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20
-	)"
-	echo "$NUMBER" | grep "Close Menu" && kill 0
-
-	NUMBER="$(echo "$NUMBER" | awk -F' ' '{print $NF}' | tr -d -)"
-	echo "$NUMBER" | grep -qE '^[+0-9]+$' || fatalerr "$NUMBER is not a number"
-
-	echo "Attempting to dial: $NUMBER" >&2
-	CALLID="$(
-		mmcli -m "$(modem_n)" --voice-create-call "number=$NUMBER" | 
-		grep -Eo "Call/[0-9]+" | 
-		grep -oE "[0-9]+"
-	)"
-	echo "Starting call with CALLID: $CALLID" >&2
-	startcall "$CALLID" >&2
-	echo "$CALLID"
-}
-
-startcall() {
-	CALLID="$1"
-	#modem_cmd_errcheck --voice-status -o $CALLID
-	modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --start
-	log_event "call_start" "$CALLID"
-}
-
 acceptcall() {
 	CALLID="$1"
-	echo "Attempting to pickup CALLID $CALLID"
-	#mmcli --voice-status -o $CALLID
-	modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --accept
-	log_event "call_pickup" "$CALLID"
+	echo "Attempting to initialize CALLID $CALLID"
+	DIRECTION="$(
+		mmcli --voice-status -o "$CALLID" -K |
+		grep call.properties.direction |
+		cut -d: -f2 |
+		tr -d " "
+	)"
+	if [ "$DIRECTION" = "outgoing" ]; then
+		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --start
+		log_event "call_start" "$CALLID"
+	elif [ "$DIRECTION" = "incoming" ]; then
+		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --accept
+		log_event "call_pickup" "$CALLID"
+	else
+		fatalerr "Couldn't initialize call with callid <$CALLID>; unknown direction <$DIRECTION>"
+	fi
 }
 
 hangup() {
@@ -198,14 +185,6 @@ dtmfmenu() {
 		DTMFINDEX=$(echo "$NUMS" | grep -bo "$PICKED" | cut -d: -f1 | xargs -IN echo 2+N | bc)
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --send-dtmf="$PICKED"
 	done
-}
-
-
-dial() {
-	CALLID="$(dialmenu)"
-	incallsetup "$CALLID"
-	incallmonitor "$CALLID" &
-	incallmenuloop "$CALLID"
 }
 
 pickup() {
