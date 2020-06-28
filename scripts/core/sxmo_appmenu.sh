@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-signal gracefulexit INT TERM
+trap gracefulexit INT TERM
 WIN=$(xdotool getwindowfocus)
 
 gracefulexit() {
