@@ -243,9 +243,9 @@ mainloop() {
 	dmenu -idx "$DMENUIDX" -l 14 -c -fn "Terminus-30" -p "$WINNAME" | (
 		PICKED="$(cat)"
 		echo "$PICKED" | grep . || quit
-		LOOP="$(echo "$PROGCHOICES" | grep -F "$PICKED" | cut -d '^' -f2)"
-		CMD="$(echo "$PROGCHOICES" | grep -F "$PICKED" | cut -d '^' -f3)"
-		DMENUIDX="$(echo "$PROGCHOICES" | grep -F -n "$PICKED" | cut -d ':' -f1)"
+		LOOP="$(echo "$PROGCHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f2)"
+		CMD="$(echo "$PROGCHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f3)"
+		DMENUIDX="$(echo "$PROGCHOICES" | grep -m1 -F -n "$PICKED" | cut -d ':' -f1)"
 		echo "Eval: <$CMD> from picked <$PICKED> with loop <$LOOP>"
 		if echo "$LOOP" | grep 1; then
 			eval "$CMD"
