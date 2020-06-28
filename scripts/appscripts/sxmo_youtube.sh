@@ -6,7 +6,7 @@ menu() {
 		dmenu -p "Yt Search" -c -l 10 -fn Terminus-20
 	)"
 	pkill svkbd-sxmo
-	[ "CLOSE_MENU" = "$SEARCHTERMS" ] && exit 0
+	[ "Close Menu" = "$SEARCHTERMS" ] && exit 0
 
 	IDIOTRESULTS="$(youtube-cli "$SEARCHTERMS")"
 	FMTRESULTS="$(
@@ -22,7 +22,7 @@ menu() {
 		printf %b "Close Menu\n$FMTRESULTS" |
 		dmenu -c -l 10 -fn Terminus-20
 	)"
-	[ "CLOSE_MENU" = "$PICKED" ] && exit 0
+	[ "Close Menu" = "$PICKED" ] && exit 0
 
 	URL="$(echo "$PICKED" | awk -F " " '{print $NF}')"
 }
