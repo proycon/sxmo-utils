@@ -217,4 +217,4 @@ pickup() {
 }
 
 modem_n || fatalerr "Couldn't determine modem number - is modem online?"
-"$1" "$2"
+"$@"

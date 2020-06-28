@@ -98,5 +98,5 @@ recordmenu() {
 if [ -z "$1" ]; then
   recordmenu
 else
-  "$1" "$2" "$3"
+  "$@"
 fi

@@ -19,7 +19,7 @@ menu() {
 }
 
 if [ $# -gt 0 ]; then
-	"$1" "$2"
+	"$@"
 else
 	menu
 fi

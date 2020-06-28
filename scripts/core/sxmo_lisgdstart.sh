@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 pkill -9 lisgd
 
-lisgd $@ \
+lisgd "$@" \
 	-g '1,LR,sxmo_lisgdonefingercheck.sh xdotool key --clearmodifiers Alt+Shift+e' \
 	-g '1,RL,sxmo_lisgdonefingercheck.sh xdotool key --clearmodifiers Alt+Shift+r' \
 	-g '1,DLUR,sxmo_lisgdonefingercheck.sh sxmo_vol.sh up' \

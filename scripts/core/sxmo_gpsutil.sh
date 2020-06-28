@@ -84,7 +84,7 @@ gpslatlonget() {
 	echo "$LAT" "$LON" "$ZOOM"
 }
 gpslatlonset() {
-	CORDS="$(echo $@ | tr -d ',°')"
+	CORDS="$(echo "$@" | tr -d ',°')"
 	LAT="$(echo "$CORDS" | cut -d' ' -f1)"
 	LON="$(echo "$CORDS" | cut -d' ' -f2)"
 	ZOOM="$(echo "$CORDS" | cut -d' ' -f3)"
@@ -226,4 +226,4 @@ menumaptype() {
 	done
 }
 
-"$1" "$2" "$3" "$4" "$5"
+"$@"
