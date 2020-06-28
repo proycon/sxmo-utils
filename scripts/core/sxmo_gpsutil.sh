@@ -84,10 +84,10 @@ gpslatlonget() {
 	echo "$LAT" "$LON" "$ZOOM"
 }
 gpslatlonset() {
-	CORDS="$(echo "$@" | tr -d ',°')"
-	LAT="$(echo "$CORDS" | cut -d' ' -f1)"
-	LON="$(echo "$CORDS" | cut -d' ' -f2)"
-	ZOOM="$(echo "$CORDS" | cut -d' ' -f3)"
+	COORDS="$(echo "$@" | tr -d ',°' | awk '{$1=$1};1')"
+	LAT="$(echo "$COORDS" | cut -d' ' -f1)"
+	LON="$(echo "$COORDS" | cut -d' ' -f2)"
+	ZOOM="$(echo "$COORDS" | cut -d' ' -f3)"
 	[ -z "$ZOOM" ] && ZOOM=10
 	WINW="$(
 		xwininfo -id "$(xdotool getactivewindow)" | grep -E '^\s*Width' | cut -d: -f2
