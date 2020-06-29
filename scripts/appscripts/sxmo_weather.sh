@@ -1,13 +1,14 @@
 #!/usr/bin/env sh
+[ -z "$SXMO_WEATHERZIPS" ] && SXMO_WEATHERZIPS="
+	10025 - NYC
+	60007 - Chicago
+	94016 - San Francisco
+	97035 - Portland, OR
+"
 
 pidof svkbd-sxmo || svkbd-sxmo &
 ZIP=$(
-	printf %b "
-		10025 - NYC
-		60007 - Chicago
-		94016 - San Francisco
-		97035 - Portland, OR
-	" |
+	printf %b "$SXMO_WEATHER_ZIPS" |
 	awk 'NF' |
 	awk '{$1=$1};1' |
 	dmenu -fn Terminus-20 -i -c -l 10 -p "US Zipcode" |
