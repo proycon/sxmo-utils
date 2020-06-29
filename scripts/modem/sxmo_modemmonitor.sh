@@ -50,7 +50,7 @@ checkforincomingcalls() {
 		mmcli -m "$(modem_n)" --voice-list-calls -o "$VOICECALLID" -K |
 		grep call.properties.number |
 		cut -d ':' -f 2 |
-		tr -d ' '
+		tr -d ' +'
 	)
 
 	# Log to /tmp/incomingcall to allow pickup and log into modemlog
