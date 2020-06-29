@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
 trap "gracefulexit" INT TERM
 
 fatalerr() {
@@ -25,7 +24,7 @@ dialmenu() {
 	)"
 	echo "$NUMBER" | grep "Close Menu" && kill 0
 
-	NUMBER="$(echo "$NUMBER" | cut -d: -f1 tr -d '- ')"
+	NUMBER="$(echo "$NUMBER" | cut -d: -f1 | tr -d -- '- ')"
 	echo "$NUMBER" | grep -qE '^[+0-9]+$' || fatalerr "$NUMBER is not a number"
 
 	echo "Attempting to dial: $NUMBER" >&2

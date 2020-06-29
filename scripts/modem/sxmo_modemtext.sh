@@ -48,12 +48,14 @@ sendtextmenu() {
 
 	# Prompt for number
 	NUMBER="$(
-		printf %b "\nCancel\n$(textcontacts)" | 
+		printf %b "\nCancel\n$(sxmo_contacts.sh)" | 
 		awk NF |
-		sxmo_dmenu_with_kb.sh -p "Number" -fn "Terminus-20" -l 10 -c
+		sxmo_dmenu_with_kb.sh -p "Number" -fn "Terminus-20" -l 10 -c |
+		cut -d: -f1 |
+		tr -d -- '- '
 	)"
 	echo "$NUMBER" | grep -E "^Cancel$" && exit 1
-	echo "$NUMBER" | grep -E '[0-9]+' || err "That doesn't seem like a valid number"
+	echo "$NUMBER" | grep -qE '^[+0-9]+$' || err "That doesn't seem like a valid number"
 
 	# Compose first version of msg
 	TEXT="$(editmsg "$NUMBER" 'Enter text message here')"
@@ -75,13 +77,19 @@ tailtextlog() {
 }
 
 main() {
-	# Display
-	ENTRIES="$(printf %b "$(sxmo_contacts.sh)" | xargs -INUM echo NUM logfile)"
-	ENTRIES="$(printf %b "Close Menu\nSend a Text\n$ENTRIES")"
+	# E.g. only display logfiles for directories that exist and join w contact name
+	ENTRIES="$(
+		printf %b "Close Menu\nSend a Text\n";
+		for TDIR in "$LOGDIR"/*; do
+			[ -d "$TDIR" ] || continue
+			NUM="$(basename "$TDIR")"
+			sxmo_contacts.sh | grep -m1 "$NUM" | xargs -IL echo "L logfile"
+		done
+	)"
 	CONTACTIDANDNUM="$(printf %b "$ENTRIES" | dmenu -p Texts -c -fn Terminus-20 -l 10)"
 	echo "$CONTACTIDANDNUM" | grep "Close Menu" && exit 1
 	echo "$CONTACTIDANDNUM" | grep "Send a Text" && sendtextmenu && exit 1
-	tailtextlog "$(echo "$CONTACTIDANDNUM" | grep -Eo "[0-9]{3,}")"
+	tailtextlog "$(echo "$CONTACTIDANDNUM" | cut -d: -f1)"
 }
 
 main
