@@ -16,14 +16,13 @@ contacts() {
 		awk '!($0 in a){a[$0];print}' |
 		sed '/^[[:space:]]*$/d'
 	)"
-	RECENTCONTACTEDNUMBERSREVCHRONF="$(mktemp)"
-	echo "$RECENTCONTACTEDNUMBERSREVCHRON" > "$RECENTCONTACTEDNUMBERSREVCHRONF"
-	printf %b "$(
-		join -t"$(printf '\t')" -o1.1,2.2 -a1 -e"Unknown Number" \
-		"$RECENTCONTACTEDNUMBERSREVCHRONF" "$CONTACTSFILE" |
-		sed 's#\t#: #g'
-	)"
-	rm "$RECENTCONTACTEDNUMBERSREVCHRONF" &
+	printf %b "$RECENTCONTACTEDNUMBERSREVCHRON" | awk -F'\t' '
+		FNR==NR{a[$1]=$2; next}
+		{
+			if (!a[$1]) a[$1] = "Unknown Number";
+			print $0 ": " a[$1]
+		}
+	' "$CONTACTSFILE" -
 }
 
 contacts
