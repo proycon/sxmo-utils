@@ -50,8 +50,7 @@ checkforincomingcalls() {
 		mmcli -m "$(modem_n)" --voice-list-calls -o "$VOICECALLID" -K |
 		grep call.properties.number |
 		cut -d ':' -f 2 |
-		sed 's/^[+]//' | 
-		sed 's/^1//'
+		tr -d ' '
 	)
 
 	# Log to /tmp/incomingcall to allow pickup and log into modemlog
@@ -86,9 +85,7 @@ checkfornewtexts() {
 		NUM="$(
 			echo "$TEXTDATA" | 
 			grep sms.content.number | 
-			sed -E 's/^sms\.content\.number\s+:\s+[+]?//' |
-			sed 's/^[+]//' |
-			sed 's/^1//'
+			sed -E 's/^sms\.content\.number\s+:\s+[+]?//'
 		)"
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 

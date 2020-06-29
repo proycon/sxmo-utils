@@ -34,9 +34,7 @@ vid_to_number() {
 	mmcli -m "$(modem_n)" -o "$1" -K | 
 	grep call.properties.number | 
 	cut -d ':' -f2 | 
-	tr -d  ' ' | 
-	sed 's/^[+]//' |
-	sed 's/^1//'
+	tr -d  ' '
 }
 
 log_event() {

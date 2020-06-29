@@ -22,7 +22,7 @@ editmsg() {
 
 sendmsg() {
 	MODEM="$(modem_n)"
-	NUMBER="$(echo "$1" | sed 's/^[+]//' | sed 's/^1//')"
+	NUMBER="$1"
 	TEXT="$2"
 	TEXTSIZE="${#TEXT}"
 
