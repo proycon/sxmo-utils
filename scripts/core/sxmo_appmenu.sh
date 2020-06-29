@@ -208,10 +208,17 @@ getprogchoices() {
 
 	# Decorate menu at top w/ incoming call entry if present
 	INCOMINGCALL="$(cat /tmp/sxmo_incomingcall || echo NOCALL)"
-	echo "$INCOMINGCALL" | grep -v NOCALL && CHOICES="
-		Pickup $(echo "$INCOMINGCALL" | cut -d: -f2) ^ 0 ^ sxmo_modemcall.sh pickup $(echo "$INCOMINGCALL" | cut -d: -f1)
-		$CHOICES
-	"
+	if echo "$INCOMINGCALL" | grep -v NOCALL; then
+		CALLID="$(echo "$INCOMINGCALL" | cut -d: -f1)"
+		CALLNUM="$(echo "$INCOMINGCALL" | cut -d: -f2)"
+		CALLCONTACT="$(sxmo_contacts.sh | grep -v "Unknown Number" | grep -m1 "$CALLNUM" | cut -d: -f2)"
+		CHOICES="
+			Pickup: $(
+				[ -n "$CALLCONTACT" ] && echo "$CALLCONTACT" || echo "$CALLNUM"
+			) ^ 0 ^ sxmo_modemcall.sh pickup $CALLID
+			$CHOICES
+		"
+	fi
 
 	# Decorate menu at bottom w/ system menu entry if not system menu
 	echo $WINNAME | grep -v Sys && CHOICES="

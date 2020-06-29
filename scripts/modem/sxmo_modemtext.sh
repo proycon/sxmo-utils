@@ -80,8 +80,9 @@ main() {
 	# E.g. only display logfiles for directories that exist and join w contact name
 	ENTRIES="$(
 		printf %b "Close Menu\nSend a Text\n";
-		for TDIR in "$LOGDIR"/*; do
-			[ -d "$TDIR" ] || continue
+		# shellcheck disable=SC2045
+		for TDIR in $(ls -1 -t "$LOGDIR"); do
+			[ -d "$LOGDIR"/"$TDIR" ] || continue
 			NUM="$(basename "$TDIR")"
 			sxmo_contacts.sh | grep -m1 "$NUM" | xargs -IL echo "L logfile"
 		done
