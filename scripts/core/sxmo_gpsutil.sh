@@ -100,10 +100,13 @@ gpslatlonset() {
 	Y="$(echo "$(lat2px "$LAT" "$ZOOM") - ($WINH / 2)" | bc -l | cut -d. -f1)"
 	X="$(echo "$(lon2px "$LON" "$ZOOM") - ($WINW / 2)" | bc -l | cut -d. -f1)"
 
-	gsettings set org.foxtrotgps global-zoom "$ZOOM"
-	gsettings set org.foxtrotgps global-x "$X"
-	gsettings set org.foxtrotgps global-y "$Y"
-	killexistingfoxtrotgps && st -e foxtrotgps --lat="$LAT" --lon="$LON" &
+	killexistingfoxtrotgps
+	st -e sh -c "
+		gsettings set org.foxtrotgps global-zoom "$ZOOM";
+		gsettings set org.foxtrotgps global-x "$X";
+		gsettings set org.foxtrotgps global-y "$Y";
+		foxtrotgps --lat="$LAT" --lon="$LON"
+	" &
 }
 gpsgeoclueset() {
 	# Will retrieve and set latlon from geoclue
@@ -221,8 +224,9 @@ menumaptype() {
 		echo "$CHOICE" | grep "Close Menu" && exit 0
 		SETCHOICE="$(printf %b "$CHOICES" | grep "$CHOICE" | cut -d^ -f2 | awk '{$1=$1};1')"
 		IDX="$(printf %b "$CHOICES" | grep -n "$CHOICE" | cut -d: -f1)"
+		killexistingfoxtrotgps
 		gsettings set org.foxtrotgps repo-name "$SETCHOICE"
-		killexistingfoxtrotgps && st -e foxtrotgps &
+		st -e foxtrotgps &
 	done
 }
 
