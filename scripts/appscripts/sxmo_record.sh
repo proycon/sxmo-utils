@@ -59,7 +59,6 @@ recordmenu() {
 		OPTIONS="
 			Line Jack
 			Microphone
-			System Audio
 			($NRECORDINGS) Recordings
 			Close Menu
 		"
