@@ -167,7 +167,7 @@ programchoicesinit() {
 		CHOICES='
 		  Locations           ^ 0 ^ sxmo_gpsutil.sh menulocations
 			Copy                ^ 1 ^ sxmo_gpsutil.sh copy
-			Paste               ^ 1 ^ sxmo_gpsutil.sh paste
+			Paste               ^ 0 ^ sxmo_gpsutil.sh paste
 		  Drop Pin            ^ 0 ^ sxmo_gpsutil.sh droppin
 			Region Search       ^ 0 ^ sxmo_gpsutil.sh menuregionsearch
 			Region Details      ^ 0 ^ sxmo_gpsutil.sh details
