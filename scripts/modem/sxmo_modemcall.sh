@@ -8,7 +8,7 @@ fatalerr() {
 	mmcli -m "$(mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2)" --voice-hangup-all
 	alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
 	notify-send "$1"
-	(sleep 0.5; echo 1 > /tmp/sxmo_bar) &
+	setsid -f sh -c 'sleep 2; echo 1 > /tmp/sxmo_bar'
 	kill -9 0
 }
 
