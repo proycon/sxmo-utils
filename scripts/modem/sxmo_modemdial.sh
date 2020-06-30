@@ -22,7 +22,7 @@ dialmenu() {
 		grep . |
 		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20
 	)"
-	echo "$NUMBER" | grep "Close Menu" && kill 0
+	echo "$NUMBER" | grep "Close Menu" && kill -9 0
 
 	NUMBER="$(echo "$NUMBER" | cut -d: -f1 | tr -d -- '- ')"
 	echo "$NUMBER" | grep -qE '^[+0-9]+$' || fatalerr "$NUMBER is not a number"
