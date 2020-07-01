@@ -102,10 +102,10 @@ gpslatlonset() {
 
 	killexistingfoxtrotgps
 	st -e sh -c "
-		gsettings set org.foxtrotgps global-zoom "$ZOOM";
-		gsettings set org.foxtrotgps global-x "$X";
-		gsettings set org.foxtrotgps global-y "$Y";
-		foxtrotgps --lat="$LAT" --lon="$LON"
+		gsettings set org.foxtrotgps global-zoom $ZOOM;
+		gsettings set org.foxtrotgps global-x $X;
+		gsettings set org.foxtrotgps global-y $Y;
+		foxtrotgps --lat=$LAT --lon=$LON
 	" &
 }
 gpsgeoclueset() {

@@ -267,7 +267,7 @@ mainloop() {
 	) & wait
 }
 
-pgrep -f "$(which sxmo_appmenu.sh)" | grep -Ev "^${$}$" | xargs kill -TERM
+pgrep -f "$(command -v sxmo_appmenu.sh)" | grep -Ev "^${$}$" | xargs kill -TERM
 DMENUIDX=0
 PICKED=""
 ARGS="$*"
