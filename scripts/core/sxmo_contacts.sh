@@ -10,6 +10,7 @@ CONTACTSFILE="$XDG_CONFIG_HOME"/sxmo/contacts.tsv
 LOGFILE="$XDG_CONFIG_HOME"/sxmo/modem/modemlog.tsv
 
 contacts() {
+	grep -q . "$CONTACTSFILE" || echo " " > "$CONTACTSFILE"
 	RECENTCONTACTEDNUMBERSREVCHRON="$(
 		cut -f3 "$LOGFILE" |
 		tac |
