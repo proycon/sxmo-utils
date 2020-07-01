@@ -42,6 +42,7 @@ programchoicesinit() {
 			W3m             ^ 0 ^ st -e w3m duck.com
 			Xcalc           ^ 0 ^ xcalc
 			St              ^ 0 ^ st
+			Foxtrotgps      ^ 0 ^ foxtrotgps
 		"
 		WINNAME=Apps
 	elif echo "$WMCLASS" | grep -i "config"; then
