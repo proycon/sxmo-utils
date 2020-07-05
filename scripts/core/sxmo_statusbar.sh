@@ -17,6 +17,13 @@ update() {
 		CALLSECONDS="$(echo "$NOWS" - "$CALLSTARTS" | bc)"
 		CALLINFO=" ${CALLSECONDS}s "
 	fi
+
+	# W symbol if wireless is connect
+	WIRELESS=""
+	WLANSTATE="$(tr -d "\n" < /sys/class/net/wlan0/operstate)"
+	if [ "$WLANSTATE" = "up" ]; then
+		WIRELESS="W "
+	fi
   
 	# M symbol if modem monitoring is on & modem present
 	MODEMMON=""
@@ -42,7 +49,7 @@ update() {
 	# Time
 	TIME="$(date +%R)"
 
-	BAR="${CALLINFO}${MODEMMON}${VOL} ${BATSTATUS}${PCT}% ${TIME}"
+	BAR="${CALLINFO}${MODEMMON}${WIRELESS}${VOL} ${BATSTATUS}${PCT}% ${TIME}"
 	xsetroot -name "$BAR"
 }
 
