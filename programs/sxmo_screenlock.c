@@ -1,71 +1,100 @@
-#include <X11/XF86keysym.h>
-#include <stdlib.h>
+#include <dirent.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <X11/keysym.h>
+#include <X11/XF86keysym.h>
 #include <X11/Xlib.h>
 
-static int running = 1;
+enum State {
+	StateNoInput,
+	StateNoInputNoScreen,
+	StateSuspend,
+	StateDead
+};
+
+enum Color {
+	Red,
+	Blue,
+	Purple,
+	Off
+};
+
+static Display *dpy;
+static enum State state = StateNoInput;
 static int lastkeysym = NULL;
 static int lastkeyn = 0;
-static int oldbrightness = 10;
-static int screenon = 1;
-static char screentogglecommand[100];
-static char pineledcommand[100];
+static char * oldbrightness = "200";
 static char * brightnessfile = "/sys/devices/platform/backlight/backlight/backlight/brightness";
+static char * powerstatefile = "/sys/power/state";
 
-
-
-void updatepineled(int red, int brightness) {
-	sprintf(
-		pineledcommand, 
-		"sh -c 'echo %d > /sys/class/leds/%s:indicator/brightness'",
-		brightness, 
-		red ? "red" : "blue"
-	);
-	system(pineledcommand);
+void
+writefile(char *filepath, char *str)
+{
+	FILE *f;
+	f = fopen(filepath, "w");
+	if (f) {
+		fprintf(f, "%s\n", str);
+		fclose(f);
+	} else {
+		fprintf(stderr, "Couldn't open filepath <%s>\n", filepath);
+	}
 }
 
-void updatescreenon(int on) {
-	int b = on ? oldbrightness : 0;
-	sprintf(screentogglecommand, "sh -c 'echo %d > %s'", b, brightnessfile);
-	system(screentogglecommand);
-	updatepineled(0, b ? 1 : 0);
-	updatepineled(1, b ? 0 : 1);
+void
+setpineled(enum Color c)
+{
+	if (c == Red) {
+		writefile("/sys/class/leds/red:indicator/brightness", "1");
+		writefile("/sys/class/leds/blue:indicator/brightness", "0");
+	} else if (c == Blue) {
+		writefile("/sys/class/leds/red:indicator/brightness", "0");
+		writefile("/sys/class/leds/blue:indicator/brightness", "1");
+	} else if (c == Purple) {
+		writefile("/sys/class/leds/red:indicator/brightness", "1");
+		writefile("/sys/class/leds/blue:indicator/brightness", "1");
+	} else if (c == Off) {
+		writefile("/sys/class/leds/red:indicator/brightness", "0");
+		writefile("/sys/class/leds/blue:indicator/brightness", "0");
+	}
 }
 
-void cleanup() {
-	updatescreenon(1);
-	updatepineled(1, 0);
-	updatepineled(0, 0);
+void
+syncstate()
+{
+	if (state == StateSuspend) {
+		setpineled(Red);
+		writefile(powerstatefile, "mem");
+	} else if (state == StateNoInput) {
+		setpineled(Blue);
+		writefile(brightnessfile, "200");
+	} else if (state == StateNoInputNoScreen) {
+		setpineled(Purple);
+		writefile(brightnessfile, "0");
+	} else if (state == StateDead) {
+		writefile(brightnessfile, "200");
+		setpineled(Off);
+	}
 }
 
-static void die(const char *err, ...) {
+static void
+die(const char *err, ...)
+{
 	fprintf(stderr, "Error: %s", err);
-	cleanup();
+	state = StateDead;
+	syncstate();
 	exit(1);
-}
-static void usage(void) {
-	die("usage: slock [-v] [cmd [arg ...]]\n");
 }
 
 // Loosely derived from suckless' slock's lockscreen binding logic but
 // alot more coarse, intentionally so can be triggered while grab_key
 // for dwm multikey path already holding..
-void lockscreen(Display *dpy, int screen) {
+void
+lockscreen(Display *dpy, int screen)
+{
 	int i, ptgrab, kbgrab;
-	//XSetWindowAttributes wa;
 	Window root;
-	//win,
 	root = RootWindow(dpy, screen);
-	//wa.override_redirect = 1;
-	//win = XCreateWindow(dpy, root, 0, 0,
-	//                          DisplayWidth(dpy, screen),
-	//                          DisplayHeight(dpy, screen),
-	//                          0, DefaultDepth(dpy, screen),
-	//                          CopyFromParent,
-	//                          DefaultVisual(dpy, screen),
-	//                          CWOverrideRedirect | CWBackPixel, &wa);
 	for (i = 0, ptgrab = kbgrab = -1; i < 9999999; i++) {
 		if (ptgrab != GrabSuccess) {
 			ptgrab = XGrabPointer(dpy, root, False,
@@ -85,14 +114,13 @@ void lockscreen(Display *dpy, int screen) {
 	}
 }
 
-
 void
 readinputloop(Display *dpy, int screen) {
 	KeySym keysym;
 	XEvent ev;
 	char buf[32];
 
-	while (running && !XNextEvent(dpy, &ev)) {
+	while (state != StateDead && !XNextEvent(dpy, &ev)) {
 		if (ev.type == KeyPress) {
 			XLookupString(&ev.xkey, buf, sizeof(buf), &keysym, 0);
 			if (lastkeysym == keysym) {
@@ -107,18 +135,18 @@ readinputloop(Display *dpy, int screen) {
 
 			lastkeyn = 0;
 			lastkeysym = NULL;
-
 			switch (keysym) {
 				case XF86XK_AudioRaiseVolume:
+					state = (state == StateSuspend ? StateDead : StateSuspend);
+					break;
 				case XF86XK_AudioLowerVolume:
-					screenon = !screenon;
-					updatescreenon(screenon);
+					state = (state == StateNoInput ? StateNoInputNoScreen : StateNoInput);
 					break;
 				case XF86XK_PowerOff:
-					cleanup();
-					running = 0;
+					state = StateDead;
 					break;
 			}
+			syncstate();
 		}
 	}
 }
@@ -127,7 +155,7 @@ int
 getoldbrightness() {
 	char * buffer = 0;
 	long length;
-	FILE * f = fopen(brightnessfile, "rb");
+	FILE * f = fopen(brightnessfile, "r");
 	if (f) {
 		fseek(f, 0, SEEK_END);
 		length = ftell(f);
@@ -139,13 +167,52 @@ getoldbrightness() {
 		fclose(f);
 	}
 	if (buffer) {
-		oldbrightness = atoi(buffer);
+		oldbrightness = buffer;
 	}
+}
+
+void
+configuresuspendsettingsandwakeupsources()
+{
+	// Disable all wakeup sources
+	struct dirent *wakeupsource;
+	char wakeuppath[100];
+	DIR *wakeupsources = opendir("/sys/class/wakeup");
+	if (wakeupsources == NULL)
+		die("Couldn't open directory /sys/class/wakeup\n");
+	while ((wakeupsource = readdir(wakeupsources)) != NULL) {
+		sprintf(
+			wakeuppath, 
+			"/sys/class/wakeup/%s/device/power/wakeup",
+			wakeupsource->d_name
+		);
+		fprintf(stderr, "Disabling wakeup source: %s", wakeupsource->d_name);
+		writefile(wakeuppath, "disabled");
+		fprintf(stderr, ".. ok\n");
+	}
+	closedir(wakeupsources);
+
+	// Enable powerbutton wakeup source
+	fprintf(stderr, "Enable powerbutton wakeup source\n");
+	writefile(
+		"/sys/devices/platform/soc/1f03400.rsb/sunxi-rsb-3a3/axp221-pek/power/wakeup",
+		"enabled"
+	);
+
+	// Temporary hack to disable USB driver that doesn't suspend
+	fprintf(stderr, "Disabling buggy USB driver\n");
+	writefile(
+		"/sys/devices/platform/soc/1c19000.usb/driver/unbind",
+		"1c19000.usb"
+	);
+
+	// E.g. make sure we're using CRUST
+	fprintf(stderr, "Flip mem_sleep setting to use crust\n");
+	writefile("/sys/power/mem_sleep", "deep");
 }
 
 int
 main(int argc, char **argv) {
-	Display *dpy;
 	Screen *screen;
 
 	if (setuid(0))
@@ -155,8 +222,9 @@ main(int argc, char **argv) {
 
 	screen = XDefaultScreen(dpy);
 	XSync(dpy, 0);
+	configuresuspendsettingsandwakeupsources();
 	getoldbrightness();
-	updatescreenon(1);
+	syncstate();
 	lockscreen(dpy, screen);
 	readinputloop(dpy, screen);
 	return 0;
