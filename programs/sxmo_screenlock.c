@@ -1,4 +1,5 @@
 #include <dirent.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,11 +32,11 @@ static char * powerstatefile = "/sys/power/state";
 void
 writefile(char *filepath, char *str)
 {
-	FILE *f;
-	f = fopen(filepath, "w");
-	if (f) {
-		fprintf(f, "%s\n", str);
-		fclose(f);
+	int f;
+	f = open(filepath, O_WRONLY);
+	if (f != NULL) {
+		write(f, str, strlen(str));
+		close(f);
 	} else {
 		fprintf(stderr, "Couldn't open filepath <%s>\n", filepath);
 	}
