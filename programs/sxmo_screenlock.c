@@ -64,6 +64,7 @@ syncstate()
 {
 	if (state == StateSuspend) {
 		setpineled(Red);
+		configuresuspendsettingsandwakeupsources();
 		writefile(powerstatefile, "mem");
 		state = StateNoInput;
 		syncstate();
@@ -224,7 +225,6 @@ main(int argc, char **argv) {
 
 	screen = XDefaultScreen(dpy);
 	XSync(dpy, 0);
-	configuresuspendsettingsandwakeupsources();
 	getoldbrightness();
 	syncstate();
 	lockscreen(dpy, screen);
