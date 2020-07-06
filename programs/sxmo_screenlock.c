@@ -210,6 +210,13 @@ configuresuspendsettingsandwakeupsources()
 		"1c19000.usb"
 	);
 
+	// Temporary hack to disable Bluetooth driver that crashes on suspend 1/5th the time
+	fprintf(stderr, "Disabling buggy Bluetooth driver\n");
+	writefile(
+		"/sys/bus/serial/drivers/hci_uart_h5/unbind",
+		"serial0-0"
+	);
+
 	// E.g. make sure we're using CRUST
 	fprintf(stderr, "Flip mem_sleep setting to use crust\n");
 	writefile("/sys/power/mem_sleep", "deep");
