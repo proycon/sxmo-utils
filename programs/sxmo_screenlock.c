@@ -65,6 +65,8 @@ syncstate()
 	if (state == StateSuspend) {
 		setpineled(Red);
 		writefile(powerstatefile, "mem");
+		state = StateNoInput;
+		syncstate();
 	} else if (state == StateNoInput) {
 		setpineled(Blue);
 		writefile(brightnessfile, "200");
@@ -137,7 +139,7 @@ readinputloop(Display *dpy, int screen) {
 			lastkeysym = NULL;
 			switch (keysym) {
 				case XF86XK_AudioRaiseVolume:
-					state = (state == StateSuspend ? StateDead : StateSuspend);
+					state = StateSuspend;
 					break;
 				case XF86XK_AudioLowerVolume:
 					state = (state == StateNoInput ? StateNoInputNoScreen : StateNoInput);
