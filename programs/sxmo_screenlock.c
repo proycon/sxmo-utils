@@ -25,7 +25,7 @@ static Display *dpy;
 static enum State state = StateNoInput;
 static int lastkeysym = NULL;
 static int lastkeyn = 0;
-static char * oldbrightness = "200";
+static char oldbrightness[10] = "200";
 static char * brightnessfile = "/sys/devices/platform/backlight/backlight/backlight/brightness";
 static char * powerstatefile = "/sys/power/state";
 
@@ -71,12 +71,12 @@ syncstate()
 		syncstate();
 	} else if (state == StateNoInput) {
 		setpineled(Blue);
-		writefile(brightnessfile, "200");
+		writefile(brightnessfile, oldbrightness);
 	} else if (state == StateNoInputNoScreen) {
 		setpineled(Purple);
 		writefile(brightnessfile, "0");
 	} else if (state == StateDead) {
-		writefile(brightnessfile, "200");
+		writefile(brightnessfile, oldbrightness);
 		setpineled(Off);
 	}
 }
@@ -171,7 +171,7 @@ getoldbrightness() {
 		fclose(f);
 	}
 	if (buffer) {
-		oldbrightness = buffer;
+		sprintf(oldbrightness, "%d", atoi(buffer));
 	}
 }
 
