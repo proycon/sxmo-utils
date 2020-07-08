@@ -20,7 +20,7 @@ dialmenu() {
 	NUMBER="$(
 		printf %b "Close Menu\n$CONTACTS" | 
 		grep . |
-		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20
+		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20 -i
 	)"
 	echo "$NUMBER" | grep "Close Menu" && kill -9 0
 

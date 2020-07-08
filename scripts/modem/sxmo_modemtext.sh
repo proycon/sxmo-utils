@@ -50,7 +50,7 @@ sendtextmenu() {
 	NUMBER="$(
 		printf %b "\nCancel\n$(sxmo_contacts.sh)" | 
 		awk NF |
-		sxmo_dmenu_with_kb.sh -p "Number" -fn "Terminus-20" -l 10 -c |
+		sxmo_dmenu_with_kb.sh -p "Number" -fn "Terminus-20" -l 10 -c -i |
 		cut -d: -f1 |
 		tr -d -- '-+ '
 	)"
@@ -87,7 +87,7 @@ main() {
 			sxmo_contacts.sh | grep -m1 "$NUM" | xargs -IL echo "L logfile"
 		done
 	)"
-	CONTACTIDANDNUM="$(printf %b "$ENTRIES" | dmenu -p Texts -c -fn Terminus-20 -l 10)"
+	CONTACTIDANDNUM="$(printf %b "$ENTRIES" | dmenu -p Texts -c -fn Terminus-20 -l 10 -i)"
 	echo "$CONTACTIDANDNUM" | grep "Close Menu" && exit 1
 	echo "$CONTACTIDANDNUM" | grep "Send a Text" && sendtextmenu && exit 1
 	tailtextlog "$(echo "$CONTACTIDANDNUM" | cut -d: -f1)"
