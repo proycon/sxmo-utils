@@ -20,6 +20,12 @@ handlefiles() {
 while true; do
 	CHOICES="$(printf %b 'Close Menu\n../\n*\n'"$(ls -1p)")"
 	DIR="$(basename "$(pwd)")"
+	TRUNCATED="$(printf %.7s "$DIR")"
+	if [ "$DIR" != "$TRUNCATED" ]; then
+		DIR="$TRUNCATED..."
+	fi
+
+
 	PICKED="$(
 		echo "$CHOICES" |
 		dmenu -fn Terminus-18 -c -p "$DIR" -l 20
