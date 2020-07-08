@@ -28,7 +28,7 @@ while true; do
 
 	PICKED="$(
 		echo "$CHOICES" |
-		dmenu -fn Terminus-18 -c -p "$DIR" -l 20
+		dmenu -fn Terminus-18 -c -p "$DIR" -l 20 -i
 	)"
 
 	echo "$PICKED" | grep "Close Menu" && exit 0
