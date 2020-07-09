@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 [ -z "$SXMO_GPSLOCATIONSFILES" ] && SXMO_GPSLOCATIONSFILES="/usr/share/sxmo/places_for_gps.tsv"
-NHOURS=72
 ROWHOURS=12
 WEATHERXML=""
 
@@ -67,6 +66,7 @@ printtables() {
 	ROWHOURS="$(echo "$ROWHOURS - $INDENTN" | bc)"
 
 	LASTDAY=""
+	NHOURS=72
 	# E.g. each while loop iteration handles 1 row
 	while echo "$TIME" | grep -Eq "[0-9]+" && [ "$NHOURS" -gt 0 ]; do
 		if [ "$LASTDAY" != "$NOWDAY" ]; then
@@ -95,10 +95,12 @@ printtables() {
 }
 
 getweathertexttable() {
+	LAT="$1"
+	LON="$2"
+	PLACE="$3"
+
 	while true; do
-		LAT="$1"
-		LON="$2"
-		PLACE="$3"
+		clear
 		downloadweatherxml "$LAT" "$LON" 2>/dev/null
 		TEMP="$(weatherdata "//temperature" "hourly")"
 		RAIN="$(weatherdata "//probability-of-precipitation" ".")"
