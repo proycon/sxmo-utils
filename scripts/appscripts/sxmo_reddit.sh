@@ -21,15 +21,17 @@ menu() {
 			awk -F'\t' '{ printf "↑%4s", $3; print " " $4 " " $1 " " $2 }'
 	)"
 
-	RESULT="$(
-		printf %b "Close Menu\n$REDDITRESULTS" | 
-		dmenu -c -l 10 -fn Terminus-20
-	)"
+	while true; do
+		RESULT="$(
+			printf %b "Close Menu\n$REDDITRESULTS" | 
+			dmenu -c -l 10 -fn Terminus-20
+		)"
 
-	[ "Close Menu" = "$RESULT" ] && exit 0
-	URL=$(echo "$RESULT" | awk -F " " '{print $NF}')
+		[ "Close Menu" = "$RESULT" ] && exit 0
+		URL=$(echo "$RESULT" | awk -F " " '{print $NF}')
 
-	$BROWSER "$URL"
+		sxmo_urlhandler.sh "$URL" fork
+	done
 }
 
 menu
