@@ -65,5 +65,5 @@ while true; do
 
 	# Handle picked item
 	URL="$(echo "$PICKED" | gawk -F " " '{print $NF}')"
-	sxmo_urlhandler.sh "$URL"
+	sxmo_urlhandler.sh "$URL" fork
 done

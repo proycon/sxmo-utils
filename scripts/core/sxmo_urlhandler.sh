@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+FORK="$2"
 
 if [ -n "$1" ]
 then
@@ -40,4 +41,9 @@ COMMAND=$(
 [ -z "$COMMAND" ] && exit 1
 
 RUN=$(echo "$URL" | xargs -IURL echo "$COMMAND")
-st -e sh -c "$RUN"
+
+if [ "$FORK" = fork ]; then
+  st -e sh -c "$RUN" &
+else
+  st -e sh -c "$RUN"
+fi
