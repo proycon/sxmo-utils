@@ -32,6 +32,7 @@ prep_temp_folder_with_items() {
 
 list_items() {
 	cd "$FOLDER" || die "Couldn't cd to $FOLDER"
+	echo "Close Menu"
 	gawk -F'\t' '{print $1 " " substr(FILENAME, 3) " | " $2 ": " $3}' ./* |\
 	grep -E '^[0-9]{5}' |\
 	sort -nk1 |\
@@ -56,9 +57,13 @@ echo "1 hour ago
 FOLDER="/tmp/sfeed_$(echo "$TIMESPAN" | sed 's/ /_/g')"
 prep_temp_folder_with_items
 
-# Show list of items
-PICKED=$(list_items | dmenu -p "RSS" -c -l 20 -fn Terminus-15)
+while true; do
+	# Show list of items
+	PICKED=$(list_items | dmenu -p "RSS" -c -l 20 -fn Terminus-15)
 
-# Handle picked item
-URL="$(echo "$PICKED" | gawk -F " " '{print $NF}')"
-sxmo_urlhandler.sh "$URL"
+	[ "$PICKED" = "Close Menu" ] && die Closed Menu
+
+	# Handle picked item
+	URL="$(echo "$PICKED" | gawk -F " " '{print $NF}')"
+	sxmo_urlhandler.sh "$URL"
+done
