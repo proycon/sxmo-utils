@@ -24,13 +24,13 @@ fi
 COMMAND=$(
 	echo "
 		w3m URL
-		mpv -v URL
-		mpv -v --ytdl-format='[height<420]' URL
+		mpv -ao=alsa -v URL
+		mpv -ao=alsa -v --ytdl-format='[height<420]' URL
 		firefox -new-window URL
 		netsurf URL
 		surf URL
 		echo URL | xsel -i
-		youtube-dl -o- URL | mpv -v -
+		youtube-dl -o- URL | mpv -ao=alsa -v -
 		youtube-dl URL
 		curl URL | vis -
 		wget URL

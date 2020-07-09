@@ -6,9 +6,9 @@ cd "$DIR" || exit 1
 
 handlefiles() {
 	if echo "$1" | grep -iE ".(webm|ogg|mp4|mov|avi)$"; then
-		st -e mpv "$@"
+		st -e mpv -ao=alsa "$@"
 	elif echo "$1" | grep -iE ".(wav|opus|m4a|flac|mp3)$"; then
-		st -e mpv --vid=no -v "$@"
+		st -e mpv -ao=alsa --vid=no -v "$@"
 	elif echo "$1" | grep -iE ".(jpg|png|gif)$"; then
 		st -e sxiv "$@"
 	else

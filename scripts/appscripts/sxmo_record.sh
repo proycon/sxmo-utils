@@ -41,7 +41,7 @@ recordconfirm() {
 			dmenu -p "$DUR" -fn Terminus-18 -c -l 10
 		)"
 		if echo "$PICK" | grep "Playback"; then
-			st -e mpv -v "$FILE"
+			st -e mpv -ao=alsa -v "$FILE"
 		elif echo "$PICK" | grep "Delete Recording"; then
 			rm "$FILE"
 			echo "File deleted." | dmenu -fn Terminus-18 -c -l 10

@@ -29,12 +29,12 @@ menu() {
 
 video() {
 	menu
-	st -e mpv -v --ytdl-format='[height<420]' "$URL"
+	st -e mpv -ao=alsa -v --ytdl-format='[height<420]' "$URL"
 }
 
 audio() {
 	menu
-	st -e mpv -v --no-video "$URL"
+	st -e mpv -ao=alsa -v --no-video "$URL"
 }
 
 $1
