@@ -95,21 +95,23 @@ printtables() {
 }
 
 getweathertexttable() {
-	LAT="$1"
-	LON="$2"
-	PLACE="$3"
-	downloadweatherxml "$LAT" "$LON" 2>/dev/null
-	TEMP="$(weatherdata "//temperature" "hourly")"
-	RAIN="$(weatherdata "//probability-of-precipitation" ".")"
-	WIND="$(weatherdata "//wind-speed" ".")"
-	#LOCATION="$(weatherdata "//location/description" ".")"
-	TIME="$(
-		weatherdata "//start-valid-time" "." | 
-		grep -oE 'T[0-9]{2}' | tr -d 'T' | tr '\n' ' '
-	)"
-	tput rev; echo "$PLACE"; tput sgr0
-	printtables
-	read -r
+	while true; do
+		LAT="$1"
+		LON="$2"
+		PLACE="$3"
+		downloadweatherxml "$LAT" "$LON" 2>/dev/null
+		TEMP="$(weatherdata "//temperature" "hourly")"
+		RAIN="$(weatherdata "//probability-of-precipitation" ".")"
+		WIND="$(weatherdata "//wind-speed" ".")"
+		#LOCATION="$(weatherdata "//location/description" ".")"
+		TIME="$(
+			weatherdata "//start-valid-time" "." | 
+			grep -oE 'T[0-9]{2}' | tr -d 'T' | tr '\n' ' '
+		)"
+		tput rev; echo "$PLACE"; tput sgr0
+		printtables
+		read -r
+	done
 }
 
 weathermenu() {
