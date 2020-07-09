@@ -203,6 +203,13 @@ configuresuspendsettingsandwakeupsources()
 		"enabled"
 	);
 
+	// Enable rtc wakeup source
+	fprintf(stderr, "Enable rtc wakeup source\n");
+	writefile(
+		"/sys/devices/platform/soc/1f00000.rtc/power/wakeup",
+		"enabled"
+	);
+
 	// Temporary hack to disable USB driver that doesn't suspend
 	fprintf(stderr, "Disabling buggy USB driver\n");
 	writefile(
