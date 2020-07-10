@@ -8,10 +8,11 @@
 #include <X11/Xlib.h>
 
 enum State {
-	StateNoInput,
-	StateNoInputNoScreen,
-	StateSuspend,
-	StateDead
+	StateNoInput,         // Screen on / input lock
+	StateNoInputNoScreen, // Screen off / input lock
+	StateSuspend,         // Deep sleep
+	StateSuspendPending,  // Suspend 'woken up', must leave state in <10s, or kicks to StateSuspend
+	StateDead             // Exit the appliation
 };
 
 enum Color {
@@ -67,12 +68,12 @@ syncstate()
 		setpineled(Red);
 		configuresuspendsettingsandwakeupsources();
 		writefile(powerstatefile, "mem");
-		state = StateNoInput;
+		state = StateSuspendPending;
 		syncstate();
 	} else if (state == StateNoInput) {
 		setpineled(Blue);
 		writefile(brightnessfile, oldbrightness);
-	} else if (state == StateNoInputNoScreen) {
+	} else if (state == StateNoInputNoScreen || state == StateSuspendPending) {
 		setpineled(Purple);
 		writefile(brightnessfile, "0");
 	} else if (state == StateDead) {
@@ -123,35 +124,55 @@ readinputloop(Display *dpy, int screen) {
 	KeySym keysym;
 	XEvent ev;
 	char buf[32];
+	fd_set fdset;
+	int xfd;
+	int selectresult;
+	struct timeval xeventtimeout = {10, 0};
+  xfd = ConnectionNumber(dpy);
 
-	while (state != StateDead && !XNextEvent(dpy, &ev)) {
-		if (ev.type == KeyPress) {
-			XLookupString(&ev.xkey, buf, sizeof(buf), &keysym, 0);
-			if (lastkeysym == keysym) {
-				lastkeyn++;
-			} else {
-				lastkeysym = keysym;
-				lastkeyn = 1;
+	for (;;) {
+		FD_ZERO(&fdset);
+		FD_SET(xfd, &fdset);
+		if (state == StateSuspendPending)
+			selectresult = select(FD_SETSIZE, &fdset, NULL, NULL, &xeventtimeout);
+		else
+			selectresult = select(FD_SETSIZE, &fdset, NULL, NULL, NULL);
+
+		if (FD_ISSET(xfd, &fdset) && XPending(dpy)) {
+			XNextEvent(dpy, &ev);
+			if (ev.type == KeyPress) {
+				XLookupString(&ev.xkey, buf, sizeof(buf), &keysym, 0);
+				if (lastkeysym == keysym) {
+					lastkeyn++;
+				} else {
+					lastkeysym = keysym;
+					lastkeyn = 1;
+				}
+
+				if (lastkeyn < 3)
+					continue;
+
+				lastkeyn = 0;
+				lastkeysym = NULL;
+				switch (keysym) {
+					case XF86XK_AudioRaiseVolume:
+						state = StateSuspend;
+						break;
+					case XF86XK_AudioLowerVolume:
+						state = (state == StateNoInput ? StateNoInputNoScreen : StateNoInput);
+						break;
+					case XF86XK_PowerOff:
+						state = StateDead;
+						break;
+				}
+				syncstate();
 			}
-
-			if (lastkeyn < 3)
-				continue;
-
-			lastkeyn = 0;
-			lastkeysym = NULL;
-			switch (keysym) {
-				case XF86XK_AudioRaiseVolume:
-					state = StateSuspend;
-					break;
-				case XF86XK_AudioLowerVolume:
-					state = (state == StateNoInput ? StateNoInputNoScreen : StateNoInput);
-					break;
-				case XF86XK_PowerOff:
-					state = StateDead;
-					break;
-			}
+		} else if (state == StateSuspendPending) {
+			state = StateSuspend;
 			syncstate();
 		}
+
+		if (state == StateDead) break;
 	}
 }
 
