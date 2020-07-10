@@ -3,10 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <X11/keysym.h>
 #include <X11/XF86keysym.h>
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
+// Types
 enum State {
 	StateNoInput,         // Screen on / input lock
 	StateNoInputNoScreen, // Screen off / input lock
@@ -14,7 +17,6 @@ enum State {
 	StateSuspendPending,  // Suspend 'woken up', must leave state in <10s, or kicks to StateSuspend
 	StateDead             // Exit the appliation
 };
-
 enum Color {
 	Red,
 	Blue,
@@ -22,179 +24,24 @@ enum Color {
 	Off
 };
 
-static Display *dpy;
-static enum State state = StateNoInput;
-static int lastkeysym = NULL;
-static int lastkeyn = 0;
-static char oldbrightness[10] = "200";
-static char * brightnessfile = "/sys/devices/platform/backlight/backlight/backlight/brightness";
-static char * powerstatefile = "/sys/power/state";
+// Fn declarations
+void configuresuspendsettingsandwakeupsources();
+void die(const char *err, ...);
+int getoldbrightness();
+void lockscreen(Display *dpy, int screen);
+void readinputloop(Display *dpy, int screen);
+void setpineled(enum Color c);
+void syncstate();
+void writefile(char *filepath, char *str);
 
-void
-writefile(char *filepath, char *str)
-{
-	int f;
-	f = open(filepath, O_WRONLY);
-	if (f != NULL) {
-		write(f, str, strlen(str));
-		close(f);
-	} else {
-		fprintf(stderr, "Couldn't open filepath <%s>\n", filepath);
-	}
-}
-
-void
-setpineled(enum Color c)
-{
-	if (c == Red) {
-		writefile("/sys/class/leds/red:indicator/brightness", "1");
-		writefile("/sys/class/leds/blue:indicator/brightness", "0");
-	} else if (c == Blue) {
-		writefile("/sys/class/leds/red:indicator/brightness", "0");
-		writefile("/sys/class/leds/blue:indicator/brightness", "1");
-	} else if (c == Purple) {
-		writefile("/sys/class/leds/red:indicator/brightness", "1");
-		writefile("/sys/class/leds/blue:indicator/brightness", "1");
-	} else if (c == Off) {
-		writefile("/sys/class/leds/red:indicator/brightness", "0");
-		writefile("/sys/class/leds/blue:indicator/brightness", "0");
-	}
-}
-
-void
-syncstate()
-{
-	if (state == StateSuspend) {
-		setpineled(Red);
-		configuresuspendsettingsandwakeupsources();
-		writefile(powerstatefile, "mem");
-		state = StateSuspendPending;
-		syncstate();
-	} else if (state == StateNoInput) {
-		setpineled(Blue);
-		writefile(brightnessfile, oldbrightness);
-	} else if (state == StateNoInputNoScreen || state == StateSuspendPending) {
-		setpineled(Purple);
-		writefile(brightnessfile, "0");
-	} else if (state == StateDead) {
-		writefile(brightnessfile, oldbrightness);
-		setpineled(Off);
-	}
-}
-
-static void
-die(const char *err, ...)
-{
-	fprintf(stderr, "Error: %s", err);
-	state = StateDead;
-	syncstate();
-	exit(1);
-}
-
-// Loosely derived from suckless' slock's lockscreen binding logic but
-// alot more coarse, intentionally so can be triggered while grab_key
-// for dwm multikey path already holding..
-void
-lockscreen(Display *dpy, int screen)
-{
-	int i, ptgrab, kbgrab;
-	Window root;
-	root = RootWindow(dpy, screen);
-	for (i = 0, ptgrab = kbgrab = -1; i < 9999999; i++) {
-		if (ptgrab != GrabSuccess) {
-			ptgrab = XGrabPointer(dpy, root, False,
-				ButtonPressMask | ButtonReleaseMask |
-				PointerMotionMask, GrabModeAsync,
-				GrabModeAsync, None, None, CurrentTime);
-		}
-		if (kbgrab != GrabSuccess) {
-			kbgrab = XGrabKeyboard(dpy, root, True,
-				GrabModeAsync, GrabModeAsync, CurrentTime);
-		}
-		if (ptgrab == GrabSuccess && kbgrab == GrabSuccess) {
-			XSelectInput(dpy, root, SubstructureNotifyMask);
-			return;
-		}
-		usleep(100000);
-	}
-}
-
-void
-readinputloop(Display *dpy, int screen) {
-	KeySym keysym;
-	XEvent ev;
-	char buf[32];
-	fd_set fdset;
-	int xfd;
-	int selectresult;
-	struct timeval xeventtimeout = {10, 0};
-  xfd = ConnectionNumber(dpy);
-
-	for (;;) {
-		FD_ZERO(&fdset);
-		FD_SET(xfd, &fdset);
-		if (state == StateSuspendPending)
-			selectresult = select(FD_SETSIZE, &fdset, NULL, NULL, &xeventtimeout);
-		else
-			selectresult = select(FD_SETSIZE, &fdset, NULL, NULL, NULL);
-
-		if (FD_ISSET(xfd, &fdset) && XPending(dpy)) {
-			XNextEvent(dpy, &ev);
-			if (ev.type == KeyPress) {
-				XLookupString(&ev.xkey, buf, sizeof(buf), &keysym, 0);
-				if (lastkeysym == keysym) {
-					lastkeyn++;
-				} else {
-					lastkeysym = keysym;
-					lastkeyn = 1;
-				}
-
-				if (lastkeyn < 3)
-					continue;
-
-				lastkeyn = 0;
-				lastkeysym = NULL;
-				switch (keysym) {
-					case XF86XK_AudioRaiseVolume:
-						state = StateSuspend;
-						break;
-					case XF86XK_AudioLowerVolume:
-						state = (state == StateNoInput ? StateNoInputNoScreen : StateNoInput);
-						break;
-					case XF86XK_PowerOff:
-						state = StateDead;
-						break;
-				}
-				syncstate();
-			}
-		} else if (state == StateSuspendPending) {
-			state = StateSuspend;
-			syncstate();
-		}
-
-		if (state == StateDead) break;
-	}
-}
-
-int
-getoldbrightness() {
-	char * buffer = 0;
-	long length;
-	FILE * f = fopen(brightnessfile, "r");
-	if (f) {
-		fseek(f, 0, SEEK_END);
-		length = ftell(f);
-		fseek(f, 0, SEEK_SET);
-		buffer = malloc(length);
-		if (buffer) {
-			fread(buffer, 1, length, f);
-		}
-		fclose(f);
-	}
-	if (buffer) {
-		sprintf(oldbrightness, "%d", atoi(buffer));
-	}
-}
+// Variables
+Display *dpy;
+enum State state = StateNoInput;
+KeySym lastkeysym = XK_Cancel;
+int lastkeyn = 0;
+char oldbrightness[10] = "200";
+char * brightnessfile = "/sys/devices/platform/backlight/backlight/backlight/brightness";
+char * powerstatefile = "/sys/power/state";
 
 void
 configuresuspendsettingsandwakeupsources()
@@ -250,9 +97,176 @@ configuresuspendsettingsandwakeupsources()
 	writefile("/sys/power/mem_sleep", "deep");
 }
 
+void
+die(const char *err, ...)
+{
+	fprintf(stderr, "Error: %s", err);
+	state = StateDead;
+	syncstate();
+	exit(1);
+}
+
+int
+getoldbrightness() {
+	char * buffer = 0;
+	long length;
+	FILE * f = fopen(brightnessfile, "r");
+	if (f) {
+		fseek(f, 0, SEEK_END);
+		length = ftell(f);
+		fseek(f, 0, SEEK_SET);
+		buffer = malloc(length);
+		if (buffer) {
+			fread(buffer, 1, length, f);
+		}
+		fclose(f);
+	}
+	if (buffer) {
+		sprintf(oldbrightness, "%d", atoi(buffer));
+	}
+}
+
+
+void
+lockscreen(Display *dpy, int screen)
+{
+	// Loosely derived from suckless' slock's lockscreen binding logic but
+	// alot more coarse, intentionally so can be triggered while grab_key
+	// for dwm multikey path already holding..
+	int i, ptgrab, kbgrab;
+	Window root;
+	root = RootWindow(dpy, screen);
+	for (i = 0, ptgrab = kbgrab = -1; i < 9999999; i++) {
+		if (ptgrab != GrabSuccess) {
+			ptgrab = XGrabPointer(dpy, root, False,
+				ButtonPressMask | ButtonReleaseMask |
+				PointerMotionMask, GrabModeAsync,
+				GrabModeAsync, None, None, CurrentTime);
+		}
+		if (kbgrab != GrabSuccess) {
+			kbgrab = XGrabKeyboard(dpy, root, True,
+				GrabModeAsync, GrabModeAsync, CurrentTime);
+		}
+		if (ptgrab == GrabSuccess && kbgrab == GrabSuccess) {
+			XSelectInput(dpy, root, SubstructureNotifyMask);
+			return;
+		}
+		usleep(100000);
+	}
+}
+
+void
+readinputloop(Display *dpy, int screen) {
+	KeySym keysym;
+	XEvent ev;
+	char buf[32];
+	fd_set fdset;
+	int xfd;
+	int selectresult;
+	struct timeval xeventtimeout = {10, 0};
+	xfd = ConnectionNumber(dpy);
+
+	for (;;) {
+		FD_ZERO(&fdset);
+		FD_SET(xfd, &fdset);
+		if (state == StateSuspendPending)
+			selectresult = select(FD_SETSIZE, &fdset, NULL, NULL, &xeventtimeout);
+		else
+			selectresult = select(FD_SETSIZE, &fdset, NULL, NULL, NULL);
+
+		if (FD_ISSET(xfd, &fdset) && XPending(dpy)) {
+			XNextEvent(dpy, &ev);
+			if (ev.type == KeyPress) {
+				XLookupString(&ev.xkey, buf, sizeof(buf), &keysym, 0);
+				if (lastkeysym == keysym) {
+					lastkeyn++;
+				} else {
+					lastkeysym = keysym;
+					lastkeyn = 1;
+				}
+
+				if (lastkeyn < 3)
+					continue;
+
+				lastkeyn = 0;
+				lastkeysym = XK_Cancel;
+				switch (keysym) {
+					case XF86XK_AudioRaiseVolume:
+						state = StateSuspend;
+						break;
+					case XF86XK_AudioLowerVolume:
+						state = (state == StateNoInput ? StateNoInputNoScreen : StateNoInput);
+						break;
+					case XF86XK_PowerOff:
+						state = StateDead;
+						break;
+				}
+				syncstate();
+			}
+		} else if (state == StateSuspendPending) {
+			state = StateSuspend;
+			syncstate();
+		}
+
+		if (state == StateDead) break;
+	}
+}
+
+void
+setpineled(enum Color c)
+{
+	if (c == Red) {
+		writefile("/sys/class/leds/red:indicator/brightness", "1");
+		writefile("/sys/class/leds/blue:indicator/brightness", "0");
+	} else if (c == Blue) {
+		writefile("/sys/class/leds/red:indicator/brightness", "0");
+		writefile("/sys/class/leds/blue:indicator/brightness", "1");
+	} else if (c == Purple) {
+		writefile("/sys/class/leds/red:indicator/brightness", "1");
+		writefile("/sys/class/leds/blue:indicator/brightness", "1");
+	} else if (c == Off) {
+		writefile("/sys/class/leds/red:indicator/brightness", "0");
+		writefile("/sys/class/leds/blue:indicator/brightness", "0");
+	}
+}
+
+void
+syncstate()
+{
+	if (state == StateSuspend) {
+		setpineled(Red);
+		configuresuspendsettingsandwakeupsources();
+		writefile(powerstatefile, "mem");
+		state = StateSuspendPending;
+		syncstate();
+	} else if (state == StateNoInput) {
+		setpineled(Blue);
+		writefile(brightnessfile, oldbrightness);
+	} else if (state == StateNoInputNoScreen || state == StateSuspendPending) {
+		setpineled(Purple);
+		writefile(brightnessfile, "0");
+	} else if (state == StateDead) {
+		writefile(brightnessfile, oldbrightness);
+		setpineled(Off);
+	}
+}
+
+void
+writefile(char *filepath, char *str)
+{
+	int f;
+	f = open(filepath, O_WRONLY);
+	if (f != -1) {
+		write(f, str, strlen(str));
+		close(f);
+	} else {
+		fprintf(stderr, "Couldn't open filepath <%s>\n", filepath);
+	}
+}
+
 int
 main(int argc, char **argv) {
-	Screen *screen;
+	int screen;
 
 	if (setuid(0))
 		die("setuid(0) failed\n");
