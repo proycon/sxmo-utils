@@ -28,7 +28,9 @@ autocutsel -selection PRIMARY &
 sxmo_statusbar.sh &
 
 # Run user's custom xinit
-[ -f "$XDG_CONFIG_HOME/sxmo/xinit" ] && "$XDG_CONFIG_HOME/sxmo/xinit"
+set -o allexport
+[ -f "$XDG_CONFIG_HOME/sxmo/xinit" ] && . "$XDG_CONFIG_HOME/sxmo/xinit"
+set +o allexport
 
 # Startup dbus, dunst in dbus path, lisgd in dbus path, and finally dwm
 exec dbus-run-session sh -c "
