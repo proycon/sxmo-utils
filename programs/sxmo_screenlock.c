@@ -14,7 +14,7 @@ enum State {
 	StateNoInput,         // Screen on / input lock
 	StateNoInputNoScreen, // Screen off / input lock
 	StateSuspend,         // Deep sleep
-	StateSuspendPending,  // Suspend 'woken up', must leave state in <10s, or kicks to StateSuspend
+	StateSuspendPending,  // Suspend 'woken up', must leave state in <5s, or kicks to StateSuspend
 	StateDead             // Exit the appliation
 };
 enum Color {
@@ -163,7 +163,7 @@ readinputloop(Display *dpy, int screen) {
 	fd_set fdset;
 	int xfd;
 	int selectresult;
-	struct timeval xeventtimeout = {10, 0};
+	struct timeval xeventtimeout = {5, 0};
 	xfd = ConnectionNumber(dpy);
 
 	for (;;) {
