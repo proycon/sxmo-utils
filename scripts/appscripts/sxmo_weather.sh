@@ -56,7 +56,7 @@ printtables() {
 		if [ "$NOWHR" -gt "12" ]; then
 			INDENTN="$(echo "$NOWHR - 12" | bc)"
 		else
-			INDENTN="$(echo "12 - $NOWHR" | bc)"
+			INDENTN="$(echo "$NOWHR" | bc)"
 		fi
 	fi
 	INDENT=""
