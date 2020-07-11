@@ -140,6 +140,8 @@ programchoicesinit() {
 			Navigate    ^ 0 ^ key Ctrl+g
 			Link Menu   ^ 0 ^ key Ctrl+d
 			Pipe URL    ^ 0 ^ sxmo_urlhandler.sh
+			Search Page ^ 0 ^ key Ctrl+f
+			Find Next   ^ 0 ^ key Ctrl+n
 			Zoom +      ^ 1 ^ key Ctrl+Shift+k
 			Zoom -      ^ 1 ^ key Ctrl+Shift+j
 			Scroll ↑    ^ 1 ^ key Shift+space
