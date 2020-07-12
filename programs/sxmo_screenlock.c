@@ -32,6 +32,7 @@ void lockscreen(Display *dpy, int screen);
 void readinputloop(Display *dpy, int screen);
 void setpineled(enum Color c);
 void syncstate();
+void updatestatusbar();
 void writefile(char *filepath, char *str);
 
 // Variables
@@ -237,6 +238,8 @@ syncstate()
 		setpineled(Red);
 		configuresuspendsettingsandwakeupsources();
 		writefile(powerstatefile, "mem");
+		// Just woke up
+		updatestatusbar();
 		state = StateSuspendPending;
 		syncstate();
 	} else if (state == StateNoInput) {
@@ -249,6 +252,18 @@ syncstate()
 		writefile(brightnessfile, oldbrightness);
 		setpineled(Off);
 	}
+}
+
+void
+updatestatusbar()
+{
+	pid_t statusbarpid = -1;
+	char buffer[999];
+	// TODO: there's probably a better way..
+	if (fgets(buffer, 999, popen("pgrep -f sxmo_statusbar.sh", "r")) != NULL)
+		statusbarpid = (pid_t) atoi(buffer);
+	if (statusbarpid != -1)
+		kill(statusbarpid, SIGUSR1);
 }
 
 void
