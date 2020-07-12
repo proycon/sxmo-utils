@@ -8,7 +8,7 @@ notify() {
 		xargs printf %.0f
 	)"
 	dunstify -i 0 -u normal -r 998 "♫ $VOL"
-	echo 1 > /tmp/sxmo_bar
+	pgrep -f "$(command -v sxmo_statusbar.sh)" | xargs kill -USR1
 }
 
 up() {

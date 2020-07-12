@@ -2,13 +2,14 @@
 LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
 trap "gracefulexit" INT TERM
 
+
 fatalerr() {
 	# E.g. hangup all calls, switch back to default audio, notify user, and die
 	sxmo_vibratepine 1000 &
 	mmcli -m "$(mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2)" --voice-hangup-all
 	alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
 	notify-send "$1"
-	setsid -f sh -c 'sleep 2; echo 1 > /tmp/sxmo_bar'
+	setsid -f sh -c 'sleep 2; pgrep -f "$(command -v sxmo_statusbar.sh)" | xargs kill -USR1'
 	kill -9 0
 }
 
@@ -120,7 +121,7 @@ incallsetup() {
 incallmonitor() {
 	CALLID="$1"
 	while true; do
-		echo 1 > /tmp/sxmo_bar
+		pgrep -f "$(command -v sxmo_statusbar.sh)" | xargs kill -USR1
 		if mmcli -m "$(modem_n)" -K -o "$CALLID" | grep -E "^call.properties.state.+terminated"; then
 			fatalerr "Call with $NUMBER terminated"
 		fi

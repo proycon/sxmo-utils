@@ -1,8 +1,6 @@
 #!/usr/bin/env sh
+trap "update" USR1
 pgrep -f sxmo_statusbar.sh | grep -v $$ | xargs kill -9
-
-UPDATEFILE=/tmp/sxmo_bar
-touch "$UPDATEFILE"
 
 update() {
 	# In-call.. show length of call
@@ -54,20 +52,10 @@ update() {
 }
 
 # E.g. on first boot justs to make sure the bar comes in quickly
-update && sleep 1 && update && sleep 1 && update
-
-periodicupdate() {
-	while :
-	do
-		echo 1 > "$UPDATEFILE"
-		sleep 30
-	done
-}
-
-periodicupdate &
+update && sleep 1 && update && sleep 1
 
 while :
 do
 	update
-	inotifywait -e MODIFY "$UPDATEFILE"
+	sleep 30 & wait
 done

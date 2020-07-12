@@ -3,7 +3,7 @@
 change() {
 	echo "Changing timezone to $1"
 	sudo setup-timezone -z "$1"
-	echo 1 > /tmp/sxmo_bar
+	pgrep -f "$(command -v sxmo_statusbar.sh)" | xargs kill -USR1
 	echo Timezone changed ok
 	read -r
 }
