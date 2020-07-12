@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-[ -z "$SXMO_GPSLOCATIONSFILES" ] && SXMO_GPSLOCATIONSFILES="/usr/share/sxmo/places_for_gps.tsv"
+[ -z "$SXMO_GPSLOCATIONSFILES" ] && SXMO_GPSLOCATIONSFILES="/usr/share/sxmo/appcfg/places_for_gps.tsv"
 CTILESIZE=256
 CLN2=0.693147180559945309417
 CPI=3.14159265358979323846

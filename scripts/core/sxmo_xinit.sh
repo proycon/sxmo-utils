@@ -8,11 +8,11 @@ command -v "$BROWSER" || export BROWSER=surf
 [ -z "$XDG_CONFIG_HOME" ] && export XDG_CONFIG_HOME=~/.config
 
 # Setup audio and a few sensible X defaults
-alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
-xmodmap /usr/share/sxmo/xmodmap_caps_esc
+alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
+xmodmap /usr/share/sxmo/appcfg/xmodmap_caps_esc
 xsetroot -mod 3 2 -fg '#000000' -bg '#888888'
 xset s off -dpms
-xrdb /usr/share/sxmo/xresources_xcalc.xr
+xrdb /usr/share/sxmo/appcfg/xresources_xcalc.xr
 synclient TapButton1=1 TapButton2=3 TapButton3=2 MinSpeed=0.25
 
 # Start daemons
@@ -20,7 +20,7 @@ pkill conky
 if [ -e "$XDG_CONFIG_HOME/sxmo/conky.conf" ]; then
 	conky -c $XDG_CONFIG_HOME/sxmo/conky.conf -d
 else
-	conky -c /usr/share/sxmo/conky.conf -d
+	conky -c /usr/share/sxmo/appcfg/conky.conf -d
 fi
 keynav &
 autocutsel &
@@ -34,7 +34,7 @@ set +o allexport
 
 # Startup dbus, dunst in dbus path, lisgd in dbus path, and finally dwm
 exec dbus-run-session sh -c "
-	dunst -conf /usr/share/sxmo/dunst.conf &
+	dunst -conf /usr/share/sxmo/appcfg/dunst.conf &
 	sxmo_lisgdstart.sh &
 	dwm 2> ~/.dwm.log
 "

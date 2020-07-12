@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-[ -z "$SXMO_GPSLOCATIONSFILES" ] && SXMO_GPSLOCATIONSFILES="/usr/share/sxmo/places_for_gps.tsv"
+[ -z "$SXMO_GPSLOCATIONSFILES" ] && SXMO_GPSLOCATIONSFILES="/usr/share/sxmo/appcfg/places_for_gps.tsv"
 ROWHOURS=12
 WEATHERXML=""
 
