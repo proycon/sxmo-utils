@@ -9,7 +9,7 @@ fatalerr() {
 	mmcli -m "$(mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2)" --voice-hangup-all
 	alsactl --file /usr/share/sxmo/default_alsa_sound.conf restore
 	notify-send "$1"
-	setsid -f sh -c 'sleep 2; pgrep -f "$(command -v sxmo_statusbar.sh)" | xargs kill -USR1'
+	setsid -f sh -c 'sleep 2; smxo_statusbarupdate.sh'
 	kill -9 0
 }
 
@@ -121,7 +121,7 @@ incallsetup() {
 incallmonitor() {
 	CALLID="$1"
 	while true; do
-		pgrep -f "$(command -v sxmo_statusbar.sh)" | xargs kill -USR1
+		sxmo_statusbarupdate.sh
 		if mmcli -m "$(modem_n)" -K -o "$CALLID" | grep -E "^call.properties.state.+terminated"; then
 			fatalerr "Call with $NUMBER terminated"
 		fi

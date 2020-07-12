@@ -257,13 +257,7 @@ syncstate()
 void
 updatestatusbar()
 {
-	pid_t statusbarpid = -1;
-	char buffer[999];
-	// TODO: there's probably a better way..
-	if (fgets(buffer, 999, popen("pgrep -f sxmo_statusbar.sh", "r")) != NULL)
-		statusbarpid = (pid_t) atoi(buffer);
-	if (statusbarpid != -1)
-		kill(statusbarpid, SIGUSR1);
+	system("sxmo_statusbarupdate.sh");
 }
 
 void

@@ -10,4 +10,4 @@ rm /tmp/sxmo_incomingcall
 # E.g. wait until process killed or started -- maybe there's a better way..
 sleep 1
 
-pgrep -f "$(command -v sxmo_statusbar.sh)" | xargs kill -USR1
+sxmo_statusbarupdate.sh

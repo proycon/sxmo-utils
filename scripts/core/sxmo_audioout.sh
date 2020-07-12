@@ -17,4 +17,4 @@ elif [ "$ARG" = "Earpiece" ]; then
 	amixer set "$EARPIECE" unmute
 fi
 
-pgrep -f "$(command -v sxmo_statusbar.sh)" | xargs kill -USR1
+sxmo_statusbarupdate.sh

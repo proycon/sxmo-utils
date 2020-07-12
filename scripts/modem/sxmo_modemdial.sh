@@ -5,7 +5,7 @@ fatalerr() {
 	# E.g. hangup all calls, switch back to default audio, notify user, and die
 	mmcli -m "$(mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2)" --voice-hangup-all
 	notify-send "$1"
-	(sleep 0.5; pgrep -f "$(command -v sxmo_statusbar.sh)" | xargs kill -USR1) &
+	(sleep 0.5; sxmo_statusbarupdate.sh) &
 	kill -9 0
 }
 
