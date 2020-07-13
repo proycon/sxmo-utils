@@ -28,7 +28,10 @@ install: programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_s
 	cp configs/alsa/alsa_sxmo_enable_dmix.conf $(PREFIX)/etc/alsa/conf.d/
 
 	mkdir -p $(PREFIX)/etc/polkit-1/rules.d
-	cp configs/polkit/00-sxmo.rules $(PREFIX)/etc/polkit-1/rules.d/
+	cp configs/polkit/*.rules $(PREFIX)/etc/polkit-1/rules.d/
+
+	mkdir -p $(PREFIX)/etc/udev/rules.d
+	cp configs/udev/*.rules $(PREFIX)/etc/udev/rules.d/
 
 	mkdir -p $(PREFIX)/usr/bin
 	cp scripts/*/* $(PREFIX)/usr/bin
