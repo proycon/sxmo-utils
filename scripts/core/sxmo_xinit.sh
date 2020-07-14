@@ -8,6 +8,15 @@ envvars() {
 	command -v "$EDITOR" || export EDITOR=vis
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 	[ -z "$XDG_CONFIG_HOME" ] && export XDG_CONFIG_HOME=~/.config
+	[ -z "$XDG_CACHE_HOME" ] && export XDG_CACHE_HOME=~/.cache
+	[ -z "$XDG_DATA_HOME" ] && export XDG_DATA_HOME=~/.local/share
+	[ -z "$XDG_RUNTIME_HOME" ] && export XDG_RUNTIME_HOME=~/.local/run
+}
+
+setupxdgruntimedir() {
+	mkdir -p $XDG_RUNTIME_HOME
+	chmod 700 $XDG_RUNTIME_HOME
+	chown "$USER:$USER" "$XDG_RUNTIME_HOME"
 }
 
 xdefaults() {
@@ -54,6 +63,7 @@ startdwm() {
 
 xinit() {
 	envvars
+	setupxdgruntimedir
 	xdefaults
 	daemons
 	startdwm
