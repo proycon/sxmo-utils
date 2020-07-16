@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <X11/keysym.h>
 #include <X11/XF86keysym.h>
+#include <X11/XKBlib.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
@@ -177,7 +178,7 @@ readinputloop(Display *dpy, int screen) {
 
 		if (FD_ISSET(xfd, &fdset) && XPending(dpy)) {
 			XNextEvent(dpy, &ev);
-			if (ev.type == KeyPress) {
+			if (ev.type == KeyRelease) {
 				XLookupString(&ev.xkey, buf, sizeof(buf), &keysym, 0);
 				if (lastkeysym == keysym) {
 					lastkeyn++;
@@ -282,6 +283,7 @@ main(int argc, char **argv) {
 	if (!(dpy = XOpenDisplay(NULL)))
 		die("Cannot open display\n");
 
+	XkbSetDetectableAutoRepeat(dpy, True, NULL);
 	screen = XDefaultScreen(dpy);
 	XSync(dpy, 0);
 	getoldbrightness();
