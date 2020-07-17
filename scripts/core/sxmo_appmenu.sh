@@ -134,7 +134,6 @@ programchoicesinit() {
 				Scroll ↓        ^ 1 ^ key Ctrl+Shift+d
 				Command prompt  ^ 0 ^ key Escape colon
 				Save            ^ 0 ^ key Escape colon w Return
-				Save and Quit   ^ 0 ^ key Escape colon w q Return
 				Quit		    ^ 0 ^ key Escape colon q Return
 				Paste Selection	^ 0 ^ key Escape quotedbl asterisk p
 				Paste Clipboard	^ 0 ^ key Escape quotedbl plus p
@@ -150,7 +149,6 @@ programchoicesinit() {
 				Scroll ↑        ^ 1 ^ key Prior
 				Scroll ↓        ^ 1 ^ key Next
 				Save            ^ 0 ^ key Ctrl+O
-				Save and Quit   ^ 0 ^ key Ctrl+O Ctrl+X
 				Quit		    ^ 0 ^ key Ctrl+X
 				Paste		    ^ 0 ^ key Ctrl+U
 				Type complete   ^ 0 ^ key Ctrl+Shift+u
