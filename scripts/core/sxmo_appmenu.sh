@@ -122,35 +122,123 @@ programchoicesinit() {
 		"
 		WINNAME=Sxiv && return
 	elif echo "$WMCLASS" | grep -i "st-256color"; then
-		#  St
-		STSELMODEON="$(
-			echo "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' '
-		)"
-		CHOICES="
-			Type complete   ^ 0 ^ key Ctrl+Shift+u
-			Copy complete   ^ 0 ^ key Ctrl+Shift+i
-			Selmode $(
-			  [ "$STSELMODEON" = 1 ] && 
-			  printf %b 'On → Off' || 
-			  printf %b 'Off → On'
-			  printf %b '^ 0 ^ key Ctrl+Shift+s'
-			)               
-			$([ "$STSELMODEON" = 1 ] && echo 'Copy selection ^ 0 ^ key Ctrl+Shift+c')
-			Paste           ^ 0 ^ key Ctrl+Shift+v
-			Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
-			Zoom -          ^ 1 ^ key Ctrl+Shift+Next
-			Scroll ↑        ^ 1 ^ key Ctrl+Shift+b
-			Scroll ↓        ^ 1 ^ key Ctrl+Shift+f
-			Invert          ^ 1 ^ key Ctrl+Shift+x
-			Hotkeys         ^ 0 ^ sxmo_appmenu.sh sthotkeys
-		"
-		WINNAME=St
+		# St
+		# First we try to handle the app running inside st:
+		WMNAME="${1:-$(echo "$XPROPOUT" | grep -E "^WM_NAME" | cut -d ' ' -f3-)}"
+		if echo "$WMNAME" | grep -i -E "\"(vi|vim|vis|nvim|neovim)\""; then
+			#Vim in st
+			CHOICES="
+				Scroll ↑        ^ 1 ^ key Ctrl+Shift+u
+				Scroll ↓        ^ 1 ^ key Ctrl+Shift+d
+				Command prompt  ^ 0 ^ key Escape Shift+semicolon
+				Save            ^ 0 ^ key Escape Shift+semicolon w Return
+				Quit		    ^ 0 ^ key Escape Shift+semicolon q Return
+				Paste Selection	^ 0 ^ key Escape quotedbl asterisk p
+				Paste Clipboard	^ 0 ^ key Escape quotedbl plus p
+				Search          ^ 0 ^ key Escape /
+				Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
+				Zoom -          ^ 1 ^ key Ctrl+Shift+Next
+				St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
+			"
+			WINNAME=Vim
+		elif echo "$WMNAME" | grep -i -w "nano"; then
+			#Nano in st
+			CHOICES="
+				Scroll ↑        ^ 1 ^ key Prior
+				Scroll ↓        ^ 1 ^ key Next
+				Save            ^ 0 ^ key Ctrl+O
+				Quit		    ^ 0 ^ key Ctrl+X
+				Paste		    ^ 0 ^ key Ctrl+U
+				Type complete   ^ 0 ^ key Ctrl+Shift+u
+				Copy complete   ^ 0 ^ key Ctrl+Shift+i
+				Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
+				Zoom -          ^ 1 ^ key Ctrl+Shift+Next
+				St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
+			"
+			WINNAME=Nano
+		elif echo "$WMNAME" | grep -i -w "tuir"; then
+			#tuir (reddit client) in st
+			CHOICES="
+				Previous ↑      ^ 1 ^ key k
+				Next ↓          ^ 1 ^ key j
+				Scroll ↑        ^ 1 ^ key Prior
+				Scroll ↓        ^ 1 ^ key Next
+				Open            ^ 0 ^ key o
+				Back ←          ^ 0 ^ key h
+				Comments →      ^ 0 ^ key l
+				Post            ^ 0 ^ key c
+				Refresh         ^ 0 ^ key r
+				Quit		    ^ 0 ^ key q
+				Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
+				Zoom -          ^ 1 ^ key Ctrl+Shift+Next
+				St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
+			"
+			WINNAME=tuir
+		elif echo "$WMNAME" | grep -i -w "w3m"; then
+			#w3m
+			CHOICES="
+				Back ←          ^ 1 ^ key B
+				Goto URL        ^ 1 ^ key U
+				Next Link       ^ 1 ^ key Tab
+				Previous Link   ^ 1 ^ key Shift+Tab
+				Open tab        ^ 0 ^ key T
+				Close tab       ^ 0 ^ Ctrl+q
+				Next tab        ^ 1 ^ key braceright
+				Previous tab    ^ 1 ^ key braceleft
+				Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
+				Zoom -          ^ 1 ^ key Ctrl+Shift+Next
+				St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
+			"
+			WINNAME=w3m
+		elif echo "$WMNAME" | grep -i -w "ncmpcpp"; then
+			#ncmpcpp
+			CHOICES="
+				Playlist        ^ 0 ^ key 1
+				Browser         ^ 0 ^ key 2
+				Search          ^ 0 ^ key 2
+				Next track      ^ 0 ^ key greater
+				Previous track  ^ 0 ^ key less
+				Pause           ^ 0 ^ key p
+				Stop            ^ 0 ^ key s
+				Toggle repeat   ^ 0 ^ key r
+				Toggle random   ^ 0 ^ key z
+				Toggle consume  ^ 0 ^ key R
+				St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
+			"
+			WINNAME=ncmpcpp
+		else
+			STSELMODEON="$(
+				echo "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' '
+			)"
+			CHOICES="
+				Type complete   ^ 0 ^ key Ctrl+Shift+u
+				Copy complete   ^ 0 ^ key Ctrl+Shift+i
+				Selmode $(
+				  [ "$STSELMODEON" = 1 ] &&
+				  printf %b 'On → Off' ||
+				  printf %b 'Off → On'
+				  printf %b '^ 0 ^ key Ctrl+Shift+s'
+				)
+				$([ "$STSELMODEON" = 1 ] && echo 'Copy selection ^ 0 ^ key Ctrl+Shift+c')
+				Paste           ^ 0 ^ key Ctrl+Shift+v
+				Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
+				Zoom -          ^ 1 ^ key Ctrl+Shift+Next
+				Scroll ↑        ^ 1 ^ key Ctrl+Shift+b
+				Scroll ↓        ^ 1 ^ key Ctrl+Shift+f
+				Invert          ^ 1 ^ key Ctrl+Shift+x
+				Hotkeys         ^ 0 ^ sxmo_appmenu.sh sthotkeys
+			"
+			WINNAME=St
+		fi
 	elif echo "$WMCLASS" | grep -i "sthotkeys"; then
 		#  St hotkeys
 		CHOICES="
 			Send Ctrl-C      ^ 0 ^ key Ctrl+c
+			Send Ctrl-Z      ^ 0 ^ key Ctrl+z
 			Send Ctrl-L      ^ 0 ^ key Ctrl+l
 			Send Ctrl-D      ^ 0 ^ key Ctrl+d
+			Send Ctrl-A      ^ 0 ^ key Ctrl+a
+			Send Ctrl-B      ^ 0 ^ key Ctrl+b
 		"
 		WINNAME=St
 	elif echo "$WMCLASS" | grep -i netsurf; then
@@ -269,7 +357,7 @@ getprogchoices() {
 
 key() {
 	xdotool windowactivate "$WIN"
-	xdotool key --clearmodifiers "$1"
+	xdotool key --delay 50 --clearmodifiers $* # <-- unquoted, word splitting is deliberate!
 	#--window $WIN
 }
 
