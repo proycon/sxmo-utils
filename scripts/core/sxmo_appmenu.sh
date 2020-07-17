@@ -132,9 +132,9 @@ programchoicesinit() {
 			CHOICES="
 				Scroll ↑        ^ 1 ^ key Ctrl+Shift+u
 				Scroll ↓        ^ 1 ^ key Ctrl+Shift+d
-				Command prompt  ^ 0 ^ key Escape colon
-				Save            ^ 0 ^ key Escape colon w Return
-				Quit		    ^ 0 ^ key Escape colon q Return
+				Command prompt  ^ 0 ^ key Escape Shift+semicolon
+				Save            ^ 0 ^ key Escape Shift+semicolon w Return
+				Quit		    ^ 0 ^ key Escape Shift+semicolon q Return
 				Paste Selection	^ 0 ^ key Escape quotedbl asterisk p
 				Paste Clipboard	^ 0 ^ key Escape quotedbl plus p
 				Search          ^ 0 ^ key Escape /
