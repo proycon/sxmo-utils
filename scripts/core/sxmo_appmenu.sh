@@ -176,6 +176,22 @@ programchoicesinit() {
 				St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
 			"
 			WINNAME=tuir
+		elif echo "$WMNAME" | grep -i -w "w3m"; then
+			#w3m
+			CHOICES="
+				Back ←          ^ 1 ^ key B
+				Goto URL        ^ 1 ^ key U
+				Next Link       ^ 1 ^ key Tab
+				Previous Link   ^ 1 ^ key Shift+Tab
+				Open tab        ^ 0 ^ key T
+				Close tab       ^ 0 ^ Ctrl+q
+				Next tab        ^ 1 ^ key braceright
+				Previous tab    ^ 1 ^ key braceleft
+				Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
+				Zoom -          ^ 1 ^ key Ctrl+Shift+Next
+				St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
+			"
+			WINNAME=w3m
 		else
 			STSELMODEON="$(
 				echo "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' '
@@ -204,8 +220,11 @@ programchoicesinit() {
 		#  St hotkeys
 		CHOICES="
 			Send Ctrl-C      ^ 0 ^ key Ctrl+c
+			Send Ctrl-Z      ^ 0 ^ key Ctrl+z
 			Send Ctrl-L      ^ 0 ^ key Ctrl+l
 			Send Ctrl-D      ^ 0 ^ key Ctrl+d
+			Send Ctrl-A      ^ 0 ^ key Ctrl+a
+			Send Ctrl-B      ^ 0 ^ key Ctrl+b
 		"
 		WINNAME=St
 	elif echo "$WMCLASS" | grep -i netsurf; then
