@@ -92,6 +92,37 @@ programchoicesinit() {
 		 Seek Info    ^ 1 ^ key o
 		"
 		WINNAME=Mpv && return
+	elif echo "$WMCLASS" | grep -i "feh"; then
+		# Feh
+		CHOICES="
+		 Next →          ^ 1 ^ key space
+		 Previous ←      ^ 1 ^ key BackSpace
+		 Zoom +          ^ 1 ^ key up
+		 Zoom -          ^ 1 ^ key down
+		 Zoom to fit     ^ 1 ^ key slash
+		 Zoom to fill    ^ 1 ^ key exlam
+		 Rotate ↺        ^ 1 ^ key less
+		 Rotate ↻        ^ 1 ^ key greater
+		 Flip ⇅          ^ 1 ^ key underscore
+		 Mirror ⇄        ^ 1 ^ key bar
+		 Toggle filename ^ 1 ^ key d
+		 Exit			 ^ 0 ^ key q
+		"
+		WINNAME=Feh && return
+	elif echo "$WMCLASS" | grep -i "sxiv"; then
+		# Sxiv
+		CHOICES="
+		 Next →          ^ 1 ^ key space
+		 Previous ←      ^ 1 ^ key BackSpace
+		 Zoom +          ^ 1 ^ key equal
+		 Zoom -          ^ 1 ^ key minus
+		 Rotate ↺        ^ 1 ^ key less
+		 Rotate ↻        ^ 1 ^ key greater
+		 Flip ⇄          ^ 1 ^ key question
+		 Flip ⇅          ^ 1 ^ key bar
+		 Exit			 ^ 0 ^ key q
+		"
+		WINNAME=Sxiv && return
 	elif echo "$WMCLASS" | grep -i "st-256color"; then
 		#  St
 		STSELMODEON="$(
