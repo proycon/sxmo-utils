@@ -76,6 +76,14 @@ programchoicesinit() {
 			Volume ↓                                                  ^ 1 ^ sxmo_vol.sh down
 		"
 		WINNAME="Audio"
+	elif echo "$WMCLASS" | grep -i "power"; then
+		# Power menu
+		CHOICES="
+			Logout   ^ 0 ^ pkill -9 dwm
+			Reboot   ^ 0 ^ st -e sudo reboot
+			Poweroff ^ 0 ^ st -e sudo halt
+		"
+		WINNAME="Power"
 	elif echo "$WMCLASS" | grep -i "mpv"; then
 		# MPV
 		CHOICES="
@@ -316,7 +324,7 @@ programchoicesinit() {
 			Wifi                 ^ 0 ^ st -e nmtui
 			Audio                ^ 0 ^ sxmo_appmenu.sh audioout
 			Config               ^ 0 ^ sxmo_appmenu.sh config
-			Logout               ^ 0 ^ pkill -9 dwm
+			Power                ^ 0 ^ sxmo_appmenu.sh power
 		"
 		WINNAME=Sys
 	fi
