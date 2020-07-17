@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
+FETCHENABLED=1
+
 if [ -f "$XDG_CONFIG_HOME/sxmo/sfeedrc" ]; then
 	SFEEDCONF="$XDG_CONFIG_HOME/sxmo/sfeedrc"
 elif [ -f "$HOME/.sfeed/sfeedrc" ]; then
@@ -32,7 +34,7 @@ prep_temp_folder_with_items() {
 
 list_items() {
 	cd "$FOLDER" || die "Couldn't cd to $FOLDER"
-	echo "Close Menu"
+	printf %b "Close Menu\nChange Timespan\n"
 	gawk -F'\t' '{print $1 " " substr(FILENAME, 3) " | " $2 ": " $3}' ./* |\
 	grep -E '^[0-9]{5}' |\
 	sort -nk1 |\
@@ -40,30 +42,68 @@ list_items() {
 	gawk -F' ' '{printf strftime("%y/%m/%d %H:%M",$1); $1=""; print $0}'
 }
 
-# Update Sfeed
-st -e sh -c "echo Syncing Feeds && sfeed_update $SFEEDCONF"
 
-# Dmenu prompt for timespan
-TIMESPAN=$(
-echo "1 hour ago
-3 hours ago
-12 hours ago
-1 day ago
-2 day ago
-1970-01-01" | dmenu -p "RSS Timespan" -c -l 10 -fn Terminus-20
-)
+rsstimespanmenu() {
+	CHOICE="Fetch"
+	while echo "$CHOICE" | grep Fetch; do
+		# Dmenu prompt for timespan
+		CHOICES="
+			Close Menu
+			1 hour ago
+			3 hours ago
+			12 hours ago
+			1 day ago
+			2 day ago
+			1970-01-01
+			Fetch $([ "$FETCHENABLED" = "1" ] && echo "enabled ✓" || echo "disabled (use cache)")
+		"
+		CHOICE="$(
+			echo "$CHOICES" |
+			sed '/^[[:space:]]*$/d' |
+			awk '{$1=$1};1' |
+			dmenu -p "RSS Timespan" -c -l 10 -fn Terminus-20
+		)"
 
-# Make folder like /tmp/sfeed_1_day_ago
-FOLDER="/tmp/sfeed_$(echo "$TIMESPAN" | sed 's/ /_/g')"
-prep_temp_folder_with_items
+		if echo "$CHOICE" | grep "Fetch"; then
+			[ "$FETCHENABLED" = 0 ] && FETCHENABLED=1 || FETCHENABLED=0
+		else
+			TIMESPAN="$CHOICE"
+		fi
+	done
 
-while true; do
-	# Show list of items
-	PICKED=$(list_items | dmenu -p "RSS" -c -l 20 -fn Terminus-15)
+	# Update Sfeed via sfeed_update (as long as user didn't request cached)
+	[ $FETCHENABLED = 1 ] &&
+		st -e sh -c "echo Fetching Feeds && sfeed_update $SFEEDCONF"
 
-	[ "$PICKED" = "Close Menu" ] && die Closed Menu
+	rssreadmenu
+}
 
-	# Handle picked item
-	URL="$(echo "$PICKED" | gawk -F " " '{print $NF}')"
-	sxmo_urlhandler.sh "$URL" fork
-done
+rssreadmenu() {
+	# Make folder like /tmp/sfeed_1_day_ago
+	FOLDER="/tmp/sfeed_$(echo "$TIMESPAN" | sed 's/ /_/g')"
+	prep_temp_folder_with_items
+	TIMESPANABBR="$(
+		echo "$TIMESPAN" |
+		sed 's/ago//' |
+		sed 's/hours/h/' |
+		sed 's/hour/h/' |
+		sed 's/days/d/' |
+		sed 's/day/d/' |
+		tr -d ' '
+	)"
+
+	while true; do
+		# Show list of items
+		PICKED=$(list_items | dmenu -p "RSS ($TIMESPANABBR)" -c -l 20 -fn Terminus-15)
+		if [ "$PICKED" = "Close Menu" ]; then
+		  die Closed Menu
+		elif [ "$PICKED" = "Change Timespan" ]; then
+		  rsstimespanmenu
+		else
+			URL="$(echo "$PICKED" | gawk -F " " '{print $NF}')"
+			sxmo_urlhandler.sh "$URL" fork
+		fi
+	done
+}
+
+rsstimespanmenu
