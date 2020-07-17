@@ -326,7 +326,7 @@ getprogchoices() {
 
 key() {
 	xdotool windowactivate "$WIN"
-	xdotool key --clearmodifiers "$*"
+	xdotool key --clearmodifiers $*
 	#--window $WIN
 }
 
