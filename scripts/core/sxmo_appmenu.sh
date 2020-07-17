@@ -192,6 +192,22 @@ programchoicesinit() {
 				St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
 			"
 			WINNAME=w3m
+		elif echo "$WMNAME" | grep -i -w "ncmpcpp"; then
+			#ncmpcpp
+			CHOICES="
+				Playlist        ^ 0 ^ key 1
+				Browser         ^ 0 ^ key 2
+				Search          ^ 0 ^ key 2
+				Next track      ^ 0 ^ key greater
+				Previous track  ^ 0 ^ key less
+				Pause           ^ 0 ^ key p
+				Stop            ^ 0 ^ key s
+				Toggle repeat   ^ 0 ^ key r
+				Toggle random   ^ 0 ^ key z
+				Toggle consume  ^ 0 ^ key R
+				St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
+			"
+			WINNAME=ncmpcpp
 		else
 			STSELMODEON="$(
 				echo "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' '
@@ -274,7 +290,7 @@ programchoicesinit() {
 		  Locations           ^ 0 ^ sxmo_gpsutil.sh menulocations
 			Copy                ^ 1 ^ sxmo_gpsutil.sh copy
 			Paste               ^ 0 ^ sxmo_gpsutil.sh paste
-		  Drop Pin            ^ 0 ^ sxmo_gpsutil.sh droppin
+			Drop Pin            ^ 0 ^ sxmo_gpsutil.sh droppin
 			Region Search       ^ 0 ^ sxmo_gpsutil.sh menuregionsearch
 			Region Details      ^ 0 ^ sxmo_gpsutil.sh details
 			Zoom +              ^ 1 ^ key i
@@ -343,7 +359,7 @@ getprogchoices() {
 
 key() {
 	xdotool windowactivate "$WIN"
-	xdotool key --delay 50 --clearmodifiers $*
+	xdotool key --delay 50 --clearmodifiers $* # <-- unquoted, word splitting is deliberate!
 	#--window $WIN
 }
 
