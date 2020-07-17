@@ -132,13 +132,13 @@ programchoicesinit() {
 			CHOICES="
 				Scroll ↑        ^ 1 ^ key Ctrl+Shift+u
 				Scroll ↓        ^ 1 ^ key Ctrl+Shift+d
-				Command prompt  ^ 0 ^ key Esc colon
-				Save            ^ 0 ^ key Esc colon w Return
-				Save & Quit     ^ 0 ^ key Esc colon w q Return
-				Quit		    ^ 0 ^ key Esc colon q Return
-				Paste Selection	^ 0 ^ key Esc quotedbl asterisk p
-				Paste Clipboard	^ 0 ^ key Esc quotedbl plus p
-				Search          ^ 0 ^ key Esc /
+				Command prompt  ^ 0 ^ key Escape colon
+				Save            ^ 0 ^ key Escape colon w Return
+				Save & Quit     ^ 0 ^ key Escape colon w q Return
+				Quit		    ^ 0 ^ key Escape colon q Return
+				Paste Selection	^ 0 ^ key Escape quotedbl asterisk p
+				Paste Clipboard	^ 0 ^ key Escape quotedbl plus p
+				Search          ^ 0 ^ key Escape /
 				Zoom +          ^ 1 ^ key Ctrl+Shift+Prior
 				Zoom -          ^ 1 ^ key Ctrl+Shift+Next
 				St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
