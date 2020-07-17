@@ -143,8 +143,8 @@ programchoicesinit() {
 				Zoom -          ^ 1 ^ key Ctrl+Shift+Next
 				St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
 			"
-			WINNAME=vi
-		if echo "$WMNAME" | grep -i -w "nano"; then
+			WINNAME=Vim
+		elif echo "$WMNAME" | grep -i -w "nano"; then
 			#Nano in st
 			CHOICES="
 				Scroll ↑        ^ 1 ^ key Prior
@@ -159,7 +159,7 @@ programchoicesinit() {
 				Zoom -          ^ 1 ^ key Ctrl+Shift+Next
 				St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
 			"
-			WINNAME=vi
+			WINNAME=Nano
 		elif echo "$WMNAME" | grep -i -w "tuir"; then
 			#tuir (reddit client) in st
 			CHOICES="
