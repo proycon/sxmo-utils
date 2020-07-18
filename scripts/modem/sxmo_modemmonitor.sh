@@ -20,12 +20,6 @@ modem_n() {
 	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 }
 
-ring() {
-	action="sxmo_vibratepine 2000 & sxmo_setpineled green 1"
-	[[ -x "$XDG_CONFIG_HOME/sxmo/ringing" ]] && action="$XDG_CONFIG_HOME/sxmo/ringing"
-	${action}
-}
-
 checkforincomingcalls() {
 	VOICECALLID="$(
 		mmcli -m "$(modem_n)" --voice-list-calls -a |
@@ -38,7 +32,11 @@ checkforincomingcalls() {
 		 return
 	fi
 
-	ring
+	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
+		 "$XDG_CONFIG_HOME/sxmo/hooks/ring"
+	else
+		sxmo_vibratepine 2000 & sxmo_setpineled green 1
+	fi
 
 	# Delete all previous calls which have been terminated calls
 	for CALLID in $(
