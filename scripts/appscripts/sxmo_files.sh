@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-EDITOR=vis
 DIR="$1"
 [ -z "$DIR" ] && DIR="/home/$USER/"
 cd "$DIR" || exit 1

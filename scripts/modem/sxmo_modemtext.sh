@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-EDITOR=vis
 LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
 
 err() {
@@ -16,7 +15,7 @@ modem_n() {
 editmsg() {
 	TMP="$(mktemp --suffix "$1_msg")"
 	echo "$2" > "$TMP"
-	TEXT="$(st -e $EDITOR "$TMP")"
+	TEXT="$(st -e "$EDITOR" "$TMP")"
 	cat "$TMP"
 }
 
