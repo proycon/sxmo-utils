@@ -106,7 +106,6 @@ programchoicesinit() {
 		 Flip ⇅          ^ 1 ^ key underscore
 		 Mirror ⇄        ^ 1 ^ key bar
 		 Toggle filename ^ 1 ^ key d
-		 Exit			 ^ 0 ^ key q
 		"
 		WINNAME=Feh && return
 	elif echo "$WMCLASS" | grep -i "sxiv"; then
@@ -120,7 +119,6 @@ programchoicesinit() {
 		 Rotate ↻        ^ 1 ^ key greater
 		 Flip ⇄          ^ 1 ^ key question
 		 Flip ⇅          ^ 1 ^ key bar
-		 Exit			 ^ 0 ^ key q
 		"
 		WINNAME=Sxiv && return
 	elif echo "$WMCLASS" | grep -i "st-256color"; then
