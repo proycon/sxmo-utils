@@ -36,8 +36,8 @@ checkforincomingcalls() {
 
 	# Delete all previous calls which have been terminated calls
 	for CALLID in $(
-		mmcli -m "$(modem_n)" --voice-list-calls | 
-		grep terminated | 
+		mmcli -m "$(modem_n)" --voice-list-calls |
+		grep terminated |
 		grep -oE "Call\/[0-9]+" |
 		cut -d'/' -f2
 	); do
@@ -50,7 +50,7 @@ checkforincomingcalls() {
 		mmcli -m "$(modem_n)" --voice-list-calls -o "$VOICECALLID" -K |
 		grep call.properties.number |
 		cut -d ':' -f 2 |
-		tr -d ' +'
+		tr -d ' '
 	)
 
 	# Log to /tmp/incomingcall to allow pickup and log into modemlog
@@ -80,9 +80,9 @@ checkfornewtexts() {
 		TEXTDATA="$(mmcli -m "$(modem_n)" -s "$TEXTID" -K)"
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
 		NUM="$(
-			echo "$TEXTDATA" | 
-			grep sms.content.number | 
-			sed -E 's/^sms\.content\.number\s+:\s+[+]?//'
+			echo "$TEXTDATA" |
+			grep sms.content.number |
+			sed -E 's/^sms\.content\.number\s+:\s+//'
 		)"
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 
