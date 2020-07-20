@@ -60,11 +60,11 @@ sendtextmenu() {
 
 	# Prompt for number
 	NUMBER="$(
-		printf %b "\nCancel\n$(sxmo_contacts.sh)" | 
+		printf %b "\nCancel\n$(sxmo_contacts.sh)" |
 		awk NF |
 		menu sxmo_dmenu_with_kb.sh -p "Number" -fn "Terminus-20" -l 10 -c -i |
 		cut -d: -f1 |
-		tr -d -- '-+ '
+		tr -d -- '- '
 	)"
 	echo "$NUMBER" | grep -E "^Cancel$" && exit 1
 	echo "$NUMBER" | grep -qE '^[+0-9]+$' || err "That doesn't seem like a valid number"

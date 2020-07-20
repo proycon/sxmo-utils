@@ -50,7 +50,7 @@ checkforincomingcalls() {
 		mmcli -m "$(modem_n)" --voice-list-calls -o "$VOICECALLID" -K |
 		grep call.properties.number |
 		cut -d ':' -f 2 |
-		tr -d ' +'
+		tr -d ' '
 	)
 
 	CONTACT="$(sxmo_contacts.sh | grep "$INCOMINGNUMBER" || echo "$INCOMINGNUMBER")"
@@ -85,7 +85,7 @@ checkfornewtexts() {
 		NUM="$(
 			echo "$TEXTDATA" |
 			grep sms.content.number |
-			sed -E 's/^sms\.content\.number\s+:\s+[+]?//'
+			sed -E 's/^sms\.content\.number\s+:\s+//'
 		)"
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 
