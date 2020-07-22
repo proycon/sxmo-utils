@@ -39,6 +39,8 @@ void writefile(char *filepath, char *str);
 // Variables
 Display *dpy;
 enum State state = StateNoInput;
+int suspendpendingsceenon = 0;
+int suspendpendingtimeouts = 0;
 KeySym lastkeysym = XK_Cancel;
 int lastkeyn = 0;
 char oldbrightness[10] = "200";
@@ -165,7 +167,7 @@ readinputloop(Display *dpy, int screen) {
 	fd_set fdset;
 	int xfd;
 	int selectresult;
-	struct timeval xeventtimeout = {5, 0};
+	struct timeval xeventtimeout = {1, 0};
 	xfd = ConnectionNumber(dpy);
 
 	for (;;) {
@@ -194,10 +196,15 @@ readinputloop(Display *dpy, int screen) {
 				lastkeysym = XK_Cancel;
 				switch (keysym) {
 					case XF86XK_AudioRaiseVolume:
+						suspendpendingsceenon = state == StateNoInput;
+						suspendpendingtimeouts = 0;
 						state = StateSuspend;
 						break;
 					case XF86XK_AudioLowerVolume:
-						state = (state == StateNoInput ? StateNoInputNoScreen : StateNoInput);
+						if (state == StateNoInput) state = StateNoInputNoScreen;
+						else if (state == StateNoInputNoScreen) state = StateNoInput;
+						else if (state = StateSuspendPending && suspendpendingsceenon) state = StateNoInputNoScreen;
+						else state = StateNoInput;
 						break;
 					case XF86XK_PowerOff:
 						state = StateDead;
@@ -206,7 +213,9 @@ readinputloop(Display *dpy, int screen) {
 				syncstate();
 			}
 		} else if (state == StateSuspendPending) {
-			state = StateSuspend;
+			suspendpendingtimeouts++;
+			// # E.g. after 4s kick back into suspend
+			if (suspendpendingtimeouts > 4) state = StateSuspend;
 			syncstate();
 		}
 
@@ -242,13 +251,19 @@ syncstate()
 		// Just woke up
 		updatestatusbar();
 		state = StateSuspendPending;
+		suspendpendingtimeouts = 0;
 		syncstate();
 	} else if (state == StateNoInput) {
 		setpineled(Blue);
 		writefile(brightnessfile, oldbrightness);
-	} else if (state == StateNoInputNoScreen || state == StateSuspendPending) {
+	} else if (state == StateNoInputNoScreen) {
 		setpineled(Purple);
 		writefile(brightnessfile, "0");
+	} else if (state == StateSuspendPending) {
+		writefile(brightnessfile, suspendpendingsceenon ? oldbrightness : "0");
+		setpineled(Off);
+		usleep(1000 * 100);
+		setpineled(suspendpendingsceenon ? Blue : Purple);
 	} else if (state == StateDead) {
 		writefile(brightnessfile, oldbrightness);
 		setpineled(Off);
