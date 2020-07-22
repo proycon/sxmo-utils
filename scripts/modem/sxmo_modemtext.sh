@@ -1,8 +1,17 @@
 #!/usr/bin/env sh
 LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
+TERMMODE=$([ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] && echo "true")
+
+menu() {
+	if [ "$TERMMODE" != "true" ]; then
+		"$@"
+	else
+		vis-menu -i -l 10
+	fi
+}
 
 err() {
-	echo "$1" | dmenu -fn Terminus-20 -c -l 10
+	echo "$1" | menu -fn Terminus-20 -c -l 10
 	kill $$
 }
 
@@ -15,7 +24,11 @@ modem_n() {
 editmsg() {
 	TMP="$(mktemp --suffix "$1_msg")"
 	echo "$2" > "$TMP"
-	TEXT="$(st -e "$EDITOR" "$TMP")"
+	if [ "$TERMMODE" != "true" ]; then
+		st -e "$EDITOR" "$TMP"
+	else
+		"$EDITOR" "$TMP"
+	fi
 	cat "$TMP"
 }
 
@@ -49,7 +62,7 @@ sendtextmenu() {
 	NUMBER="$(
 		printf %b "\nCancel\n$(sxmo_contacts.sh)" | 
 		awk NF |
-		sxmo_dmenu_with_kb.sh -p "Number" -fn "Terminus-20" -l 10 -c -i |
+		menu sxmo_dmenu_with_kb.sh -p "Number" -fn "Terminus-20" -l 10 -c -i |
 		cut -d: -f1 |
 		tr -d -- '-+ '
 	)"
@@ -63,7 +76,7 @@ sendtextmenu() {
 	do
 		CONFIRM="$(
 			printf %b "Edit Message ($TEXT)\nSend to → $NUMBER\nCancel" |
-			dmenu -c -idx 1 -p "Confirm" -fn "Terminus-20" -l 10
+			menu dmenu -c -idx 1 -p "Confirm" -fn "Terminus-20" -l 10
 		)"
 		echo "$CONFIRM" | grep -E "^Send" && sendmsg "$NUMBER" "$TEXT" && exit 0
 		echo "$CONFIRM" | grep -E "^Cancel$" && exit 1
@@ -72,7 +85,11 @@ sendtextmenu() {
 }
 
 tailtextlog() {
-  st -e tail -n9999 -f "$LOGDIR/$1/sms.txt"
+	if [ "$TERMMODE" != "true" ]; then
+		st -e tail -n9999 -f "$LOGDIR/$1/sms.txt"
+	else
+		tail -n9999 -f "$LOGDIR/$1/sms.txt"
+	fi
 }
 
 main() {
@@ -86,7 +103,7 @@ main() {
 			sxmo_contacts.sh | grep -m1 "$NUM" | xargs -IL echo "L logfile"
 		done
 	)"
-	CONTACTIDANDNUM="$(printf %b "$ENTRIES" | dmenu -p Texts -c -fn Terminus-20 -l 10 -i)"
+	CONTACTIDANDNUM="$(printf %b "$ENTRIES" | menu dmenu -p Texts -c -fn Terminus-20 -l 10 -i)"
 	echo "$CONTACTIDANDNUM" | grep "Close Menu" && exit 1
 	echo "$CONTACTIDANDNUM" | grep "Send a Text" && sendtextmenu && exit 1
 	tailtextlog "$(echo "$CONTACTIDANDNUM" | cut -d: -f1)"
