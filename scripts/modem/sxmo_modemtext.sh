@@ -11,7 +11,7 @@ menu() {
 }
 
 err() {
-	echo "$1" | menu -fn Terminus-20 -c -l 10
+	echo "$1" | menu dmenu -fn Terminus-20 -c -l 10
 	kill $$
 }
 
