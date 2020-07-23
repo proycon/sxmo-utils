@@ -357,7 +357,7 @@ getprogchoices() {
 
 key() {
 	xdotool windowactivate "$WIN"
-	xdotool key --delay 50 --clearmodifiers $* # <-- unquoted, word splitting is deliberate!
+	xdotool key --delay 50 --clearmodifiers "$@"
 	#--window $WIN
 }
 
