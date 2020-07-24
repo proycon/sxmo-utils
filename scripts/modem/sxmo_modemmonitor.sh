@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 TIMEOUT=3
 LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
+NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
 trap "gracefulexit" INT TERM
 
 err() {
@@ -10,7 +11,6 @@ err() {
 
 gracefulexit() {
 	echo "gracefully exiting $0!"
-	sxmo_setpineled green 0
 	kill -9 0
 }
 
@@ -28,14 +28,14 @@ checkforincomingcalls() {
 	)"
 
 	if echo "$VOICECALLID" | grep -v .; then
-		 rm -f /tmp/sxmo_incomingcall
+		 rm -f "$NOTIFDIR/sxmo_incomingcall"
 		 return
 	fi
 
 	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
 		 "$XDG_CONFIG_HOME/sxmo/hooks/ring"
 	else
-		sxmo_vibratepine 2000 & sxmo_setpineled green 1
+		sxmo_vibratepine 2000 &
 	fi
 
 	# Delete all previous calls which have been terminated calls
@@ -61,7 +61,7 @@ checkforincomingcalls() {
 	TIME="$(date --iso-8601=seconds)"
 	mkdir -p "$LOGDIR"
 	printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$LOGDIR/modemlog.tsv"
-	echo "$VOICECALLID:$INCOMINGNUMBER" > /tmp/sxmo_incomingcall
+	printf %b "$VOICECALLID:$INCOMINGNUMBER\n" > "$NOTIFDIR/sxmo_incomingcall"
 	echo "Number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)"
 }
 
@@ -74,18 +74,11 @@ checkfornewtexts() {
 	echo "$TEXTIDS" | grep -v . && return
 
 	# Loop each textid received and read out the data into appropriate logfile
-	{
-		sxmo_setpineled green 1
-		sxmo_vibratepine 200;
-		sleep 0.1;
-		sxmo_vibratepine 200;
-		sleep 0.1;
-		sxmo_vibratepine 200;
-	} &
+	for TEXTID in $TEXTIDS; do
 
-	for TEXTID in $(printf %b "$TEXTIDS") ; do
 		TEXTDATA="$(mmcli -m "$(modem_n)" -s "$TEXTID" -K)"
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
+		TRUNCATED="$(printf %b "$TEXT" | cut -c1-70 | tr '\n' ' ' | sed '$s/ $/\n/')"
 		NUM="$(
 			echo "$TEXTDATA" | 
 			grep sms.content.number | 
@@ -97,12 +90,21 @@ checkfornewtexts() {
 		printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
 		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
 		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
+
+		CONTACT="$(sxmo_contacts.sh | grep "$NUM" || echo "$NUM")"
+
+		# Send a notice of each message to a notification file / watcher
+		
+		if [ "${#TEXT}" = "${#TRUNCATED}" ]; then
+			( sxmo_notificationwrite.sh "Message from $CONTACT: $TEXT" "st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" "$LOGDIR/$NUM/sms.txt" & ) &
+		else
+			( sxmo_notificationwrite.sh "Message from $CONTACT: $TRUNCATED..." "st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" "$LOGDIR/$NUM/sms.txt" & ) &
+		fi
 	done
 }
 
 mainloop() {
 	while true; do
-		sxmo_setpineled green 0
 		checkforincomingcalls
 		checkfornewtexts
 		sleep $TIMEOUT & wait

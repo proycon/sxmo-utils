@@ -39,6 +39,7 @@ daemons() {
 	autocutsel &
 	autocutsel -selection PRIMARY &
 	sxmo_statusbar.sh &
+	sxmo_notificationservice.sh &
 }
 
 daemonsneedingdbus() {
