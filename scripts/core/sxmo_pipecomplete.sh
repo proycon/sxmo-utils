@@ -3,14 +3,14 @@ INPUT="$(cat)"
 STWIN="$(xprop -root | sed -n '/^_NET_ACTIVE_WINDOW/ s/.* //p')"
 
 menu() {
-	pidof svkbd-sxmo || svkbd-sxmo &
+	pidof "$KEYBOARD" || "$KEYBOARD" &
 	RESULT="$(
 		printf %b "$(
   		echo "Close Menu";
 			echo "$INPUT" | grep -Eo '\S+' | tr -d '[:blank:]' | sort | uniq
 		)" | dmenu -p "$PROMPT" -l 10 -i -c -fn Terminus-20
 	)"
-	pkill svkbd-sxmo
+	pkill "$KEYBOARD"
 }
 
 copy() {

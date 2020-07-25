@@ -1,11 +1,11 @@
 #!/usr/bin/env sh
 menu() {
-	pidof svkbd-sxmo || svkbd-sxmo &
+	pidof "$KEYBOARD" || "$KEYBOARD" &
 	SEARCHTERMS="$(
 		echo "Close Menu" |
 		dmenu -p "Yt Search" -c -l 10 -fn Terminus-20
 	)"
-	pkill svkbd-sxmo
+	pkill "$KEYBOARD"
 	[ "Close Menu" = "$SEARCHTERMS" ] && exit 0
 
 	IDIOTRESULTS="$(youtube-cli "$SEARCHTERMS")"

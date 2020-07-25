@@ -10,6 +10,6 @@ lisgd "$@" \
 	-g '1,ULDR,sxmo_lisgdonefingercheck.sh sxmo_brightness.sh down' \
 	-g '2,LR,xdotool key --clearmodifiers Alt+e' \
 	-g '2,RL,xdotool key --clearmodifiers Alt+r' \
-	-g '2,DU,pidof svkbd-sxmo || svkbd-sxmo &' \
-	-g '2,UD,pkill -9 svkbd-sxmo' \
+	-g "2,DU,pidof $KEYBOARD || $KEYBOARD &" \
+	-g "2,UD,pkill -9 $KEYBOARD" \
 	&

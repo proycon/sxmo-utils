@@ -73,7 +73,7 @@ link_select() {
 		link_normalize "$(xprop -id "$SURF_WINDOW" _SURF_URI | cut -d '"' -f 2)"
 }
 
-pidof svkbd-sxmo || svkbd-sxmo &
+pidof "$KEYBOARD" || "$KEYBOARD" &
 VAL="$(link_select)"
-pkill svkbd-sxmo
+pkill "$KEYBOARD"
 echo "$VAL"
