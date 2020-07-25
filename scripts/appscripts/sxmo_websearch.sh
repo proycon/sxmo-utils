@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
-pidof svkbd-sxmo || svkbd-sxmo &
+pidof "$KEYBOARD" || "$KEYBOARD" &
 SEARCHQUERY="$(
 	echo "Close Menu" | dmenu -t -p "Search Query:" -c -fn "Terminus-20" -l 20
 )"
-pkill svkbd-sxmo
+pkill "$KEYBOARD"
 [ "Close Menu" = "$SEARCHQUERY" ] && exit 0
 
 echo "$SEARCHQUERY" | grep . || exit 0

@@ -6,6 +6,7 @@ envvars() {
 	command -v "$TERM" || export TERM=st
 	command -v "$BROWSER" || export BROWSER=surf
 	command -v "$EDITOR" || export EDITOR=vis
+	command -v "$KEYBOARD" || export KEYBOARD=svkbd-sxmo
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 	[ -z "$XDG_CONFIG_HOME" ] && export XDG_CONFIG_HOME=~/.config
 	[ -z "$XDG_CACHE_HOME" ] && export XDG_CACHE_HOME=~/.cache

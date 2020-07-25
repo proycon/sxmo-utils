@@ -2,20 +2,20 @@
 [ -z "$SXMO_SUBREDDITS" ] && SXMO_SUBREDDITS="pine64official pinephoneofficial unixporn postmarketos linux"
 
 menu() {
-	pidof svkbd-sxmo || svkbd-sxmo &
+	pidof "$KEYBOARD" || "$KEYBOARD" &
 	SUBREDDIT="$(
 		printf %b "Close Menu\n$(echo "$SXMO_SUBREDDITS" | tr " " '\n')" |
 		dmenu -p "Subreddit:" -c -l 10 -fn Terminus-20
 	)"
-	pkill svkbd-sxmo
+	pkill "$KEYBOARD"
 	[ "Close Menu" = "$SUBREDDIT" ] && exit 0
 
 	REDDITRESULTS="$(
 		reddit-cli "$SUBREDDIT" |
 			grep -E '^((created_utc|ups|title|url):|===)' |
 			sed -E 's/^(created_utc|ups|title|url):\s+/\t/g' |
-			tr -d '\n' | 
-			sed 's/===/\n/g' | 
+			tr -d '\n' |
+			sed 's/===/\n/g' |
 			sed 's/^\t//g' |
 			sort -t"$(printf '%b' '\t')" -rnk4 |
 			awk -F'\t' '{ printf "↑%4s", $3; print " " $4 " " $1 " " $2 }'
@@ -23,7 +23,7 @@ menu() {
 
 	while true; do
 		RESULT="$(
-			printf %b "Close Menu\n$REDDITRESULTS" | 
+			printf %b "Close Menu\n$REDDITRESULTS" |
 			dmenu -c -l 10 -fn Terminus-20
 		)"
 
