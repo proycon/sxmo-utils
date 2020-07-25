@@ -46,7 +46,7 @@ install: programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_s
 
 	chown root programs/sxmo_screenlock
 	chmod u+s programs/sxmo_screenlock
-	cp programs/sxmo_screenlock $(PREFIX)/usr/bin
+	cp -f programs/sxmo_screenlock $(PREFIX)/usr/bin
 
 	cp programs/sxmo_megiaudioroute $(PREFIX)/usr/bin
 	cp programs/sxmo_vibratepine $(PREFIX)/usr/bin
