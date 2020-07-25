@@ -20,6 +20,9 @@ programs/sxmo_megiaudioroute:
 programs/sxmo_vibratepine:
 	gcc -o programs/sxmo_vibratepine programs/sxmo_vibratepine.c
 
+clean:
+	rm programs/sxmo_setpineled programs/sxmo_screenlock programs/sxmo_setpinebacklight programs/sxmo_megiaudioroute programs/sxmo_vibratepine
+
 install: programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_screenlock programs/sxmo_megiaudioroute programs/sxmo_vibratepine
 	mkdir -p $(PREFIX)/usr/share/sxmo
 	cp -r configs/* $(PREFIX)/usr/share/sxmo
