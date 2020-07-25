@@ -79,9 +79,12 @@ programchoicesinit() {
 	elif echo "$WMCLASS" | grep -i "power"; then
 		# Power menu
 		CHOICES="
-			Logout   ^ 0 ^ pkill -9 dwm
-			Reboot   ^ 0 ^ st -e sudo reboot
-			Poweroff ^ 0 ^ st -e sudo halt
+			Lock               ^ 0 ^ sxmo_lock.sh
+			Lock (Screen off)  ^ 0 ^ sxmo_lock.sh --screen-off
+			Suspend            ^ 0 ^ sxmo_lock.sh --suspend
+			Logout             ^ 0 ^ pkill -9 dwm
+			Reboot             ^ 0 ^ st -e sudo reboot
+			Poweroff           ^ 0 ^ st -e sudo halt
 		"
 		WINNAME="Power"
 	elif echo "$WMCLASS" | grep -i "mpv"; then

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 #include <X11/keysym.h>
 #include <X11/XF86keysym.h>
 #include <X11/XKBlib.h>
@@ -108,6 +109,14 @@ die(const char *err, ...)
 	state = StateDead;
 	syncstate();
 	exit(1);
+}
+
+void
+sigterm()
+{
+	state = StateDead;
+	syncstate();
+	exit(0);
 }
 
 int
@@ -289,9 +298,32 @@ writefile(char *filepath, char *str)
 	}
 }
 
+void usage() {
+	fprintf(stderr, "Usage: sxmo_screenlock [--screen-off] [--suspend]\n");
+}
+
 int
 main(int argc, char **argv) {
 	int screen;
+	int i;
+	enum State target = StateNoInput;
+
+	signal(SIGTERM, sigterm);
+
+	//parse command line arguments
+	for (i = 1; i < argc; i++) {
+		if(!strcmp(argv[i], "-h")) {
+			usage();
+			return 0;
+		} else if(!strcmp(argv[i], "--screen-off")) {
+			target = StateNoInputNoScreen;
+		} else if(!strcmp(argv[i], "--suspend")) {
+			target = StateSuspend;
+		} else {
+			fprintf(stderr, "Invalid argument: %s\n", argv[i]);
+			return 2;
+		}
+	}
 
 	if (setuid(0))
 		die("setuid(0) failed\n");
@@ -304,6 +336,14 @@ main(int argc, char **argv) {
 	getoldbrightness();
 	syncstate();
 	lockscreen(dpy, screen);
+	if ((target == StateNoInputNoScreen) || (target == StateSuspend)) {
+		state = StateNoInputNoScreen;
+		syncstate();
+	}
+	if (target == StateSuspend) {
+		state = StateSuspend;
+		syncstate();
+	}
 	readinputloop(dpy, screen);
 	return 0;
 }
