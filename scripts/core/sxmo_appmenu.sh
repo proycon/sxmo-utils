@@ -15,8 +15,8 @@ programchoicesinit() {
 	if echo "$WMCLASS" | grep -i "userscripts"; then
 		# Userscripts menu
 		CHOICES="$(
-			find "$XDG_CONFIG_HOME/sxmo/userscripts" \( -type f -o -type l \) -print0 | 
-			xargs -IF basename F | 
+			find "$XDG_CONFIG_HOME/sxmo/userscripts" \( -type f -o -type l \) -print0 |
+			xargs -IF basename F |
 			awk '{printf "%s\t^ 0 ^ $XDG_CONFIG_HOME/sxmo/userscripts/%s \n", $0, $0}'
 		)"
 		WINNAME=Userscripts
@@ -55,7 +55,7 @@ programchoicesinit() {
 			Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
 			Modem Log                  ^ 0 ^ sxmo_modemlog.sh
 			Flash $(
-				grep -qE '^0$' /sys/class/leds/white:flash/brightness && 
+				grep -qE '^0$' /sys/class/leds/white:flash/brightness &&
 				printf %b "Off → On" ||  printf %b "On → Off";
 				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 			)
@@ -80,9 +80,12 @@ programchoicesinit() {
 	elif echo "$WMCLASS" | grep -i "power"; then
 		# Power menu
 		CHOICES="
-			Logout   ^ 0 ^ pkill -9 dwm
-			Reboot   ^ 0 ^ st -e sudo reboot
-			Poweroff ^ 0 ^ st -e sudo halt
+			Lock               ^ 0 ^ sxmo_lock.sh
+			Lock (Screen off)  ^ 0 ^ sxmo_lock.sh --screen-off
+			Suspend            ^ 0 ^ sxmo_lock.sh --suspend
+			Logout             ^ 0 ^ pkill -9 dwm
+			Reboot             ^ 0 ^ st -e sudo reboot
+			Poweroff           ^ 0 ^ st -e sudo halt
 		"
 		WINNAME="Power"
 	elif echo "$WMCLASS" | grep -i "mpv"; then
@@ -312,7 +315,7 @@ programchoicesinit() {
 		# Default system menu (no matches)
 		CHOICES="
 			$(
-				[ -n "$(ls -A "$XDG_CONFIG_HOME"/sxmo/userscripts)" ] && 
+				[ -n "$(ls -A "$XDG_CONFIG_HOME"/sxmo/userscripts)" ] &&
 				echo 'Userscripts  ^ 0 ^ sxmo_appmenu.sh userscripts'
 			)
 			Scripts              ^ 0 ^ sxmo_appmenu.sh scripts
@@ -385,7 +388,7 @@ quit() {
 mainloop() {
 	getprogchoices "$ARGS"
 	echo "$PROGCHOICES" |
-	cut -d'^' -f1 | 
+	cut -d'^' -f1 |
 	dmenu -idx "$DMENUIDX" -l 14 -c -fn "Terminus-30" -p "$WINNAME" | (
 		PICKED="$(cat)"
 		echo "$PICKED" | grep . || quit
