@@ -7,7 +7,8 @@ while true; do
 	PICKED="$(printf %b "$CHOICES\nClose Menu" | cut -f1 | dmenu -c -i -fn "Terminus-18" -p "Notifs" -l 10)"
 
 	echo "$PICKED" | grep "Close Menu" && exit 0
-	
+
+	# shellcheck disable=SC2091
 	$(printf %b "$CHOICES" | grep "$PICKED" | cut -f2)
 	exit 0
 done

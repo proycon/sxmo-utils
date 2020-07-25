@@ -99,9 +99,9 @@ checkfornewtexts() {
 		# Send a notice of each message to a notification file / watcher
 
 		if [ "${#TEXT}" = "${#TRUNCATED}" ]; then
-			( sxmo_notificationwrite.sh "Message from $CONTACT: $TEXT" "st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" "$LOGDIR/$NUM/sms.txt" & ) &
+			( sxmo_notificationwrite.sh "Message from $CONTACT: $TEXT" "st -e tail -n9999 -f \"$LOGDIR/$NUM/sms.txt\"" "$LOGDIR/$NUM/sms.txt" & ) &
 		else
-			( sxmo_notificationwrite.sh "Message from $CONTACT: $TRUNCATED..." "st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" "$LOGDIR/$NUM/sms.txt" & ) &
+			( sxmo_notificationwrite.sh "Message from $CONTACT: $TRUNCATED..." "st -e tail -n9999 -f \"$LOGDIR/$NUM/sms.txt\"" "$LOGDIR/$NUM/sms.txt" & ) &
 		fi
 
 		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/sms" ]; then
