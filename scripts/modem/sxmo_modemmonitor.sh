@@ -32,21 +32,17 @@ checkforincomingcalls() {
 		 return
 	fi
 
-	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
-		 "$XDG_CONFIG_HOME/sxmo/hooks/ring"
-	else
-		sxmo_vibratepine 2000 &
-	fi
 
 	# Delete all previous calls which have been terminated calls
 	for CALLID in $(
-		mmcli -m "$(modem_n)" --voice-list-calls | 
-		grep terminated | 
+		mmcli -m "$(modem_n)" --voice-list-calls |
+		grep terminated |
 		grep -oE "Call\/[0-9]+" |
 		cut -d'/' -f2
 	); do
 		mmcli -m "$(modem_n)" --voice-delete-call "$CALLID"
 	done
+
 
 	# Determine the incoming phone number
 	echo "Incoming Call:"
@@ -57,10 +53,17 @@ checkforincomingcalls() {
 		tr -d ' +'
 	)
 
+	CONTACT="$(sxmo_contacts.sh | grep "$INCOMINGNUMBER" || echo "$INCOMINGNUMBER")"
+	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
+		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$CONTACT"
+	else
+		sxmo_vibratepine 2000 &
+	fi
+
 	# Log to /tmp/incomingcall to allow pickup and log into modemlog
 	TIME="$(date --iso-8601=seconds)"
 	mkdir -p "$LOGDIR"
-	printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+	printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\t$CONTACT\n" >> "$LOGDIR/modemlog.tsv"
 	printf %b "$VOICECALLID:$INCOMINGNUMBER\n" > "$NOTIFDIR/sxmo_incomingcall"
 	echo "Number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)"
 }
@@ -80,26 +83,31 @@ checkfornewtexts() {
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
 		TRUNCATED="$(printf %b "$TEXT" | cut -c1-70 | tr '\n' ' ' | sed '$s/ $/\n/')"
 		NUM="$(
-			echo "$TEXTDATA" | 
-			grep sms.content.number | 
+			echo "$TEXTDATA" |
+			grep sms.content.number |
 			sed -E 's/^sms\.content\.number\s+:\s+[+]?//'
 		)"
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 
-		mkdir -p "$LOGDIR/$NUM"
-		printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
-		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
-		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
-
 		CONTACT="$(sxmo_contacts.sh | grep "$NUM" || echo "$NUM")"
 
+		mkdir -p "$LOGDIR/$NUM"
+		printf %b "Received from $NUM ($CONTACT) at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
+		printf %b "$TIME\trecv_txt\t$NUM\t$CONTACT\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
+		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
+
 		# Send a notice of each message to a notification file / watcher
-		
+
 		if [ "${#TEXT}" = "${#TRUNCATED}" ]; then
 			( sxmo_notificationwrite.sh "Message from $CONTACT: $TEXT" "st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" "$LOGDIR/$NUM/sms.txt" & ) &
 		else
 			( sxmo_notificationwrite.sh "Message from $CONTACT: $TRUNCATED..." "st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" "$LOGDIR/$NUM/sms.txt" & ) &
 		fi
+
+		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/sms" ]; then
+			"$XDG_CONFIG_HOME/sxmo/hooks/sms" "$CONTACT" "$TEXT"
+		fi
+
 	done
 }
 
