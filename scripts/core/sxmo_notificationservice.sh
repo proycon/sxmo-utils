@@ -3,6 +3,7 @@
 # This script should be run to initialize the notification watchers.
 
 NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
+mkdir -p "$NOTIFDIR"
 
 notifyd(){
 	inotifywait "$1" && rm -f "$2"
@@ -11,7 +12,7 @@ notifyd(){
 handlecreation(){
 	sxmo_setpineled green 1
 	# Start notification watcher if it matches the sxmo_notificationwrite format
-	awk 'BEGIN {FS="\t"} ; {print NF}' "$1" | grep -v 3 || 
+	awk 'BEGIN {FS="\t"} ; {print NF}' "$1" | grep -v 3 ||
 	( notifyd "$(cut -f3 "$1")" "$1" & )
 }
 
@@ -30,7 +31,7 @@ while true; do
 				NOTIFFILE="$NOTIFDIR/$(echo "$STATUS" | cut -d" " -f3)"
 				handlecreation "$NOTIFFILE"
 				;;
-		
+
 			"DELETE"|"DELETE_SELF"|"MOVED_FROM")
 				find "$NOTIFDIR"/ -type f -mindepth 1 | read -r || sxmo_setpineled green 0
 				;;
