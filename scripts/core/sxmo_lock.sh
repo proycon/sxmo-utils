@@ -4,7 +4,7 @@ if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/lock" ]; then
 fi
 pkill -9 lisgd
 sxmo_screenlock "$@"
-lisgd &
+sxmo_lisgdstart.sh &
 if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/unlock" ]; then
 	"$XDG_CONFIG_HOME/sxmo/hooks/unlock"
 fi
