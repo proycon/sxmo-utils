@@ -5,19 +5,24 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+#include <time.h>
 #include <X11/keysym.h>
 #include <X11/XF86keysym.h>
 #include <X11/XKBlib.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <sys/ioctl.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <linux/rtc.h>
 
 // Types
 enum State {
-	StateNoInput,         // Screen on / input lock
+	StateNoInput,		 // Screen on / input lock
 	StateNoInputNoScreen, // Screen off / input lock
-	StateSuspend,         // Deep sleep
+	StateSuspend,		 // Deep sleep
 	StateSuspendPending,  // Suspend 'woken up', must leave state in <5s, or kicks to StateSuspend
-	StateDead             // Exit the appliation
+	StateDead			 // Exit the appliation
 };
 enum Color {
 	Red,
@@ -27,14 +32,21 @@ enum Color {
 };
 
 // Fn declarations
+int checkrtcwake();
 void configuresuspendsettingsandwakeupsources();
+time_t convert_rtc_time(struct rtc_time * rtc);
 void die(const char *err, ...);
 int getoldbrightness();
+void init_rtc();
 void lockscreen(Display *dpy, int screen);
 void readinputloop(Display *dpy, int screen);
+int presuspend();
+void postwake();
 void setpineled(enum Color c);
+int setup_rtc_wakeup();
+void sigterm();
 void syncstate();
-void updatestatusbar();
+void usage();
 void writefile(char *filepath, char *str);
 
 // Variables
@@ -47,6 +59,63 @@ int lastkeyn = 0;
 char oldbrightness[10] = "200";
 char * brightnessfile = "/sys/devices/platform/backlight/backlight/backlight/brightness";
 char * powerstatefile = "/sys/power/state";
+int rtc_fd = 0; //file descriptor
+time_t wakeinterval = 0; //wake every x seconds
+time_t waketime = 0; //next wakeup time according to the RTC clock
+
+#define RTC_DEVICE	  "/dev/rtc0"
+
+time_t
+convert_rtc_time(struct rtc_time * rtc) {
+	struct tm		 tm;
+	memset(&tm, 0, sizeof tm);
+	tm.tm_sec = rtc->tm_sec;
+	tm.tm_min = rtc->tm_min;
+	tm.tm_hour = rtc->tm_hour;
+	tm.tm_mday = rtc->tm_mday;
+	tm.tm_mon = rtc->tm_mon;
+	tm.tm_year = rtc->tm_year;
+	tm.tm_isdst = -1;  /* assume the system knows better than the RTC */
+	return mktime(&tm);
+}
+
+int setup_rtc_wakeup() {
+	//(code adapted from util-linux's rtcwake)
+	struct tm		 *tm;
+	struct rtc_wkalrm	wake;
+	struct rtc_time now_rtc;
+
+	if (ioctl(rtc_fd, RTC_RD_TIME, &now_rtc) < 0) {
+		fprintf(stderr, "Error reading rtc time\n");
+	}
+	const time_t now = convert_rtc_time(&now_rtc);
+	waketime = now + wakeinterval;
+
+	tm = localtime(&waketime);
+
+	wake.time.tm_sec = tm->tm_sec;
+	wake.time.tm_min = tm->tm_min;
+	wake.time.tm_hour = tm->tm_hour;
+	wake.time.tm_mday = tm->tm_mday;
+	wake.time.tm_mon = tm->tm_mon;
+	wake.time.tm_year = tm->tm_year;
+	/* wday, yday, and isdst fields are unused by Linux */
+	wake.time.tm_wday = -1;
+	wake.time.tm_yday = -1;
+	wake.time.tm_isdst = -1;
+
+	fprintf(stderr, "Setting RTC wakeup to %ld: (UTC) %s", waketime, asctime(tm));
+
+	if (ioctl(rtc_fd, RTC_ALM_SET, &wake.time) < 0) {
+		fprintf(stderr, "error setting rtc alarm\n");
+		return -1;
+	}
+	if (ioctl(rtc_fd, RTC_AIE_ON, 0) < 0) {
+		fprintf(stderr, "error enabling rtc alarm\n");
+		return -1;
+	}
+	return 0;
+}
 
 void
 configuresuspendsettingsandwakeupsources()
@@ -59,7 +128,7 @@ configuresuspendsettingsandwakeupsources()
 		die("Couldn't open directory /sys/class/wakeup\n");
 	while ((wakeupsource = readdir(wakeupsources)) != NULL) {
 		sprintf(
-			wakeuppath, 
+			wakeuppath,
 			"/sys/class/wakeup/%.50s/device/power/wakeup",
 			wakeupsource->d_name
 		);
@@ -90,6 +159,9 @@ configuresuspendsettingsandwakeupsources()
 		"enabled"
 	);
 
+	//set RTC wake
+	if (wakeinterval > 0) setup_rtc_wakeup();
+
 	// Temporary hack to disable USB driver that doesn't suspend
 	fprintf(stderr, "Disabling buggy USB driver\n");
 	writefile(
@@ -107,6 +179,7 @@ configuresuspendsettingsandwakeupsources()
 	// E.g. make sure we're using CRUST
 	fprintf(stderr, "Flip mem_sleep setting to use crust\n");
 	writefile("/sys/power/mem_sleep", "deep");
+
 }
 
 void
@@ -123,6 +196,7 @@ sigterm()
 {
 	state = StateDead;
 	syncstate();
+	if (wakeinterval) close(rtc_fd);
 	exit(0);
 }
 
@@ -223,6 +297,7 @@ readinputloop(Display *dpy, int screen) {
 						else state = StateNoInput;
 						break;
 					case XF86XK_PowerOff:
+						waketime = 0;
 						state = StateDead;
 						break;
 				}
@@ -234,6 +309,7 @@ readinputloop(Display *dpy, int screen) {
 			if (suspendpendingtimeouts > 4) state = StateSuspend;
 			syncstate();
 		}
+
 
 		if (state == StateDead) break;
 	}
@@ -257,17 +333,64 @@ setpineled(enum Color c)
 	}
 }
 
+int
+presuspend() {
+	//called prior to suspension, a non-zero return value cancels suspension
+	return system("sxmo_presuspend.sh");
+}
+
+void
+postwake() {
+	//called after fully waking up (not used for temporary rtc wakeups)
+	system("sxmo_postwake.sh");
+}
+
+int
+checkrtcwake()
+{
+	struct rtc_time now;
+	if (ioctl(rtc_fd, RTC_RD_TIME, &now) < 0) {
+		fprintf(stderr, "Error reading rtc time\n");
+		return -1;
+	}
+
+	const long int timediff = convert_rtc_time(&now) - waketime;
+	fprintf(stderr, "Checking rtc wake? timediff=%ld\n", timediff);
+	if (timediff >= 0 && timediff <= 3) {
+		fprintf(stderr, "Calling RTC wake script\n");
+		setpineled(Blue);
+		return system("sxmo_rtcwake.sh");
+	}
+	return 0;
+}
+
 void
 syncstate()
 {
+	int rtcresult;
 	if (state == StateSuspend) {
-		setpineled(Red);
-		configuresuspendsettingsandwakeupsources();
-		writefile(powerstatefile, "mem");
-		// Just woke up
-		updatestatusbar();
-		state = StateSuspendPending;
-		suspendpendingtimeouts = 0;
+		if (presuspend() != 0) {
+			state = StateDead;
+		} else {
+			setpineled(Red);
+			configuresuspendsettingsandwakeupsources();
+			writefile(powerstatefile, "mem");
+			//---- program blocks here due to sleep ----- //
+			// Just woke up again
+			fprintf(stderr, "Woke up\n");
+			if (waketime > 0) {
+				rtcresult = checkrtcwake();
+			} else {
+				rtcresult = 0;
+			}
+			if (rtcresult == 0) {
+				state = StateSuspendPending;
+				suspendpendingtimeouts = 0;
+			} else {
+				postwake();
+				state = StateDead;
+			}
+		}
 		syncstate();
 	} else if (state == StateNoInput) {
 		setpineled(Blue);
@@ -286,11 +409,8 @@ syncstate()
 	}
 }
 
-void
-updatestatusbar()
-{
-	system("sxmo_statusbarupdate.sh");
-}
+
+
 
 void
 writefile(char *filepath, char *str)
@@ -309,6 +429,15 @@ void usage() {
 	fprintf(stderr, "Usage: sxmo_screenlock [--screen-off] [--suspend]\n");
 }
 
+
+void init_rtc() {
+	rtc_fd = open(RTC_DEVICE, O_RDONLY);
+	if (rtc_fd < 0) {
+		die("Unable to open rtc device");
+		exit(EXIT_FAILURE);
+	}
+}
+
 int
 main(int argc, char **argv) {
 	int screen;
@@ -316,6 +445,9 @@ main(int argc, char **argv) {
 	enum State target = StateNoInput;
 
 	signal(SIGTERM, sigterm);
+
+	const char* rtcwakeinterval = getenv("SXMO_RTCWAKEINTERVAL");
+	if (rtcwakeinterval != NULL) wakeinterval = atoi(rtcwakeinterval);
 
 	//parse command line arguments
 	for (i = 1; i < argc; i++) {
@@ -326,6 +458,8 @@ main(int argc, char **argv) {
 			target = StateNoInputNoScreen;
 		} else if(!strcmp(argv[i], "--suspend")) {
 			target = StateSuspend;
+		} else if(!strcmp(argv[i], "--wake-interval")) {
+			wakeinterval = (time_t) atoi(argv[++i]);
 		} else {
 			fprintf(stderr, "Invalid argument: %s\n", argv[i]);
 			return 2;
@@ -336,6 +470,8 @@ main(int argc, char **argv) {
 		die("setuid(0) failed\n");
 	if (!(dpy = XOpenDisplay(NULL)))
 		die("Cannot open display\n");
+
+	if (wakeinterval) init_rtc();
 
 	XkbSetDetectableAutoRepeat(dpy, True, NULL);
 	screen = XDefaultScreen(dpy);
@@ -352,5 +488,9 @@ main(int argc, char **argv) {
 		syncstate();
 	}
 	readinputloop(dpy, screen);
+	if (wakeinterval) {
+		ioctl(rtc_fd, RTC_AIE_OFF, 0);
+		close(rtc_fd);
+	}
 	return 0;
 }
