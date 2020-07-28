@@ -212,7 +212,7 @@ readinputloop(Display *dpy, int screen) {
 					case XF86XK_AudioLowerVolume:
 						if (state == StateNoInput) state = StateNoInputNoScreen;
 						else if (state == StateNoInputNoScreen) state = StateNoInput;
-						else if (state = StateSuspendPending && suspendpendingsceenon) state = StateNoInputNoScreen;
+						else if (state == StateSuspendPending && suspendpendingsceenon) state = StateNoInputNoScreen;
 						else state = StateNoInput;
 						break;
 					case XF86XK_PowerOff:
