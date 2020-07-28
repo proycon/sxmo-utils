@@ -57,7 +57,7 @@ customxinit() {
 startdwm() {
 	exec dbus-run-session sh -c "
 		$0 daemonsneedingdbus;
-		$0 customxinit;
+		. $0 customxinit;
 		dwm 2> ~/.dwm.log
 	"
 }
