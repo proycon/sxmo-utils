@@ -96,12 +96,10 @@ main() {
 	# E.g. only display logfiles for directories that exist and join w contact name
 	ENTRIES="$(
 		printf %b "Close Menu\nSend a Text\n";
-		# shellcheck disable=SC2045
-		for TDIR in $(ls -1 -t "$LOGDIR"); do
-			[ -d "$LOGDIR"/"$TDIR" ] || continue
-			NUM="$(basename "$TDIR")"
-			sxmo_contacts.sh | grep -m1 "$NUM" | xargs -IL echo "L logfile"
-		done
+		sxmo_contacts.sh | while read -r TDIR; do
+			[ -d "$LOGDIR"/"$(printf %b "$TDIR" | cut -d: -f1)" ] || continue
+			printf %b "$TDIR" | xargs -IL echo "L logfile"
+		done 
 	)"
 	CONTACTIDANDNUM="$(printf %b "$ENTRIES" | menu dmenu -p Texts -c -fn Terminus-20 -l 10 -i)"
 	echo "$CONTACTIDANDNUM" | grep "Close Menu" && exit 1
