@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 trap gracefulexit INT TERM
 WIN=$(xdotool getwindowfocus)
+NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
 
 gracefulexit() {
 	echo "Gracefully exiting $0"
@@ -339,8 +340,16 @@ getprogchoices() {
 	# E.g. sets CHOICES var
 	programchoicesinit "$@"
 
+	# Decorate menu at top w/ notifications if they exist
+	NOTIFICATIONS="$(find "$NOTIFDIR"/* -type f | grep -vc "sxmo_incomingcall" || echo 0)"
+	echo "$NOTIFICATIONS" | grep -v 0 &&
+		CHOICES="
+			Notifications ($(echo "$NOTIFICATIONS" | cut -d " " -f1)) ^ 0 ^ sxmo_notifications.sh
+			$CHOICES
+		"
+
 	# Decorate menu at top w/ incoming call entry if present
-	INCOMINGCALL="$(cat /tmp/sxmo_incomingcall || echo NOCALL)"
+	INCOMINGCALL="$(cat "$NOTIFDIR"/sxmo_incomingcall || echo NOCALL)"
 	if echo "$INCOMINGCALL" | grep -v NOCALL; then
 		CALLID="$(echo "$INCOMINGCALL" | cut -d: -f1)"
 		CALLNUM="$(echo "$INCOMINGCALL" | cut -d: -f2)"
