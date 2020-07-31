@@ -96,9 +96,9 @@ main() {
 	# E.g. only display logfiles for directories that exist and join w contact name
 	ENTRIES="$(
 		printf %b "Close Menu\nSend a Text\n";
-		sxmo_contacts.sh | while read -r TDIR; do
-			[ -d "$LOGDIR"/"$(printf %b "$TDIR" | cut -d: -f1)" ] || continue
-			printf %b "$TDIR" | xargs -IL echo "L logfile"
+		sxmo_contacts.sh | while read -r CONTACT; do
+			[ -d "$LOGDIR"/"$(printf %b "$CONTACT" | cut -d: -f1)" ] || continue
+			printf %b "$CONTACT" | xargs -IL echo "L logfile"
 		done 
 	)"
 	CONTACTIDANDNUM="$(printf %b "$ENTRIES" | menu dmenu -p Texts -c -fn Terminus-20 -l 10 -i)"
