@@ -44,6 +44,7 @@ daemons() {
 
 daemonsneedingdbus() {
 	dunst -conf /usr/share/sxmo/appcfg/dunst.conf &
+	sxmo_notificationmonitor.sh &
 	sxmo_lisgdstart.sh &
 }
 
