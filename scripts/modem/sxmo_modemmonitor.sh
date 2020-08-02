@@ -53,14 +53,14 @@ checkforincomingcalls() {
 		tr -d ' '
 	)
 
-	CONTACT="$(sxmo_contacts.sh | grep "$INCOMINGNUMBER" || echo "$INCOMINGNUMBER")"
+	CONTACT="$(sxmo_contacts.sh | grep "$INCOMINGNUMBER" | cut -d" " -f2- || echo "Unknown Number")"
 	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
 		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$CONTACT"
 	else
 		sxmo_vibratepine 2000 &
 	fi
 
-	# Log to /tmp/incomingcall to allow pickup and log into modemlog
+	# Log to $NOTIFDIR/incomingcall to allow pickup and log into modemlog
 	TIME="$(date --iso-8601=seconds)"
 	mkdir -p "$LOGDIR"
 	printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\t$CONTACT\n" >> "$LOGDIR/modemlog.tsv"
@@ -95,7 +95,7 @@ checkfornewtexts() {
 		printf %b "$TIME\trecv_txt\t$NUM\t$CONTACT\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
 		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
 
-		CONTACT="$(sxmo_contacts.sh | grep "$NUM" || echo "$NUM")"
+		CONTACT="$(sxmo_contacts.sh | grep "$NUM" | cut -d" " -f2- || echo "Unknown Number")"
 		echo "$CONTACT" | grep -c . | grep 1 || CONTACT="$NUM"
 		( sxmo_notificationwrite.sh "Message from $CONTACT: $TEXT" "st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" "$LOGDIR/$NUM/sms.txt" & ) &
 

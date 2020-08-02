@@ -3,6 +3,7 @@
 # This script should be run to initialize the notification watchers.
 
 NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
+mkdir -p "$NOTIFDIR"
 
 handlecreation(){
 	sxmo_setpineled green 1;
@@ -39,7 +40,7 @@ while true; do
 				NOTIFFILE="$NOTIFDIR/$(echo "$DIREVENT" | cut -d" " -f3)"
 				handlecreation "$NOTIFFILE"
 				;;
-		
+
 			"DELETE"|"DELETE_SELF"|"MOVED_FROM")
 				find "$NOTIFDIR"/ -type f -mindepth 1 | read -r || sxmo_setpineled green 0
 				;;
