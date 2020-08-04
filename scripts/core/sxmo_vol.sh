@@ -23,4 +23,4 @@ setvol() {
 	amixer set "$(sxmo_audiocurrentdevice.sh)" "$1"
 }
 
-$1
+"$@"
