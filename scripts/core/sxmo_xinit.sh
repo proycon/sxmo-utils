@@ -36,7 +36,6 @@ daemons() {
 	else
 		conky -c /usr/share/sxmo/appcfg/conky.conf -d
 	fi
-	keynav &
 	autocutsel &
 	autocutsel -selection PRIMARY &
 	sxmo_statusbar.sh &
