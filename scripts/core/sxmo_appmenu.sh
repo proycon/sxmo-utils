@@ -60,6 +60,7 @@ programchoicesinit() {
 				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 			)
 			Bar Toggle                 ^ 1 ^ key Alt+b
+			Invert Colors              ^ 1 ^ xcalib -a -invert
 			Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			Rotate                     ^ 1 ^ sxmo_rotate.sh
 			Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh
