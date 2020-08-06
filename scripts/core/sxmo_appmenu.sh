@@ -340,26 +340,25 @@ getprogchoices() {
 	# E.g. sets CHOICES var
 	programchoicesinit "$@"
 
-	# Decorate menu at top w/ notifications if they exist
-	NOTIFICATIONS="$(find "$NOTIFDIR"/* -type f | grep -vc "sxmo_incomingcall" || echo 0)"
-	echo "$NOTIFICATIONS" | grep -v 0 &&
+	# Decorate menu at top *always* w/ incoming call entry if present
+	if [ -e "$NOTIFDIR"/incomingcall ]; then
+		INCOMINGCALLMSG="$(tail -n+3 "$NOTIFDIR"/incomingcall)"
+		INCOMINGCALLPICKUPACTION="$(head -n1 "$NOTIFDIR"/incomingcall)"
 		CHOICES="
-			Notifications ($(echo "$NOTIFICATIONS" | cut -d " " -f1)) ^ 0 ^ sxmo_notifications.sh
+			$INCOMINGCALLMSG ^ sh -c "rm "$NOTIFDIR"/incomingcall; "$INCOMINGCALLPICKUPACTION""
 			$CHOICES
 		"
+	fi
 
-	# Decorate menu at top w/ incoming call entry if present
-	INCOMINGCALL="$(cat "$NOTIFDIR"/sxmo_incomingcall || echo NOCALL)"
-	if echo "$INCOMINGCALL" | grep -v NOCALL; then
-		CALLID="$(echo "$INCOMINGCALL" | cut -d: -f1)"
-		CALLNUM="$(echo "$INCOMINGCALL" | cut -d: -f2)"
-		CALLCONTACT="$(sxmo_contacts.sh | grep -v "Unknown Number" | grep -m1 "$CALLNUM" | cut -d: -f2)"
-		CHOICES="
-			Pickup: $(
-				[ -n "$CALLCONTACT" ] && echo "$CALLCONTACT" || echo "$CALLNUM"
-			) ^ 0 ^ sxmo_modemcall.sh pickup $CALLID
-			$CHOICES
-		"
+	# For the Sys menu decorate at top with notifications if >1 notification
+	if [ "$WINNAME" = "Sys" ]; then
+		NNOTIFICATIONS="$(find "$NOTIFDIR" -type f | wc -l)"
+		if [ "$NNOTIFICATIONS" -gt 0 ]; then
+			CHOICES="
+				Notifications ($NNOTIFICATIONS) ^ 0 ^ sxmo_notificationsmenu.sh
+				$CHOICES
+			"
+		fi
 	fi
 
 	# Decorate menu at bottom w/ system menu entry if not system menu

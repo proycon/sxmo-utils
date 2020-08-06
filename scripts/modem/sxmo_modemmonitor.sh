@@ -26,11 +26,7 @@ checkforincomingcalls() {
 		grep -Eo '[0-9]+ incoming \(ringing-in\)' |
 		grep -Eo '[0-9]+'
 	)"
-
-	if echo "$VOICECALLID" | grep -v .; then
-		 rm -f "$NOTIFDIR/sxmo_incomingcall"
-		 return
-	fi
+	echo "$VOICECALLID" | grep -v . && rm -f "$NOTIFDIR/incomingcall" && return
 
 	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
 		 "$XDG_CONFIG_HOME/sxmo/hooks/ring"
@@ -61,7 +57,13 @@ checkforincomingcalls() {
 	TIME="$(date --iso-8601=seconds)"
 	mkdir -p "$LOGDIR"
 	printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$LOGDIR/modemlog.tsv"
-	printf %b "$VOICECALLID:$INCOMINGNUMBER\n" > "$NOTIFDIR/sxmo_incomingcall"
+
+	sxmo_notificationwrite.sh \
+		"$NOTIFDIR/incomingcall" \
+		"sxmo_modemcall.sh pickup $VOICECALLID" \
+		"$NOTIFDIR/incomingcall" \
+		"Pickup $(sxmo_contacts.sh | grep -E "^$INCOMINGNUMBER")" &
+
 	echo "Number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)"
 }
 
@@ -75,7 +77,6 @@ checkfornewtexts() {
 
 	# Loop each textid received and read out the data into appropriate logfile
 	for TEXTID in $TEXTIDS; do
-
 		TEXTDATA="$(mmcli -m "$(modem_n)" -s "$TEXTID" -K)"
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
 		NUM="$(
@@ -90,9 +91,11 @@ checkfornewtexts() {
 		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
 		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
 
-		CONTACT="$(sxmo_contacts.sh | grep "$NUM" || echo "$NUM")"
-		echo "$CONTACT" | grep -c . | grep 1 || CONTACT="$NUM"
-		( sxmo_notificationwrite.sh "Message from $CONTACT: $TEXT" "st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" "$LOGDIR/$NUM/sms.txt" & ) &
+		sxmo_notificationwrite.sh \
+			random \
+			"st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" \
+			"$LOGDIR/$NUM/sms.txt" \
+			"Message from $(sxmo_contacts.sh | grep -E "^$NUM:"): $TEXT" &
 	done
 }
 

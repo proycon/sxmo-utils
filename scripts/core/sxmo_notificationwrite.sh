@@ -1,15 +1,25 @@
 #!/usr/bin/env sh
-
-# This script takes 3 arguments, (1) a fuzzy description of the notification, (2) the action that the notification invokes upon selecting, and (3) the file to watch for deactivation.
-# A notification file has 3 different fields, (1) a fuzzy description, (2) the selection action, and (3) the watch file.
-
 NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
 
-mkdir -p "$NOTIFDIR"
-echo "$3" | grep -v . && { echo "Not enough args."; exit 2; }
+# Takes 4 args:
+# (1) the filepath of the notification to write (or random to generate a random id)
+# (2) action notification invokes upon selecting
+# (3) the file to watch for deactivation.
+# (4) description of notification
+NOTIFFILEPATHTOWRITE="$1"
+ACTION="$2"
+WATCHFILE="$3"
+NOTIFMSG="$4"
 
-# Don't send a notification if we're already looking at it!
-lsof | grep "$3" && exit 0
-	
-OUTFILE=$NOTIFDIR/$(date "+%Y:%m:%d:%H:%M:%S:%N")
-printf %b "$1\n$2\n$3\n" > "$OUTFILE"
+writenotification() {
+	lsof | grep "$WATCHFILE" && exit 0 # Already viewing watchfile, nops
+	mkdir -p "$NOTIFDIR"
+	if [ "$NOTIFFILEPATHTOWRITE" = "random" ]; then
+		NOTIFFILEPATHTOWRITE="$NOTIFDIR/$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 10)"
+	fi
+	rm -f "$NOTIFFILEPATHTOWRITE"
+	printf %b "$ACTION\n$WATCHFILE\n$NOTIFMSG\n" > "$NOTIFFILEPATHTOWRITE"
+}
+
+[ "$#" -lt 4 ] && echo "Need >=4 args to create a notification" && exit 1
+writenotification

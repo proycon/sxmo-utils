@@ -1,48 +1,65 @@
 #!/usr/bin/env sh
-
-# This script should be run to initialize the notification watchers.
-
 NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
 
-handlecreation(){
-	sxmo_setpineled green 1;
-	echo "$1" | grep "sxmo_incomingcall" ||
-		{
+notificationhook() {
+	if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/notification ]; then
+		"$XDG_CONFIG_HOME"/sxmo/hooks/notification
+	else
 			sxmo_vibratepine 200;
 			sleep 0.1;
 			sxmo_vibratepine 200;
 			sleep 0.1;
-		} &
-
-	# Dunstify / start notification watcher if it matches the sxmo_notificationwrite format
-	grep -c . "$1" | grep 3 &&
-		{
-			inotifywait "$(tail -1 "$1")" && rm -f "$1" &
-
-			DUNST_RETURN="$(dunstify --action="2,open" "$(head -1 "$1" | cut -c1-70)")";
-			# shellcheck disable=SC2091
-			echo "$DUNST_RETURN" | grep -v 2 || { $(head -2 "$1" | tail -1)& }
-		}
+  fi
 }
 
-sxmo_setpineled green 0
-for NOTIF in "$NOTIFDIR"/*; do
-	[ -f "$NOTIF" ] || continue
-	handlecreation "$NOTIF"
-done
+handlenewnotiffile(){
+	NOTIFFILE="$1"
 
-while true; do
-	{
-		DIREVENT="$(inotifywait -e create,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/)"
-		case "$(echo "$DIREVENT" | cut -d" " -f2)" in
+	if [ "$(wc -l "$NOTIFFILE" | cut -d' ' -f1)" -lt 3 ]; then
+		echo "Invalid notification file $NOTIFFILE found (<3 lines -- see notif spec in sxmo_notifwrite.sh), deleting!" >&2
+		rm "$NOTIFFILE"
+	else
+		sxmo_setpineled green 1;
+		notificationhook &
+		NOTIFACTION="$(awk NR==1 "$NOTIFFILE")"
+		NOTIFWATCHFILE="$(awk NR==2 "$NOTIFFILE")"
+		NOTIFMSG="$(tail -n+3 "$NOTIFFILE" | cut -c1-70)"
+
+		if dunstify --action="2,open" "$NOTIFMSG" | grep 2; then
+			eval "$NOTIFACTION"
+		else
+			inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE" &
+		fi
+	fi
+}
+
+recreateexistingnotifs() {
+	for NOTIF in "$NOTIFDIR"/*; do
+		[ -f "$NOTIF" ] || continue
+		handlenewnotiffile "$NOTIF"
+	done
+}
+
+monitorforaddordelnotifs() {
+	while true; do
+		INOTIFYOUTPUT="$(
+			inotifywait -e create,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/
+		)"
+		INOTIFYEVENTTYPE="$(echo "$INOTIFYOUTPUT" | cut -d" " -f2)"
+
+		case "$INOTIFYEVENTTYPE" in
 			"CREATE"|"MOVED_TO")
-				NOTIFFILE="$NOTIFDIR/$(echo "$DIREVENT" | cut -d" " -f3)"
-				handlecreation "$NOTIFFILE"
+				NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
+				handlenewnotiffile "$NOTIFFILE"
 				;;
-		
 			"DELETE"|"DELETE_SELF"|"MOVED_FROM")
+				# E.g. if no more notifications unset LED
 				find "$NOTIFDIR"/ -type f -mindepth 1 | read -r || sxmo_setpineled green 0
 				;;
 		esac
-	}
-done
+	done
+}
+
+sxmo_setpineled green 0
+recreateexistingnotifs
+monitorforaddordelnotifs
