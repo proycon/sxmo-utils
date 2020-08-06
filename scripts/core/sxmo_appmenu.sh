@@ -40,6 +40,7 @@ programchoicesinit() {
 			$(command -v firefox    >/dev/null && echo 'Firefox     ^ 0 ^ firefox')
 			$(command -v sacc       >/dev/null && echo 'Sacc        ^ 0 ^ st -e sacc i-logout.cz/1/bongusta')
 			$(command -v w3m        >/dev/null && echo 'W3m         ^ 0 ^ st -e w3m duck.com')
+			$(command -v htop       >/dev/null && echo 'Htop        ^ 0 ^ st -e htop')
 			$(command -v xcalc      >/dev/null && echo 'Xcalc       ^ 0 ^ xcalc')
 			$(command -v st         >/dev/null && echo 'St          ^ 0 ^ st')
 			$(command -v foxtrotgps >/dev/null && echo 'Foxtrotgps  ^ 0 ^ foxtrotgps')
