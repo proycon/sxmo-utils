@@ -35,14 +35,14 @@ programchoicesinit() {
 	elif echo "$WMCLASS" | grep -i "applications"; then
 	# Apps menu
 		CHOICES="
-			Surf            ^ 0 ^ surf
-			Netsurf         ^ 0 ^ netsurf
-			Firefox         ^ 0 ^ firefox
-			Sacc            ^ 0 ^ st -e sacc i-logout.cz/1/bongusta
-			W3m             ^ 0 ^ st -e w3m duck.com
-			Xcalc           ^ 0 ^ xcalc
-			St              ^ 0 ^ st
-			Foxtrotgps      ^ 0 ^ foxtrotgps
+			$(command -v surf       >/dev/null && echo 'Surf        ^ 0 ^ surf')
+			$(command -v netsurf    >/dev/null && echo 'Netsurf     ^ 0 ^ netsurf')
+			$(command -v firefox    >/dev/null && echo 'Firefox     ^ 0 ^ firefox')
+			$(command -v sacc       >/dev/null && echo 'Sacc        ^ 0 ^ st -e sacc i-logout.cz/1/bongusta')
+			$(command -v w3m        >/dev/null && echo 'W3m         ^ 0 ^ st -e w3m duck.com')
+			$(command -v xcalc      >/dev/null && echo 'Xcalc       ^ 0 ^ xcalc')
+			$(command -v st         >/dev/null && echo 'St          ^ 0 ^ st')
+			$(command -v foxtrotgps >/dev/null && echo 'Foxtrotgps  ^ 0 ^ foxtrotgps')
 		"
 		WINNAME=Apps
 	elif echo "$WMCLASS" | grep -i "config"; then
@@ -320,7 +320,7 @@ programchoicesinit() {
 			Scripts              ^ 0 ^ sxmo_appmenu.sh scripts
 			Apps                 ^ 0 ^ sxmo_appmenu.sh applications
 			Files                ^ 0 ^ sxmo_files.sh
-			Maps                 ^ 0 ^ foxtrotgps
+			$(command -v foxtrotgps >/dev/null && echo 'Maps ^ 0 ^ foxtrotgps')
 			Dialer               ^ 0 ^ sxmo_modemdial.sh
 			Texts                ^ 0 ^ sxmo_modemtext.sh
 			Camera               ^ 0 ^ sxmo_camera.sh
