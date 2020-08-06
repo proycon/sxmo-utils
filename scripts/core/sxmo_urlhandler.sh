@@ -27,7 +27,7 @@ COMMAND=$(
 		Close Menu
 		$(command -v w3m        >/dev/null && echo 'w3m URL')
 		$(command -v mpv        >/dev/null && echo 'mpv -ao=alsa -v URL')
-		$(command -v mpv        >/dev/null && echo 'mpv -ao=alsa -v --ytdl-format='[height<420]' URL')
+		$(command -v mpv        >/dev/null && echo 'mpv -ao=alsa -v --ytdl-format="[height<420]" URL')
 		$(command -v firefox    >/dev/null && echo 'firefox -new-window URL')
 		$(command -v netsurf    >/dev/null && echo 'netsurf URL')
 		$(command -v surf       >/dev/null && echo 'surf URL')
