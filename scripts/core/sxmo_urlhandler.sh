@@ -24,6 +24,7 @@ fi
 
 COMMAND=$(
 	echo "
+		Close Menu
 		$(command -v w3m        >/dev/null && echo 'w3m URL')
 		$(command -v mpv        >/dev/null && echo 'mpv -ao=alsa -v URL')
 		$(command -v mpv        >/dev/null && echo 'mpv -ao=alsa -v --ytdl-format='[height<420]' URL')
@@ -42,10 +43,10 @@ COMMAND=$(
 		sed -e 's/^\s*//' |
 		dmenu -fn Terminus-15 -p "Pipe URL" -c -l 20
 )
+
+[ "$COMMAND" = "Close Menu" ] && exit 1
 [ -z "$COMMAND" ] && exit 1
-
 RUN=$(echo "$URL" | xargs -IURL echo "$COMMAND")
-
 if [ "$FORK" = fork ]; then
   st -e sh -c "$RUN" &
 else
