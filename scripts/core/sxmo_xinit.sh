@@ -6,7 +6,7 @@ envvars() {
 	command -v "$TERM" || export TERM=st
 	command -v "$BROWSER" || export BROWSER=surf
 	command -v "$EDITOR" || export EDITOR=vis
-	command -v "$KEYBOARD" || export KEYBOARD=svkbd-sxmo
+	command -v "$KEYBOARD" || defaultkeyboard
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 	[ -z "$XDG_CONFIG_HOME" ] && export XDG_CONFIG_HOME=~/.config
 	[ -z "$XDG_CACHE_HOME" ] && export XDG_CACHE_HOME=~/.cache
@@ -27,6 +27,16 @@ xdefaults() {
 	xset s off -dpms
 	xrdb /usr/share/sxmo/appcfg/xresources_xcalc.xr
 	synclient TapButton1=1 TapButton2=3 TapButton3=2 MinSpeed=0.25
+}
+
+defaultkeyboard() {
+	if command -v svkbd-mobile-intl; then
+		export KEYBOARD=svkbd-mobile-intl
+	elif command -v svkbd-mobile-plain; then
+		export KEYBOARD=svkbd-mobile-plain
+	else
+		export KEYBOARD=svkbd-sxmo
+	fi
 }
 
 daemons() {
