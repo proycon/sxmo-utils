@@ -418,7 +418,7 @@ writefile(char *filepath, char *str)
 }
 
 void usage() {
-	fprintf(stderr, "Usage: sxmo_screenlock [--screen-off] [--suspend]\n");
+	fprintf(stderr, "Usage: sxmo_screenlock [--screen-off] [--suspend] [--wake-interval n]\n");
 }
 
 
