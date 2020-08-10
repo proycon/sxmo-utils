@@ -53,6 +53,12 @@ checkforincomingcalls() {
 		tr -d ' +'
 	)
 
+	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
+		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$(sxmo_contacts.sh | grep -E "^$INCOMINGNUMBER")"
+	else
+		sxmo_vibratepine 2000 &
+	fi
+
 	# Log to /tmp/incomingcall to allow pickup and log into modemlog
 	TIME="$(date --iso-8601=seconds)"
 	mkdir -p "$LOGDIR"
@@ -96,6 +102,10 @@ checkfornewtexts() {
 			"st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" \
 			"$LOGDIR/$NUM/sms.txt" \
 			"Message from $(sxmo_contacts.sh | grep -E "^$NUM:"): $TEXT" &
+
+		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/sms" ]; then
+			"$XDG_CONFIG_HOME/sxmo/hooks/sms" "$(sxmo_contacts.sh | grep -E "^$INCOMINGNUMBER")" "$TEXT"
+		fi
 	done
 }
 
