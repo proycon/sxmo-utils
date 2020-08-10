@@ -449,6 +449,12 @@ main(int argc, char **argv) {
 	const char* rtcwakeinterval = getenv("SXMO_RTCWAKEINTERVAL");
 	if (rtcwakeinterval != NULL) wakeinterval = atoi(rtcwakeinterval);
 
+	const char* screen_off = getenv("SXMO_LOCK_SCREEN_OFF");
+	if (screen_off != NULL && atoi(screen_off)) target = StateNoInputNoScreen;
+
+	const char* suspend = getenv("SXMO_LOCK_SUSPEND");
+	if (suspend != NULL && atoi(suspend)) target = StateSuspend;
+
 	//parse command line arguments
 	for (i = 1; i < argc; i++) {
 		if(!strcmp(argv[i], "-h")) {
