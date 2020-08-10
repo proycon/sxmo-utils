@@ -128,7 +128,7 @@ configuresuspendsettingsandwakeupsources()
 		die("Couldn't open directory /sys/class/wakeup\n");
 	while ((wakeupsource = readdir(wakeupsources)) != NULL) {
 		sprintf(
-			wakeuppath, 
+			wakeuppath,
 			"/sys/class/wakeup/%s/device/power/wakeup",
 			wakeupsource->d_name
 		);
@@ -440,6 +440,12 @@ main(int argc, char **argv) {
 
 	const char* rtcwakeinterval = getenv("SXMO_RTCWAKEINTERVAL");
 	if (rtcwakeinterval != NULL) wakeinterval = atoi(rtcwakeinterval);
+
+	const char* screen_off = getenv("SXMO_LOCK_SCREEN_OFF");
+	if (screen_off != NULL && atoi(screen_off)) target = StateNoInputNoScreen;
+
+	const char* suspend = getenv("SXMO_LOCK_SUSPEND");
+	if (suspend != NULL && atoi(suspend)) target = StateSuspend;
 
 	//parse command line arguments
 	for (i = 1; i < argc; i++) {
