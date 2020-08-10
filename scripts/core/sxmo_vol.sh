@@ -22,5 +22,13 @@ down() {
 setvol() {
 	amixer set "$(sxmo_audiocurrentdevice.sh)" "$1"
 }
+mute() {
+	amixer set "$(sxmo_audiocurrentdevice.sh)" mute
+	notify
+}
+unmute() {
+	amixer set "$(sxmo_audiocurrentdevice.sh)" unmute
+	notify
+}
 
 "$@"
