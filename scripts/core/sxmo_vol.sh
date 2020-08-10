@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 notify() {
 	VOL="$(
-		amixer get "$(sxmo_audiocurrentdevice.sh)" | 
+		amixer get "$(sxmo_audiocurrentdevice.sh)" |
 		grep -oE '([0-9]+)%' |
 		tr -d ' %' |
 		awk '{ s += $1; c++ } END { print s/c }'  |
@@ -21,6 +21,14 @@ down() {
 }
 setvol() {
 	amixer set "$(sxmo_audiocurrentdevice.sh)" "$1"
+}
+mute() {
+	amixer set "$(sxmo_audiocurrentdevice.sh)" mute
+	notify
+}
+unmute() {
+	amixer set "$(sxmo_audiocurrentdevice.sh)" unmute
+	notify
 }
 
 "$@"
