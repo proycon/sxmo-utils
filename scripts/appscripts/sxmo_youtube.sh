@@ -1,12 +1,17 @@
 #!/usr/bin/env sh
+HISTORY_FILE="$XDG_CONFIG_HOME"/sxmo/youtubehistory.tsv
+
 menu() {
 	pidof "$KEYBOARD" || "$KEYBOARD" &
+	HISTORY="$(tac "$HISTORY_FILE" | nl | sort -uk 2 | sort -k 1 | cut -f 2)"
+
 	SEARCHTERMS="$(
-		echo "Close Menu" |
+		printf %b "Close Menu\n$HISTORY" |
 		dmenu -p "Yt Search" -c -l 10 -fn Terminus-20
 	)"
 	pkill "$KEYBOARD"
 	[ "Close Menu" = "$SEARCHTERMS" ] && exit 0
+	printf %b "$SEARCHTERMS\n" >> "$HISTORY_FILE"
 
 	IDIOTRESULTS="$(youtube-cli "$SEARCHTERMS")"
 	FMTRESULTS="$(
