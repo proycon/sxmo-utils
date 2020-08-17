@@ -23,11 +23,12 @@ setvol() {
 	amixer set "$(sxmo_audiocurrentdevice.sh)" "$1"
 }
 mute() {
-	amixer set "$(sxmo_audiocurrentdevice.sh)" mute
+        echo "$(sxmo_audiocurrentdevice.sh)" > /tmp/muted-audio.dev
+	amixer set "$(cat /tmp/muted-audio.dev)" mute
 	notify
 }
 unmute() {
-	amixer set "$(sxmo_audiocurrentdevice.sh)" unmute
+	amixer set "$(cat /tmp/muted-audio.dev)" unmute
 	notify
 }
 
