@@ -28,8 +28,17 @@ rotright() {
 	exit 0
 }
 
+rotleft() {
+	xrandr -o left
+	applyptrmatrix 0 -1 1 1 0 0 0 0 1
+	pkill lisgd
+	sxmo_lisgdstart.sh -o -1 &
+	exit 0
+}
+
+
 rotate() {
 	if isrotated; then rotnormal; else rotright; fi
 }
 
-rotate
+"$1"
