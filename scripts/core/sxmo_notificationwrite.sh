@@ -17,7 +17,7 @@ writenotification() {
 	if [ "$NOTIFFILEPATHTOWRITE" = "random" ]; then
 		NOTIFFILEPATHTOWRITE="$NOTIFDIR/$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 10)"
 	fi
-	rm -f "$NOTIFFILEPATHTOWRITE"
+	touch "$NOTIFFILEPATHTOWRITE"
 	printf %b "$ACTION\n$WATCHFILE\n$NOTIFMSG\n" > "$NOTIFFILEPATHTOWRITE"
 }
 

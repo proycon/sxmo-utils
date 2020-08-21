@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
+trap gracefulexit INT TERM
 NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
+
+gracefulexit() {
+	echo "Gracefully exiting $0"
+	kill -9 0
+}
 
 notificationhook() {
 	if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/notification ]; then
@@ -42,24 +48,24 @@ recreateexistingnotifs() {
 
 monitorforaddordelnotifs() {
 	while true; do
-		INOTIFYOUTPUT="$(
-			inotifywait -e create,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/
-		)"
-		INOTIFYEVENTTYPE="$(echo "$INOTIFYOUTPUT" | cut -d" " -f2)"
-
-		case "$INOTIFYEVENTTYPE" in
-			"CREATE"|"MOVED_TO")
-				NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
-				handlenewnotiffile "$NOTIFFILE"
-				;;
-			"DELETE"|"DELETE_SELF"|"MOVED_FROM")
-				# E.g. if no more notifications unset LED
-				find "$NOTIFDIR"/ -type f -mindepth 1 | read -r || sxmo_setpineled green 0
-				;;
-		esac
+		inotifywait -e create,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
+			INOTIFYOUTPUT="$(cat)"
+			INOTIFYEVENTTYPE="$(echo "$INOTIFYOUTPUT" | cut -d" " -f2)"
+			case "$INOTIFYEVENTTYPE" in
+				"CREATE"|"MOVED_TO")
+					NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
+					handlenewnotiffile "$NOTIFFILE"
+					;;
+				"DELETE"|"DELETE_SELF"|"MOVED_FROM")
+					# E.g. if no more notifications unset LED
+					find "$NOTIFDIR"/ -type f -mindepth 1 | read -r || sxmo_setpineled green 0
+					;;
+			esac
+		) & wait
 	done
 }
 
+pgrep -f "$(command -v sxmo_notificationmonitor.sh)" | grep -Ev "^${$}$" | xargs kill
 sxmo_setpineled green 0
 recreateexistingnotifs
 monitorforaddordelnotifs
