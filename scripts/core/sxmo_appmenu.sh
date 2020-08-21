@@ -343,16 +343,6 @@ getprogchoices() {
 	# E.g. sets CHOICES var
 	programchoicesinit "$@"
 
-	# Decorate menu at top *always* w/ incoming call entry if present
-	if [ -e "$NOTIFDIR"/incomingcall ]; then
-		INCOMINGCALLMSG="$(tail -n+3 "$NOTIFDIR"/incomingcall)"
-		INCOMINGCALLPICKUPACTION="$(head -n1 "$NOTIFDIR"/incomingcall)"
-		CHOICES="
-			$INCOMINGCALLMSG ^ sh -c "rm "$NOTIFDIR"/incomingcall; "$INCOMINGCALLPICKUPACTION""
-			$CHOICES
-		"
-	fi
-
 	# For the Sys menu decorate at top with notifications if >1 notification
 	if [ "$WINNAME" = "Sys" ]; then
 		NNOTIFICATIONS="$(find "$NOTIFDIR" -type f | wc -l)"

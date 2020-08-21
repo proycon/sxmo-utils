@@ -67,7 +67,7 @@ checkforincomingcalls() {
 	sxmo_notificationwrite.sh \
 		"$NOTIFDIR/incomingcall" \
 		"sxmo_modemcall.sh pickup $VOICECALLID" \
-		"$NOTIFDIR/incomingcall" \
+		"none" \
 		"Pickup $(sxmo_contacts.sh | grep -E "^$INCOMINGNUMBER")" &
 
 	echo "Number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)"

@@ -33,7 +33,7 @@ handlenewnotiffile(){
 
 		if dunstify --action="2,open" "$NOTIFMSG" | grep 2; then
 			eval "$NOTIFACTION"
-		else
+		elif [ -e "$NOTIFWATCHFILE" ]; then
 			inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE" &
 		fi
 	fi
@@ -48,11 +48,11 @@ recreateexistingnotifs() {
 
 monitorforaddordelnotifs() {
 	while true; do
-		inotifywait -e create,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
+		inotifywait -e create,attrib,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
 			INOTIFYOUTPUT="$(cat)"
 			INOTIFYEVENTTYPE="$(echo "$INOTIFYOUTPUT" | cut -d" " -f2)"
 			case "$INOTIFYEVENTTYPE" in
-				"CREATE"|"MOVED_TO")
+				"CREATE"|"MOVED_TO","ATTRIB")
 					NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
 					handlenewnotiffile "$NOTIFFILE"
 					;;
