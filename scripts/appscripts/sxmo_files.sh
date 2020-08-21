@@ -4,7 +4,7 @@ DIR="$1"
 cd "$DIR" || exit 1
 
 handlefiles() {
-	if echo "$1" | grep -iE ".(webm|ogg|mp4|mov|avi)$"; then
+	if echo "$1" | grep -iE ".(webm|ogg|mp4|mov|avi|mkv)$"; then
 		st -e mpv -ao=alsa "$@"
 	elif echo "$1" | grep -iE ".(wav|opus|m4a|flac|mp3)$"; then
 		st -e mpv -ao=alsa --vid=no -v "$@"
