@@ -176,6 +176,7 @@ programchoicesinit() {
 		 Rotate ↻        ^ 1 ^ key greater
 		 Flip ⇄          ^ 1 ^ key question
 		 Flip ⇅          ^ 1 ^ key bar
+		 Thumbnail ⊡     ^ 0 ^ key Return
 		"
 		WINNAME=Sxiv && return
 	elif echo "$WMCLASS" | grep -i "st-256color"; then

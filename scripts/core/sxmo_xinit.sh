@@ -12,6 +12,7 @@ envvars() {
 	[ -z "$XDG_CACHE_HOME" ] && export XDG_CACHE_HOME=~/.cache
 	[ -z "$XDG_DATA_HOME" ] && export XDG_DATA_HOME=~/.local/share
 	[ -z "$XDG_RUNTIME_HOME" ] && export XDG_RUNTIME_HOME=~/.local/run
+	[ -z "$XDG_PICTURES_DIR" ] && export XDG_PICTURES_DIR=~/Pictures
 }
 
 setupxdgruntimedir() {
