@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 trap gracefulexit INT TERM
 NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
+NOTIFHOOKPIDS=""
 
 gracefulexit() {
 	echo "Gracefully exiting $0"
@@ -32,6 +33,7 @@ handlenewnotiffile(){
 		rm -f "$NOTIFFILE"
 	else
 		notificationhook &
+		NOTIFHOOKPIDS="$NOTIFHOOKPIDS $!"
 		NOTIFACTION="$(awk NR==1 "$NOTIFFILE")"
 		NOTIFWATCHFILE="$(awk NR==2 "$NOTIFFILE")"
 		NOTIFMSG="$(tail -n+3 "$NOTIFFILE" | cut -c1-70)"
@@ -54,7 +56,11 @@ recreateexistingnotifs() {
 
 monitorforaddordelnotifs() {
 	while true; do
-		[ "$(find "$NOTIFDIR"/ -type f | wc -l)" -lt 1 ] && sxmo_setpineled green 0
+		if [ "$(find "$NOTIFDIR"/ -type f | wc -l)" -lt 1 ]; then
+			sxmo_setpineled green 0
+			echo "$NOTIFHOOKPIDS" | tr ' ' '\n' | xargs -IP kill -9 P
+			NOTIFHOOKPIDS=""
+		fi
 
 		inotifywait -e create,attrib,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
 			INOTIFYOUTPUT="$(cat)"
