@@ -20,6 +20,44 @@ modem_n() {
 	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 }
 
+lookupnumberfromcallid() {
+	VOICECALLID=$1
+	mmcli -m "$(modem_n)" --voice-list-calls -o "$VOICECALLID" -K |
+		grep call.properties.number |
+		cut -d ':' -f 2 |
+		tr -d ' +'
+}
+
+checkformissedcalls() {
+	if pgrep -vf sxmo_modemcall.sh; then
+		# Add a notification for every missed call
+		# Note sxmo_modemcall.sh cleanups/delete the callid from the modem; so
+		# effectivly any incoming call thats terminated here is a missed call!
+		for MISSEDCALLID in $(
+			mmcli -m "$(modem_n)" --voice-list-calls |
+			grep incoming |
+			grep terminated |
+			grep -oE "Call\/[0-9]+" |
+			cut -d'/' -f2
+		); do
+			MISSEDNUMBER="$(lookupnumberfromcallid $MISSEDCALLID)"
+			mmcli -m "$(modem_n)" --voice-delete-call "$MISSEDCALLID"
+
+			TIME="$(date --iso-8601=seconds)"
+			mkdir -p "$LOGDIR"
+			printf %b "$TIME\tcall_missed\t$MISSEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+
+			CONTACT="$(sxmo_contacts.sh | grep -E "^$MISSEDNUMBER")"
+			RUNCOMMAND=""
+			sxmo_notificationwrite.sh \
+				random \
+				"st -f Terminus-20 -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \
+				none \
+				"Missed call - $CONTACT"
+		done
+	fi
+}
+
 checkforincomingcalls() {
 	VOICECALLID="$(
 		mmcli -m "$(modem_n)" --voice-list-calls -a |
@@ -28,32 +66,16 @@ checkforincomingcalls() {
 	)"
 	echo "$VOICECALLID" | grep -v . && rm -f "$NOTIFDIR/incomingcall" && return
 
-	# Delete all previous calls which have been terminated calls
-	for CALLID in $(
-		mmcli -m "$(modem_n)" --voice-list-calls |
-		grep terminated |
-		grep -oE "Call\/[0-9]+" |
-		cut -d'/' -f2
-	); do
-		mmcli -m "$(modem_n)" --voice-delete-call "$CALLID"
-	done
-
 	# Determine the incoming phone number
 	echo "Incoming Call:"
-	INCOMINGNUMBER=$(
-		mmcli -m "$(modem_n)" --voice-list-calls -o "$VOICECALLID" -K |
-		grep call.properties.number |
-		cut -d ':' -f 2 |
-		tr -d ' '
-	)
+	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
 
 	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
 		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$(sxmo_contacts.sh | grep -E "^$INCOMINGNUMBER")"
 	else
-		sxmo_vibratepine 2000 &
+		sxmo_vibratepine 2500 &
 	fi
 
-	# Log to /tmp/incomingcall to allow pickup and log into modemlog
 	TIME="$(date --iso-8601=seconds)"
 	mkdir -p "$LOGDIR"
 	printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$LOGDIR/modemlog.tsv"
@@ -61,8 +83,8 @@ checkforincomingcalls() {
 	sxmo_notificationwrite.sh \
 		"$NOTIFDIR/incomingcall" \
 		"sxmo_modemcall.sh pickup $VOICECALLID" \
-		"$NOTIFDIR/incomingcall" \
-		"Pickup $(sxmo_contacts.sh | grep -E "^$INCOMINGNUMBER")" &
+		none \
+		"Pickup - $(sxmo_contacts.sh | grep -E "^$INCOMINGNUMBER")" &
 
 	echo "Number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)"
 }
@@ -95,7 +117,7 @@ checkfornewtexts() {
 			random \
 			"st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" \
 			"$LOGDIR/$NUM/sms.txt" \
-			"Message from $(sxmo_contacts.sh | grep -E "^$NUM:"): $TEXT" &
+			"Message - $(sxmo_contacts.sh | grep -E "^$NUM:"): $TEXT"
 
 		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/sms" ]; then
 			"$XDG_CONFIG_HOME/sxmo/hooks/sms" "$(sxmo_contacts.sh | grep -E "^$INCOMINGNUMBER")" "$TEXT"
@@ -105,6 +127,7 @@ checkfornewtexts() {
 
 mainloop() {
 	while true; do
+		checkformissedcalls
 		checkforincomingcalls
 		checkfornewtexts
 		sleep $TIMEOUT & wait
