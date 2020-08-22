@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 trap gracefulexit INT TERM
 NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
-NOTIFHOOKPIDS=""
 
 gracefulexit() {
 	echo "Gracefully exiting $0"
@@ -15,11 +14,8 @@ notificationhook() {
 		VIBS=5
 		VIBI=0
 		while [ $VIBI -lt $VIBS ]; do
-			sxmo_setpineled green 0
-			sleep 0.1
 			sxmo_vibratepine 400 &
-			sxmo_setpineled green 1
-			sleep 0.4
+			sleep 0.5
 			VIBI=$(echo $VIBI+1 | bc)
 		done
   fi
@@ -33,17 +29,20 @@ handlenewnotiffile(){
 		rm -f "$NOTIFFILE"
 	else
 		notificationhook &
-		NOTIFHOOKPIDS="$NOTIFHOOKPIDS $!"
 		NOTIFACTION="$(awk NR==1 "$NOTIFFILE")"
 		NOTIFWATCHFILE="$(awk NR==2 "$NOTIFFILE")"
 		NOTIFMSG="$(tail -n+3 "$NOTIFFILE" | cut -c1-70)"
 
-		if dunstify --action="2,open" "$NOTIFMSG" | grep 2; then
-			setsid -f sh -c "$NOTIFACTION" &
-			rm -f "$NOTIFFILE"
-		elif [ -e "$NOTIFWATCHFILE" ]; then
-			(inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE") &
-		fi
+		(
+			dunstify --action="2,open" "$NOTIFMSG" | grep 2 && (
+				setsid -f sh -c "$NOTIFACTION" &
+				rm -f "$NOTIFFILE"
+			)
+		) &
+
+		[ -e "$NOTIFWATCHFILE" ] && (
+		  inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE"
+		) &
 	fi
 }
 
@@ -54,17 +53,20 @@ recreateexistingnotifs() {
 	done
 }
 
+syncled() {
+	sxmo_setpineled green 0
+	if [ "$(find "$NOTIFDIR"/ -type f | wc -l)" -gt 0 ]; then
+		sleep 0.1
+		sxmo_setpineled green 1
+	fi
+}
+
 monitorforaddordelnotifs() {
 	while true; do
-		if [ "$(find "$NOTIFDIR"/ -type f | wc -l)" -lt 1 ]; then
-			sxmo_setpineled green 0
-			echo "$NOTIFHOOKPIDS" | tr ' ' '\n' | xargs -IP kill -9 P
-			NOTIFHOOKPIDS=""
-		fi
-
 		inotifywait -e create,attrib,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
 			INOTIFYOUTPUT="$(cat)"
 			INOTIFYEVENTTYPE="$(echo "$INOTIFYOUTPUT" | cut -d" " -f2)"
+			syncled
 			if echo "$INOTIFYEVENTTYPE" | grep -E "CREATE|MOVED_TO|ATTRIB"; then
 				NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
 				handlenewnotiffile "$NOTIFFILE"
@@ -76,4 +78,5 @@ monitorforaddordelnotifs() {
 pgrep -f "$(command -v sxmo_notificationmonitor.sh)" | grep -Ev "^${$}$" | xargs kill
 rm -f "$NOTIFDIR"/incomingcall
 recreateexistingnotifs
+syncled
 monitorforaddordelnotifs
