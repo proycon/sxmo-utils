@@ -152,6 +152,8 @@ incallmenuloop() {
 		DTMF Tones                                                        ^ dtmfmenu $CALLID
 		Hangup                                                            ^ hangup $CALLID
 	"
+
+	pkill -9 dmenu # E.g. just incase user is playing with btns or hits a menu by mistake
 	echo "$CHOICES" |
 		xargs -0 echo |
 		cut -d'^' -f1 |

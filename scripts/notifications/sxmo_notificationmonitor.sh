@@ -11,13 +11,12 @@ notificationhook() {
 	if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/notification ]; then
 		"$XDG_CONFIG_HOME"/sxmo/hooks/notification
 	else
-		VIBS=5
-		VIBI=0
-		while [ $VIBI -lt $VIBS ]; do
-			sxmo_vibratepine 400 &
-			sleep 0.5
-			VIBI=$(echo $VIBI+1 | bc)
-		done
+			sxmo_setpineled green 0
+			sxmo_vibratepine 200;
+			sleep 0.1;
+			sxmo_setpineled green 1
+			sxmo_vibratepine 200;
+			sleep 0.1;
   fi
 }
 
@@ -35,6 +34,7 @@ handlenewnotiffile(){
 
 		if dunstify --action="2,open" "$NOTIFMSG" | grep 2; then
 			setsid -f sh -c "$NOTIFACTION" &
+			rm -f "$NOTIFFILE"
 		elif [ -e "$NOTIFWATCHFILE" ]; then
 			(inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE") &
 		fi
@@ -58,7 +58,8 @@ syncled() {
 
 monitorforaddordelnotifs() {
 	while true; do
-		find "$NOTIFDIR"/ -type f -mindepth 1 | read -r || sxmo_setpineled green 0
+		[ $(find "$NOTIFDIR"/ -type f | wc -l) -lt 1 ] && sxmo_setpineled green 0
+
 		inotifywait -e create,attrib,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
 			INOTIFYOUTPUT="$(cat)"
 			INOTIFYEVENTTYPE="$(echo "$INOTIFYOUTPUT" | cut -d" " -f2)"
@@ -71,7 +72,6 @@ monitorforaddordelnotifs() {
 
 pgrep -f "$(command -v sxmo_notificationmonitor.sh)" | grep -Ev "^${$}$" | xargs kill
 rm -f $NOTIFDIR/incomingcall
-sxmo_setpineled green 0
 recreateexistingnotifs
 syncled
 monitorforaddordelnotifs
