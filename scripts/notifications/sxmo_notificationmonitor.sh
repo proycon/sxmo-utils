@@ -33,16 +33,11 @@ handlenewnotiffile(){
 		NOTIFWATCHFILE="$(awk NR==2 "$NOTIFFILE")"
 		NOTIFMSG="$(tail -n+3 "$NOTIFFILE" | cut -c1-70)"
 
-		(
-			dunstify --action="2,open" "$NOTIFMSG" | grep 2 && (
-				setsid -f sh -c "$NOTIFACTION" &
-				rm -f "$NOTIFFILE"
-			)
-		) &
-
-		[ -e "$NOTIFWATCHFILE" ] && (
-		  inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE"
-		) &
+		if dunstify --action="2,open" "$NOTIFMSG" | grep 2; then
+			setsid -f sh -c "$NOTIFACTION" &
+		elif [ -e "$NOTIFWATCHFILE" ]; then
+			(inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE") &
+		fi
 	fi
 }
 
@@ -63,20 +58,20 @@ syncled() {
 
 monitorforaddordelnotifs() {
 	while true; do
+		find "$NOTIFDIR"/ -type f -mindepth 1 | read -r || sxmo_setpineled green 0
 		inotifywait -e create,attrib,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
 			INOTIFYOUTPUT="$(cat)"
 			INOTIFYEVENTTYPE="$(echo "$INOTIFYOUTPUT" | cut -d" " -f2)"
-			syncled
-			if echo "$INOTIFYEVENTTYPE" | grep -E "CREATE|MOVED_TO|ATTRIB"; then
-				NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
-				handlenewnotiffile "$NOTIFFILE"
-			fi
+			echo "$INOTIFYEVENTTYPE" | grep -E "CREATE|MOVED_TO|ATTRIB" || continue
+			NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
+			handlenewnotiffile "$NOTIFFILE"
 		) & wait
 	done
 }
 
 pgrep -f "$(command -v sxmo_notificationmonitor.sh)" | grep -Ev "^${$}$" | xargs kill
-rm -f "$NOTIFDIR"/incomingcall
+rm -f $NOTIFDIR/incomingcall
+sxmo_setpineled green 0
 recreateexistingnotifs
 syncled
 monitorforaddordelnotifs
