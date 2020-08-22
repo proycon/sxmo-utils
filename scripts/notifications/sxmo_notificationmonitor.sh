@@ -11,12 +11,16 @@ notificationhook() {
 	if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/notification ]; then
 		"$XDG_CONFIG_HOME"/sxmo/hooks/notification
 	else
+		VIBS=5
+		VIBI=0
+		while [ $VIBI -lt $VIBS ]; do
 			sxmo_setpineled green 0
-			sxmo_vibratepine 200;
-			sleep 0.1;
+			sleep 0.1
+			sxmo_vibratepine 400 &
 			sxmo_setpineled green 1
-			sxmo_vibratepine 200;
-			sleep 0.1;
+			sleep 0.4
+			VIBI=$(echo $VIBI+1 | bc)
+		done
   fi
 }
 
