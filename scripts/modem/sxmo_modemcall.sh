@@ -2,11 +2,22 @@
 LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
 trap "gracefulexit" INT TERM
 
+modem_n() {
+	MODEMS="$(mmcli -L)"
+	echo "$MODEMS" | grep -qoE 'Modem\/([0-9]+)' || fatalerr "Couldn't find modem - is your modem enabled?"
+	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
+}
+
 
 fatalerr() {
 	# E.g. hangup all calls, switch back to default audio, notify user, and die
 	sxmo_vibratepine 1000 &
-	mmcli -m "$(mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2)" --voice-hangup-all
+	mmcli -m "$(modem_n)" --voice-hangup-all
+	for CALLID in $(
+		mmcli -m "$(modem_n)" --voice-list-calls | grep -oE "Call\/[0-9]+" | cut -d'/' -f2
+	); do
+		mmcli -m "$(modem_n)" --voice-delete-call "$CALLID"
+	done
 	alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
 	notify-send "$1"
 	setsid -f sh -c 'sleep 2; sxmo_statusbarupdate.sh'
@@ -17,11 +28,6 @@ gracefulexit() {
 	fatalerr "Terminated via SIGTERM/SIGINT"
 }
 
-modem_n() {
-	MODEMS="$(mmcli -L)"
-	echo "$MODEMS" | grep -qoE 'Modem\/([0-9]+)' || fatalerr "Couldn't find modem - is your modem enabled?"
-	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
-}
 
 modem_cmd_errcheck() {
 	RES="$(mmcli "$@" 2>&1)"
