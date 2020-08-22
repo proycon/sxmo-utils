@@ -40,7 +40,7 @@ checkformissedcalls() {
 			grep -oE "Call\/[0-9]+" |
 			cut -d'/' -f2
 		); do
-			MISSEDNUMBER="$(lookupnumberfromcallid $MISSEDCALLID)"
+			MISSEDNUMBER="$(lookupnumberfromcallid "$MISSEDCALLID")"
 			mmcli -m "$(modem_n)" --voice-delete-call "$MISSEDCALLID"
 
 			TIME="$(date --iso-8601=seconds)"
@@ -48,7 +48,6 @@ checkformissedcalls() {
 			printf %b "$TIME\tcall_missed\t$MISSEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
 			CONTACT="$(sxmo_contacts.sh | grep -E "^$MISSEDNUMBER")"
-			RUNCOMMAND=""
 			sxmo_notificationwrite.sh \
 				random \
 				"st -f Terminus-20 -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \

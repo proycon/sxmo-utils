@@ -54,19 +54,20 @@ recreateexistingnotifs() {
 
 monitorforaddordelnotifs() {
 	while true; do
-		[ $(find "$NOTIFDIR"/ -type f | wc -l) -lt 1 ] && sxmo_setpineled green 0
+		[ "$(find "$NOTIFDIR"/ -type f | wc -l)" -lt 1 ] && sxmo_setpineled green 0
 
 		inotifywait -e create,attrib,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
 			INOTIFYOUTPUT="$(cat)"
 			INOTIFYEVENTTYPE="$(echo "$INOTIFYOUTPUT" | cut -d" " -f2)"
-			echo "$INOTIFYEVENTTYPE" | grep -E "CREATE|MOVED_TO|ATTRIB" || continue
-			NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
-			handlenewnotiffile "$NOTIFFILE"
+			if echo "$INOTIFYEVENTTYPE" | grep -E "CREATE|MOVED_TO|ATTRIB"; then
+				NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
+				handlenewnotiffile "$NOTIFFILE"
+			fi
 		) & wait
 	done
 }
 
 pgrep -f "$(command -v sxmo_notificationmonitor.sh)" | grep -Ev "^${$}$" | xargs kill
-rm -f $NOTIFDIR/incomingcall
+rm -f "$NOTIFDIR"/incomingcall
 recreateexistingnotifs
 monitorforaddordelnotifs
