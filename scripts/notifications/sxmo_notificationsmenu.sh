@@ -25,7 +25,7 @@ notificationmenu() {
 
 	PICKEDNOTIFFILE="$(echo "$CHOICES" | grep "$PICKEDCONTENT" | cut -d^ -f2 | tr -d ' ')"
 	NOTIFACTION="$(head -n1 "$PICKEDNOTIFFILE")"
-	eval "$NOTIFACTION" &
+	setsid -f sh -c "$NOTIFACTION" &
 	rm "$PICKEDNOTIFFILE"
 }
 

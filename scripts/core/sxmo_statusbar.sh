@@ -8,7 +8,7 @@ update() {
 	if pgrep -f sxmo_modemcall.sh; then
 		NOWS="$(date +"%s")"
 		CALLSTARTS="$(date +"%s" -d "$(
-			grep call_start ~/.config/sxmo/modem/modemlog.tsv |
+			grep -aE 'call_start|call_pickup' "$XDG_CONFIG_HOME"/sxmo/modem/modemlog.tsv |
 			tail -n1 |
 			cut -f1
 		)")"
