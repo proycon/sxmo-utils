@@ -99,7 +99,7 @@ main() {
 		sxmo_contacts.sh | while read -r CONTACT; do
 			[ -d "$LOGDIR"/"$(printf %b "$CONTACT" | cut -d: -f1)" ] || continue
 			printf %b "$CONTACT" | xargs -IL echo "L logfile"
-		done 
+		done
 	)"
 	CONTACTIDANDNUM="$(printf %b "$ENTRIES" | menu dmenu -p Texts -c -fn Terminus-20 -l 10 -i)"
 	echo "$CONTACTIDANDNUM" | grep "Close Menu" && exit 1
