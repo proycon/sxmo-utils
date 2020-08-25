@@ -18,7 +18,7 @@ writenotification() {
 		NOTIFFILEPATHTOWRITE="$NOTIFDIR/$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 10)"
 	fi
 	touch "$NOTIFFILEPATHTOWRITE"
-	printf %b "$ACTION\n$WATCHFILE\n$NOTIFMSG\n" > "$NOTIFFILEPATHTOWRITE"
+	printf %b "rm -f $NOTIFFILEPATHTOWRITE; $ACTION\n$WATCHFILE\n$NOTIFMSG\n" > "$NOTIFFILEPATHTOWRITE"
 }
 
 [ "$#" -lt 4 ] && echo "Need >=4 args to create a notification" && exit 1

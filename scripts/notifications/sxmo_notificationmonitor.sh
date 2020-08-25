@@ -11,10 +11,13 @@ notificationhook() {
 	if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/notification ]; then
 		"$XDG_CONFIG_HOME"/sxmo/hooks/notification
 	else
-			sxmo_vibratepine 200;
-			sleep 0.1;
-			sxmo_vibratepine 200;
-			sleep 0.1;
+		VIBS=5
+		VIBI=0
+		while [ $VIBI -lt $VIBS ]; do
+			sxmo_vibratepine 400 &
+			sleep 0.5
+			VIBI=$(echo $VIBI+1 | bc)
+		done
   fi
 }
 
@@ -23,19 +26,23 @@ handlenewnotiffile(){
 
 	if [ "$(wc -l "$NOTIFFILE" | cut -d' ' -f1)" -lt 3 ]; then
 		echo "Invalid notification file $NOTIFFILE found (<3 lines -- see notif spec in sxmo_notifwrite.sh), deleting!" >&2
-		rm "$NOTIFFILE"
+		rm -f "$NOTIFFILE"
 	else
-		sxmo_setpineled green 1;
 		notificationhook &
 		NOTIFACTION="$(awk NR==1 "$NOTIFFILE")"
 		NOTIFWATCHFILE="$(awk NR==2 "$NOTIFFILE")"
 		NOTIFMSG="$(tail -n+3 "$NOTIFFILE" | cut -c1-70)"
 
-		if dunstify --action="2,open" "$NOTIFMSG" | grep 2; then
-			eval "$NOTIFACTION"
-		else
-			inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE" &
-		fi
+		(
+			dunstify --action="2,open" "$NOTIFMSG" | grep 2 && (
+				setsid -f sh -c "$NOTIFACTION" &
+				rm -f "$NOTIFFILE"
+			)
+		) &
+
+		[ -e "$NOTIFWATCHFILE" ] && (
+		  inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE"
+		) &
 	fi
 }
 
@@ -46,26 +53,30 @@ recreateexistingnotifs() {
 	done
 }
 
+syncled() {
+	sxmo_setpineled green 0
+	if [ "$(find "$NOTIFDIR"/ -type f | wc -l)" -gt 0 ]; then
+		sleep 0.1
+		sxmo_setpineled green 1
+	fi
+}
+
 monitorforaddordelnotifs() {
 	while true; do
-		inotifywait -e create,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
+		inotifywait -e create,attrib,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
 			INOTIFYOUTPUT="$(cat)"
 			INOTIFYEVENTTYPE="$(echo "$INOTIFYOUTPUT" | cut -d" " -f2)"
-			case "$INOTIFYEVENTTYPE" in
-				"CREATE"|"MOVED_TO")
-					NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
-					handlenewnotiffile "$NOTIFFILE"
-					;;
-				"DELETE"|"DELETE_SELF"|"MOVED_FROM")
-					# E.g. if no more notifications unset LED
-					find "$NOTIFDIR"/ -type f -mindepth 1 | read -r || sxmo_setpineled green 0
-					;;
-			esac
+			syncled
+			if echo "$INOTIFYEVENTTYPE" | grep -E "CREATE|MOVED_TO|ATTRIB"; then
+				NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
+				handlenewnotiffile "$NOTIFFILE"
+			fi
 		) & wait
 	done
 }
 
 pgrep -f "$(command -v sxmo_notificationmonitor.sh)" | grep -Ev "^${$}$" | xargs kill
-sxmo_setpineled green 0
+rm -f "$NOTIFDIR"/incomingcall
 recreateexistingnotifs
+syncled
 monitorforaddordelnotifs
