@@ -3,30 +3,13 @@ HISTORY_FILE="$XDG_CONFIG_HOME"/sxmo/youtubehistory.tsv
 NRESULTS=5
 AUDIOONLY=0
 
-jsonfieldextract() {
-	FIELDNAME="$1"
-	TYPE="$2"
-	# TODO: be less lazy and use a JSON parser, need to add json2tsv as dep..
-	if [ "$TYPE" = "number" ]; then
-		GREPED="$(grep -oE '"'"$FIELDNAME"'"[ ]*:[ ]*[0-9+]+[ ]*,')"
-	else
-		GREPED="$(grep -oE '"'"$FIELDNAME"'"[ ]*:[ ]*"[^"]+"[ ]*,')"
-	fi
-	echo "$GREPED" | cut -d: -f2- | tr -d '",' | sed -E 's#^[ ]+##' | head -n1
-}
-
 youtubesearch() {
 	QUERY="$1"
 	NRESULTS="$2"
-	RESULTS="$(youtube-dl -j ytsearch"$NRESULTS":"${QUERY}")"
-	i=1
-	while [ $i -lt "$(echo "$NRESULTS" + 1 | bc)" ]; do
-		TITLE="$(echo "$RESULTS" | awk NR==$i | jsonfieldextract fulltitle string)"
-		URL="$(echo "$RESULTS" | awk NR==$i | jsonfieldextract webpage_url string)"
-		DURATION="$(echo "$RESULTS" | awk NR==$i | jsonfieldextract duration number)s"
-		echo "$DURATION: $TITLE - $URL"
-		i="$(echo $i + 1 | bc)"
-	done
+	youtube-dl -f '[height<420]' -e --get-id --get-duration ytsearch$NRESULTS:$QUERY |
+		paste - - - -d ' ' |
+		awk -F" " '{DUR=$NF; NF-=1; print DUR " " $0}' |
+		sed -E 's#([^ ]+)$#ytdl://\1#g'
 }
 
 searchmenu() {
