@@ -4,29 +4,29 @@ NRESULTS=5
 AUDIOONLY=0
 
 jsonfieldextract() {
-  FIELDNAME="$1"
-  TYPE="$2"
-  # TODO: be less lazy and use a JSON parser, need to add json2tsv as dep..
-  if [ "$TYPE" = "number" ]; then
-    GREPED="$(grep -oE '"'"$FIELDNAME"'"[ ]*:[ ]*[0-9+]+[ ]*,')"
-  else
-    GREPED="$(grep -oE '"'"$FIELDNAME"'"[ ]*:[ ]*"[^"]+"[ ]*,')"
-  fi
-  echo "$GREPED" | cut -d: -f2- | tr -d '",' | sed -E 's#^[ ]+##' | head -n1
+	FIELDNAME="$1"
+	TYPE="$2"
+	# TODO: be less lazy and use a JSON parser, need to add json2tsv as dep..
+	if [ "$TYPE" = "number" ]; then
+		GREPED="$(grep -oE '"'"$FIELDNAME"'"[ ]*:[ ]*[0-9+]+[ ]*,')"
+	else
+		GREPED="$(grep -oE '"'"$FIELDNAME"'"[ ]*:[ ]*"[^"]+"[ ]*,')"
+	fi
+	echo "$GREPED" | cut -d: -f2- | tr -d '",' | sed -E 's#^[ ]+##' | head -n1
 }
 
 youtubesearch() {
-  QUERY="$1"
-  NRESULTS="$2"
-  RESULTS="$(youtube-dl -j ytsearch"$NRESULTS":"${QUERY}")"
-  i=1
-  while [ $i -lt "$(echo "$NRESULTS" + 1 | bc)" ]; do
-    TITLE="$(echo "$RESULTS" | awk NR==$i | jsonfieldextract fulltitle string)"
-    URL="$(echo "$RESULTS" | awk NR==$i | jsonfieldextract webpage_url string)"
-    DURATION="$(echo "$RESULTS" | awk NR==$i | jsonfieldextract duration number)s"
-    echo "$DURATION: $TITLE - $URL"
-    i="$(echo $i + 1 | bc)"
-  done
+	QUERY="$1"
+	NRESULTS="$2"
+	RESULTS="$(youtube-dl -j ytsearch"$NRESULTS":"${QUERY}")"
+	i=1
+	while [ $i -lt "$(echo "$NRESULTS" + 1 | bc)" ]; do
+		TITLE="$(echo "$RESULTS" | awk NR==$i | jsonfieldextract fulltitle string)"
+		URL="$(echo "$RESULTS" | awk NR==$i | jsonfieldextract webpage_url string)"
+		DURATION="$(echo "$RESULTS" | awk NR==$i | jsonfieldextract duration number)s"
+		echo "$DURATION: $TITLE - $URL"
+		i="$(echo $i + 1 | bc)"
+	done
 }
 
 searchmenu() {
@@ -83,12 +83,6 @@ resultsmenu() {
 			return
 		elif [ "Close Menu" = "$PICKED" ]; then
 			exit 0
-		elif echo $PICKED | grep "Audio & Video or"; then
-			if [ "$AUDIOONLY" = 0 ]; then
-				AUDIOONLY=1
-			else
-				AUDIOONLY=0
-			fi
 		elif [ "$AUDIOONLY" = 1 ]; then
 			URL="$(echo "$PICKED" | awk -F " " '{print $NF}')"
 			st -e mpv -ao=alsa -v --no-video "$URL" &
