@@ -3,6 +3,7 @@
 envvars() {
 	# shellcheck disable=SC1091
 	. /etc/profile
+	. ~/.profile
 	command -v "$TERM" || export TERM=st
 	command -v "$BROWSER" || export BROWSER=surf
 	command -v "$EDITOR" || export EDITOR=vis
