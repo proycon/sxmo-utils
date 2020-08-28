@@ -12,43 +12,80 @@ programchoicesinit() {
 	XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
 	WMCLASS="${1:-$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3-)}"
 
-	if echo "$WMCLASS" | grep -i "userscripts"; then
-		# Userscripts menu
-		CHOICES="
-			$(
-				find "$XDG_CONFIG_HOME/sxmo/userscripts" \( -type f -o -type l \) -print0 |
-				xargs -IF basename F |
-				awk '{printf "%s\t^ 0 ^ $XDG_CONFIG_HOME/sxmo/userscripts/%s \n", $0, $0}'
-			)
-			Edit Scripts ^ 0 ^ sxmo_files.sh $XDG_CONFIG_HOME/sxmo/userscripts
-		"
-		WINNAME=Userscripts
-	elif echo "$WMCLASS" | grep -i "scripts"; then
+	if echo "$WMCLASS" | grep -i "scripts"; then
 		# Scripts menu
 		CHOICES="
-			Web Search      ^ 0 ^ sxmo_websearch.sh
 			Record          ^ 0 ^ sxmo_record.sh
+			Reddit          ^ 0 ^ sxmo_reddit.sh
+			RSS             ^ 0 ^ sxmo_rss.sh
 			Timer           ^ 0 ^ sxmo_timer.sh
 			Youtube         ^ 0 ^ sxmo_youtube.sh video
 			Youtube (Audio) ^ 0 ^ sxmo_youtube.sh audio
+			Web Search      ^ 0 ^ sxmo_websearch.sh
 			Weather         ^ 0 ^ sxmo_weather.sh
-			RSS             ^ 0 ^ sxmo_rss.sh
-			Reddit          ^ 0 ^ sxmo_reddit.sh
 		"
+		if [ -x "$XDG_CONFIG_HOME/sxmo/userscripts" ]; then
+			CHOICES="
+				$(
+					find "$XDG_CONFIG_HOME/sxmo/userscripts" \( -type f -o -type l \) -print0 |
+					xargs -IF basename F |
+					awk '{printf "%s\t^ 0 ^ $XDG_CONFIG_HOME/sxmo/userscripts/%s \n", $0, $0}' |
+                    sort -f
+				)
+				$CHOICES
+				Edit Scripts ^ 0 ^ sxmo_files.sh $XDG_CONFIG_HOME/sxmo/userscripts
+			"
+			CHOICES=$(echo -e "$CHOICES" | sort -f)
+		fi
 		WINNAME=Scripts
 	elif echo "$WMCLASS" | grep -i "applications"; then
 	# Apps menu
-		CHOICES="
-			$(command -v surf       >/dev/null && echo 'Surf        ^ 0 ^ surf')
-			$(command -v netsurf    >/dev/null && echo 'Netsurf     ^ 0 ^ netsurf')
-			$(command -v firefox    >/dev/null && echo 'Firefox     ^ 0 ^ firefox')
-			$(command -v sacc       >/dev/null && echo 'Sacc        ^ 0 ^ st -e sacc i-logout.cz/1/bongusta')
-			$(command -v w3m        >/dev/null && echo 'W3m         ^ 0 ^ st -e w3m duck.com')
-			$(command -v htop       >/dev/null && echo 'Htop        ^ 0 ^ st -e htop')
-			$(command -v xcalc      >/dev/null && echo 'Xcalc       ^ 0 ^ xcalc')
-			$(command -v st         >/dev/null && echo 'St          ^ 0 ^ st')
-			$(command -v foxtrotgps >/dev/null && echo 'Foxtrotgps  ^ 0 ^ foxtrotgps')
-		"
+		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/apps" ]; then
+			CHOICES=$("$XDG_CONFIG_HOME/sxmo/hooks/apps")
+		else
+			CHOICES="
+				$(command -v alpine     >/dev/null && echo 'Alpine      ^ 0 ^ st -e alpine')
+				$(command -v cmus       >/dev/null && echo 'Cmus        ^ 0 ^ st -e cmus')
+				$(command -v emacs      >/dev/null && echo 'Emacs       ^ 0 ^ st -e emacs')
+				$(command -v epiphany   >/dev/null && echo 'Epiphany    ^ 0 ^ epiphany')
+				$(command -v firefox    >/dev/null && echo 'Firefox     ^ 0 ^ firefox')
+				$(command -v foxtrotgps >/dev/null && echo 'Foxtrotgps  ^ 0 ^ foxtrotgps')
+				$(command -v geany      >/dev/null && echo 'Geany       ^ 0 ^ geany')
+				$(command -v gedit      >/dev/null && echo 'Gedit       ^ 0 ^ gedit')
+				$(command -v geeqie     >/dev/null && echo 'Geeqie      ^ 0 ^ geeqie')
+				$(command -v htop       >/dev/null && echo 'Htop        ^ 0 ^ st -e htop')
+				$(command -v irssi      >/dev/null && echo 'Irssi       ^ 0 ^ st -e irssi')
+				$(command -v ii         >/dev/null && echo 'Ii          ^ 0 ^ st -e ii')
+				$(command -v ipython    >/dev/null && echo 'IPython     ^ 0 ^ st -e ipython')
+				$(command -v lf         >/dev/null && echo 'Lf          ^ 0 ^ st -e lf')
+				$(command -v midori     >/dev/null && echo 'Midori      ^ 0 ^ midori')
+				$(command -v mutt       >/dev/null && echo 'Mutt        ^ 0 ^ st -e mutt')
+				$(command -v nano       >/dev/null && echo 'Nano        ^ 0 ^ st -e nano')
+				$(command -v ncmpcpp    >/dev/null && echo 'Ncmpcpp     ^ 0 ^ st -e ncmpcpp')
+				$(command -v neomutt    >/dev/null && echo 'Neomutt     ^ 0 ^ st -e neomutt')
+				$(command -v neovim     >/dev/null && echo 'Neovim      ^ 0 ^ st -e neovim')
+				$(command -v netsurf    >/dev/null && echo 'Netsurf     ^ 0 ^ netsurf')
+				$(command -v newsboat   >/dev/null && echo 'Newsboat    ^ 0 ^ st -e newsboat')
+				$(command -v nnn        >/dev/null && echo 'Nnn         ^ 0 ^ st -e nnn')
+				$(command -v pidgin     >/dev/null && echo 'Pidgin      ^ 0 ^ pidgin')
+				$(command -v ranger     >/dev/null && echo 'Ranger      ^ 0 ^ st -e ranger')
+				$(command -v sacc       >/dev/null && echo 'Sacc        ^ 0 ^ st -e sacc i-logout.cz/1/bongusta')
+				$(command -v sic        >/dev/null && echo 'Sic         ^ 0 ^ st -e sic')
+				$(command -v st         >/dev/null && echo 'St          ^ 0 ^ st')
+				$(command -v surf       >/dev/null && echo 'Surf        ^ 0 ^ surf')
+				$(command -v syncthing  >/dev/null && echo 'Syncthing          ^ 0 ^ syncthing')
+				$(command -v telegram-desktop >/dev/null && echo 'Telegram     ^ 0 ^ telegram-desktop')
+				$(command -v thunar     >/dev/null && echo 'Thunar      ^ 0 ^ st -e thunar')
+				$(command -v thunderbird >/dev/null && echo 'Thunderbird     ^ 0 ^ thunderbird')
+				$(command -v totem      >/dev/null && echo 'Totem       ^ 0 ^ st -e totem')
+				$(command -v tuir       >/dev/null && echo 'Tuir        ^ 0 ^ st -e tuir')
+				$(command -v weechat    >/dev/null && echo 'Weechat     ^ 0 ^ st -e weechat')
+				$(command -v w3m        >/dev/null && echo 'W3m         ^ 0 ^ st -e w3m duck.com')
+				$(command -v vim        >/dev/null && echo 'Vim         ^ 0 ^ st -e vim')
+				$(command -v vis        >/dev/null && echo 'Vis         ^ 0 ^ st -e vis')
+				$(command -v xcalc      >/dev/null && echo 'Xcalc       ^ 0 ^ xcalc')
+			"
+		fi
 		WINNAME=Apps
 	elif echo "$WMCLASS" | grep -i "config"; then
 		# System Control menu
