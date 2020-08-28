@@ -437,6 +437,7 @@ main(int argc, char **argv) {
 	enum State target = StateNoInput;
 
 	signal(SIGTERM, sigterm);
+	signal(SIGINT, sigterm);
 
 	const char* rtcwakeinterval = getenv("SXMO_RTCWAKEINTERVAL");
 	if (rtcwakeinterval != NULL) wakeinterval = atoi(rtcwakeinterval);
