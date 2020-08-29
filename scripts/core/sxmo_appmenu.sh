@@ -66,8 +66,11 @@ programchoicesinit() {
 			Bar Toggle                 ^ 1 ^ key Alt+b
 			Invert Colors              ^ 1 ^ xcalib -a -invert
 			Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
-			Toggle Autorotate          ^ 0 ^ sxmo_autorotate.sh
-			Rotate		   	   ^ 1 ^ sxmo_rotate.sh rotate
+			Autorotate $(
+				pgrep -f "$(command -v sxmo_rotateautotoggle.sh)" > /dev/null &&
+				printf %b "On → Off ^ 0 ^ sxmo_rotateautotoggle.sh &" ||  printf %b "Off → On ^ 0 ^ sxmo_rotateautotoggle.sh &"
+			)
+			Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
 			Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh
 		"
 		WINNAME=Config
