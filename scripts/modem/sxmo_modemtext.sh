@@ -75,7 +75,7 @@ sendtextmenu() {
 	while true
 	do
 		CONFIRM="$(
-			printf %b "Edit Message ($TEXT)\nSend to → $NUMBER\nCancel" |
+			printf %b "Edit Message ($(echo "$TEXT" | head -n1))\nSend to → $NUMBER\nCancel" |
 			menu dmenu -c -idx 1 -p "Confirm" -fn "Terminus-20" -l 10
 		)"
 		echo "$CONFIRM" | grep -E "^Send" && sendmsg "$NUMBER" "$TEXT" && exit 0
