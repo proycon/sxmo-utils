@@ -119,7 +119,7 @@ checkfornewtexts() {
 			"Message - $(sxmo_contacts.sh | grep -E "^$NUM:"): $TEXT"
 
 		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/sms" ]; then
-			"$XDG_CONFIG_HOME/sxmo/hooks/sms" "$(sxmo_contacts.sh | grep -E "^$INCOMINGNUMBER")" "$TEXT"
+			"$XDG_CONFIG_HOME/sxmo/hooks/sms" "$(sxmo_contacts.sh | grep -E "^$NUM")" "$TEXT"
 		fi
 	done
 }
