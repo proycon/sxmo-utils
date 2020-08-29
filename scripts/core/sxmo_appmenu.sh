@@ -33,9 +33,8 @@ programchoicesinit() {
                     sort -f
 				)
 				$CHOICES
-				Edit Scripts ^ 0 ^ sxmo_files.sh $XDG_CONFIG_HOME/sxmo/userscripts
+				Edit Userscripts ^ 0 ^ sxmo_files.sh $XDG_CONFIG_HOME/sxmo/userscripts
 			"
-			CHOICES=$(echo -e "$CHOICES" | sort -f)
 		fi
 		WINNAME=Scripts
 	elif echo "$WMCLASS" | grep -i "applications"; then
@@ -360,10 +359,6 @@ programchoicesinit() {
 	else
 		# Default system menu (no matches)
 		CHOICES="
-			$(
-				[ -n "$(ls -A "$XDG_CONFIG_HOME"/sxmo/userscripts)" ] && 
-				echo 'Userscripts  ^ 0 ^ sxmo_appmenu.sh userscripts'
-			)
 			Scripts              ^ 0 ^ sxmo_appmenu.sh scripts
 			Apps                 ^ 0 ^ sxmo_appmenu.sh applications
 			Files                ^ 0 ^ sxmo_files.sh
