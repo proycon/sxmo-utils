@@ -41,6 +41,7 @@ startmpv() {
 	# in mpv; but this is simpler and more reliable for now.
 	ffmpeg -re -fflags nobuffer -f v4l2 -video_size $RES -i /dev/video1 -f rawvideo - |
 	mpv \
+		--cache-secs=0 --demuxer-readahead-secs=0 \
 		--demuxer-rawvideo-w=$WIDTH --demuxer-rawvideo-h=$HEIGHT \
 		--untimed --vo=xv --cache-pause=no --no-demuxer-thread \
 		--profile=low-latency --demuxer=rawvideo -vf transpose=$TRANSPOSE \
