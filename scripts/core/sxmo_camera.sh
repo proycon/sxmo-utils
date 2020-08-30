@@ -66,9 +66,9 @@ cameramenu() {
 	if [ "$CHOICE" = "Close Menu" ]; then
 		exit 0
 	elif [ "$CHOICE" = "Rear Camera" ]; then
-		camerarear
+		st -e $0 camerarear
 	elif [ "$CHOICE" = "Front Camera" ]; then
-		camerafront
+		st -e $0 camerafront
 	fi
 }
 
