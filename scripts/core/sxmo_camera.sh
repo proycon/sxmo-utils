@@ -29,26 +29,33 @@ setupv4l2() {
 }
 startmpv() {
 	MODE="$1"
+	TRANSPOSE="$2"
 	RES="${MODE%%@*}"
 	SPEED="${MODE##*@}"
 	HEIGHT="${RES##*x}"
 	WIDTH="${RES%%x*}"
-	# -vf=transpose=1 - TODO: figure out why rotation is so slow..
-	mpv -v --demuxer-lavf-format=video4linux2 \
-		-demuxer-lavf-o=input_format=rawvideo,video_size=${WIDTH}x${HEIGHT}:framerate=$SPEED \
-		--profile=low-latency --untimed --fps=$SPEED --vo=xv \
-		av://v4l2:/dev/video1 
+
+	# FFMpeg here is just converting V4L2 into rawvideo data to pipe to mpv which
+	# has better compatabilty with mpv's rawvideo demuxer (then v4l2 data). There
+	# (may) be a way to directly invoke the rawvideo demuxer with a v4l2 device
+	# in mpv; but this is simpler and more reliable for now.
+	ffmpeg -re -fflags nobuffer -f v4l2 -video_size $RES -i /dev/video1 -f rawvideo - |
+	mpv \
+		--demuxer-rawvideo-w=$WIDTH --demuxer-rawvideo-h=$HEIGHT \
+		--untimed --vo=xv --cache-pause=no --no-demuxer-thread \
+		--profile=low-latency --demuxer=rawvideo -vf transpose=$TRANSPOSE \
+		-
 }
 
 camerarear() {
 	setupmediactllinks "$REAR_LINK[0]" "$FRONT_LINK[1]"
 	setupv4l2 "$REAR_MODE" "$REAR_NODE"
-	startmpv "$REAR_MODE"
+	startmpv "$REAR_MODE" 1
 }
 camerafront() {
 	setupmediactllinks "$FRONT_LINK[0]" "$REAR_LINK[1]"
 	setupv4l2 "$FRONT_MODE" "$FRONT_NODE"
-	startmpv "$FRONT_MODE"
+	startmpv "$FRONT_MODE" 3
 }
 
 cameramenu() {
@@ -59,10 +66,8 @@ cameramenu() {
 	if [ "$CHOICE" = "Close Menu" ]; then
 		exit 0
 	elif [ "$CHOICE" = "Rear Camera" ]; then
-		sxmo_rotate.sh rotright #TODO - figure out how to rotate w mpv
 		camerarear
 	elif [ "$CHOICE" = "Front Camera" ]; then
-		sxmo_rotate.sh rotleft #TODO - figure out how to rotate w mpv
 		camerafront
 	fi
 }
