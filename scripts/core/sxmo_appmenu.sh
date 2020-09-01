@@ -82,6 +82,7 @@ programchoicesinit() {
 				$(command -v w3m        >/dev/null && echo 'W3m         ^ 0 ^ st -e w3m duck.com')
 				$(command -v vim        >/dev/null && echo 'Vim         ^ 0 ^ st -e vim')
 				$(command -v vis        >/dev/null && echo 'Vis         ^ 0 ^ st -e vis')
+				$(command -v vlc        >/dev/null && echo 'Vlc         ^ 0 ^ vlc')
 				$(command -v xcalc      >/dev/null && echo 'Xcalc       ^ 0 ^ xcalc')
 			"
 		fi
