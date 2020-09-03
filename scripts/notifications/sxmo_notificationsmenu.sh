@@ -2,7 +2,7 @@
 NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
 
 notificationmenu() {
-	CHOICES="Close Menu"
+	CHOICES="Close Menu\nClear Notifications"
 	for NOTIFFILE in "$NOTIFDIR"/*; do
 		NOTIFMSG="$(tail -n+3 "$NOTIFFILE" | tr "\n^" " ")"
 		NOTIFHRANDMIN="$(stat --printf %y "$NOTIFFILE" | grep -oE '[0-9]{2}:[0-9]{2}')"
@@ -22,6 +22,7 @@ notificationmenu() {
 	)"
 
 	[ "$PICKEDCONTENT" = "Close Menu" ] && exit 1
+	[ "$PICKEDCONTENT" = "Clear Notifications" ] && rm "$NOTIFDIR"/* && exit 1
 
 	PICKEDNOTIFFILE="$(echo "$CHOICES" | grep "$PICKEDCONTENT" | cut -d^ -f2 | tr -d ' ')"
 	NOTIFACTION="$(head -n1 "$PICKEDNOTIFFILE")"
