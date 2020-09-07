@@ -125,12 +125,16 @@ checkfornewtexts() {
 }
 
 mainloop() {
-	while true; do
-		checkformissedcalls
-		checkforincomingcalls
-		checkfornewtexts
-		sleep $TIMEOUT & wait
-	done
+	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Voice',type='signal',member='CallAdded'" | \
+		while read line; do
+			checkforincomingcalls
+		done &
+	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Messaging',type='signal',member='Added'" | \
+		while read line; do
+			checkfornewtexts
+		done &
+	wait
+	wait
 }
 
 mainloop
