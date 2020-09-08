@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
-REAR_NODE="ov5640 3-004c"
-REAR_LINK='"gc2145 3-003c":0->"sun6i-csi":0'
+REAR_NODE="ov5640 4-004c"
+REAR_LINK='"gc2145 4-003c":0->"sun6i-csi":0'
 REAR_MODE="1920x1080@20"
-FRONT_NODE="gc2145 3-003c"
-FRONT_LINK='"ov5640 3-004c":0->"sun6i-csi":0'
+FRONT_NODE="gc2145 4-003c"
+FRONT_LINK='"ov5640 4-004c":0->"sun6i-csi":0'
 FRONT_MODE="1600x1200@15"
 FMTPIX='UYVY'
 FMTBUS='UYVY8_2X8'
