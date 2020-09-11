@@ -92,13 +92,18 @@ rssreadmenu() {
 		tr -d ' '
 	)"
 
+	CHOICES="$(list_items)"
+	DMENUIDX=1
 	while true; do
 		# Show list of items
-		PICKED=$(list_items | dmenu -p "RSS ($TIMESPANABBR)" -c -l 20 -fn Terminus-15)
+		PICKED="$(printf %b "$CHOICES" | dmenu -idx $DMENUIDX -p "RSS ($TIMESPANABBR)" -c -l 20 -fn Terminus-15)"
+		DMENUIDX="$(echo "$CHOICES" | grep -m1 -F -n "$PICKED" | cut -d ':' -f1)"
 		if [ "$PICKED" = "Close Menu" ]; then
-		  die Closed Menu
+			die Closed Menu
 		elif [ "$PICKED" = "Change Timespan" ]; then
-		  rsstimespanmenu
+			rsstimespanmenu
+			CHOICES="$(list_items)"
+			DMENUIDX=1
 		else
 			URL="$(echo "$PICKED" | gawk -F " " '{print $NF}')"
 			sxmo_urlhandler.sh "$URL" fork
