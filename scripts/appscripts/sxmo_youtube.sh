@@ -6,7 +6,7 @@ AUDIOONLY=0
 youtubesearch() {
 	QUERY="$1"
 	NRESULTS="$2"
-	youtube-dl -f '[height<420]' -e --get-id --get-duration ytsearch$NRESULTS:$QUERY |
+	youtube-dl -f '[height<420]' -e --get-id --get-duration "ytsearch$NRESULTS:$QUERY" |
 		paste - - - -d ' ' |
 		awk -F" " '{DUR=$NF; NF-=1; print DUR " " $0}' |
 		sed -E 's#([^ ]+)$#ytdl://\1#g'
