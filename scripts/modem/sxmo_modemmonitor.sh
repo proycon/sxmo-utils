@@ -125,9 +125,11 @@ checkfornewtexts() {
 }
 
 mainloop() {
+	checkformissedcalls
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Voice',type='signal',member='CallAdded'" | \
 		while read line; do
 			checkforincomingcalls
+			checkformissedcalls
 		done &
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Messaging',type='signal',member='Added'" | \
 		while read line; do
