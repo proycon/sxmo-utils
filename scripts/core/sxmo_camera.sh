@@ -39,22 +39,22 @@ startmpv() {
 	# has better compatabilty with mpv's rawvideo demuxer (then v4l2 data). There
 	# (may) be a way to directly invoke the rawvideo demuxer with a v4l2 device
 	# in mpv; but this is simpler and more reliable for now.
-	ffmpeg -re -fflags nobuffer -f v4l2 -video_size $RES -i /dev/video1 -f rawvideo - |
+	ffmpeg -re -fflags nobuffer -f v4l2 -video_size "$RES" -i /dev/video1 -f rawvideo - |
 	mpv \
 		--cache-secs=0 --demuxer-readahead-secs=0 \
-		--demuxer-rawvideo-w=$WIDTH --demuxer-rawvideo-h=$HEIGHT \
+		--demuxer-rawvideo-w="$WIDTH" --demuxer-rawvideo-h="$HEIGHT" \
 		--untimed --vo=xv --cache-pause=no --no-demuxer-thread \
-		--profile=low-latency --demuxer=rawvideo -vf transpose=$TRANSPOSE \
+		--profile=low-latency --demuxer=rawvideo -vf transpose="$TRANSPOSE" \
 		-
 }
 
 camerarear() {
-	setupmediactllinks "$REAR_LINK[0]" "$FRONT_LINK[1]"
+	setupmediactllinks "${REAR_LINK}[0]" "${FRONT_LINK}[1]"
 	setupv4l2 "$REAR_MODE" "$REAR_NODE"
 	startmpv "$REAR_MODE" 1
 }
 camerafront() {
-	setupmediactllinks "$FRONT_LINK[0]" "$REAR_LINK[1]"
+	setupmediactllinks "${FRONT_LINK}[0]" "${REAR_LINK}[1]"
 	setupv4l2 "$FRONT_MODE" "$FRONT_NODE"
 	startmpv "$FRONT_MODE" 3
 }
@@ -67,9 +67,9 @@ cameramenu() {
 	if [ "$CHOICE" = "Close Menu" ]; then
 		exit 0
 	elif [ "$CHOICE" = "Rear Camera" ]; then
-		st -e $0 camerarear
+		st -e "$0" camerarear
 	elif [ "$CHOICE" = "Front Camera" ]; then
-		st -e $0 camerafront
+		st -e "$0" camerafront
 	fi
 }
 

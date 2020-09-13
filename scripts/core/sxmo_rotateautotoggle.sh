@@ -4,8 +4,8 @@ THRESHOLD="400"
 POLL_TIME=1
 RIGHT_SIDE_UP="$(echo "$GRAVITY - $THRESHOLD" | bc)"
 UPSIDE_DOWN="$(echo "-$GRAVITY + $THRESHOLD" | bc)"
-FILE_Y="$(find /sys/bus/iio/devices/iio\:device*/ -iname in_accel_y_raw)"
-FILE_X="$(find /sys/bus/iio/devices/iio\:device*/ -iname in_accel_x_raw)"
+FILE_Y="$(find /sys/bus/iio/devices/iio:device*/ -iname in_accel_y_raw)"
+FILE_X="$(find /sys/bus/iio/devices/iio:device*/ -iname in_accel_x_raw)"
 
 autorotatedisable() {
 	notify-send "Autorotate disabled"
