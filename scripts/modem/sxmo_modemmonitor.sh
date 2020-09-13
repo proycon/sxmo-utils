@@ -47,7 +47,7 @@ checkformissedcalls() {
 			mkdir -p "$LOGDIR"
 			printf %b "$TIME\tcall_missed\t$MISSEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
-			CONTACT="$(sxmo_contacts.sh | grep -E "^$MISSEDNUMBER")"
+			CONTACT="$(sxmo_contacts.sh | grep -E "^\\$MISSEDNUMBER")"
 			sxmo_notificationwrite.sh \
 				random \
 				"st -f Terminus-20 -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \
@@ -70,7 +70,7 @@ checkforincomingcalls() {
 	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
 
 	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
-		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$(sxmo_contacts.sh | grep -E "^$INCOMINGNUMBER")"
+		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$(sxmo_contacts.sh | grep -E "^\\$INCOMINGNUMBER")"
 	else
 		sxmo_vibratepine 2500 &
 	fi
@@ -83,7 +83,7 @@ checkforincomingcalls() {
 		"$NOTIFDIR/incomingcall" \
 		"sxmo_modemcall.sh pickup $VOICECALLID" \
 		none \
-		"Pickup - $(sxmo_contacts.sh | grep -E "^$INCOMINGNUMBER")" &
+		"Pickup - $(sxmo_contacts.sh | grep -E "^\\$INCOMINGNUMBER")" &
 
 	echo "Number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)"
 }
@@ -116,10 +116,10 @@ checkfornewtexts() {
 			random \
 			"st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" \
 			"$LOGDIR/$NUM/sms.txt" \
-			"Message - $(sxmo_contacts.sh | grep -E "^$NUM:"): $TEXT"
+			"Message - $(sxmo_contacts.sh | grep -E "^\\$NUM"): $TEXT"
 
 		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/sms" ]; then
-			"$XDG_CONFIG_HOME/sxmo/hooks/sms" "$(sxmo_contacts.sh | grep -E "^$NUM")" "$TEXT"
+			"$XDG_CONFIG_HOME/sxmo/hooks/sms" "$(sxmo_contacts.sh | grep -E "^\\$NUM")" "$TEXT"
 		fi
 	done
 }
