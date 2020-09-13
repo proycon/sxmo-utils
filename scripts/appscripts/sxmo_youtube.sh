@@ -14,7 +14,7 @@ youtubesearch() {
 
 searchmenu() {
 	HISTORY="$(
-		tac "$HISTORY_FILE" | nl | sort -uk 2 | sort -k 1 | cut -f 2 |
+		tac "$HISTORY_FILE" | nl | sort -uk 2 | sort -k 1 | cut -f 2 | grep . |
 		sed "s#^#History: #g"
 	)"
 
