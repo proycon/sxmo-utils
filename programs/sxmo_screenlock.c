@@ -60,7 +60,7 @@ configuresuspendsettingsandwakeupsources()
 	while ((wakeupsource = readdir(wakeupsources)) != NULL) {
 		sprintf(
 			wakeuppath, 
-			"/sys/class/wakeup/%s/device/power/wakeup",
+			"/sys/class/wakeup/%.50s/device/power/wakeup",
 			wakeupsource->d_name
 		);
 		fprintf(stderr, "Disabling wakeup source: %s", wakeupsource->d_name);
