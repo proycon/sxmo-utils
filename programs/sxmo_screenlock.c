@@ -76,6 +76,13 @@ configuresuspendsettingsandwakeupsources()
 		"enabled"
 	);
 
+	// Enable IRQ wakeup source
+	fprintf(stderr, "Enable irq wakeup source\n");
+	writefile(
+		"/sys/devices/platform/gpio-keys/power/wakeup",
+		"enabled"
+	 );
+
 	// Enable rtc wakeup source
 	fprintf(stderr, "Enable rtc wakeup source\n");
 	writefile(
