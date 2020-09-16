@@ -2,7 +2,12 @@ PREFIX:=/
 
 .PHONY: install shellcheck
 
-PROGRAMS = programs/sxmo_setpineled programs/sxmo_setpinebacklight programs/sxmo_screenlock programs/sxmo_megiaudioroute programs/sxmo_megiaudioroute
+PROGRAMS = \
+	programs/sxmo_setpineled \
+	programs/sxmo_setpinebacklight \
+	programs/sxmo_screenlock \
+	programs/sxmo_megiaudioroute \
+	programs/sxmo_vibratepine
 
 all: shellcheck $(PROGRAMS)
 
