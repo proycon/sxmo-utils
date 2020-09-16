@@ -28,8 +28,8 @@ else
         -g "1,DU,T,*,sxmo_gesturehandler.sh hidemenu" \
         -g "2,UD,T,*,sxmo_gesturehandler.sh showsysmenu" \
         -g "2,UD,B,*,sxmo_gesturehandler.sh killwindow" \
-        -g '2,LR,*,*,sxmo_gesturehandler.sh moveprevdesktop' \
-        -g '2,RL,*,*,sxmo_gesturehandler.sh movenextdesktop' \
+        -g '2,RL,*,*,sxmo_gesturehandler.sh moveprevdesktop' \
+        -g '2,LR,*,*,sxmo_gesturehandler.sh movenextdesktop' \
         -g '1,DU,R,L,sxmo_gesturehandler.sh scrollup_long' \
         -g '1,UD,R,L,sxmo_gesturehandler.sh scrolldown_long' \
         -g '1,DU,R,M,sxmo_gesturehandler.sh scrollup_med' \
