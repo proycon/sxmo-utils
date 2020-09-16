@@ -27,7 +27,7 @@ setupxdgruntimedir() {
 xdefaults() {
 	alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
 	xmodmap /usr/share/sxmo/appcfg/xmodmap_caps_esc
-	xsetroot -mod 3 2 -fg '#000000' -bg '#888888'
+	xsetroot -mod 29 29 -fg '#0b3a4c' -bg '#082430'
 	xset s off -dpms
 	xrdb /usr/share/sxmo/appcfg/xresources_xcalc.xr
 	synclient TapButton1=1 TapButton2=3 TapButton3=2 MinSpeed=0.25
