@@ -2,8 +2,8 @@
 
 envvars() {
 	# shellcheck disable=SC1091
-	. /etc/profile
-	. ~/.profile
+	[ -f /etc/profile ] && . /etc/profile
+	[ -f "$HOME"/.profile ] && . "$HOME"/.profile
 	command -v "$TERM" || export TERM=st
 	command -v "$BROWSER" || export BROWSER=surf
 	command -v "$EDITOR" || export EDITOR=vis
