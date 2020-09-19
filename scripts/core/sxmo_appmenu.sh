@@ -367,7 +367,7 @@ programchoicesinit() {
 			Dialer               ^ 0 ^ sxmo_modemdial.sh
 			Texts                ^ 0 ^ sxmo_modemtext.sh
 			Camera               ^ 0 ^ sxmo_camera.sh
-			Wifi                 ^ 0 ^ st -e nmtui
+			Networks             ^ 0 ^ sxmo_networks.sh
 			Audio                ^ 0 ^ sxmo_appmenu.sh audioout
 			Config               ^ 0 ^ sxmo_appmenu.sh config
 			Power                ^ 0 ^ sxmo_appmenu.sh power
