@@ -54,8 +54,9 @@ addnetworkgsmmenu() {
 
 addnetworkwpamenu() {
 	SSID="$(
-		echo "Close Menu" |
-			sxmo_dmenu_with_kb.sh -c -p "Add WPA: SSID" -fn "Terminus-20" -l 20
+		nmcli d wifi list | tail -n +2 | grep -v '^*' | awk '{ print $2 }' | grep -v '\-\-' |
+		xargs -0 printf 'Close Menu\n%s' |
+		sxmo_dmenu_with_kb.sh -c -p "Add WPA: SSID" -fn "Terminus-20" -l 20
 	)"
 	[ "$SSID" = "Close Menu" ] && return
 
