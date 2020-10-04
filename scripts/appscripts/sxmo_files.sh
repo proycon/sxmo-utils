@@ -13,7 +13,6 @@ handlefiles() {
 	else
 		st -e sh -ic "$EDITOR $*"
 	fi
-	exit 0
 }
 
 while true; do
