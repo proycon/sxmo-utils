@@ -114,7 +114,7 @@ checkfornewtexts() {
 
 		sxmo_notificationwrite.sh \
 			random \
-			"st -e tail -n9999 -f $LOGDIR/$NUM/sms.txt" \
+			"st -e tail -n9999 -f '$LOGDIR/$NUM/sms.txt'" \
 			"$LOGDIR/$NUM/sms.txt" \
 			"Message - $(sxmo_contacts.sh | grep -E "^\\$NUM"): $TEXT"
 
