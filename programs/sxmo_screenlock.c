@@ -169,20 +169,6 @@ configuresuspendsettingsandwakeupsources()
 	//set RTC wake
 	if (wakeinterval > 0) setup_rtc_wakeup();
 
-	// Temporary hack to disable USB driver that doesn't suspend
-	fprintf(stderr, "Disabling buggy USB driver\n");
-	writefile(
-		"/sys/devices/platform/soc/1c19000.usb/driver/unbind",
-		"1c19000.usb"
-	);
-
-	// Temporary hack to disable Bluetooth driver that crashes on suspend 1/5th the time
-	fprintf(stderr, "Disabling buggy Bluetooth driver\n");
-	writefile(
-		"/sys/bus/serial/drivers/hci_uart_h5/unbind",
-		"serial0-0"
-	);
-
 	// E.g. make sure we're using CRUST
 	fprintf(stderr, "Flip mem_sleep setting to use crust\n");
 	writefile("/sys/power/mem_sleep", "deep");
