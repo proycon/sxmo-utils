@@ -24,7 +24,7 @@ notificationmenu() {
 	[ "$PICKEDCONTENT" = "Close Menu" ] && exit 1
 	[ "$PICKEDCONTENT" = "Clear Notifications" ] && rm "$NOTIFDIR"/* && exit 1
 
-	PICKEDNOTIFFILE="$(echo "$CHOICES" | grep "$PICKEDCONTENT" | cut -d^ -f2 | tr -d ' ')"
+	PICKEDNOTIFFILE="$(echo "$CHOICES" | awk '{$1=$1};1' | grep "$PICKEDCONTENT" | cut -d^ -f2 | tr -d ' ')"
 	NOTIFACTION="$(head -n1 "$PICKEDNOTIFFILE")"
 	setsid -f sh -c "$NOTIFACTION" &
 	rm "$PICKEDNOTIFFILE"
