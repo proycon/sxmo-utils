@@ -1,0 +1,9 @@
+image: alpine/edge
+packages:
+  - shellcheck
+sources:
+  - https://git.sr.ht/~mil/sxmo-utils
+tasks:
+  - shellcheck: |
+      cd sxmo-utils
+      shellcheck scripts/*/*
