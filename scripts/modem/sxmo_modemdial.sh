@@ -18,7 +18,12 @@ modem_n() {
 dialmenu() {
 	CONTACTS="$(sxmo_contacts.sh)"
 	NUMBER="$(
-		printf %b "Close Menu\n$CONTACTS" | 
+		printf %b "Close Menu\nMore contacts\n$CONTACTS" |
+		grep . |
+		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20 -i
+	)"
+	echo "$NUMBER" | grep "More contacts" && NUMBER="$(
+		printf %b "Close Menu\n$(sxmo_contacts.sh --all)" |
 		grep . |
 		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20 -i
 	)"
@@ -29,8 +34,8 @@ dialmenu() {
 
 	echo "Attempting to dial: $NUMBER" >&2
 	CALLID="$(
-		mmcli -m "$(modem_n)" --voice-create-call "number=$NUMBER" | 
-		grep -Eo "Call/[0-9]+" | 
+		mmcli -m "$(modem_n)" --voice-create-call "number=$NUMBER" |
+		grep -Eo "Call/[0-9]+" |
 		grep -oE "[0-9]+"
 	)"
 	echo "Starting call with CALLID: $CALLID" >&2

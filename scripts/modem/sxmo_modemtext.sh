@@ -38,13 +38,20 @@ choosenumbermenu() {
 
 	# Prompt for number
 	NUMBER="$(
-		printf %b "\nCancel\n$(sxmo_contacts.sh)" |
+		printf %b "\nCancel\nMore contacts\n$(sxmo_contacts.sh)" |
 		awk NF |
 		menu sxmo_dmenu_with_kb.sh -p "Number" -fn "Terminus-20" -l 10 -c -i |
 		cut -d: -f1 |
 		tr -d -- '- '
 	)"
-	echo "$NUMBER" | grep -E "^Cancel$" && exit 1
+	echo "$NUMBER" | grep -qE "^Morecontacts$" && NUMBER="$( #joined words without space is not a bug
+		printf %b "\nCancel\n$(sxmo_contacts.sh --all)" |
+			grep . |
+			sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20 -i
+			cut -d: -f1 |
+			tr -d -- '- '
+	)"
+	echo "$NUMBER" | grep -qE "^Cancel$" && exit 1
 	echo "$NUMBER" | grep -qE '^[+0-9]+$' || err "That doesn't seem like a valid number"
 	echo "$NUMBER"
 }

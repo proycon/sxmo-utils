@@ -28,4 +28,14 @@ contacts() {
 	' "$CONTACTSFILE" -
 }
 
-contacts
+all_contacts() {
+	cat "$CONTACTSFILE" | awk -F'\t' '{
+		if (substr($0,1,1) == "+") print $1 ": " $2
+	}' | sort -f -k 2
+}
+
+if [ "$1" = "--all" ]; then
+	all_contacts
+else
+	contacts
+fi
