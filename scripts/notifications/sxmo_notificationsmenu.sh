@@ -17,14 +17,14 @@ notificationmenu() {
 		xargs -0 echo |
 		sed '/^[[:space:]]*$/d' |
 		awk '{$1=$1};1' |
-		cut -d^ -f1 | 
+		cut -d^ -f1 |
 		dmenu -c -i -fn "Terminus-18" -p "Notifs" -l 10
 	)"
 
 	[ "$PICKEDCONTENT" = "Close Menu" ] && exit 1
 	[ "$PICKEDCONTENT" = "Clear Notifications" ] && rm "$NOTIFDIR"/* && exit 1
 
-	PICKEDNOTIFFILE="$(echo "$CHOICES" | awk '{$1=$1};1' | grep "$PICKEDCONTENT" | cut -d^ -f2 | tr -d ' ')"
+	PICKEDNOTIFFILE="$(echo "$CHOICES" | tr -s ' ' | grep -F "$PICKEDCONTENT" | cut -d^ -f2 | tr -d ' ')"
 	NOTIFACTION="$(head -n1 "$PICKEDNOTIFFILE")"
 	setsid -f sh -c "$NOTIFACTION" &
 	rm "$PICKEDNOTIFFILE"
