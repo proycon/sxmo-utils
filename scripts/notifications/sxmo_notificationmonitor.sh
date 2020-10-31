@@ -63,6 +63,9 @@ syncled() {
 
 monitorforaddordelnotifs() {
 	while true; do
+		if [ ! -e "$NOTIFDIR" ]; then
+			mkdir -p "$NOTIFDIR" || sleep 10
+		fi
 		inotifywait -e create,attrib,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
 			INOTIFYOUTPUT="$(cat)"
 			INOTIFYEVENTTYPE="$(echo "$INOTIFYOUTPUT" | cut -d" " -f2)"
