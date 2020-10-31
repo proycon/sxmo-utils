@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-TIMEOUT=3
 LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
 NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
 trap "gracefulexit" INT TERM
@@ -101,8 +100,8 @@ checkfornewtexts() {
 		TEXTDATA="$(mmcli -m "$(modem_n)" -s "$TEXTID" -K)"
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
 		NUM="$(
-			echo "$TEXTDATA" | 
-			grep sms.content.number | 
+			echo "$TEXTDATA" |
+			grep sms.content.number |
 			sed -E 's/^sms\.content\.number\s+:\s+//'
 		)"
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
@@ -127,12 +126,12 @@ checkfornewtexts() {
 mainloop() {
 	checkformissedcalls
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Voice',type='signal',member='CallAdded'" | \
-		while read line; do
+		while read -r; do
 			checkforincomingcalls
 			checkformissedcalls
 		done &
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Messaging',type='signal',member='Added'" | \
-		while read line; do
+		while read -r; do
 			checkfornewtexts
 		done &
 	wait
