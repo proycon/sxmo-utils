@@ -3,7 +3,7 @@
 connections() {
 	ACTIVE="$(nmcli -c no -t c show --active | cut -d: -f1,3 | sed 's/$/ ✓/')"
 	INACTIVE="$(nmcli -c no -t c show | cut -d: -f1,3)"
-	printf %b "$ACTIVE\n$INACTIVE" | sort -u -t: -k1,1 
+	printf %b "$ACTIVE\n$INACTIVE" | sort -u -t: -k1,1
 }
 
 toggleconnection() {
@@ -54,7 +54,7 @@ addnetworkgsmmenu() {
 
 addnetworkwpamenu() {
 	SSID="$(
-		nmcli d wifi list | tail -n +2 | grep -v '^*' | awk '{ print $2 }' | grep -v '\-\-' |
+		nmcli d wifi list | tail -n +2 | grep -v '^\*' | awk -F'  ' '{ print $6 }' | grep -v '\-\-' |
 		xargs -0 printf 'Close Menu\n%s' |
 		sxmo_dmenu_with_kb.sh -c -p "Add WPA: SSID" -fn "Terminus-20" -l 20
 	)"
@@ -79,7 +79,7 @@ addnetworkwpamenu() {
 networksmenu() {
 	while true; do
 		CHOICE="$(
-			printf %b "	
+			printf %b "
 				$(connections)
 				Add a GSM Network
 				Add a WPA Network
@@ -88,7 +88,7 @@ networksmenu() {
 				Launch Ifconfig
 				Scan Wifi Networks
 				Close Menu
-			" | 
+			" |
 			awk '{$1=$1};1' | grep '\w' | dmenu -c -p 'Networks' -l 14 -fn 'Terminus-20'
 		)"
 		if [ "$CHOICE" = "Close Menu" ]; then
