@@ -76,7 +76,7 @@ if [ "$HANDLE" -ne 0 ]; then
 			pkill -9 "$KEYBOARD"
 			;;
 		"showmenu")
-			sxmo_appmenu.sh &
+			pidof dmenu || sxmo_appmenu.sh &
 			;;
 		"showsysmenu")
 			sxmo_appmenu.sh sys &
