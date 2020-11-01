@@ -79,7 +79,7 @@ if [ "$HANDLE" -ne 0 ]; then
 			pidof dmenu || sxmo_appmenu.sh &
 			;;
 		"showsysmenu")
-			sxmo_appmenu.sh sys &
+			pidof dmenu || sxmo_appmenu.sh sys &
 			;;
 		"hidemenu")
 			pkill -9 dmenu
