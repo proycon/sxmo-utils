@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
 TERMMODE=$([ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] && echo "true")
-POSTPONE_DIR="$XDG_CONFIG_HOME/sxmo/modem/postponed"
+DRAFT_DIR="$XDG_CONFIG_HOME/sxmo/modem/draft"
 
 menu() {
 	if [ "$TERMMODE" != "true" ]; then
@@ -47,7 +47,7 @@ choosenumbermenu() {
 	echo "$NUMBER" | grep -qE "^Morecontacts$" && NUMBER="$( #joined words without space is not a bug
 		printf %b "\nCancel\n$(sxmo_contacts.sh --all)" |
 			grep . |
-			sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20 -i
+			menu sxmo_dmenu_with_kb.sh -l 10 -p "Number" -c -fn Terminus-20 -i |
 			cut -d: -f1 |
 			tr -d -- '- '
 	)"
@@ -69,33 +69,33 @@ sendtextmenu() {
 	while true
 	do
 		CONFIRM="$(
-			printf %b "Edit Message ($(echo "$TEXT" | head -n1))\nSend to → $NUMBER\nPostpone\nCancel" |
+			printf %b "Edit Message ($(echo "$TEXT" | head -n1))\nSend to → $NUMBER\nSave as Draft\nCancel" |
 			menu dmenu -c -idx 1 -p "Confirm" -fn "Terminus-20" -l 10
 		)"
 		echo "$CONFIRM" | grep -E "^Send" && (echo "$TEXT" | sxmo_modemsendsms.sh "$NUMBER" -) && exit 0
 		echo "$CONFIRM" | grep -E "^Cancel$" && exit 1
 		echo "$CONFIRM" | grep -E "^Edit Message" && TEXT="$(editmsg "$NUMBER" "$TEXT")"
-		echo "$CONFIRM" | grep -E "^Postpone$" && err "Postponed to $(postpone "$NUMBER" "$TEXT")"
+		echo "$CONFIRM" | grep -E "^Save as Draft$" && err "Draft saved to $(draft "$NUMBER" "$TEXT")"
 	done
 }
 
-postpone() {
+draft() {
 	NUMBER="$1"
 	TEXT="$2"
-	mkdir -p "$POSTPONE_DIR"
-	POSTPONE_FILE="$NUMBER-$(date +'%Y-%m-%d_%H-%m-%S')"
-	echo "$NUMBER" > "$POSTPONE_DIR/$POSTPONE_FILE"
-	echo "$TEXT" >> "$POSTPONE_DIR/$POSTPONE_FILE"
-	echo "$POSTPONE_FILE"
+	mkdir -p "$DRAFT_DIR"
+	DRAFT_FILE="$NUMBER-$(date +'%Y-%m-%d_%H-%m-%S')"
+	echo "$NUMBER" > "$DRAFT_DIR/$DRAFT_FILE"
+	echo "$TEXT" >> "$DRAFT_DIR/$DRAFT_FILE"
+	echo "$DRAFT_FILE"
 }
 
-sendpostponedtextmenu() {
+senddrafttextmenu() {
 	CONFIRM="$(
-		printf %b "Cancel\n$(ls "$POSTPONE_DIR")" |
-		menu sxmo_dmenu_with_kb.sh -p "Postponed Message" -fn "Terminus-20" -l 10 -c -i
+		printf %b "Cancel\n$(ls "$DRAFT_DIR")" |
+		menu sxmo_dmenu_with_kb.sh -p "Draft Message" -fn "Terminus-20" -l 10 -c -i
 	)"
 	echo "$CONFIRM" | grep -E "^Cancel$" && exit 1
-	FILE="$POSTPONE_DIR/$CONFIRM"
+	FILE="$DRAFT_DIR/$CONFIRM"
 	NUMBER="$(head -n1 "$FILE")"
 	TEXT="$(tail -n +2 "$FILE")"
 	rm "$FILE"
@@ -113,7 +113,7 @@ tailtextlog() {
 main() {
 	# E.g. only display logfiles for directories that exist and join w contact name
 	ENTRIES="$(
-		printf %b "Close Menu\nSend a Text\nSend a Postponed Text\n";
+	printf %b "Close Menu\nSend a Text$( [ "$(ls -A "$DRAFT_DIR")" ] && printf %b "\nSend a Draft Text")\n";
 		sxmo_contacts.sh | while read -r CONTACT; do
 			[ -d "$LOGDIR"/"$(printf %b "$CONTACT" | cut -d: -f1)" ] || continue
 			printf %b "$CONTACT" | xargs -IL echo "L logfile"
@@ -122,7 +122,7 @@ main() {
 	CONTACTIDANDNUM="$(printf %b "$ENTRIES" | menu dmenu -p Texts -c -fn Terminus-20 -l 10 -i)"
 	echo "$CONTACTIDANDNUM" | grep "Close Menu" && exit 1
 	echo "$CONTACTIDANDNUM" | grep "Send a Text" && sendnewtextmenu && exit 1
-	echo "$CONTACTIDANDNUM" | grep "Send a Postponed Text" && sendpostponedtextmenu && exit 1
+	echo "$CONTACTIDANDNUM" | grep "Send a Draft Text" && senddrafttextmenu && exit 1
 	tailtextlog "$(echo "$CONTACTIDANDNUM" | cut -d: -f1)"
 }
 
