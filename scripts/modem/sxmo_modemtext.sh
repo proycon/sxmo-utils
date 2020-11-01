@@ -33,29 +33,6 @@ editmsg() {
 	cat "$TMP"
 }
 
-sendmsg() {
-	MODEM="$(modem_n)"
-	NUMBER="$1"
-	TEXT="$2"
-	TEXTSIZE="${#TEXT}"
-
-	SMSNO="$(
-		mmcli -m "$MODEM" --messaging-create-sms="text='$TEXT',number=$NUMBER" |
-		grep -o "[0-9]*$"
-	)"
-	mmcli -s "${SMSNO}" --send || err "Couldn't send text message\nPostponed to $(postpone "$NUMBER" "$TEXT")"
-	for i in $(mmcli -m "$MODEM" --messaging-list-sms | grep " (sent)" | cut -f5 -d' ') ; do
-	  mmcli -m "$MODEM" --messaging-delete-sms="$i"
-	done
-
-	TIME="$(date --iso-8601=seconds)"
-	mkdir -p "$LOGDIR/$NUMBER"
-	printf %b "Sent to $NUMBER at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUMBER/sms.txt"
-	printf %b "$TIME\tsent_txt\t$NUMBER\t$TEXTSIZE chars\n" >> "$LOGDIR/modemlog.tsv"
-
-	err "Sent text message ok"
-}
-
 choosenumbermenu() {
 	modem_n >/dev/null || err "Couldn't determine modem number - is modem online?"
 
@@ -88,7 +65,7 @@ sendtextmenu() {
 			printf %b "Edit Message ($(echo "$TEXT" | head -n1))\nSend to → $NUMBER\nPostpone\nCancel" |
 			menu dmenu -c -idx 1 -p "Confirm" -fn "Terminus-20" -l 10
 		)"
-		echo "$CONFIRM" | grep -E "^Send" && sendmsg "$NUMBER" "$TEXT" && exit 0
+		echo "$CONFIRM" | grep -E "^Send" && (echo "$TEXT" | sxmo_modemsendsms.sh "$NUMBER" -) && exit 0
 		echo "$CONFIRM" | grep -E "^Cancel$" && exit 1
 		echo "$CONFIRM" | grep -E "^Edit Message" && TEXT="$(editmsg "$NUMBER" "$TEXT")"
 		echo "$CONFIRM" | grep -E "^Postpone$" && err "Postponed to $(postpone "$NUMBER" "$TEXT")"
