@@ -5,7 +5,7 @@
 #   Wherein $LOGFILE is *sorted* tsv with three fields: date\tevt\tnumber
 #
 #   number should be a full phone number starting with + and the country number
-# 
+#
 # Prints in output format: "number: contact"
 
 CONTACTSFILE="$XDG_CONFIG_HOME"/sxmo/contacts.tsv
@@ -29,9 +29,9 @@ contacts() {
 }
 
 all_contacts() {
-	cat "$CONTACTSFILE" | awk -F'\t' '{
+	awk -F'\t' '{
 		if (substr($0,1,1) == "+") print $1 ": " $2
-	}' | sort -f -k 2
+	}' "$CONTACTSFILE" | sort -f -k 2
 }
 
 if [ "$1" = "--all" ]; then
