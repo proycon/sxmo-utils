@@ -69,7 +69,7 @@ checkforincomingcalls() {
 	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
 
 	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
-		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$(sxmo_contacts.sh | grep -E "^\\$INCOMINGNUMBER")"
+		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$(sxmo_contacts.sh | grep -E "^\\$INCOMINGNUMBER")" &
 	else
 		sxmo_vibratepine 2500 &
 	fi
