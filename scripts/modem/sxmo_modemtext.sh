@@ -82,7 +82,6 @@ sendtextmenu() {
 draft() {
 	NUMBER="$1"
 	TEXT="$2"
-	mkdir -p "$DRAFT_DIR"
 	DRAFT_FILE="$NUMBER-$(date +'%Y-%m-%d_%H-%m-%S')"
 	echo "$NUMBER" > "$DRAFT_DIR/$DRAFT_FILE"
 	echo "$TEXT" >> "$DRAFT_DIR/$DRAFT_FILE"
@@ -111,6 +110,7 @@ tailtextlog() {
 }
 
 main() {
+	[ ! -d "$DRAFT_DIR" ] && mkdir -p "$DRAFT_DIR"
 	# E.g. only display logfiles for directories that exist and join w contact name
 	ENTRIES="$(
 	printf %b "Close Menu\nSend a Text$( [ "$(ls -A "$DRAFT_DIR")" ] && printf %b "\nSend a Draft Text")\n";
