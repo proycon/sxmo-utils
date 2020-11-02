@@ -361,17 +361,17 @@ programchoicesinit() {
 	else
 		# Default system menu (no matches)
 		CHOICES="
-			Scripts              ^ 0 ^ sxmo_appmenu.sh scripts
-			Apps                 ^ 0 ^ sxmo_appmenu.sh applications
-			Files                ^ 0 ^ sxmo_files.sh
-			$(command -v foxtrotgps >/dev/null && echo 'Maps ^ 0 ^ foxtrotgps')
-			Dialer               ^ 0 ^ sxmo_modemdial.sh
-			Texts                ^ 0 ^ sxmo_modemtext.sh
-			Camera               ^ 0 ^ sxmo_camera.sh
-			Networks             ^ 0 ^ sxmo_networks.sh
-			Audio                ^ 0 ^ sxmo_appmenu.sh audioout
-			Config               ^ 0 ^ sxmo_appmenu.sh config
-			Power                ^ 0 ^ sxmo_appmenu.sh power
+			Scripts                                            ^ 0 ^ sxmo_appmenu.sh scripts
+			Apps                                               ^ 0 ^ sxmo_appmenu.sh applications
+			Files                                              ^ 0 ^ sxmo_files.sh
+			$(command -v foxtrotgps >/dev/null && echo 'Maps   ^ 0 ^ foxtrotgps')
+			Dialer                                             ^ 0 ^ sxmo_modemdial.sh
+			Texts                                              ^ 0 ^ sxmo_modemtext.sh
+			$(command -v megapixels >/dev/null && echo 'Camera ^ 0 ^ megapixels')
+			Networks                                           ^ 0 ^ sxmo_networks.sh
+			Audio                                              ^ 0 ^ sxmo_appmenu.sh audioout
+			Config                                             ^ 0 ^ sxmo_appmenu.sh config
+			Power                                              ^ 0 ^ sxmo_appmenu.sh power
 		"
 		WINNAME=Sys
 	fi
