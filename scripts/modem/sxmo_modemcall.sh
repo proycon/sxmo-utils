@@ -86,6 +86,9 @@ acceptcall() {
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --start
 		log_event "call_start" "$CALLID"
 	elif [ "$DIRECTION" = "incoming" ]; then
+		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/pickup" ]; then
+			"$XDG_CONFIG_HOME/sxmo/hooks/pickup" &
+		fi
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --accept
 		log_event "call_pickup" "$CALLID"
 	else
