@@ -34,8 +34,12 @@ else
 fi
 TEXTSIZE="${#TEXT}"
 
+#mmcli doesn't appear to be able to interpret a proper escape
+#mechanism, so we'll substitute double quotes for two single quotes
+SAFE_TEXT=$(echo "$TEXT" | sed "s/\"/''/g")
+
 SMSNO="$(
-	mmcli -m "$MODEM" --messaging-create-sms="text='$TEXT',number=$NUMBER" |
+	mmcli -m "$MODEM" --messaging-create-sms="text=\"$SAFE_TEXT\",number=$NUMBER" |
 	grep -o "[0-9]*$"
 )"
 mmcli -s "${SMSNO}" --send || err "Couldn't send text message"
