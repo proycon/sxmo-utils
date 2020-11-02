@@ -18,10 +18,14 @@ envvars() {
 	[ -z "$XDG_PICTURES_DIR" ] && export XDG_PICTURES_DIR=~/Pictures
 }
 
-setupxdgruntimedir() {
+setupxdgdir() {
 	mkdir -p $XDG_RUNTIME_HOME
 	chmod 700 $XDG_RUNTIME_HOME
 	chown "$USER:$USER" "$XDG_RUNTIME_HOME"
+
+	mkdir -p "$XDG_CACHE_HOME/sxmo/"
+	chmod 700 "$XDG_CACHE_HOME"
+	chown "$USER:$USER" "$XDG_CACHE_HOME"
 }
 
 xdefaults() {
@@ -69,16 +73,17 @@ customxinit() {
 }
 
 startdwm() {
+
 	exec dbus-run-session sh -c "
 		$0 daemonsneedingdbus;
 		. $0 customxinit;
-		dwm 2> ~/.dwm.log
+		dwm 2> "$XDG_CACHE_HOME/sxmo/dwm.log"
 	"
 }
 
 xinit() {
 	envvars
-	setupxdgruntimedir
+	setupxdgdir
 	xdefaults
 	daemons
 	startdwm
