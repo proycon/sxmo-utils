@@ -22,7 +22,7 @@ dialmenu() {
 		grep . |
 		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20 -i
 	)"
-	echo "$NUMBER" | grep "More contacts" && NUMBER="$(
+	echo "$NUMBER" | grep -q "More contacts" && NUMBER="$(
 		printf %b "Close Menu\n$(sxmo_contacts.sh --all)" |
 		grep . |
 		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20 -i
