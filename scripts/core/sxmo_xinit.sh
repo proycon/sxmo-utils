@@ -5,7 +5,7 @@ envvars() {
 	[ -f /etc/profile ] && . /etc/profile
 	# shellcheck source=/dev/null
 	[ -f "$HOME"/.profile ] && . "$HOME"/.profile
-	command -v "$TERM" || export TERM=st
+	command -v "$TERMCMD" || export TERMCMD=st
 	command -v "$BROWSER" || export BROWSER=surf
 	command -v "$EDITOR" || export EDITOR=vis
 	command -v "$KEYBOARD" || defaultkeyboard
