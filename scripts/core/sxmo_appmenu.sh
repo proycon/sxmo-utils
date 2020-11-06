@@ -70,7 +70,7 @@ programchoicesinit() {
 				$(command -v ranger     >/dev/null && echo 'Ranger      ^ 0 ^ st -e ranger')
 				$(command -v sacc       >/dev/null && echo 'Sacc        ^ 0 ^ st -e sacc i-logout.cz/1/bongusta')
 				$(command -v sic        >/dev/null && echo 'Sic         ^ 0 ^ st -e sic')
-				$(command -v st         >/dev/null && echo 'St          ^ 0 ^ st -e /bin/sh -l')
+				$(command -v st         >/dev/null && echo 'St          ^ 0 ^ st -e $SHELL -l')
 				$(command -v surf       >/dev/null && echo 'Surf        ^ 0 ^ surf')
 				$(command -v syncthing  >/dev/null && echo 'Syncthing          ^ 0 ^ syncthing')
 				$(command -v telegram-desktop >/dev/null && echo 'Telegram     ^ 0 ^ telegram-desktop')
@@ -96,7 +96,7 @@ programchoicesinit() {
 			Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
 			Modem Log                  ^ 0 ^ sxmo_modemlog.sh
 			Flash $(
-				grep -qE '^0$' /sys/class/leds/white:flash/brightness && 
+				grep -qE '^0$' /sys/class/leds/white:flash/brightness &&
 				printf %b "Off → On" ||  printf %b "On → Off";
 				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 			)
@@ -420,7 +420,7 @@ quit() {
 mainloop() {
 	getprogchoices "$ARGS"
 	echo "$PROGCHOICES" |
-	cut -d'^' -f1 | 
+	cut -d'^' -f1 |
 	dmenu -idx "$DMENUIDX" -l 16 -c -fn "Terminus-30" -p "$WINNAME" | (
 		PICKED="$(cat)"
 		echo "$PICKED" | grep . || quit

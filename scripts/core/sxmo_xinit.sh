@@ -8,6 +8,7 @@ envvars() {
 	command -v "$TERMCMD" || export TERMCMD=st
 	command -v "$BROWSER" || export BROWSER=surf
 	command -v "$EDITOR" || export EDITOR=vis
+	command -v "$SHELL" || export SHELL=/bin/sh
 	command -v "$KEYBOARD" || defaultkeyboard
 	[ -z "$MPV_HOME" ] && export MPV_HOME=/usr/share/sxmo/mpv
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
