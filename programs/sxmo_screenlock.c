@@ -145,10 +145,17 @@ configuresuspendsettingsandwakeupsources()
 		"enabled"
 	);
 
-	// Enable IRQ wakeup source
-	fprintf(stderr, "Enable irq wakeup source\n");
+	// Enable IRQ wakeup source (incoming call) 5.8
+	fprintf(stderr, "Enable 5.8 IRQ wakeup source\n");
 	writefile(
 		"/sys/devices/platform/gpio-keys/power/wakeup",
+		"enabled"
+	 );
+
+	 // Enable IRQ wakeup source (incoming call) 5.9
+	fprintf(stderr, "Enable 5.9 IRQ wakeup source\n");
+	writefile(
+		"/sys/devices/platform/soc/1c28c00.serial/serial1/serial1-0/power/wakeup",
 		"enabled"
 	 );
 
