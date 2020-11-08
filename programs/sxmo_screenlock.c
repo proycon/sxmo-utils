@@ -52,6 +52,7 @@ void writefile(char *filepath, char *str);
 // Variables
 Display *dpy;
 enum State state = StateNoInput;
+int suspendtimeouts = 35;
 int suspendpendingsceenon = 0;
 int suspendpendingtimeouts = 0;
 KeySym lastkeysym = XK_Cancel;
@@ -298,8 +299,8 @@ readinputloop(Display *dpy, int screen) {
 			}
 		} else if (state == StateSuspendPending) {
 			suspendpendingtimeouts++;
-			// # E.g. after 4s kick back into suspend
-			if (suspendpendingtimeouts > 4) state = StateSuspend;
+			// # E.g. after suspendtimeouts seconds kick back into suspend
+			if (suspendpendingtimeouts > suspendtimeouts) state = StateSuspend;
 			syncstate();
 		}
 
@@ -438,6 +439,9 @@ main(int argc, char **argv) {
 	enum State target = StateNoInput;
 
 	signal(SIGTERM, sigterm);
+
+	const char* suspendtimeouts_str = getenv("SXMO_SUSPENDTIMEOUTS");
+	if (suspendtimeouts_str != NULL) suspendtimeouts = atoi(suspendtimeouts_str);
 
 	const char* rtcwakeinterval = getenv("SXMO_RTCWAKEINTERVAL");
 	if (rtcwakeinterval != NULL) wakeinterval = atoi(rtcwakeinterval);
