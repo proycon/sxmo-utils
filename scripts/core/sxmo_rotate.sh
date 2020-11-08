@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 applyptrmatrix() {
-	PTRID="$(  
+	PTRID="$(
 		xinput | grep -iE 'touchscreen.+pointer' | grep -oE 'id=[0-9]+' | cut -d= -f2
 	)"
 	xinput set-prop "$PTRID" --type=float --type=float "Coordinate Transformation Matrix" "$@"
@@ -9,10 +9,12 @@ applyptrmatrix() {
 
 isrotated() {
 	xrandr | grep primary | cut -d' ' -f 5 | grep right && return 0
+	xrandr | grep primary | cut -d' ' -f 5 | grep left && return 0
 	return 1
 }
 
 rotnormal() {
+	pkill "$KEYBOARD"
 	xrandr -o normal
 	applyptrmatrix 0 0 0 0 0 0 0 0 0
 	pkill lisgd
@@ -21,6 +23,7 @@ rotnormal() {
 }
 
 rotright() {
+	pkill "$KEYBOARD"
 	xrandr -o right
 	applyptrmatrix 0 1 0 -1 0 1 0 0 1
 	pkill lisgd
@@ -29,6 +32,7 @@ rotright() {
 }
 
 rotleft() {
+	pkill "$KEYBOARD"
 	xrandr -o left
 	applyptrmatrix 0 -1 1 1 0 0 0 0 1
 	pkill lisgd
