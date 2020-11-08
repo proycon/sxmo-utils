@@ -41,6 +41,8 @@ checkformissedcalls() {
 		); do
 			MISSEDNUMBER="$(lookupnumberfromcallid "$MISSEDCALLID")"
 			mmcli -m "$(modem_n)" --voice-delete-call "$MISSEDCALLID"
+			rm -f "$NOTIFDIR/incomingcall_${MISSEDCALLID}_notification"
+
 
 			TIME="$(date --iso-8601=seconds)"
 			mkdir -p "$LOGDIR"
@@ -62,7 +64,6 @@ checkforincomingcalls() {
 		grep -Eo '[0-9]+ incoming \(ringing-in\)' |
 		grep -Eo '[0-9]+'
 	)"
-	echo "$VOICECALLID" | grep -v . && rm -f "$NOTIFDIR/incomingcall" && return
 
 	# Determine the incoming phone number
 	echo "Incoming Call:"
@@ -79,7 +80,7 @@ checkforincomingcalls() {
 	printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
 	sxmo_notificationwrite.sh \
-		"$NOTIFDIR/incomingcall" \
+		"$NOTIFDIR/incomingcall_${VOICECALLID}_notification" \
 		"sxmo_modemcall.sh pickup $VOICECALLID" \
 		none \
 		"Pickup - $(sxmo_contacts.sh | grep -E "^\\$INCOMINGNUMBER")" &
@@ -125,15 +126,28 @@ checkfornewtexts() {
 
 mainloop() {
 	checkformissedcalls
+	checkforincomingcalls
+	checkfornewtexts
+
+	# Monitor for incoming calls
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Voice',type='signal',member='CallAdded'" | \
 		while read -r; do
 			checkforincomingcalls
-			checkformissedcalls
 		done &
+
+	# Monitor for incoming texts
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Messaging',type='signal',member='Added'" | \
 		while read -r; do
 			checkfornewtexts
 		done &
+
+	# Monitor for missed calls
+	dbus-monitor --system "interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',arg0='org.freedesktop.ModemManager1.Call'" | \
+		while read -r; do
+			checkformissedcalls
+		done &
+
+	wait
 	wait
 	wait
 }

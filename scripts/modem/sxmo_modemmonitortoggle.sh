@@ -5,7 +5,8 @@ else
 	sxmo_modemmonitor.sh &
 fi
 
-rm /tmp/sxmo_incomingcall
+NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
+rm $NOTIFDIR/incomingcall*
 
 # E.g. wait until process killed or started -- maybe there's a better way..
 sleep 1
