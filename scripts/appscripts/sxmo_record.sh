@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-[ -z "$SXMO_RECDIR" ] && SXMO_RECDIR=~/Recordings
+[ -z "$SXMO_RECDIR" ] && SXMO_RECDIR="$XDG_DATA_HOME"/sxmo/recordings
 mkdir -p "$SXMO_RECDIR"
 
 getdur() {

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
-LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
-NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
+LOGDIR="$XDG_DATA_HOME"/sxmo/modem
+NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 trap "gracefulexit" INT TERM
 
 err() {

@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
+NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 
 notificationmenu() {
 	CHOICES="Close Menu\nClear Notifications"

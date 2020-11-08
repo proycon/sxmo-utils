@@ -9,7 +9,7 @@
 # Prints in output format: "number: contact"
 
 CONTACTSFILE="$XDG_CONFIG_HOME"/sxmo/contacts.tsv
-LOGFILE="$XDG_CONFIG_HOME"/sxmo/modem/modemlog.tsv
+LOGFILE="$XDG_DATA_HOME"/sxmo/modem/modemlog.tsv
 
 contacts() {
 	grep -q . "$CONTACTSFILE" || echo " " > "$CONTACTSFILE"

@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
+NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 
 # Takes 4 args:
 # (1) the filepath of the notification to write (or random to generate a random id)

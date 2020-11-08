@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 trap gracefulexit INT TERM
-NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
+NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 
 gracefulexit() {
 	echo "Gracefully exiting $0"

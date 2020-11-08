@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
-LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
+LOGDIR="$XDG_DATA_HOME"/sxmo/modem
 TERMMODE=$([ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] && echo "true")
-DRAFT_DIR="$XDG_CONFIG_HOME/sxmo/modem/draft"
+DRAFT_DIR="$XDG_DATA_HOME/sxmo/modem/draft"
 
 menu() {
 	if [ "$TERMMODE" != "true" ]; then

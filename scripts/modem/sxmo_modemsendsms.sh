@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-LOGDIR="$XDG_CONFIG_HOME"/sxmo/modem
+LOGDIR="$XDG_DATA_HOME"/sxmo/modem
 
 info() {
 	echo "$1" > /dev/stderr
