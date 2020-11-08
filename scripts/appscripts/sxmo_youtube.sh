@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-HISTORY_FILE="$XDG_CONFIG_HOME"/sxmo/youtubehistory.tsv
+HISTORY_FILE="$XDG_CACHE_HOME"/sxmo/youtubehistory.tsv
 NRESULTS=5
 AUDIOONLY=0
 
