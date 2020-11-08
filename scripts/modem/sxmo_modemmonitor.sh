@@ -64,6 +64,7 @@ checkforincomingcalls() {
 		grep -Eo '[0-9]+ incoming \(ringing-in\)' |
 		grep -Eo '[0-9]+'
 	)"
+	echo "$VOICECALLID" | grep -v . && rm -f "$NOTIFDIR/incomingcall*" && return
 
 	# Determine the incoming phone number
 	echo "Incoming Call:"
