@@ -80,9 +80,11 @@ printtables() {
 		printarow "Temp" "$ROWHOURS" "$TEMP" "$INDENT"
 		printarow "Rain" "$ROWHOURS" "$RAIN" "$INDENT"
 		printarow "Wind" "$ROWHOURS" "$WIND" "$INDENT"
+		printarow "Dirn" "$ROWHOURS" "$DIRECTION" "$INDENT"
 		TIME="$(clearitemsfromrow "$ROWHOURS" "$TIME")"
 		TEMP="$(clearitemsfromrow "$ROWHOURS" "$TEMP")"
 		RAIN="$(clearitemsfromrow "$ROWHOURS" "$RAIN")"
+		DIRECTION="$(clearitemsfromrow "$ROWHOURS" "$DIRECTION")"
 		WIND="$(clearitemsfromrow "$ROWHOURS" "$WIND")"
 
 		echo "$TIME"  | tr -d " " | tr -d '\n' | grep -Eq "^0" &&
@@ -104,6 +106,7 @@ getweathertexttable() {
 		downloadweatherxml "$LAT" "$LON" 2>/dev/null
 		TEMP="$(weatherdata "//temperature" "hourly")"
 		RAIN="$(weatherdata "//probability-of-precipitation" ".")"
+		DIRECTION="$(weatherdata "//direction" ".")"
 		WIND="$(weatherdata "//wind-speed" ".")"
 		#LOCATION="$(weatherdata "//location/description" ".")"
 		TIME="$(
