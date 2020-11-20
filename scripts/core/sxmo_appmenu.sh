@@ -30,7 +30,7 @@ programchoicesinit() {
 					find "$XDG_CONFIG_HOME/sxmo/userscripts" \( -type f -o -type l \) -print0 |
 					xargs -IF basename F |
 					awk '{printf "%s\t^ 0 ^ $XDG_CONFIG_HOME/sxmo/userscripts/%s \n", $0, $0}' |
-                    sort -f
+					sort -f
 				)
 				$CHOICES
 				Edit Userscripts ^ 0 ^ sxmo_files.sh $XDG_CONFIG_HOME/sxmo/userscripts
@@ -137,47 +137,47 @@ programchoicesinit() {
 	elif echo "$WMCLASS" | grep -i "mpv"; then
 		# MPV
 		CHOICES="
-		 Pause        ^ 0 ^ key space
-		 Seek ←       ^ 1 ^ key Left
-		 Seek →       ^ 1 ^ key Right
-		 App Volume ↑ ^ 1 ^ key 0
-		 App Volume ↓ ^ 1 ^ key 9
-		 Speed ↑      ^ 1 ^ key bracketright
-		 Speed ↓      ^ 1 ^ key bracketleft
-		 Screenshot   ^ 1 ^ key s
-		 Loopmark     ^ 1 ^ key l
-		 Info         ^ 1 ^ key i
-		 Seek Info    ^ 1 ^ key o
+			Pause        ^ 0 ^ key space
+			Seek ←       ^ 1 ^ key Left
+			Seek →       ^ 1 ^ key Right
+			App Volume ↑ ^ 1 ^ key 0
+			App Volume ↓ ^ 1 ^ key 9
+			Speed ↑      ^ 1 ^ key bracketright
+			Speed ↓      ^ 1 ^ key bracketleft
+			Screenshot   ^ 1 ^ key s
+			Loopmark     ^ 1 ^ key l
+			Info         ^ 1 ^ key i
+			Seek Info    ^ 1 ^ key o
 		"
 		WINNAME=Mpv && return
 	elif echo "$WMCLASS" | grep -i "feh"; then
 		# Feh
 		CHOICES="
-		 Next →          ^ 1 ^ key space
-		 Previous ←      ^ 1 ^ key BackSpace
-		 Zoom +          ^ 1 ^ key up
-		 Zoom -          ^ 1 ^ key down
-		 Zoom to fit     ^ 1 ^ key slash
-		 Zoom to fill    ^ 1 ^ key exlam
-		 Rotate ↺        ^ 1 ^ key less
-		 Rotate ↻        ^ 1 ^ key greater
-		 Flip ⇅          ^ 1 ^ key underscore
-		 Mirror ⇄        ^ 1 ^ key bar
-		 Toggle filename ^ 1 ^ key d
+			Next →          ^ 1 ^ key space
+			Previous ←      ^ 1 ^ key BackSpace
+			Zoom +          ^ 1 ^ key up
+			Zoom -          ^ 1 ^ key down
+			Zoom to fit     ^ 1 ^ key slash
+			Zoom to fill    ^ 1 ^ key exlam
+			Rotate ↺        ^ 1 ^ key less
+			Rotate ↻        ^ 1 ^ key greater
+			Flip ⇅          ^ 1 ^ key underscore
+			Mirror ⇄        ^ 1 ^ key bar
+			Toggle filename ^ 1 ^ key d
 		"
 		WINNAME=Feh && return
 	elif echo "$WMCLASS" | grep -i "sxiv"; then
 		# Sxiv
 		CHOICES="
-		 Next →          ^ 1 ^ key space
-		 Previous ←      ^ 1 ^ key BackSpace
-		 Zoom +          ^ 1 ^ key equal
-		 Zoom -          ^ 1 ^ key minus
-		 Rotate ↺        ^ 1 ^ key less
-		 Rotate ↻        ^ 1 ^ key greater
-		 Flip ⇄          ^ 1 ^ key question
-		 Flip ⇅          ^ 1 ^ key bar
-		 Thumbnail ⊡     ^ 0 ^ key Return
+			Next →          ^ 1 ^ key space
+			Previous ←      ^ 1 ^ key BackSpace
+			Zoom +          ^ 1 ^ key equal
+			Zoom -          ^ 1 ^ key minus
+			Rotate ↺        ^ 1 ^ key less
+			Rotate ↻        ^ 1 ^ key greater
+			Flip ⇄          ^ 1 ^ key question
+			Flip ⇅          ^ 1 ^ key bar
+			Thumbnail ⊡     ^ 0 ^ key Return
 		"
 		WINNAME=Sxiv && return
 	elif echo "$WMCLASS" | grep -i "st-256color"; then
@@ -344,10 +344,10 @@ programchoicesinit() {
 	elif echo "$WMCLASS" | grep -i foxtrot; then
 		# Foxtrot GPS
 		CHOICES='
-		  Locations           ^ 0 ^ sxmo_gpsutil.sh menulocations
+			Locations           ^ 0 ^ sxmo_gpsutil.sh menulocations
 			Copy                ^ 1 ^ sxmo_gpsutil.sh copy
 			Paste               ^ 0 ^ sxmo_gpsutil.sh paste
-		  Drop Pin            ^ 0 ^ sxmo_gpsutil.sh droppin
+			Drop Pin            ^ 0 ^ sxmo_gpsutil.sh droppin
 			Region Search       ^ 0 ^ sxmo_gpsutil.sh menuregionsearch
 			Region Details      ^ 0 ^ sxmo_gpsutil.sh details
 			Zoom +              ^ 1 ^ key i

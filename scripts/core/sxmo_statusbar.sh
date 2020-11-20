@@ -22,7 +22,7 @@ update() {
 	if [ "$WLANSTATE" = "up" ]; then
 		WIRELESS="W "
 	fi
-  
+
 	# M symbol if modem monitoring is on & modem present
 	MODEMMON=""
 	pgrep -f sxmo_modemmonitor.sh && MODEMMON="M "

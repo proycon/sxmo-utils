@@ -3,10 +3,10 @@
 mkdir -p "$SXMO_RECDIR"
 
 getdur() {
-	mediainfo "$1" | 
-	grep ^Duration | 
-	head -n1 | 
-	cut -d: -f2 | 
+	mediainfo "$1" |
+	grep ^Duration |
+	head -n1 |
+	cut -d: -f2 |
 	tr -d " " |
 	sed -E 's/[0-9]+ms//'
 }
@@ -65,11 +65,11 @@ recordmenu() {
 		OPTION="$(
 			printf %b "$OPTIONS" |
 			xargs -0 echo |
-			sed '/^[[:space:]]*$/d' | 
+			sed '/^[[:space:]]*$/d' |
 			awk '{$1=$1};1' |
 			dmenu -fn Terminus-30 -c -p "Record" -l 20
 		)"
-	
+
 		if [ "$OPTION" = "Line Jack" ]; then
 			OLDAUDIOF="$(mktemp)"
 			alsactl --file "$OLDAUDIOF" store
@@ -95,7 +95,7 @@ recordmenu() {
 }
 
 if [ -z "$1" ]; then
-  recordmenu
+	recordmenu
 else
-  "$@"
+	"$@"
 fi

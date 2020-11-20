@@ -10,7 +10,7 @@ change() {
 
 menu() {
 	T="$(
-		find /usr/share/zoneinfo -type f | 
+		find /usr/share/zoneinfo -type f |
 		sed  's#^/usr/share/zoneinfo/##g' |
 		sort |
 		sxmo_dmenu_with_kb.sh -p Timezone -c -l 10 -fn Terminus-20 -i

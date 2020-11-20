@@ -4,9 +4,9 @@ CTILESIZE=256
 CLN2=0.693147180559945309417
 CPI=3.14159265358979323846
 
-# The following {lat,px}2{px,lat} were derived from the foxtrotgps source 
-# functions of similar names only just translated from C to bc all because... 
-# foxtrotgps doesn't support autocentering on restored lat/lon instead it 
+# The following {lat,px}2{px,lat} were derived from the foxtrotgps source
+# functions of similar names only just translated from C to bc all because...
+# foxtrotgps doesn't support autocentering on restored lat/lon instead it
 # stores internally X/Y pixel values; so we need conversion fns
 lat2px() {
 	DEGREES="$1"; ZOOM="$2"
@@ -27,7 +27,7 @@ lon2px() {
 			($DEGREES * $CPI / 180) * $CTILESIZE *  \
 			e($ZOOM * $CLN2) / (2 * $CPI) \
 		) + (e($ZOOM * $CLN2) * ($CTILESIZE / 2))
-	" | bc -l 
+	" | bc -l
 }
 px2lat() {
 	PX="$1"; ZOOM="$2"
@@ -40,8 +40,8 @@ px2lat() {
 		asin(tanh( \
 			(-( $PX - ( e( $ZOOM * $CLN2 ) * ( $CTILESIZE / 2 ) ) ) * ( 2 * $CPI )) / \
 			( $CTILESIZE * e( $ZOOM * $CLN2)) \
-		)) / $CPI * 180 
-	" | bc -l 
+		)) / $CPI * 180
+	" | bc -l
 }
 px2lon() {
 	PX="$1"; ZOOM="$2"
@@ -196,7 +196,7 @@ menulocations() {
 	)"
 	ZOOM=14
 	if [ "$CHOICE" = "Close Menu" ]; then
-	 exit 0
+		exit 0
 	else
 		LATLON="$(printf %b "$CHOICE" | cut -d: -f2- )"
 		gpslatlonset "$LATLON $ZOOM"

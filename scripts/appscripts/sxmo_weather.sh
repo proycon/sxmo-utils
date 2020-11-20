@@ -5,7 +5,7 @@ WEATHERXML=""
 
 downloadweatherxml() {
 	WEATHERXML="$(
-		curl "https://forecast.weather.gov/MapClick.php?lat=$LAT&lon=$LON&FcstType=digitalDWML" 
+		curl "https://forecast.weather.gov/MapClick.php?lat=$LAT&lon=$LON&FcstType=digitalDWML"
 	)"
 }
 
@@ -110,7 +110,7 @@ getweathertexttable() {
 		WIND="$(weatherdata "//wind-speed" ".")"
 		#LOCATION="$(weatherdata "//location/description" ".")"
 		TIME="$(
-			weatherdata "//start-valid-time" "." | 
+			weatherdata "//start-valid-time" "." |
 			grep -oE 'T[0-9]{2}' | tr -d 'T' | tr '\n' ' '
 		)"
 		tput rev; echo "$PLACE"; tput sgr0
@@ -133,7 +133,7 @@ weathermenu() {
 		sxmo_dmenu_with_kb.sh -i -c -l 10 -fn Terminus-18 -p "Locations"
 	)"
 	if [ "$CHOICE" = "Close Menu" ]; then
-	 exit 0
+		exit 0
 	else
 		PLACE="$(printf %b "$CHOICE" | cut -d: -f1 | awk '{$1=$1};1')"
 		LAT="$(printf %b "$CHOICE" | cut -d: -f2- | awk '{$1=$1};1' | cut -d ' ' -f1)"
@@ -143,7 +143,7 @@ weathermenu() {
 }
 
 if [ -z "$1" ]; then
-  weathermenu
+	weathermenu
 else
   "$@"
 fi

@@ -18,7 +18,7 @@ notificationhook() {
 			sleep 0.5
 			VIBI=$(echo $VIBI+1 | bc)
 		done
-  fi
+	fi
 }
 
 handlenewnotiffile(){
@@ -41,7 +41,7 @@ handlenewnotiffile(){
 		) &
 
 		[ -e "$NOTIFWATCHFILE" ] && (
-		  inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE"
+			inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE"
 		) &
 	fi
 }

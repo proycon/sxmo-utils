@@ -96,7 +96,7 @@ networksmenu() {
 		elif [ "$CHOICE" = "Add a GSM Network" ]; then
 			addnetworkgsmmenu
 		elif [ "$CHOICE" = "Add a WPA Network" ]; then
-		  addnetworkwpamenu
+			addnetworkwpamenu
 		elif [ "$CHOICE" = "Delete a Network" ]; then
 			deletenetworkmenu
 		elif [ "$CHOICE" = "Launch Nmtui" ]; then

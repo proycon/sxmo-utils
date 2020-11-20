@@ -44,7 +44,7 @@ SMSNO="$(
 )"
 mmcli -s "${SMSNO}" --send || err "Couldn't send text message"
 for i in $(mmcli -m "$MODEM" --messaging-list-sms | grep " (sent)" | cut -f5 -d' ') ; do
-  mmcli -m "$MODEM" --messaging-delete-sms="$i"
+	mmcli -m "$MODEM" --messaging-delete-sms="$i"
 done
 
 TIME="$(date --iso-8601=seconds)"

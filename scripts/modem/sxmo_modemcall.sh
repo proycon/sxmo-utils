@@ -38,9 +38,9 @@ modem_cmd_errcheck() {
 }
 
 vid_to_number() {
-	mmcli -m "$(modem_n)" -o "$1" -K | 
-	grep call.properties.number | 
-	cut -d ':' -f2 | 
+	mmcli -m "$(modem_n)" -o "$1" -K |
+	grep call.properties.number |
+	cut -d ':' -f2 |
 	tr -d  ' '
 }
 
@@ -58,7 +58,7 @@ toggleflag() {
 	shift
 	FLAGS="$*"
 
-	echo -- "$FLAGS" | grep -- "$TOGGLEFLAG" >&2 && 
+	echo -- "$FLAGS" | grep -- "$TOGGLEFLAG" >&2 &&
 		NEWFLAGS="$(echo -- "$FLAGS" | sed "s/$TOGGLEFLAG//g")" ||
 		NEWFLAGS="$(echo -- "$FLAGS $TOGGLEFLAG")"
 
@@ -157,9 +157,9 @@ incallmenuloop() {
 	"
 
 	pkill -9 dmenu # E.g. just incase user is playing with btns or hits a menu by mistake
-	echo "$CHOICES" | 
-		xargs -0 echo | 
-		cut -d'^' -f1 | 
+	echo "$CHOICES" |
+		xargs -0 echo |
+		cut -d'^' -f1 |
 		sed '/^[[:space:]]*$/d' |
 		awk '{$1=$1};1' |
 		dmenu -idx $DMENUIDX -l 14 "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -fn "Terminus-30" -p "$NUMBER" |

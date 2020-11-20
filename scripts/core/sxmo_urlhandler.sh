@@ -48,7 +48,7 @@ COMMAND=$(
 [ -z "$COMMAND" ] && exit 1
 RUN=$(echo "$URL" | xargs -IURL echo "$COMMAND")
 if [ "$FORK" = fork ]; then
-  st -e sh -c "$RUN" &
+	st -e sh -c "$RUN" &
 else
-  st -e sh -c "$RUN"
+	st -e sh -c "$RUN"
 fi

@@ -27,8 +27,8 @@ int main(int argc, char *argv[]) {
 
 	color = argv[argc--];
 	if (
-		strcmp(color, "red") && 
-		strcmp(color, "blue") && 
+		strcmp(color, "red") &&
+		strcmp(color, "blue") &&
 		strcmp(color, "green") &&
 		strcmp(color, "white")
 	) {
