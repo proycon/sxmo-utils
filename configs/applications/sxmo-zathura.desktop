@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Zathura
+Exec=zathura
+Terminal=false
+Type=Application
+MimeType=application/pdf;application/x-rar;application/epub+zip
