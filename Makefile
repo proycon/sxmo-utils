@@ -36,6 +36,8 @@ install: $(PROGRAMS)
 	mkdir -p $(PREFIX)/usr/share/sxmo
 	cp -r configs/* $(PREFIX)/usr/share/sxmo
 
+	cp -r usr/* /usr/
+
 	mkdir -p $(PREFIX)/etc/alsa/conf.d/
 	cp configs/alsa/alsa_sxmo_enable_dmix.conf $(PREFIX)/etc/alsa/conf.d/
 

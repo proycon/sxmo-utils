@@ -1,0 +1,7 @@
+[Default Applications]
+image/jpeg=sxmo-sxiv.desktop
+image/png=sxmo-sxiv.desktop
+image/gif=sxmo-sxiv.desktop
+audio/x-m4a=sxmo-mpv-music.desktop
+audio/mpeg=sxmo-mpv-music.desktop
+application/pdf=sxmo-zathura.desktop
