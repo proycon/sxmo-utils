@@ -30,7 +30,12 @@ dialmenu() {
 		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20 -i
 	)"
 	NUMBER="$(echo "$NUMBER" | cut -d: -f1 | tr -d -- '- ')"
-	echo "$NUMBER" | grep -qE '^[+0-9]+$' || fatalerr "$NUMBER is not a number"
+	if [ -z "$NUMBER" ] || [ "$NUMBER" = "CloseMenu" ]; then
+		#no number selected (probably cancelled), silently discard
+		exit 0
+	else
+		echo "$NUMBER" | grep -qE '^[+0-9]+$' || fatalerr "$NUMBER is not a number"
+	fi
 
 	echo "Attempting to dial: $NUMBER" >&2
 	CALLID="$(
@@ -44,4 +49,6 @@ dialmenu() {
 
 modem_n || fatalerr "Couldn't determine modem number - is modem online?"
 CREATEDCALLID="$(dialmenu)"
-sxmo_modemcall.sh pickup "$CREATEDCALLID"
+if [ ! -z "$CREATEDCALLID" ]; then
+	sxmo_modemcall.sh pickup "$CREATEDCALLID"
+fi
