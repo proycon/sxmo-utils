@@ -1,7 +1,12 @@
 #!/usr/bin/env sh
-if pgrep -f sxmo_modemmonitor.sh; then
+
+# This script toggles the modem monitor
+# It optionally takes a parameter "on" or "off"
+# forcing it to toggle only to that desired state if applicable.
+
+if [ "$1" != "on" ] && pgrep -f sxmo_modemmonitor.sh; then
 	pgrep -f sxmo_modemmonitor.sh | grep -Ev "^${$}$" | xargs -IP kill -TERM P
-else
+elif [ "$1" != "off" ]; then
 	setsid -f sxmo_modemmonitor.sh &
 fi
 
