@@ -2,7 +2,7 @@
 if pgrep -f sxmo_modemmonitor.sh; then
 	pgrep -f sxmo_modemmonitor.sh | grep -Ev "^${$}$" | xargs -IP kill -TERM P
 else
-	sxmo_modemmonitor.sh &
+	setsid -f sxmo_modemmonitor.sh &
 fi
 
 NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications

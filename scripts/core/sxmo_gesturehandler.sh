@@ -76,10 +76,10 @@ if [ "$HANDLE" -ne 0 ]; then
 			pkill -9 "$KEYBOARD"
 			;;
 		"showmenu")
-			pidof dmenu || sxmo_appmenu.sh &
+			pidof dmenu || setsid -f sxmo_appmenu.sh &
 			;;
 		"showsysmenu")
-			pidof dmenu || sxmo_appmenu.sh sys &
+			pidof dmenu || setsid -f sxmo_appmenu.sh sys &
 			;;
 		"hidemenu")
 			pkill -9 dmenu
