@@ -36,8 +36,7 @@ install: $(PROGRAMS)
 	mkdir -p $(PREFIX)/usr/share/sxmo
 	cp -r configs/* $(PREFIX)/usr/share/sxmo
 
-	cp -r usr/* /usr/
-
+	# Configs
 	mkdir -p $(PREFIX)/etc/alsa/conf.d/
 	cp configs/alsa/alsa_sxmo_enable_dmix.conf $(PREFIX)/etc/alsa/conf.d/
 
@@ -47,6 +46,10 @@ install: $(PROGRAMS)
 	mkdir -p $(PREFIX)/etc/udev/rules.d
 	cp configs/udev/*.rules $(PREFIX)/etc/udev/rules.d/
 
+	mkdir -p $(PREFIX)/usr/share/applications/
+	cp configs/xdg/mimeapps.list $(PREFIX)/usr/share/applications/
+
+	# Bin
 	mkdir -p $(PREFIX)/usr/bin
 	cp scripts/*/* $(PREFIX)/usr/bin
 
