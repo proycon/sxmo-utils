@@ -4,7 +4,8 @@
 #   Wherein $CONTACTSFILE is tsv with two fields: number\tcontact name
 #   Wherein $LOGFILE is *sorted* tsv with three fields: date\tevt\tnumber
 #
-#   number should be a full phone number starting with + and the country number
+#   Most normal numbers should be a full phone number starting with + and the country number
+#   Some special numbers (ie. 2222, "CR AGRICOLE") can ignore this pattern
 #
 # Prints in output format: "number: contact"
 
