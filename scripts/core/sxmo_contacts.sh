@@ -16,14 +16,14 @@ contacts() {
 	RECENTCONTACTEDNUMBERSREVCHRON="$(
 		cut -f3 "$LOGFILE" |
 		tac |
-		awk '!($0 in a){a[$0]; if (substr($0,1,1) == "+") print}' |
+		awk '!($0 in a){a[$0]; print}' |
 		sed '/^[[:space:]]*$/d'
 	)"
 	printf %b "$RECENTCONTACTEDNUMBERSREVCHRON" | awk -F'\t' '
 		FNR==NR{a[$1]=$2; next}
 		{
 			if (!a[$1]) a[$1] = "Unknown Number";
-			if (substr($0,1,1) == "+") print $0 ": " a[$1]
+			print $0 ": " a[$1]
 		}
 	' "$CONTACTSFILE" -
 }
