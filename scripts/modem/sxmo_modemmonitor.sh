@@ -22,9 +22,7 @@ modem_n() {
 lookupnumberfromcallid() {
 	VOICECALLID=$1
 	mmcli -m "$(modem_n)" --voice-list-calls -o "$VOICECALLID" -K |
-		grep call.properties.number |
-		cut -d ':' -f 2 |
-		tr -d ' '
+		sed -E 's/^call\.properties\.number\s+:\s+//'
 }
 
 checkformissedcalls() {
