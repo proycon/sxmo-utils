@@ -16,7 +16,7 @@ modem_n() {
 }
 
 dialmenu() {
-	CONTACTS="$(sxmo_contacts.sh)"
+	CONTACTS="$(sxmo_contacts.sh | grep -E "^\+?[0-9]+:")"
 	NUMBER="$(
 		printf %b "Close Menu\nMore contacts\n$CONTACTS" |
 		grep . |

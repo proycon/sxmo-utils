@@ -38,7 +38,7 @@ choosenumbermenu() {
 
 	# Prompt for number
 	NUMBER="$(
-		printf %b "\nCancel\nMore contacts\n$(sxmo_contacts.sh)" |
+		printf %b "\nCancel\nMore contacts\n$(sxmo_contacts.sh | grep -E "^\+?[0-9]+:")" |
 		awk NF |
 		menu sxmo_dmenu_with_kb.sh -p "Number" -fn "Terminus-20" -l 10 -c -i |
 		cut -d: -f1 |
