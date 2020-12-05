@@ -28,7 +28,7 @@ programchoicesinit() {
 			CHOICES="
 				$(
 					find "$XDG_CONFIG_HOME/sxmo/userscripts" \( -type f -o -type l \) -print0 |
-					xargs -IF basename F |
+					xargs --null -IF basename F |
 					awk '{printf "%s\t^ 0 ^ $XDG_CONFIG_HOME/sxmo/userscripts/%s \n", $0, $0}' |
 					sort -f
 				)
