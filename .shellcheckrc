@@ -1,0 +1,2 @@
+# Allow string replacements (not POSIX compliant)
+disable=SC2039
