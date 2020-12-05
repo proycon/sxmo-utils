@@ -49,6 +49,6 @@ dialmenu() {
 
 modem_n || fatalerr "Couldn't determine modem number - is modem online?"
 CREATEDCALLID="$(dialmenu)"
-if [ ! -z "$CREATEDCALLID" ]; then
+if [ -n "$CREATEDCALLID" ]; then
 	sxmo_modemcall.sh pickup "$CREATEDCALLID"
 fi
