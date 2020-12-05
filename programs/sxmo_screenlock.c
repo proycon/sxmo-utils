@@ -371,6 +371,9 @@ syncstate()
 			writefile(powerstatefile, "mem");
 			//---- program blocks here due to sleep ----- //
 			// Just woke up again
+			fprintf(stderr, "Resetting usb connection to the modem\n");
+			writefile("/sys/bus/usb/drivers/usb/unbind", "3-1");
+			writefile("/sys/bus/usb/drivers/usb/bind", "3-1");
 			fprintf(stderr, "Woke up\n");
 			if (waketime > 0) {
 				rtcresult = checkrtcwake();
