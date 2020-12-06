@@ -45,7 +45,7 @@ programchoicesinit() {
 			CHOICES="
 				$(command -v alpine     >/dev/null && echo 'Alpine      ^ 0 ^ st -e alpine')
 				$(command -v cmus       >/dev/null && echo 'Cmus        ^ 0 ^ st -e cmus')
-				$(command -v dino       >/dev/null && echo 'dino        ^ 0 ^ GDK_SCALE=2 dino')
+				$(command -v dino       >/dev/null && echo 'Dino        ^ 0 ^ GDK_SCALE=2 dino')
 				$(command -v emacs      >/dev/null && echo 'Emacs       ^ 0 ^ st -e emacs')
 				$(command -v epiphany   >/dev/null && echo 'Epiphany    ^ 0 ^ epiphany')
 				$(command -v firefox    >/dev/null && echo 'Firefox     ^ 0 ^ firefox')
