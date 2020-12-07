@@ -31,7 +31,7 @@ contacts() {
 
 all_contacts() {
 	awk -F'\t' '{
-		if (substr($0,1,1) == "+") print $1 ": " $2
+		print $1 ": " $2
 	}' "$CONTACTSFILE" | sort -f -k 2
 }
 
