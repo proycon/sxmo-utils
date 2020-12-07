@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 LOGDIR="$XDG_DATA_HOME"/sxmo/modem
+ALSASTATEFILE="/tmp/precall.alsa.state"
 trap "gracefulexit" INT TERM
 
 modem_n() {
@@ -18,7 +19,11 @@ fatalerr() {
 	); do
 		mmcli -m "$(modem_n)" --voice-delete-call "$CALLID"
 	done
-	alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
+	if [ -f "$ALSASTATEFILE" ]; then
+		alsactl --file "$ALSASTATEFILE" restore
+	else
+		alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
+	fi
 	echo "$1">&2
 	notify-send "$1"
 	setsid -f sh -c 'sleep 2; sxmo_statusbarupdate.sh'
@@ -98,6 +103,7 @@ acceptcall() {
 	else
 		fatalerr "Couldn't initialize call with callid <$CALLID>; unknown direction <$DIRECTION>"
 	fi
+	alsactl --file "$ALSASTATEFILE" store
 }
 
 hangup() {
@@ -169,7 +175,7 @@ incallmenuloop() {
 		xargs -0 echo |
 		cut -d'^' -f1 |
 		sed '/^[[:space:]]*$/d' |
-		awk '{$1=$1};1' |
+		awk '{$1=$1};1' | #this cryptic statement trims leading/trailing whitespace from a string
 		dmenu -idx $DMENUIDX -l 14 "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -fn "Terminus-30" -p "$NUMBER" |
 		(
 			PICKED="$(cat)";
