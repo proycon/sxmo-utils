@@ -4,12 +4,13 @@ NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 trap "gracefulexit" INT TERM
 
 err() {
+	echo "$1">&2
 	notify-send "$1"
 	gracefulexit
 }
 
 gracefulexit() {
-	echo "gracefully exiting $0!"
+	echo "gracefully exiting $0!">&2
 	kill -9 0
 }
 
@@ -71,6 +72,7 @@ checkforincomingcalls() {
 	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
 
 	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
+		echo "Invoking ring hook (async)">&2
 		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$(sxmo_contacts.sh | grep -E "^${INCOMINGNUMBER//+/\\+}:")" &
 	else
 		sxmo_vibratepine 2500 &
@@ -86,7 +88,7 @@ checkforincomingcalls() {
 		none \
 		"Pickup - $(sxmo_contacts.sh | grep -E "^${INCOMINGNUMBER//+/\\+}:")" &
 
-	echo "Number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)"
+	echo "Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)">&2
 }
 
 checkfornewtexts() {
@@ -109,6 +111,7 @@ checkfornewtexts() {
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 
 		mkdir -p "$LOGDIR/$NUM"
+		echo "Text from number: $NUM (TEXTID: $TEXTID)">&2
 		printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
 		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
 		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"

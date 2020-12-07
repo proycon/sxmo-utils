@@ -19,6 +19,7 @@ fatalerr() {
 		mmcli -m "$(modem_n)" --voice-delete-call "$CALLID"
 	done
 	alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
+	echo "$1">&2
 	notify-send "$1"
 	setsid -f sh -c 'sleep 2; sxmo_statusbarupdate.sh'
 	kill -9 0
@@ -32,7 +33,7 @@ gracefulexit() {
 modem_cmd_errcheck() {
 	RES="$(mmcli "$@" 2>&1)"
 	OK="$?"
-	echo "Command: mmcli $*"
+	echo "Command: mmcli $*">&2
 	if [ "$OK" != 0 ]; then fatalerr "Problem executing mmcli command!\n$RES"; fi
 	echo "$RES"
 }
@@ -75,7 +76,7 @@ toggleflagset() {
 
 acceptcall() {
 	CALLID="$1"
-	echo "Attempting to initialize CALLID $CALLID"
+	echo "Attempting to initialize CALLID $CALLID">&2
 	DIRECTION="$(
 		mmcli --voice-status -o "$CALLID" -K |
 		grep call.properties.direction |
@@ -85,12 +86,15 @@ acceptcall() {
 	if [ "$DIRECTION" = "outgoing" ]; then
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --start
 		log_event "call_start" "$CALLID"
+		echo "Started call $CALLID">&2
 	elif [ "$DIRECTION" = "incoming" ]; then
 		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/pickup" ]; then
+			echo "Invoking pickup hook (async)">&2
 			"$XDG_CONFIG_HOME/sxmo/hooks/pickup" &
 		fi
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --accept
 		log_event "call_pickup" "$CALLID"
+		echo "Picked up call $CALLID">&2
 	else
 		fatalerr "Couldn't initialize call with callid <$CALLID>; unknown direction <$DIRECTION>"
 	fi
@@ -132,15 +136,19 @@ incallmonitor() {
 	while true; do
 		sxmo_statusbarupdate.sh
 		if mmcli -m "$(modem_n)" -K -o "$CALLID" | grep -E "^call.properties.state.+terminated"; then
-			fatalerr "Call with $NUMBER terminated"
+			if [ "$NUMBER" = "--" ]; then
+				fatalerr "Call with unknown number terminated"
+			else
+				fatalerr "Call with $NUMBER terminated"
+			fi
 		fi
-		echo "Call still in progress"
+		echo "Call still in progress">&2
 		sleep 3
 	done
 }
 
 incallmenuloop() {
-	echo "Current flags are $FLAGS"
+	echo "Current flags are $FLAGS">&2
 	CHOICES="
 		$([ "$WINDOWIFIED" = 0 ] && echo Windowify || echo Unwindowify)   ^ togglewindowify
 		$([ "$WINDOWIFIED" = 0 ] && echo 'Screenlock                      ^ togglewindowify; sxmo_screenlock &')
@@ -165,11 +173,11 @@ incallmenuloop() {
 		dmenu -idx $DMENUIDX -l 14 "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -fn "Terminus-30" -p "$NUMBER" |
 		(
 			PICKED="$(cat)";
-			echo "Picked is $PICKED"
+			echo "Picked is $PICKED">&2
 			echo "$PICKED" | grep -Ev "."
 			CMD=$(echo "$CHOICES" | grep "$PICKED" | cut -d'^' -f2)
 			DMENUIDX=$(echo "$(echo "$CHOICES" | grep -n "$PICKED" | cut -d ':' -f1)" - 1 | bc)
-			echo "Eval in call context: $CMD"
+			echo "Eval in call context: $CMD">&2
 			eval "$CMD"
 			incallmenuloop
 		) & wait # E.g. bg & wait to allow for SIGINT propogation

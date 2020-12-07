@@ -12,6 +12,7 @@ menu() {
 }
 
 err() {
+	echo "$1">&2
 	echo "$1" | menu dmenu -fn Terminus-20 -c -l 10
 	kill $$
 }
@@ -72,7 +73,7 @@ sendtextmenu() {
 			printf %b "Edit Message ($(echo "$TEXT" | head -n1))\nSend to → $NUMBER\nSave as Draft\nCancel" |
 			menu dmenu -c -idx 1 -p "Confirm" -fn "Terminus-20" -l 10
 		)"
-		echo "$CONFIRM" | grep -E "^Send" && (echo "$TEXT" | sxmo_modemsendsms.sh "$NUMBER" -) && exit 0
+		echo "$CONFIRM" | grep -E "^Send" && (echo "$TEXT" | sxmo_modemsendsms.sh "$NUMBER" -) && echo "Sent text to $NUMBER">&2 && exit 0
 		echo "$CONFIRM" | grep -E "^Cancel$" && exit 1
 		echo "$CONFIRM" | grep -E "^Edit Message" && TEXT="$(editmsg "$NUMBER" "$TEXT")"
 		echo "$CONFIRM" | grep -E "^Save as Draft$" && err "Draft saved to $(draft "$NUMBER" "$TEXT")"
