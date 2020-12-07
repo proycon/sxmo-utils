@@ -28,6 +28,26 @@ lookupnumberfromcallid() {
 		tr -d ' '
 }
 
+lookupcontactname() {
+	if [ "$1" = "--" ]; then
+		echo "Unknown number"
+	else
+		NUMBER="$1"
+		CONTACT=$(sxmo_contacts.sh --all |
+			grep "$NUMBER:" | #this is not an exact match but a suffix match
+							  #which also works if the + and country code are missing
+							  #but may lead to false positives in rare cases (short numbers)
+			cut -d':' -f 2 |
+			sed 's/^[ \t]*//;s/[ \t]*$//' #strip leading/trailing whitespace
+		)
+		if [ -n "$CONTACT" ]; then
+			echo "$CONTACT"
+		else
+			echo "Unknown ($NUMBER)"
+		fi
+	fi
+}
+
 checkformissedcalls() {
 	if pgrep -vf sxmo_modemcall.sh; then
 		# Add a notification for every missed call
@@ -49,7 +69,7 @@ checkformissedcalls() {
 			mkdir -p "$LOGDIR"
 			printf %b "$TIME\tcall_missed\t$MISSEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
-			CONTACT="$(sxmo_contacts.sh | grep -F "^${MISSEDNUMBER//+/\\+}:")"
+			CONTACT="$(lookupcontactname "$MISSEDNUMBER")"
 			sxmo_notificationwrite.sh \
 				random \
 				"st -f Terminus-20 -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \
@@ -70,10 +90,11 @@ checkforincomingcalls() {
 	# Determine the incoming phone number
 	echo "Incoming Call:"
 	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
+	CONTACTNAME=$(lookupcontactname "$INCOMINGNUMBER")
 
 	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
 		echo "Invoking ring hook (async)">&2
-		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$(sxmo_contacts.sh | grep -E "^${INCOMINGNUMBER//+/\\+}:")" &
+		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$CONTACTNAME" &
 	else
 		sxmo_vibratepine 2500 &
 	fi
@@ -86,7 +107,7 @@ checkforincomingcalls() {
 		"$NOTIFDIR/incomingcall_${VOICECALLID}_notification" \
 		"sxmo_modemcall.sh pickup $VOICECALLID" \
 		none \
-		"Pickup - $(sxmo_contacts.sh | grep -E "^${INCOMINGNUMBER//+/\\+}:")" &
+		"Pickup - $CONTACTNAME" &
 
 	echo "Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)">&2
 }
@@ -115,15 +136,16 @@ checkfornewtexts() {
 		printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
 		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
 		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
+		CONTACTNAME=$(lookupcontactname "$NUM")
 
 		sxmo_notificationwrite.sh \
 			random \
 			"st -e tail -n9999 -f '$LOGDIR/$NUM/sms.txt'" \
 			"$LOGDIR/$NUM/sms.txt" \
-			"Message - $(sxmo_contacts.sh | grep -E "^${NUM//+/\\+}:"): $TEXT"
+			"Message - $CONTACTNAME: $TEXT"
 
 		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/sms" ]; then
-			"$XDG_CONFIG_HOME/sxmo/hooks/sms" "$(sxmo_contacts.sh | grep -E "^${NUM//+/\\+}:")" "$TEXT"
+			"$XDG_CONFIG_HOME/sxmo/hooks/sms" "$CONTACTNAME" "$TEXT"
 		fi
 	done
 }
