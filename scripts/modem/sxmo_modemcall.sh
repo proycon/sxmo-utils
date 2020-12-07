@@ -110,8 +110,9 @@ hangup() {
 	CALLID="$1"
 	modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --hangup
 	log_event "call_hangup" "$CALLID"
-	fatalerr "Call with $NUMBER terminated"
-	exit 1
+	modem_cmd_errcheck -m "$(modem_n)" --voice-delete-call="$CALLID"
+	finish "Call with $NUMBER terminated"
+	exit 0
 }
 
 togglewindowify() {
@@ -142,6 +143,7 @@ incallmonitor() {
 	while true; do
 		sxmo_statusbarupdate.sh
 		if mmcli -m "$(modem_n)" -K -o "$CALLID" | grep -E "^call.properties.state.+terminated"; then
+			mmcli -m "$(modem_n)" --voice-delete-call="$CALLID"
 			if [ "$NUMBER" = "--" ]; then
 				fatalerr "Call with unknown number terminated"
 			else
