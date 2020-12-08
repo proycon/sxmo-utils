@@ -1,16 +1,17 @@
 #!/usr/bin/env sh
 LOGDIR="$XDG_DATA_HOME"/sxmo/modem
-ALSASTATEFILE="/tmp/precall.alsa.state"
+ALSASTATEFILE="$XDG_CACHE_HOME"/precall.alsa.state
+CACHEDIR="$XDG_CACHE_HOME"/sxmo
 trap "gracefulexit" INT TERM
 
 modem_n() {
 	MODEMS="$(mmcli -L)"
-	echo "$MODEMS" | grep -qoE 'Modem\/([0-9]+)' || fatalerr "Couldn't find modem - is your modem enabled?"
+	echo "$MODEMS" | grep -qoE 'Modem\/([0-9]+)' || finish "Couldn't find modem - is your modem enabled?"
 	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 }
 
 
-fatalerr() {
+finish() {
 	# E.g. hangup all calls, switch back to default audio, notify user, and die
 	sxmo_vibratepine 1000 &
 	mmcli -m "$(modem_n)" --voice-hangup-all
@@ -24,14 +25,18 @@ fatalerr() {
 	else
 		alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
 	fi
-	echo "$1">&2
-	notify-send "$1"
 	setsid -f sh -c 'sleep 2; sxmo_statusbarupdate.sh'
+	if [ -n "$1" ]; then
+		echo "$1">&2
+		notify-send "$1"
+	fi
 	kill -9 0
+	pkill -9 dmenu #just in case the call menu survived somehow?
+	exit 1
 }
 
 gracefulexit() {
-	fatalerr "Terminated via SIGTERM/SIGINT"
+	finish "Call ended"
 }
 
 
@@ -39,7 +44,7 @@ modem_cmd_errcheck() {
 	RES="$(mmcli "$@" 2>&1)"
 	OK="$?"
 	echo "Command: mmcli $*">&2
-	if [ "$OK" != 0 ]; then fatalerr "Problem executing mmcli command!\n$RES"; fi
+	if [ "$OK" != 0 ]; then finish "Problem executing mmcli command!\n$RES"; fi
 	echo "$RES"
 }
 
@@ -97,11 +102,13 @@ acceptcall() {
 			echo "Invoking pickup hook (async)">&2
 			"$XDG_CONFIG_HOME/sxmo/hooks/pickup" &
 		fi
+		touch "$CACHEDIR/${CALLID}.pickedupcall" #this signals that we picked this call up
+											     #to other asynchronously running processes
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --accept
 		log_event "call_pickup" "$CALLID"
 		echo "Picked up call $CALLID">&2
 	else
-		fatalerr "Couldn't initialize call with callid <$CALLID>; unknown direction <$DIRECTION>"
+		finish "Couldn't initialize call with callid <$CALLID>; unknown direction <$DIRECTION>"
 	fi
 	alsactl --file "$ALSASTATEFILE" store
 }
@@ -143,11 +150,11 @@ incallmonitor() {
 	while true; do
 		sxmo_statusbarupdate.sh
 		if mmcli -m "$(modem_n)" -K -o "$CALLID" | grep -E "^call.properties.state.+terminated"; then
-			mmcli -m "$(modem_n)" --voice-delete-call="$CALLID"
+			#note: deletion will be handled asynchronously by sxmo_modemmonitor's checkforfinishedcalls()
 			if [ "$NUMBER" = "--" ]; then
-				fatalerr "Call with unknown number terminated"
+				finish "Call with unknown number terminated"
 			else
-				fatalerr "Call with $NUMBER terminated"
+				finish "Call with $NUMBER terminated"
 			fi
 		fi
 		echo "Call still in progress">&2
@@ -214,5 +221,5 @@ pickup() {
 	incallmenuloop "$1"
 }
 
-modem_n || fatalerr "Couldn't determine modem number - is modem online?"
+modem_n || finish "Couldn't determine modem number - is modem online?"
 "$@"

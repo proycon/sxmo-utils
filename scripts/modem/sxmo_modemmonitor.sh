@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 LOGDIR="$XDG_DATA_HOME"/sxmo/modem
 NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
+CACHEDIR="$XDG_CACHE_HOME"/sxmo
 trap "gracefulexit" INT TERM
 
 err() {
@@ -48,35 +49,41 @@ lookupcontactname() {
 	fi
 }
 
-checkformissedcalls() {
-	if pgrep -vf sxmo_modemcall.sh; then
-		# Add a notification for every missed call
-		# Note sxmo_modemcall.sh cleanups/delete the callid from the modem; so
-		# effectivly any incoming call thats terminated here is a missed call!
-		for MISSEDCALLID in $(
-			mmcli -m "$(modem_n)" --voice-list-calls |
-			grep incoming |
-			grep terminated |
-			grep -oE "Call\/[0-9]+" |
-			cut -d'/' -f2
-		); do
-			MISSEDNUMBER="$(lookupnumberfromcallid "$MISSEDCALLID")"
-			mmcli -m "$(modem_n)" --voice-delete-call "$MISSEDCALLID"
-			rm -f "$NOTIFDIR/incomingcall_${MISSEDCALLID}_notification"
+checkforfinishedcalls() {
+	#find all finished calls
+	for FINISHEDCALLID in $(
+		mmcli -m "$(modem_n)" --voice-list-calls |
+		grep incoming |
+		grep terminated |
+		grep -oE "Call\/[0-9]+" |
+		cut -d'/' -f2
+	); do
+		FINISHEDNUMBER="$(lookupnumberfromcallid "$FINISHEDCALLID")"
+		mmcli -m "$(modem_n)" --voice-delete-call "$FINISHEDCALLID"
+		rm -f "$NOTIFDIR/incomingcall_${FINISHEDCALLID}_notification"
 
+		TIME="$(date --iso-8601=seconds)"
+		mkdir -p "$LOGDIR"
+		if [ -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall" ]; then
+			#this call was picked up
+			pkill -f sxmo_modemcall.sh #kill call (softly) in case it is still in progress (remote party hung up)
+			echo "Finished call from $FINISHEDNUMBER">&2
+			rm -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall"
+			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+		else
+			#this is a missed call
+			# Add a notification for every missed call
+			echo "Missed call from $FINISHEDNUMBER">&2
+			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
-			TIME="$(date --iso-8601=seconds)"
-			mkdir -p "$LOGDIR"
-			printf %b "$TIME\tcall_missed\t$MISSEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
-
-			CONTACT="$(lookupcontactname "$MISSEDNUMBER")"
+			CONTACT="$(lookupcontactname "$FINISHEDNUMBER")"
 			sxmo_notificationwrite.sh \
 				random \
 				"st -f Terminus-20 -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \
 				none \
 				"Missed call - $CONTACT"
-		done
-	fi
+		fi
+	done
 }
 
 checkforincomingcalls() {
@@ -151,26 +158,26 @@ checkfornewtexts() {
 }
 
 mainloop() {
-	checkformissedcalls
+	checkforfinishedcalls
 	checkforincomingcalls
 	checkfornewtexts
 
 	# Monitor for incoming calls
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Voice',type='signal',member='CallAdded'" | \
-		while read -r; do
+		while read -r line; do
 			checkforincomingcalls
 		done &
 
 	# Monitor for incoming texts
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Messaging',type='signal',member='Added'" | \
-		while read -r; do
+		while read -r line; do
 			checkfornewtexts
 		done &
 
-	# Monitor for missed calls
+	# Monitor for finished calls
 	dbus-monitor --system "interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',arg0='org.freedesktop.ModemManager1.Call'" | \
-		while read -r; do
-			checkformissedcalls
+		while read -r line; do
+			checkforfinishedcalls
 		done &
 
 	wait
@@ -178,4 +185,5 @@ mainloop() {
 	wait
 }
 
+rm -f "$CACHEDIR"/*.pickedupcall 2>/dev/null #new session, forget all calls we picked up previously
 mainloop
