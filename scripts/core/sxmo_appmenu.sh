@@ -384,6 +384,7 @@ getprogchoices() {
 	# E.g. sets CHOICES var
 	programchoicesinit "$@"
 
+
 	# For the Sys menu decorate at top with notifications if >1 notification
 	if [ "$WINNAME" = "Sys" ]; then
 		NNOTIFICATIONS="$(find "$NOTIFDIR" -type f | wc -l)"
@@ -394,6 +395,16 @@ getprogchoices() {
 			"
 		fi
 	fi
+
+	#shellcheck disable=SC2044
+	for NOTIFFILE in $(find "$NOTIFDIR" -name 'incomingcall*'); do
+		NOTIFACTION="$(head -n1 "$NOTIFFILE")"
+		CHOICES="
+			Pick up incoming call ^ 0 ^ $NOTIFACTION
+			$CHOICES
+		"
+		break
+	done
 
 	# Decorate menu at bottom w/ system menu entry if not system menu
 	echo $WINNAME | grep -v Sys && CHOICES="
