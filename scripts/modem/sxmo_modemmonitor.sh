@@ -165,19 +165,19 @@ mainloop() {
 	# Monitor for incoming calls
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Voice',type='signal',member='CallAdded'" | \
 		while read -r line; do
-			checkforincomingcalls
+			echo "$line" | grep -E "^signal" && checkforincomingcalls
 		done &
 
 	# Monitor for incoming texts
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Messaging',type='signal',member='Added'" | \
 		while read -r line; do
-			checkfornewtexts
+			echo "$line" | grep -E "^signal" && checkfornewtexts
 		done &
 
 	# Monitor for finished calls
 	dbus-monitor --system "interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',arg0='org.freedesktop.ModemManager1.Call'" | \
 		while read -r line; do
-			checkforfinishedcalls
+			echo "$line" | grep -E "^signal" && checkforfinishedcalls
 		done &
 
 	wait
