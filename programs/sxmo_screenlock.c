@@ -63,6 +63,7 @@ char * powerstatefile = "/sys/power/state";
 int rtc_fd = 0; //file descriptor
 time_t wakeinterval = 0; //wake every x seconds
 time_t waketime = 0; //next wakeup time according to the RTC clock
+int slept = 0; //indicates whether the process has slept (crust) or not
 
 #define RTC_DEVICE	  "/dev/rtc0"
 
@@ -278,6 +279,7 @@ readinputloop(Display *dpy, int screen) {
 
 				lastkeyn = 0;
 				lastkeysym = XK_Cancel;
+				if (slept) postwake();
 				switch (keysym) {
 					case XF86XK_AudioRaiseVolume:
 						suspendpendingsceenon = state == StateNoInput;
@@ -337,6 +339,7 @@ void
 postwake() {
 	//called after fully waking up (not used for temporary rtc wakeups)
 	system("sxmo_postwake.sh");
+	slept = 0;
 }
 
 int
@@ -366,6 +369,7 @@ syncstate()
 		if (presuspend() != 0) {
 			state = StateDead;
 		} else {
+			slept = 1;
 			setpineled(Red);
 			configuresuspendsettingsandwakeupsources();
 			writefile(powerstatefile, "mem");
