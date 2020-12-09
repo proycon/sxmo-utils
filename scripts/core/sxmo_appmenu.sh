@@ -43,6 +43,7 @@ programchoicesinit() {
 			CHOICES=$("$XDG_CONFIG_HOME/sxmo/hooks/apps")
 		else
 			CHOICES="
+				$(command -v aerc	>/dev/null && echo 'Aerc    	^ 0 ^ st -e aerc')
 				$(command -v alpine     >/dev/null && echo 'Alpine      ^ 0 ^ st -e alpine')
 				$(command -v calcurse   >/dev/null && echo 'Calcurse    ^ 0 ^ st -e calcurse')
 				$(command -v cmus       >/dev/null && echo 'Cmus        ^ 0 ^ st -e cmus')
