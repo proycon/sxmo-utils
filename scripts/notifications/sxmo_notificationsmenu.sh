@@ -3,12 +3,12 @@ NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 
 notificationmenu() {
 	CHOICES="Close Menu\nClear Notifications"
-	for NOTIFFILE in "$NOTIFDIR"/*; do
-		NOTIFMSG="$(tail -n+3 "$NOTIFFILE" | tr "\n^" " ")"
-		NOTIFHRANDMIN="$(stat --printf %y "$NOTIFFILE" | grep -oE '[0-9]{2}:[0-9]{2}')"
+	for NOTIFFILE in $(ls -tr $NOTIFDIR); do
+		NOTIFMSG="$(tail -n+3 "$NOTIFDIR/$NOTIFFILE" | tr "\n^" " ")"
+		NOTIFHRANDMIN="$(stat --printf %y "$NOTIFDIR/$NOTIFFILE" | grep -oE '[0-9]{2}:[0-9]{2}')"
 		CHOICES="
 			$CHOICES
-			$NOTIFHRANDMIN - $NOTIFMSG ^ $NOTIFFILE
+			$NOTIFHRANDMIN - $NOTIFMSG ^ $NOTIFDIR/$NOTIFFILE
 		"
 	done
 
