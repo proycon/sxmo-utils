@@ -42,4 +42,8 @@ rotate() {
 	if isrotated; then rotnormal; else rotright; fi
 }
 
-"$1"
+if [ -z "$1" ]; then
+	rotate
+else
+	"$1"
+fi
