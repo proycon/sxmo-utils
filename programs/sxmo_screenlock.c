@@ -375,10 +375,14 @@ syncstate()
 			writefile(powerstatefile, "mem");
 			//---- program blocks here due to sleep ----- //
 			// Just woke up again
+			fprintf(stderr, "Woke up\n");
 			fprintf(stderr, "Resetting usb connection to the modem\n");
 			writefile("/sys/bus/usb/drivers/usb/unbind", "3-1");
 			writefile("/sys/bus/usb/drivers/usb/bind", "3-1");
-			fprintf(stderr, "Woke up\n");
+			fprintf(stderr, "Lower scan interval for quicker reconnection to wireless network\n");
+			writefile("/sys/module/8723cs/parameters/rtw_scan_interval_thr", "1200"); //ms
+			//^-- this will be undone again by a networkmanager hook after connection has been established
+			//    or by a delayed script if no connection can be established after a while (to conserve battery)
 			if (waketime > 0) {
 				rtcresult = checkrtcwake();
 			} else {
