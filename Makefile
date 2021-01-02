@@ -44,6 +44,9 @@ install: $(PROGRAMS)
 
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ configs/xdg/mimeapps.list
 
+	mkdir -p $(PREFIX)/etc/NetworkManager/dispatcher.d
+	cp configs/networkmanager/updatestatusbar.sh $(PREFIX)/etc/NetworkManager/dispatcher.d/10-updatestatusbar.sh
+
 	# Bin
 	install -D -t $(DESTDIR)$(PREFIX)/bin scripts/*/*
 
