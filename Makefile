@@ -33,37 +33,25 @@ clean:
 	rm programs/sxmo_setpineled programs/sxmo_screenlock programs/sxmo_setpinebacklight programs/sxmo_megiaudioroute programs/sxmo_vibratepine
 
 install: $(PROGRAMS)
-	mkdir -p $(PREFIX)/usr/share/sxmo
-	cp -r configs/* $(PREFIX)/usr/share/sxmo
+	cd configs && find . -type f -exec install -D -m 0644 "{}" "$(PREFIX)/usr/share/sxmo/{}" \; && cd ..
 
 	# Configs
-	mkdir -p $(PREFIX)/etc/alsa/conf.d/
-	cp configs/alsa/alsa_sxmo_enable_dmix.conf $(PREFIX)/etc/alsa/conf.d/
+	install -D -m 0644 -t $(PREFIX)/etc/alsa/conf.d/ configs/alsa/alsa_sxmo_enable_dmix.conf
 
-	mkdir -p $(PREFIX)/etc/polkit-1/rules.d
-	cp configs/polkit/*.rules $(PREFIX)/etc/polkit-1/rules.d/
+	install -D -m 0644 -t $(PREFIX)/etc/polkit-1/rules.d/ configs/polkit/*.rules
 
-	mkdir -p $(PREFIX)/etc/udev/rules.d
-	cp configs/udev/*.rules $(PREFIX)/etc/udev/rules.d/
+	install -D -m 0644 -t $(PREFIX)/etc/udev/rules.d/ configs/udev/*.rules
 
-	mkdir -p $(PREFIX)/usr/share/applications/
-	cp configs/xdg/mimeapps.list $(PREFIX)/usr/share/applications/
+	install -D -m 0644 -t $(PREFIX)/usr/share/applications/ configs/xdg/mimeapps.list
 
 	# Bin
-	mkdir -p $(PREFIX)/usr/bin
-	cp scripts/*/* $(PREFIX)/usr/bin
+	install -D -t $(PREFIX)/usr/bin scripts/*/*
 
-	chown root programs/sxmo_setpineled
-	chmod u+s programs/sxmo_setpineled
-	cp programs/sxmo_setpineled $(PREFIX)/usr/bin
+	install -D -o root -m 4755 programs/sxmo_setpineled $(PREFIX)/usr/bin/
 
-	chown root programs/sxmo_setpinebacklight
-	chmod u+s programs/sxmo_setpinebacklight
-	cp programs/sxmo_setpinebacklight $(PREFIX)/usr/bin
+	install -D -o root -m 4755 programs/sxmo_setpinebacklight $(PREFIX)/usr/bin/
 
-	chown root programs/sxmo_screenlock
-	chmod u+s programs/sxmo_screenlock
-	cp programs/sxmo_screenlock $(PREFIX)/usr/bin
+	install -D -o root -m 4755 programs/sxmo_screenlock $(PREFIX)/usr/bin/
 
-	cp programs/sxmo_megiaudioroute $(PREFIX)/usr/bin
-	cp programs/sxmo_vibratepine $(PREFIX)/usr/bin
+	install -D programs/sxmo_megiaudioroute $(PREFIX)/usr/bin/
+	install -D programs/sxmo_vibratepine $(PREFIX)/usr/bin/
