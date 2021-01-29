@@ -36,11 +36,11 @@ install: $(PROGRAMS)
 	cd configs && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
 	# Configs
-	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/etc/alsa/conf.d/ configs/alsa/alsa_sxmo_enable_dmix.conf
+	install -D -m 0644 -t $(DESTDIR)/etc/alsa/conf.d/ configs/alsa/alsa_sxmo_enable_dmix.conf
 
-	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/etc/polkit-1/rules.d/ configs/polkit/*.rules
+	install -D -m 0644 -t $(DESTDIR)/etc/polkit-1/rules.d/ configs/polkit/*.rules
 
-	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/etc/udev/rules.d/ configs/udev/*.rules
+	install -D -m 0644 -t $(DESTDIR)/etc/udev/rules.d/ configs/udev/*.rules
 
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ configs/xdg/mimeapps.list
 
