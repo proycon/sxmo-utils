@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 LOGDIR="$XDG_DATA_HOME"/sxmo/modem
+NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 ALSASTATEFILE="$XDG_CACHE_HOME"/precall.alsa.state
 CACHEDIR="$XDG_CACHE_HOME"/sxmo
 trap "gracefulexit" INT TERM
@@ -86,6 +87,7 @@ toggleflagset() {
 
 acceptcall() {
 	CALLID="$1"
+	rm "$NOTIFDIR/incomingcall_${CALLID}_notification"* 2>dev/null #there can be multiple actionable notifications for one call (pickup/discard)
 	echo "sxmo_modemcall: Attempting to initialize CALLID $CALLID">&2
 	DIRECTION="$(
 		mmcli --voice-status -o "$CALLID" -K |
@@ -115,6 +117,11 @@ acceptcall() {
 
 hangup() {
 	CALLID="$1"
+	rm "$NOTIFDIR/incomingcall_${CALLID}_notification"* 2>dev/null #there can be multiple actionable notifications for one call (pickup/discard)
+	if [ ! -f "$CACHEDIR/${CALLID}.pickedupcall" ]; then
+		#this call was never picked up and hung up immediately, so it is a discarded call
+		touch "$CACHEDIR/${CALLID}.discardedcall" #this signals that we discarded this call to other asynchronously running processes
+	fi
 	modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --hangup
 	log_event "call_hangup" "$CALLID"
 	modem_cmd_errcheck -m "$(modem_n)" --voice-delete-call="$CALLID"

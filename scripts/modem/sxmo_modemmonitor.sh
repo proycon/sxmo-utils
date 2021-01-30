@@ -70,11 +70,15 @@ checkforfinishedcalls() {
 	); do
 		FINISHEDNUMBER="$(lookupnumberfromcallid "$FINISHEDCALLID")"
 		mmcli -m "$(modem_n)" --voice-delete-call "$FINISHEDCALLID"
-		rm -f "$NOTIFDIR/incomingcall_${FINISHEDCALLID}_notification"
+		rm -f "$NOTIFDIR/incomingcall_${FINISHEDCALLID}_notification"* #there may be multiple actionable notification for one call
 
 		TIME="$(date --iso-8601=seconds)"
 		mkdir -p "$LOGDIR"
-		if [ -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall" ]; then
+		if [ -f "$CACHEDIR/${FINISHEDCALLID}.discardedcall" ]; then
+			echo "sxmo_modemmonitor: Discarded call from $FINISHEDNUMBER">&2
+			rm -f "$CACHEDIR/${FINISHEDCALLID}.discardedcall"
+			printf %b "$TIME\tcall_discarded\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
 			pkill -f sxmo_modemcall.sh #kill call (softly) in case it is still in progress (remote party hung up)
 			echo "sxmo_modemmonitor: Finished call from $FINISHEDNUMBER">&2
@@ -125,6 +129,11 @@ checkforincomingcalls() {
 		"sxmo_modemcall.sh pickup $VOICECALLID" \
 		none \
 		"Pickup - $CONTACTNAME" &
+	sxmo_notificationwrite.sh \
+		"$NOTIFDIR/incomingcall_${VOICECALLID}_notification_discard" \
+		"sxmo_modemcall.sh hangup $VOICECALLID" \
+		none \
+		"Discard - $CONTACTNAME" &
 
 	echo "sxmo_modemmonitor: Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)">&2
 }
