@@ -48,9 +48,5 @@ int main(int argc, char *argv[]) {
 		"sh -c 'echo %d > /sys/class/leds/%s:%s/brightness'",
 		brightness, color, type
 	);
-	if (setuid(0)) {
-		fprintf(stderr, "setuid(0) failed\n");
-	} else {
-		return system(command);
-	}
+	return system(command);
 }

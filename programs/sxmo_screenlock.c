@@ -431,7 +431,7 @@ writefile(char *filepath, char *str)
 }
 
 void usage() {
-	fprintf(stderr, "Usage: sxmo_screenlock [--screen-off] [--suspend] [--wake-interval n]\n");
+	fprintf(stderr, "Usage: sxmo_screenlock [--screen-off] [--suspend] [--wake-interval n] [--setuid]\n");
 }
 
 
@@ -474,14 +474,15 @@ main(int argc, char **argv) {
 			target = StateSuspend;
 		} else if(!strcmp(argv[i], "--wake-interval")) {
 			wakeinterval = (time_t) atoi(argv[++i]);
+		} else if(!strcmp(argv[i], "--setuid")) {
+			if (setuid(0))
+				die("setuid(0) failed\n");
 		} else {
 			fprintf(stderr, "Invalid argument: %s\n", argv[i]);
 			return 2;
 		}
 	}
 
-	if (setuid(0))
-		die("setuid(0) failed\n");
 	if (!(dpy = XOpenDisplay(NULL)))
 		die("Cannot open display\n");
 

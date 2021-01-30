@@ -36,6 +36,8 @@ install: $(PROGRAMS)
 	cd configs && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
 	# Configs
+	install -D -m 0755 -t $(DESTDIR)/etc/init.d configs/openrc/sxmo-pinephone
+
 	install -D -m 0644 -t $(DESTDIR)/etc/alsa/conf.d/ configs/alsa/alsa_sxmo_enable_dmix.conf
 
 	install -D -m 0644 -t $(DESTDIR)/etc/polkit-1/rules.d/ configs/polkit/*.rules
@@ -51,11 +53,12 @@ install: $(PROGRAMS)
 	# Bin
 	install -D -t $(DESTDIR)$(PREFIX)/bin scripts/*/*
 
-	install -D -o root -m 4755 programs/sxmo_setpineled $(DESTDIR)$(PREFIX)/bin/
+	install -D -m 0755 programs/sxmo_setpineled $(DESTDIR)$(PREFIX)/bin/
 
-	install -D -o root -m 4755 programs/sxmo_setpinebacklight $(DESTDIR)$(PREFIX)/bin/
+	install -D -m 0755 programs/sxmo_setpinebacklight $(DESTDIR)$(PREFIX)/bin/
 
-	install -D -o root -m 4755 programs/sxmo_screenlock $(DESTDIR)$(PREFIX)/bin/
+	install -D -m 0755 programs/sxmo_screenlock $(DESTDIR)$(PREFIX)/bin/
 
 	install -D programs/sxmo_megiaudioroute $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_vibratepine $(DESTDIR)$(PREFIX)/bin/
+

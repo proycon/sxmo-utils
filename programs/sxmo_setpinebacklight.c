@@ -28,11 +28,6 @@ int main(int argc, char *argv[]) {
 	argc--;
 	brightness = atoi(argv[argc--]);
 
-	if (setuid(0)) {
-		fprintf(stderr, "setuid(0) failed\n");
-		return 1;
-	}
-
 	if (access(pbpScreen, F_OK) != -1) {
 		writeFile(pbpScreen, brightness);
 		fprintf(stderr, "Set PBP brightness to %d\n", brightness);
