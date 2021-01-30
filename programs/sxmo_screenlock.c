@@ -38,7 +38,9 @@ time_t convert_rtc_time(struct rtc_time * rtc);
 void die(const char *err, ...);
 int getoldbrightness();
 void init_rtc();
-void lockscreen(Display *dpy, int screen);
+void lockscreen(Display *dpy, int screen, int blank);
+void unblankscreen();
+void blankscreen();
 void readinputloop(Display *dpy, int screen);
 int presuspend();
 void postwake();
@@ -51,6 +53,7 @@ void writefile(char *filepath, char *str);
 
 // Variables
 Display *dpy;
+Window root;
 enum State state = StateNoInput;
 int suspendtimeouts = 35;
 int suspendpendingsceenon = 0;
@@ -64,6 +67,7 @@ int rtc_fd = 0; //file descriptor
 time_t wakeinterval = 0; //wake every x seconds
 time_t waketime = 0; //next wakeup time according to the RTC clock
 int slept = 0; //indicates whether the process has slept (crust) or not
+int blanked = 0; //indicated whether the display blanked or not
 
 #define RTC_DEVICE	  "/dev/rtc0"
 
@@ -218,14 +222,16 @@ getoldbrightness() {
 
 
 void
-lockscreen(Display *dpy, int screen)
+lockscreen(Display *dpy, int screen, int blank)
 {
 	// Loosely derived from suckless' slock's lockscreen binding logic but
 	// alot more coarse, intentionally so can be triggered while grab_key
 	// for dwm multikey path already holding..
 	int i, ptgrab, kbgrab;
-	Window root;
 	root = RootWindow(dpy, screen);
+	if (blank == 1) {
+		blankscreen();
+	}
 	for (i = 0, ptgrab = kbgrab = -1; i < 9999999; i++) {
 		if (ptgrab != GrabSuccess) {
 			ptgrab = XGrabPointer(dpy, root, False,
@@ -242,6 +248,24 @@ lockscreen(Display *dpy, int screen)
 			return;
 		}
 		usleep(100000);
+	}
+}
+
+void
+blankscreen()
+{
+	if (!blanked) {
+		system("xset dpms force off");
+		blanked = 1;
+	}
+}
+
+void
+unblankscreen()
+{
+	if (blanked) {
+		system("xset dpms force on");
+		blanked = 0;
 	}
 }
 
@@ -370,13 +394,16 @@ syncstate()
 		if (presuspend() != 0) {
 			state = StateDead;
 		} else {
+			fprintf(stderr, "Screenlock entering suspend state (pred mode)\n");
+			writefile(brightnessfile, "0");
+			blankscreen();
 			slept = 1;
 			setpineled(Red);
 			configuresuspendsettingsandwakeupsources();
 			writefile(powerstatefile, "mem");
 			//---- program blocks here due to sleep ----- //
 			// Just woke up again
-			fprintf(stderr, "Woke up\n");
+			fprintf(stderr, "Screenlock woke up\n");
 			fprintf(stderr, "Resetting usb connection to the modem\n");
 			writefile("/sys/bus/usb/drivers/usb/unbind", "3-1");
 			writefile("/sys/bus/usb/drivers/usb/bind", "3-1");
@@ -399,17 +426,25 @@ syncstate()
 		}
 		syncstate();
 	} else if (state == StateNoInput) {
+		fprintf(stderr, "Screenlock in no Input state (blue mode)\n");
 		setpineled(Blue);
+		unblankscreen();
 		writefile(brightnessfile, oldbrightness);
 	} else if (state == StateNoInputNoScreen) {
+		fprintf(stderr, "Screenlock in no screen state (purple mode)\n");
 		setpineled(Purple);
 		writefile(brightnessfile, "0");
+		blankscreen();
 	} else if (state == StateSuspendPending) {
+		fprintf(stderr, "Screenlock is pending suspension\n");
+		if (suspendpendingsceenon) unblankscreen();
 		writefile(brightnessfile, suspendpendingsceenon ? oldbrightness : "0");
+		if (!suspendpendingsceenon) blankscreen();
 		setpineled(Off);
 		usleep(1000 * 100);
 		setpineled(suspendpendingsceenon ? Blue : Purple);
 	} else if (state == StateDead) {
+		unblankscreen();
 		writefile(brightnessfile, oldbrightness);
 		setpineled(Off);
 	}
@@ -496,7 +531,7 @@ main(int argc, char **argv) {
 	XSync(dpy, 0);
 	getoldbrightness();
 	syncstate();
-	lockscreen(dpy, screen);
+	lockscreen(dpy, screen, target == StateNoInputNoScreen || target == StateSuspend);
 	if ((target == StateNoInputNoScreen) || (target == StateSuspend)) {
 		state = StateNoInputNoScreen;
 		syncstate();
