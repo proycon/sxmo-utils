@@ -16,9 +16,19 @@ gracefulexit() {
 }
 
 modem_n() {
-	MODEMS="$(mmcli -L)"
-	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' > /dev/null || err "Couldn't find modem - is your modem enabled?\nDisabling modem monitor"
-	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
+	TRIES=0
+	while [ "$TRIES" -lt 10 ]; do
+		MODEMS="$(mmcli -L)"
+		if ! echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' > /dev/null; then
+			TRIES=$((TRIES+1))
+			echo "sxmo_modemmonitor: modem not found, waiting for modem... (try #$TRIES)">&2
+			sleep 1
+		else
+			echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
+			return
+		fi
+	done
+	err "Couldn't find modem - is your modem enabled? Disabling modem monitor"
 }
 
 lookupnumberfromcallid() {
