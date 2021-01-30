@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 trap "update" USR1
-pgrep -f sxmo_statusbar.sh | grep -v $$ | xargs kill -9
+pgrep -f sxmo_statusbar.sh | grep -v $$ | xargs -r kill -9
 
 update() {
 	# In-call.. show length of call

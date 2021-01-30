@@ -180,7 +180,7 @@ configuresuspendsettingsandwakeupsources()
 void
 die(const char *err, ...)
 {
-	fprintf(stderr, "Error: %s", err);
+	fprintf(stderr, "Screenlock error: %s\n", err);
 	state = StateDead;
 	syncstate();
 	exit(1);
@@ -192,6 +192,7 @@ sigterm()
 	state = StateDead;
 	syncstate();
 	if (wakeinterval) close(rtc_fd);
+	fprintf(stderr, "Screenlock terminating on signal\n");
 	exit(0);
 }
 
@@ -476,7 +477,7 @@ main(int argc, char **argv) {
 			wakeinterval = (time_t) atoi(argv[++i]);
 		} else if(!strcmp(argv[i], "--setuid")) {
 			if (setuid(0))
-				die("setuid(0) failed\n");
+				die("setuid(0) failed");
 		} else {
 			fprintf(stderr, "Invalid argument: %s\n", argv[i]);
 			return 2;
@@ -484,9 +485,11 @@ main(int argc, char **argv) {
 	}
 
 	if (!(dpy = XOpenDisplay(NULL)))
-		die("Cannot open display\n");
+		die("Cannot open display");
 
 	if (wakeinterval) init_rtc();
+
+	fprintf(stderr, "Screenlock starting\n");
 
 	XkbSetDetectableAutoRepeat(dpy, True, NULL);
 	screen = XDefaultScreen(dpy);
@@ -507,5 +510,6 @@ main(int argc, char **argv) {
 		ioctl(rtc_fd, RTC_AIE_OFF, 0);
 		close(rtc_fd);
 	}
+	fprintf(stderr, "Screenlock terminating normally\n");
 	return 0;
 }

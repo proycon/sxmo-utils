@@ -9,7 +9,7 @@ FILE_X="$(find /sys/bus/iio/devices/iio:device*/ -iname in_accel_x_raw)"
 
 autorotatedisable() {
 	notify-send "Autorotate disabled"
-	pgrep -f "$(command -v sxmo_rotateautotoggle.sh)" | grep -Ev "^${$}$" | xargs kill -9
+	pgrep -f "$(command -v sxmo_rotateautotoggle.sh)" | grep -Ev "^${$}$" | xargs -r kill -9
 	exit 0
 }
 

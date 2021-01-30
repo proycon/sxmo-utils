@@ -78,7 +78,7 @@ monitorforaddordelnotifs() {
 	done
 }
 
-pgrep -f "$(command -v sxmo_notificationmonitor.sh)" | grep -Ev "^${$}$" | xargs kill
+pgrep -f "$(command -v sxmo_notificationmonitor.sh)" | grep -Ev "^${$}$" | xargs -r kill
 rm -f "$NOTIFDIR"/incomingcall
 recreateexistingnotifs
 syncled

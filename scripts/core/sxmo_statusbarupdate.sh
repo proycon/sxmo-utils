@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-pgrep -f "$(command -v sxmo_statusbar.sh)" | xargs kill -USR1 &
+pgrep -f "$(command -v sxmo_statusbar.sh)" | xargs -r kill -USR1 &

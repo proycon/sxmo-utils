@@ -5,13 +5,13 @@ CACHEDIR="$XDG_CACHE_HOME"/sxmo
 trap "gracefulexit" INT TERM
 
 err() {
-	echo "$1">&2
+	echo "sxmo_modemmonitor: Error: $1">&2
 	notify-send "$1"
 	gracefulexit
 }
 
 gracefulexit() {
-	echo "gracefully exiting $0!">&2
+	echo "sxmo_modemmonitor: gracefully exiting (on signal or after error)">&2
 	kill -9 0
 }
 
@@ -67,13 +67,13 @@ checkforfinishedcalls() {
 		if [ -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
 			pkill -f sxmo_modemcall.sh #kill call (softly) in case it is still in progress (remote party hung up)
-			echo "Finished call from $FINISHEDNUMBER">&2
+			echo "sxmo_modemmonitor: Finished call from $FINISHEDNUMBER">&2
 			rm -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		else
 			#this is a missed call
 			# Add a notification for every missed call
-			echo "Missed call from $FINISHEDNUMBER">&2
+			echo "sxmo_modemmonitor: Missed call from $FINISHEDNUMBER">&2
 			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
 			CONTACT="$(lookupcontactname "$FINISHEDNUMBER")"
@@ -95,12 +95,12 @@ checkforincomingcalls() {
 	echo "$VOICECALLID" | grep -v . && rm -f "$NOTIFDIR/incomingcall*" && return
 
 	# Determine the incoming phone number
-	echo "Incoming Call:"
+	echo "sxmo_modemmonitor: Incoming Call:">&2
 	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
 	CONTACTNAME=$(lookupcontactname "$INCOMINGNUMBER")
 
 	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
-		echo "Invoking ring hook (async)">&2
+		echo "sxmo_modemmonitor: Invoking ring hook (async)">&2
 		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$CONTACTNAME" &
 	else
 		sxmo_vibratepine 2500 &
@@ -116,7 +116,7 @@ checkforincomingcalls() {
 		none \
 		"Pickup - $CONTACTNAME" &
 
-	echo "Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)">&2
+	echo "sxmo_modemmonitor: Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)">&2
 }
 
 checkfornewtexts() {
@@ -139,7 +139,7 @@ checkfornewtexts() {
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 
 		mkdir -p "$LOGDIR/$NUM"
-		echo "Text from number: $NUM (TEXTID: $TEXTID)">&2
+		echo "sxmo_modemmonitor: Text from number: $NUM (TEXTID: $TEXTID)">&2
 		printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
 		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
 		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
@@ -185,5 +185,7 @@ mainloop() {
 	wait
 }
 
+echo "sxmo_modemmonitor: starting -- $(date)" >&2
 rm -f "$CACHEDIR"/*.pickedupcall 2>/dev/null #new session, forget all calls we picked up previously
 mainloop
+echo "sxmo_modemmonitor: exiting -- $(date)" >&2

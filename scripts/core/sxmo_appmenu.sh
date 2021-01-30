@@ -4,13 +4,18 @@ WIN=$(xdotool getwindowfocus)
 NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 
 gracefulexit() {
-	echo "Gracefully exiting $0"
+	echo "Gracefully exiting $0">&2
 	kill -9 0
 }
 
 programchoicesinit() {
 	XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
 	WMCLASS="${1:-$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3-)}"
+	if [ -z "$XPROPOUT" ]; then
+		echo "sxmo_appmenu: detected no active window, no problem, opening system menu" >&2
+	else
+		echo "sxmo_appmenu: opening menu for wmclass $WMCLASS" >&2
+	fi
 
 	if echo "$WMCLASS" | grep -i "scripts"; then
 		# Scripts menu
@@ -441,7 +446,7 @@ mainloop() {
 		LOOP="$(echo "$PROGCHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f2)"
 		CMD="$(echo "$PROGCHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f3)"
 		DMENUIDX="$(echo "$PROGCHOICES" | grep -m1 -F -n "$PICKED" | cut -d ':' -f1)"
-		echo "Eval: <$CMD> from picked <$PICKED> with loop <$LOOP>"
+		echo "sxmo_appmenu: Eval: <$CMD> from picked <$PICKED> with loop <$LOOP>">&2
 		if echo "$LOOP" | grep 1; then
 			eval "$CMD"
 			mainloop
@@ -452,7 +457,7 @@ mainloop() {
 	) & wait
 }
 
-pgrep -f "$(command -v sxmo_appmenu.sh)" | grep -Ev "^${$}$" | xargs kill -TERM
+pgrep -f "$(command -v sxmo_appmenu.sh)" | grep -Ev "^${$}$" | xargs -r kill -TERM
 DMENUIDX=0
 PICKED=""
 ARGS="$*"
