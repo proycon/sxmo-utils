@@ -1,13 +1,10 @@
 #!/usr/bin/env sh
-LOGDIR="$XDG_DATA_HOME"/sxmo/modem
-NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 ALSASTATEFILE="$XDG_CACHE_HOME"/precall.alsa.state
-CACHEDIR="$XDG_CACHE_HOME"/sxmo
 trap "gracefulexit" INT TERM
 
-DIR=$(dirname "$0")
-# shellcheck source=./sxmo_icons.sh
-. "$DIR/sxmo_icons.sh"
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
 
 modem_n() {
 	MODEMS="$(mmcli -L)"

@@ -1,11 +1,11 @@
 #!/usr/bin/env sh
-LOGDIR="$XDG_DATA_HOME"/sxmo/modem
+
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 TERMMODE=$([ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] && echo "true")
 DRAFT_DIR="$XDG_DATA_HOME/sxmo/modem/draft"
-
-DIR=$(dirname "$0")
-# shellcheck source=./sxmo_icons.sh
-. "$DIR/sxmo_icons.sh"
 
 menu() {
 	if [ "$TERMMODE" != "true" ]; then
@@ -17,7 +17,7 @@ menu() {
 
 err() {
 	echo "$1">&2
-	echo "$1" | menu dmenu -fn Terminus-20 -c -l 10
+	echo "$1" | menu dmenu -c -l 10
 	kill $$
 }
 

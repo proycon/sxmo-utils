@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
-NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
+
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
 
 # Takes 4 args:
 # (1) the filepath of the notification to write (or random to generate a random id)

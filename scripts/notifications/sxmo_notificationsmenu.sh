@@ -1,9 +1,8 @@
 #!/usr/bin/env sh
-NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 
-DIR=$(dirname "$0")
-# shellcheck source=./sxmo_icons.sh
-. "$DIR/sxmo_icons.sh"
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
 
 notificationmenu() {
 	CHOICES="$icon_cls Close Menu\n$icon_del Clear Notifications"

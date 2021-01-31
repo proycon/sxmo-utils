@@ -1,11 +1,11 @@
 #!/usr/bin/env sh
 trap gracefulexit INT TERM
-WIN=$(xdotool getwindowfocus)
-NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 
-DIR=$(dirname "$0")
-# shellcheck source=./sxmo_icons.sh
-. "$DIR/sxmo_icons.sh"
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
+WIN=$(xdotool getwindowfocus)
 
 gracefulexit() {
 	echo "Gracefully exiting $0">&2

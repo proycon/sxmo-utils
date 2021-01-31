@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 trap gracefulexit INT TERM
-NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
+
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
 
 gracefulexit() {
 	echo "Gracefully exiting $0"

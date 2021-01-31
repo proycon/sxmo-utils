@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
-LOGDIR="$XDG_DATA_HOME"/sxmo/modem
+
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
 
 info() {
 	echo "$1" > /dev/stderr

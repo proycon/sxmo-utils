@@ -4,13 +4,16 @@
 # It optionally takes a parameter "on" or "off"
 # forcing it to toggle only to that desired state if applicable.
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 if [ "$1" != "on" ] && pgrep -f sxmo_modemmonitor.sh; then
 	pgrep -f sxmo_modemmonitor.sh | grep -Ev "^${$}$" | xargs -IP kill -TERM P
 elif [ "$1" != "off" ]; then
 	setsid -f sxmo_modemmonitor.sh &
 fi
 
-NOTIFDIR="$XDG_CONFIG_HOME"/sxmo/notifications
 rm "$NOTIFDIR"/incomingcall*
 
 # E.g. wait until process killed or started -- maybe there's a better way..

@@ -1,8 +1,9 @@
 #!/usr/bin/env sh
-LOGDIR="$XDG_DATA_HOME"/sxmo/modem
-NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
-CACHEDIR="$XDG_CACHE_HOME"/sxmo
 trap "gracefulexit" INT TERM
+
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
 
 err() {
 	echo "sxmo_modemmonitor: Error: $1">&2
