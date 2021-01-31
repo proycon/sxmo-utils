@@ -20,7 +20,7 @@ toggleconnection() {
 deletenetworkmenu() {
 	CHOICE="$(
 		printf %b "Close Menu\n$(connections)" |
-			dmenu -c -p "Delete Network" -l 14 -fn "Terminus-20"
+			dmenu -c -p "Delete Network" -l 14
 	)"
 	if [ "$CHOICE" = "Close Menu" ]; then
 		return
@@ -34,13 +34,13 @@ deletenetworkmenu() {
 addnetworkgsmmenu() {
 	CONNNAME="$(
 		echo "Close Menu" |
-			sxmo_dmenu_with_kb.sh -c -p "Add GSM: Alias" -fn "Terminus-20" -l 20
+			sxmo_dmenu_with_kb.sh -c -p "Add GSM: Alias" -l 20
 	)"
 	[ "$CONNNAME" = "Close Menu" ] && return
 
 	APN="$(
 		echo "Close Menu" |
-			sxmo_dmenu_with_kb.sh -c -p "Add GSM: APN" -fn "Terminus-20" -l 20
+			sxmo_dmenu_with_kb.sh -c -p "Add GSM: APN" -l 20
 	)"
 	[ "$APN" = "Close Menu" ] && return
 
@@ -56,13 +56,13 @@ addnetworkwpamenu() {
 	SSID="$(
 		nmcli d wifi list | tail -n +2 | grep -v '^\*' | awk -F'  ' '{ print $6 }' | grep -v '\-\-' |
 		xargs -0 printf 'Close Menu\n%s' |
-		sxmo_dmenu_with_kb.sh -c -p "Add WPA: SSID" -fn "Terminus-20" -l 20
+		sxmo_dmenu_with_kb.sh -c -p "Add WPA: SSID" -l 20
 	)"
 	[ "$SSID" = "Close Menu" ] && return
 
 	PASSPHRASE="$(
 		echo "Close Menu" |
-			sxmo_dmenu_with_kb.sh -c -p "Add WPA: Passpharse" -fn "Terminus-20" -l 20
+			sxmo_dmenu_with_kb.sh -c -p "Add WPA: Passphrase" -l 20
 	)"
 	[ "$PASSPHRASE" = "Close Menu" ] && return
 
@@ -89,7 +89,7 @@ networksmenu() {
 				Scan Wifi Networks
 				Close Menu
 			" |
-			awk '{$1=$1};1' | grep '\w' | dmenu -c -p 'Networks' -l 14 -fn 'Terminus-20'
+			awk '{$1=$1};1' | grep '\w' | dmenu -c -p 'Networks' -l 14
 		)"
 		if [ "$CHOICE" = "Close Menu" ]; then
 			exit

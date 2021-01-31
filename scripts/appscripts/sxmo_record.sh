@@ -38,13 +38,13 @@ recordconfirm() {
 				Delete Recording
 			" |
 			xargs -0 echo | sed '/^[[:space:]]*$/d' | awk '{$1=$1};1' |
-			dmenu -p "$DUR" -fn Terminus-18 -c -l 10
+			dmenu -p "$DUR" -c -l 10
 		)"
 		if echo "$PICK" | grep "Playback"; then
 			st -e mpv -ao=alsa -v "$FILE"
 		elif echo "$PICK" | grep "Delete Recording"; then
 			rm "$FILE"
-			echo "File deleted." | dmenu -fn Terminus-18 -c -l 10
+			echo "File deleted." | dmenu -c -l 10
 			return
 		else
 			return
@@ -67,7 +67,7 @@ recordmenu() {
 			xargs -0 echo |
 			sed '/^[[:space:]]*$/d' |
 			awk '{$1=$1};1' |
-			dmenu -fn Terminus-30 -c -p "Record" -l 20
+			dmenu -c -p "Record" -l 20
 		)"
 
 		if [ "$OPTION" = "Line Jack" ]; then

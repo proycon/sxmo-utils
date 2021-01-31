@@ -130,7 +130,7 @@ weathermenu() {
 		)" |
 		grep -vE '^#' |
 		sed "s/\t/: /g" |
-		sxmo_dmenu_with_kb.sh -i -c -l 10 -fn Terminus-18 -p "Locations"
+		sxmo_dmenu_with_kb.sh -i -c -l 10 -p "Locations"
 	)"
 	if [ "$CHOICE" = "Close Menu" ]; then
 		exit 0

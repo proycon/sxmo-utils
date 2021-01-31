@@ -5,7 +5,7 @@ menu() {
 	pidof "$KEYBOARD" || "$KEYBOARD" &
 	SUBREDDIT="$(
 		printf %b "Close Menu\n$(echo "$SXMO_SUBREDDITS" | tr " " '\n')" |
-		dmenu -p "Subreddit:" -c -l 10 -fn Terminus-20
+		dmenu -p "Subreddit:" -c -l 10
 	)"
 	pkill "$KEYBOARD"
 	[ "Close Menu" = "$SUBREDDIT" ] && exit 0

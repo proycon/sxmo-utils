@@ -192,7 +192,7 @@ incallmenuloop() {
 		cut -d'^' -f1 |
 		sed '/^[[:space:]]*$/d' |
 		awk '{$1=$1};1' | #this cryptic statement trims leading/trailing whitespace from a string
-		dmenu -idx $DMENUIDX -l 14 "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -fn "Terminus-30" -p "$NUMBER" |
+		dmenu -idx $DMENUIDX -l 14 "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -p "$NUMBER" |
 		(
 			PICKED="$(cat)";
 			echo "sxmo_modemcall: Picked is $PICKED">&2
@@ -213,7 +213,7 @@ dtmfmenu() {
 	while true; do
 		PICKED="$(
 			echo "$NUMS" | grep -o . | sed '1 iReturn to Call Menu' |
-			dmenu "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -l 20 -fn Terminus-20 -c -idx $DTMFINDEX -p "DTMF Tone"
+			dmenu "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -l 20 -c -idx $DTMFINDEX -p "DTMF Tone"
 		)"
 		echo "$PICKED" | grep "Return to Call Menu" && return
 		DTMFINDEX=$(echo "$NUMS" | grep -bo "$PICKED" | cut -d: -f1 | xargs -IN echo 2+N | bc)

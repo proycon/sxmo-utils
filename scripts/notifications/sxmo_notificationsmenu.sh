@@ -19,7 +19,7 @@ notificationmenu() {
 		sed '/^[[:space:]]*$/d' |
 		awk '{$1=$1};1' |
 		cut -d^ -f1 |
-		dmenu -c -i -fn "Terminus-18" -p "Notifs" -l 10
+		dmenu -c -i -p "Notifs" -l 20
 	)"
 
 	[ "$PICKEDCONTENT" = "Close Menu" ] && exit 1

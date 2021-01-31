@@ -41,14 +41,14 @@ choosenumbermenu() {
 	NUMBER="$(
 		printf %b "\nCancel\nMore contacts\n$(sxmo_contacts.sh | grep -E "^\+?[0-9]+:")" |
 		awk NF |
-		menu sxmo_dmenu_with_kb.sh -p "Number" -fn "Terminus-20" -l 10 -c -i |
+		menu sxmo_dmenu_with_kb.sh -p "Number" -l 10 -c -i |
 		cut -d: -f1 |
 		tr -d -- '- '
 	)"
 	echo "$NUMBER" | grep -qE "^Morecontacts$" && NUMBER="$( #joined words without space is not a bug
 		printf %b "\nCancel\n$(sxmo_contacts.sh --all)" |
 			grep . |
-			menu sxmo_dmenu_with_kb.sh -l 10 -p "Number" -c -fn Terminus-20 -i |
+			menu sxmo_dmenu_with_kb.sh -l 10 -p "Number" -c -i |
 			cut -d: -f1 |
 			tr -d -- '- '
 	)"
@@ -71,7 +71,7 @@ sendtextmenu() {
 	do
 		CONFIRM="$(
 			printf %b "Edit Message ($(echo "$TEXT" | head -n1))\nSend to → $NUMBER\nSave as Draft\nCancel" |
-			menu dmenu -c -idx 1 -p "Confirm" -fn "Terminus-20" -l 10
+			menu dmenu -c -idx 1 -p "Confirm" -l 10
 		)"
 		echo "$CONFIRM" | grep -E "^Send" && (echo "$TEXT" | sxmo_modemsendsms.sh "$NUMBER" -) && echo "Sent text to $NUMBER">&2 && exit 0
 		echo "$CONFIRM" | grep -E "^Cancel$" && exit 1
@@ -92,7 +92,7 @@ draft() {
 senddrafttextmenu() {
 	CONFIRM="$(
 		printf %b "Cancel\n$(ls "$DRAFT_DIR")" |
-		menu sxmo_dmenu_with_kb.sh -p "Draft Message" -fn "Terminus-20" -l 10 -c -i
+		menu sxmo_dmenu_with_kb.sh -p "Draft Message" -l 10 -c -i
 	)"
 	echo "$CONFIRM" | grep -E "^Cancel$" && exit 1
 	FILE="$DRAFT_DIR/$CONFIRM"
@@ -120,7 +120,7 @@ main() {
 			printf %b "$CONTACT" | xargs -IL echo "L logfile"
 		done
 	)"
-	CONTACTIDANDNUM="$(printf %b "$ENTRIES" | menu dmenu -p Texts -c -fn Terminus-20 -l 10 -i)"
+	CONTACTIDANDNUM="$(printf %b "$ENTRIES" | menu dmenu -p Texts -c -l 10 -i)"
 	echo "$CONTACTIDANDNUM" | grep "Close Menu" && exit 1
 	echo "$CONTACTIDANDNUM" | grep "Send a Text" && sendnewtextmenu && exit 1
 	echo "$CONTACTIDANDNUM" | grep "Send a Draft Text" && senddrafttextmenu && exit 1

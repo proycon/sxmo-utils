@@ -8,7 +8,7 @@ menu() {
 		printf %b "$(
 		echo "Close Menu";
 			echo "$INPUT" | grep -Eo '\S+' | tr -d '[:blank:]' | sort | uniq
-		)" | dmenu -p "$PROMPT" -l 10 -i -c -fn Terminus-20
+		)" | dmenu -p "$PROMPT" -l 10 -i -c
 	)"
 	pkill "$KEYBOARD"
 }

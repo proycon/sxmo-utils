@@ -61,7 +61,7 @@ rsstimespanmenu() {
 			echo "$CHOICES" |
 			sed '/^[[:space:]]*$/d' |
 			awk '{$1=$1};1' |
-			dmenu -p "RSS Timespan" -c -l 10 -fn Terminus-20
+			dmenu -p "RSS Timespan" -c -l 10
 		)"
 
 		if echo "$CHOICE" | grep "Fetch"; then

@@ -35,6 +35,7 @@ xdefaults() {
 	xsetroot -mod 29 29 -fg '#0b3a4c' -bg '#082430'
 	xset s off -dpms
 	xrdb /usr/share/sxmo/appcfg/xresources_xcalc.xr
+	xrdb /usr/share/sxmo/appcfg/xresources_dmenu.xr
 	synclient TapButton1=1 TapButton2=3 TapButton3=2 MinSpeed=0.25
 }
 

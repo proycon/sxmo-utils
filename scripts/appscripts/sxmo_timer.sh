@@ -40,7 +40,7 @@ menu() {
 		1m
 		30s
 		Close Menu
-	" | awk 'NF' | awk '{$1=$1};1' | dmenu -p Timer -c -fn "Terminus-30" -l 20
+	" | awk 'NF' | awk '{$1=$1};1' | dmenu -p Timer -c -l 20
 	)"
 	pkill "$KEYBOARD"
 	[ "Close Menu" = "$TIMEINPUT" ] && exit 0

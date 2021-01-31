@@ -21,14 +21,14 @@ dialmenu() {
 	NUMBER="$(
 		printf %b "Close Menu\nMore contacts\n$CONTACTS" |
 		grep . |
-		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20 -i
+		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -i
 	)"
 	echo "$NUMBER" | grep "Close Menu" && kill -9 0
 
 	echo "$NUMBER" | grep -q "More contacts" && NUMBER="$(
 		printf %b "Close Menu\n$(sxmo_contacts.sh --all)" |
 		grep . |
-		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -fn Terminus-20 -i
+		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -i
 	)"
 	NUMBER="$(echo "$NUMBER" | cut -d: -f1 | tr -d -- '- ')"
 	if [ -z "$NUMBER" ] || [ "$NUMBER" = "CloseMenu" ]; then

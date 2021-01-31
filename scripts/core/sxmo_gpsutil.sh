@@ -166,7 +166,7 @@ menuregionsearch() {
 		printf %b "$POIS" |
 		sed '/^[[:space:]]*$/d' |
 		awk '{$1=$1};1' |
-		sxmo_dmenu_with_kb.sh -i -c -l 10 -fn Terminus-18 -p Search
+		sxmo_dmenu_with_kb.sh -i -c -l 10 -p Search
 	)"
 
 	if [ "$QUERY" = "Close Menu" ]; then
@@ -192,7 +192,7 @@ menulocations() {
 		)" |
 		grep -vE '^#' |
 		sed "s/\t/: /g" |
-		sxmo_dmenu_with_kb.sh -i -c -l 10 -fn Terminus-18 -p "Locations"
+		sxmo_dmenu_with_kb.sh -i -c -l 10 -p "Locations"
 	)"
 	ZOOM=14
 	if [ "$CHOICE" = "Close Menu" ]; then
@@ -218,7 +218,7 @@ menumaptype() {
 		CHOICE="$(
 			echo "$CHOICES" |
 			awk -F^ '{ print $1 }' |
-			dmenu -idx "$IDX" -c -l 10 -fn Terminus-18 -p "Map Type" |
+			dmenu -idx "$IDX" -c -l 10 -p "Map Type" |
 			awk '{$1=$1};1'
 		)"
 		echo "$CHOICE" | grep "Close Menu" && exit 0

@@ -440,7 +440,7 @@ mainloop() {
 	getprogchoices "$ARGS"
 	echo "$PROGCHOICES" |
 	cut -d'^' -f1 |
-	dmenu -idx "$DMENUIDX" -l 16 -c -fn "Terminus-30" -p "$WINNAME" | (
+	dmenu -idx "$DMENUIDX" -l 16 -c -p "$WINNAME" | (
 		PICKED="$(cat)"
 		echo "$PICKED" | grep . || quit
 		LOOP="$(echo "$PROGCHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f2)"

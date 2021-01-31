@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 err() {
-	printf %b "$1" | dmenu -fn Terminus-20 -c -l 10
+	printf %b "$1" | dmenu -c -l 10
 	exit
 }
 
