@@ -5,6 +5,10 @@ ALSASTATEFILE="$XDG_CACHE_HOME"/precall.alsa.state
 CACHEDIR="$XDG_CACHE_HOME"/sxmo
 trap "gracefulexit" INT TERM
 
+DIR=$(dirname "$0")
+# shellcheck source=./sxmo_icons.sh
+. "$DIR/sxmo_icons.sh"
+
 modem_n() {
 	MODEMS="$(mmcli -L)"
 	echo "$MODEMS" | grep -qoE 'Modem\/([0-9]+)' || finish "Couldn't find modem - is your modem enabled?"
@@ -172,18 +176,18 @@ incallmonitor() {
 incallmenuloop() {
 	echo "sxmo_modemcall: Current flags are $FLAGS">&2
 	CHOICES="
-		$([ "$WINDOWIFIED" = 0 ] && echo Windowify || echo Unwindowify)   ^ togglewindowify
-		$([ "$WINDOWIFIED" = 0 ] && echo 'Screenlock                      ^ togglewindowify; sxmo_screenlock &')
-		Volume ↑                                                          ^ sxmo_vol.sh up
-		Volume ↓                                                          ^ sxmo_vol.sh down
-		Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo ✓)            ^ toggleflagset -e
-		Mic $(echo -- "$FLAGS" | grep -q -- -m && echo ✓)                 ^ toggleflagset -m
-		Linejack $(echo -- "$FLAGS" | grep -q -- -h && echo ✓)            ^ toggleflagset -h
-		Linemic  $(echo -- "$FLAGS" | grep -q -- -l && echo ✓)            ^ toggleflagset -l
-		Speakerphone $(echo -- "$FLAGS" | grep -q -- -s && echo ✓)        ^ toggleflagset -s
-		Echomic $(echo -- "$FLAGS" | grep -q -- -z && echo ✓)             ^ toggleflagset -z
-		DTMF Tones                                                        ^ dtmfmenu $CALLID
-		Hangup                                                            ^ hangup $CALLID
+		$([ "$WINDOWIFIED" = 0 ] && echo "$icon_wn2 Windowify" || echo "$icon_wn2 Unwindowify")   ^ togglewindowify
+		$([ "$WINDOWIFIED" = 0 ] && echo "$icon_lck Screenlock                      ^ togglewindowify; sxmo_screenlock &")
+		$icon_aru Volume up                                                          ^ sxmo_vol.sh up
+		$icon_ard Volume down                                                          ^ sxmo_vol.sh down
+		$icon_phn Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo ✓)            ^ toggleflagset -e
+		$icon_mic Mic $(echo -- "$FLAGS" | grep -q -- -m && echo ✓)                 ^ toggleflagset -m
+		$icon_itm Linejack $(echo -- "$FLAGS" | grep -q -- -h && echo ✓)            ^ toggleflagset -h
+		$icon_itm Linemic  $(echo -- "$FLAGS" | grep -q -- -l && echo ✓)            ^ toggleflagset -l
+		$icon_spk Speakerphone $(echo -- "$FLAGS" | grep -q -- -s && echo ✓)        ^ toggleflagset -s
+		$icon_itm Echomic $(echo -- "$FLAGS" | grep -q -- -z && echo ✓)             ^ toggleflagset -z
+		$icon_mus DTMF Tones                                                        ^ dtmfmenu $CALLID
+		$icon_phx Hangup                                                            ^ hangup $CALLID
 	"
 
 	pkill -9 dmenu # E.g. just incase user is playing with btns or hits a menu by mistake

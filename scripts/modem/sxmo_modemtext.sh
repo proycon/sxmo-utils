@@ -3,6 +3,10 @@ LOGDIR="$XDG_DATA_HOME"/sxmo/modem
 TERMMODE=$([ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] && echo "true")
 DRAFT_DIR="$XDG_DATA_HOME/sxmo/modem/draft"
 
+DIR=$(dirname "$0")
+# shellcheck source=./sxmo_icons.sh
+. "$DIR/sxmo_icons.sh"
+
 menu() {
 	if [ "$TERMMODE" != "true" ]; then
 		"$@"
@@ -39,20 +43,20 @@ choosenumbermenu() {
 
 	# Prompt for number
 	NUMBER="$(
-		printf %b "\nCancel\nMore contacts\n$(sxmo_contacts.sh | grep -E "^\+?[0-9]+:")" |
+		printf %b "\n$icon_cls Cancel\n$icon_grp More contacts\n$(sxmo_contacts.sh | grep -E "^\+?[0-9]+:")" |
 		awk NF |
 		menu sxmo_dmenu_with_kb.sh -p "Number" -l 10 -c -i |
 		cut -d: -f1 |
 		tr -d -- '- '
 	)"
-	echo "$NUMBER" | grep -qE "^Morecontacts$" && NUMBER="$( #joined words without space is not a bug
+	echo "$NUMBER" | grep -q "Morecontacts" && NUMBER="$( #joined words without space is not a bug
 		printf %b "\nCancel\n$(sxmo_contacts.sh --all)" |
 			grep . |
 			menu sxmo_dmenu_with_kb.sh -l 10 -p "Number" -c -i |
 			cut -d: -f1 |
 			tr -d -- '- '
 	)"
-	echo "$NUMBER" | grep -qE "^Cancel$" && exit 1
+	echo "$NUMBER" | grep -q "Cancel" && exit 1
 	echo "$NUMBER" | grep -qE '^[+0-9]+$' || err "That doesn't seem like a valid number"
 	echo "$NUMBER"
 }
@@ -70,13 +74,13 @@ sendtextmenu() {
 	while true
 	do
 		CONFIRM="$(
-			printf %b "Edit Message ($(echo "$TEXT" | head -n1))\nSend to → $NUMBER\nSave as Draft\nCancel" |
+			printf %b "$icon_edt Edit Message ($(echo "$TEXT" | head -n1))\n$icon_snd Send to → $NUMBER\n$icon_sav Save as Draft\n$icon_cls Cancel" |
 			menu dmenu -c -idx 1 -p "Confirm" -l 10
 		)"
-		echo "$CONFIRM" | grep -E "^Send" && (echo "$TEXT" | sxmo_modemsendsms.sh "$NUMBER" -) && echo "Sent text to $NUMBER">&2 && exit 0
-		echo "$CONFIRM" | grep -E "^Cancel$" && exit 1
-		echo "$CONFIRM" | grep -E "^Edit Message" && TEXT="$(editmsg "$NUMBER" "$TEXT")"
-		echo "$CONFIRM" | grep -E "^Save as Draft$" && err "Draft saved to $(draft "$NUMBER" "$TEXT")"
+		echo "$CONFIRM" | grep -E "Send to" && (echo "$TEXT" | sxmo_modemsendsms.sh "$NUMBER" -) && echo "Sent text to $NUMBER">&2 && exit 0
+		echo "$CONFIRM" | grep -E "Cancel$" && exit 1
+		echo "$CONFIRM" | grep -E "Edit Message" && TEXT="$(editmsg "$NUMBER" "$TEXT")"
+		echo "$CONFIRM" | grep -E "Save as Draft$" && err "Draft saved to $(draft "$NUMBER" "$TEXT")"
 	done
 }
 
@@ -91,10 +95,10 @@ draft() {
 
 senddrafttextmenu() {
 	CONFIRM="$(
-		printf %b "Cancel\n$(ls "$DRAFT_DIR")" |
+		printf %b "$icon_cls Cancel\n$(ls "$DRAFT_DIR")" |
 		menu sxmo_dmenu_with_kb.sh -p "Draft Message" -l 10 -c -i
 	)"
-	echo "$CONFIRM" | grep -E "^Cancel$" && exit 1
+	echo "$CONFIRM" | grep -E "Cancel$" && exit 1
 	FILE="$DRAFT_DIR/$CONFIRM"
 	NUMBER="$(head -n1 "$FILE")"
 	TEXT="$(tail -n +2 "$FILE")"
@@ -114,7 +118,7 @@ main() {
 	[ ! -d "$DRAFT_DIR" ] && mkdir -p "$DRAFT_DIR"
 	# E.g. only display logfiles for directories that exist and join w contact name
 	ENTRIES="$(
-	printf %b "Close Menu\nSend a Text$( [ "$(ls -A "$DRAFT_DIR")" ] && printf %b "\nSend a Draft Text")\n";
+	printf %b "$icon_cls Close Menu\n$icon_edt Send a Text$( [ "$(ls -A "$DRAFT_DIR")" ] && printf %b "\n$icon_edt Send a Draft Text")\n";
 		sxmo_contacts.sh | while read -r CONTACT; do
 			[ -d "$LOGDIR"/"$(printf %b "$CONTACT" | cut -d: -f1)" ] || continue
 			printf %b "$CONTACT" | xargs -IL echo "L logfile"

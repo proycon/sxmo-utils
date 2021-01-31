@@ -12,7 +12,7 @@ PROGRAMS = \
 all: shellcheck $(PROGRAMS)
 
 shellcheck:
-	shellcheck scripts/*/*
+	shellcheck -x scripts/*/*
 
 programs/sxmo_setpineled: programs/sxmo_setpineled.c
 	gcc -o programs/sxmo_setpineled programs/sxmo_setpineled.c

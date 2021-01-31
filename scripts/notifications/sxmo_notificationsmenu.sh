@@ -1,8 +1,12 @@
 #!/usr/bin/env sh
 NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 
+DIR=$(dirname "$0")
+# shellcheck source=./sxmo_icons.sh
+. "$DIR/sxmo_icons.sh"
+
 notificationmenu() {
-	CHOICES="Close Menu\nClear Notifications"
+	CHOICES="$icon_cls Close Menu\n$icon_del Clear Notifications"
 	# shellcheck disable=SC2045
 	for NOTIFFILE in $(ls -tr "$NOTIFDIR"); do
 		NOTIFMSG="$(tail -n+3 "$NOTIFDIR/$NOTIFFILE" | tr "\n^" " ")"
@@ -22,8 +26,8 @@ notificationmenu() {
 		dmenu -c -i -p "Notifs" -l 20
 	)"
 
-	[ "$PICKEDCONTENT" = "Close Menu" ] && exit 1
-	[ "$PICKEDCONTENT" = "Clear Notifications" ] && rm "$NOTIFDIR"/* && exit 1
+	echo "$PICKEDCONTENT" | grep -q "Close Menu" && exit 1
+	echo "$PICKEDCONTENT" | grep -q "Clear Notifications" && rm "$NOTIFDIR"/* && exit 1
 
 	PICKEDNOTIFFILE="$(echo "$CHOICES" | tr -s ' ' | grep -F "$PICKEDCONTENT" | cut -d^ -f2 | tr -d ' ')"
 	NOTIFACTION="$(head -n1 "$PICKEDNOTIFFILE")"
