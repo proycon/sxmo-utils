@@ -3,4 +3,4 @@
 description="Enable user access to pinephone hardware kernel interface"
 
 command="chmod"
-command_args="a+rw /sys/module/8723cs/parameters/rtw_scan_interval_thr /sys/devices/platform/backlight/backlight/backlight/brightness /sys/power/state /sys/devices/platform/soc/1f00000.rtc/power/wakeup /sys/power/mem_sleep /sys/bus/usb/drivers/usb/unbind /sys/bus/usb/drivers/usb/bind /sys/class/leds/red:indicator/brightness /sys/class/leds/blue:indicator/brightness /sys/class/leds/green:indicator/brightness /sys/class/leds/white:flash/brightness /dev/rtc0"
+command_args="a+rw /sys/module/8723cs/parameters/rtw_scan_interval_thr /sys/devices/platform/backlight/backlight/backlight/brightness /sys/power/state /sys/devices/platform/soc/1f00000.rtc/power/wakeup /sys/power/mem_sleep /sys/bus/usb/drivers/usb/unbind /sys/bus/usb/drivers/usb/bind /sys/class/leds/red:indicator/brightness /sys/class/leds/blue:indicator/brightness /sys/class/leds/green:indicator/brightness /sys/class/leds/white:flash/brightness /dev/rtc0 /sys/devices/platform/soc/1f03400.rsb/sunxi-rsb-3a3/axp221-pek/power/wakeup /sys/class/wakeup/*"
