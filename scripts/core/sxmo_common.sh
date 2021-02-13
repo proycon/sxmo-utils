@@ -20,6 +20,7 @@ LOGDIR="$XDG_DATA_HOME"/sxmo/modem
 alias find="busybox find"
 alias pkill="busybox pkill"
 alias pgrep="busybox pgrep"
+alias xargs="busybox xargs"
 
 #this script is meant to be sourced
 #the glyphs are often in the private use area and
@@ -128,7 +129,7 @@ icon_flt="" #filter/pipe
 # shellcheck disable=SC2034
 icon_glb="" #globe
 # shellcheck disable=SC2034
-icon_phl="'" #phonelog
+icon_phl="" #phonelog
 # shellcheck disable=SC2034
 icon_inf="" #info
 # shellcheck disable=SC2034
