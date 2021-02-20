@@ -143,7 +143,7 @@ programchoicesinit() {
 			$icon_zzz Suspend            ^ 0 ^ sxmo_lock.sh --suspend
 			$icon_out Logout             ^ 0 ^ pkill -9 dwm
 			$icon_rld Reboot             ^ 0 ^ st -e sudo reboot
-			$icon_pwr Poweroff           ^ 0 ^ st -e sudo halt
+			$icon_pwr Poweroff           ^ 0 ^ st -e sudo poweroff
 		"
 		WINNAME="Power"
 	elif echo "$WMCLASS" | grep -i "mpv"; then
