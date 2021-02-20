@@ -1,4 +1,9 @@
 #!/usr/bin/env sh
+
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 [ -z "$SXMO_GPSLOCATIONSFILES" ] && SXMO_GPSLOCATIONSFILES="/usr/share/sxmo/appcfg/places_for_gps.tsv"
 CTILESIZE=256
 CLN2=0.693147180559945309417

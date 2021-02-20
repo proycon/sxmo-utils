@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
+
 ACTION="$1"
+
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
 
 XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
 WMCLASS="$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3- | cut -d ' ' -f1 | tr -d '\",')"

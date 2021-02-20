@@ -9,6 +9,10 @@
 #
 # Prints in output format: "number: contact"
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 CONTACTSFILE="$XDG_CONFIG_HOME"/sxmo/contacts.tsv
 LOGFILE="$XDG_DATA_HOME"/sxmo/modem/modemlog.tsv
 

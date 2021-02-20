@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 applyptrmatrix() {
 	PTRID="$(
 		xinput | grep -iE 'touchscreen.+pointer' | grep -oE 'id=[0-9]+' | cut -d= -f2

@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 connections() {
 	ACTIVE="$(nmcli -c no -t c show --active | cut -d: -f1,3 | sed 's/$/ ✓/')"
 	INACTIVE="$(nmcli -c no -t c show | cut -d: -f1,3)"

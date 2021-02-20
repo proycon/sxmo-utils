@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 ARG="$1"
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 SPEAKER="Line Out"
 HEADPHONE="Headphone"
 EARPIECE="Earpiece"

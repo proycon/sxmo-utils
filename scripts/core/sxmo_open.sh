@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 MIMEAPPS="${XDG_CONFIG_HOME:-$HOME/.config}/mimeapps.list"
 DESKTOPS_CACHED_MIMEAPPS="${XDG_CONFIG_HOME:-$HOME/.config}/desktops.mimeapps.list"
 DESKTOP_DIRS="/usr/share/sxmo/applications/|/usr/share/applications/|/usr/local/share/applications/|${XDG_DATA_HOME:-$HOME/.local/share}/applications/"

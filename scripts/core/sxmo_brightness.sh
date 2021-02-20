@@ -1,4 +1,9 @@
 #!/usr/bin/env sh
+
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 [ -e /sys/class/backlight/edp-backlight ] && DEV=/sys/class/backlight/edp-backlight
 [ -e /sys/devices/platform/backlight/backlight/backlight ] && DEV=/sys/devices/platform/backlight/backlight/backlight
 

@@ -1,4 +1,9 @@
 #!/usr/bin/env sh
+
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 HISTORY_FILE="$XDG_CACHE_HOME"/sxmo/youtubehistory.tsv
 NRESULTS=5
 AUDIOONLY=0

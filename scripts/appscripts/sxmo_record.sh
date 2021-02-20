@@ -1,4 +1,9 @@
 #!/usr/bin/env sh
+
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 [ -z "$SXMO_RECDIR" ] && SXMO_RECDIR="$XDG_DATA_HOME"/sxmo/recordings
 mkdir -p "$SXMO_RECDIR"
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 
+
 envvars() {
 	# shellcheck disable=SC1091
 	[ -f /etc/profile ] && . /etc/profile
@@ -84,6 +85,10 @@ startdwm() {
 }
 
 xinit() {
+	# include common definitions
+	# shellcheck source=scripts/core/sxmo_common.sh
+	. "$(dirname "$0")/sxmo_common.sh"
+
 	envvars
 	setupxdgdir
 	xdefaults
