@@ -22,6 +22,8 @@ alias pkill="busybox pkill"
 alias pgrep="busybox pgrep"
 alias xargs="busybox xargs"
 
+[ "$SXMO_NO_ICONS" -eq 1 ] && return;
+
 #this script is meant to be sourced
 #the glyphs are often in the private use area and
 #therefore require a font like those in https://github.com/ryanoasis/nerd-fonts/ for proper display
