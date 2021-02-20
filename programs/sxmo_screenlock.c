@@ -195,7 +195,10 @@ sigterm()
 {
 	state = StateDead;
 	syncstate();
-	if (wakeinterval) close(rtc_fd);
+	if (wakeinterval) {
+		ioctl(rtc_fd, RTC_AIE_OFF, 0);
+		close(rtc_fd);
+	}
 	fprintf(stderr, "Screenlock terminating on signal\n");
 	exit(0);
 }
@@ -474,6 +477,7 @@ void usage() {
 void init_rtc() {
 	rtc_fd = open(RTC_DEVICE, O_RDONLY);
 	if (rtc_fd < 0) {
+		fprintf(stderr, "Error opening rtc device: %d\n", rtc_fd);
 		die("Unable to open rtc device");
 		exit(EXIT_FAILURE);
 	}
@@ -522,6 +526,8 @@ main(int argc, char **argv) {
 	if (!(dpy = XOpenDisplay(NULL)))
 		die("Cannot open display");
 
+	getoldbrightness();
+
 	if (wakeinterval) init_rtc();
 
 	fprintf(stderr, "Screenlock starting\n");
@@ -529,7 +535,6 @@ main(int argc, char **argv) {
 	XkbSetDetectableAutoRepeat(dpy, True, NULL);
 	screen = XDefaultScreen(dpy);
 	XSync(dpy, 0);
-	getoldbrightness();
 	syncstate();
 	lockscreen(dpy, screen, target == StateNoInputNoScreen || target == StateSuspend);
 	if ((target == StateNoInputNoScreen) || (target == StateSuspend)) {
