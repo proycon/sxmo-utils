@@ -7,11 +7,11 @@
 # for all the variables we define here
 
 # shellcheck disable=SC2034
-NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
+export NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 # shellcheck disable=SC2034
-CACHEDIR="$XDG_CACHE_HOME"/sxmo
+export CACHEDIR="$XDG_CACHE_HOME"/sxmo
 # shellcheck disable=SC2034
-LOGDIR="$XDG_DATA_HOME"/sxmo/modem
+export LOGDIR="$XDG_DATA_HOME"/sxmo/modem
 
 # This script ensures all sxmo scripts are using the busybox version of
 # certain coreutils rather than any other version that may be installed on the
