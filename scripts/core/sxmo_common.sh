@@ -3,6 +3,9 @@
 # This script is meant to be sourced by various sxmo scripts
 # and defines some common settings
 
+# Small optimization to guard against including the script unnecessarily
+[ "$SXMO_COMMON_INCLUDED" -eq 1 ] && return 0;
+
 # we disable shellcheck SC2034 (variable not used)
 # for all the variables we define here
 
@@ -13,6 +16,8 @@ export CACHEDIR="$XDG_CACHE_HOME"/sxmo
 # shellcheck disable=SC2034
 export LOGDIR="$XDG_DATA_HOME"/sxmo/modem
 
+command -v "$KEYBOARD" || export KEYBOARD=svkbd-mobile-intl
+
 # This script ensures all sxmo scripts are using the busybox version of
 # certain coreutils rather than any other version that may be installed on the
 # user's computer
@@ -22,7 +27,9 @@ alias pkill="busybox pkill"
 alias pgrep="busybox pgrep"
 alias xargs="busybox xargs"
 
-[ "$SXMO_NO_ICONS" -eq 1 ] && return;
+SXMO_COMMON_INCLUDED=1
+
+[ "$SXMO_NO_ICONS" -eq 1 ] && return 0;
 
 #this script is meant to be sourced
 #the glyphs are often in the private use area and
