@@ -37,6 +37,7 @@ xdefaults() {
 	xset s off -dpms
 	xrdb /usr/share/sxmo/appcfg/xresources_xcalc.xr
 	xrdb /usr/share/sxmo/appcfg/xresources_dmenu.xr
+	[ -e "$HOME"/.Xresources ] && xrdb "$HOME"/.Xresources
 	synclient TapButton1=1 TapButton2=3 TapButton3=2 MinSpeed=0.25
 }
 
