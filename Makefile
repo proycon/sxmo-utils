@@ -9,7 +9,7 @@ PROGRAMS = \
 	programs/sxmo_megiaudioroute \
 	programs/sxmo_vibratepine
 
-all: shellcheck $(PROGRAMS)
+all: $(PROGRAMS)
 
 shellcheck:
 	shellcheck -x scripts/*/*
