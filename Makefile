@@ -30,7 +30,7 @@ programs/sxmo_vibratepine: programs/sxmo_vibratepine.c
 	gcc -o programs/sxmo_vibratepine programs/sxmo_vibratepine.c
 
 clean:
-	rm programs/sxmo_setpineled programs/sxmo_screenlock programs/sxmo_setpinebacklight programs/sxmo_megiaudioroute programs/sxmo_vibratepine
+	rm -f programs/sxmo_setpineled programs/sxmo_screenlock programs/sxmo_setpinebacklight programs/sxmo_megiaudioroute programs/sxmo_vibratepine
 
 install: $(PROGRAMS)
 	cd configs && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
