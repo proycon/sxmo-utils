@@ -11,6 +11,8 @@ PROGRAMS = \
 
 all: $(PROGRAMS)
 
+test: shellcheck
+
 shellcheck:
 	shellcheck -x scripts/*/*
 
