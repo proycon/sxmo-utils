@@ -28,33 +28,6 @@ void syscall_error(int is_err, const char* fmt, ...)
 	exit(1);
 }
 
-int open_event_dev(const char* name_needle, int flags)
-{
-	char path[256];
-	char name[256];
-	int fd, ret;
-
-	// find the right device and open it
-	for (int i = 0; i < 10; i++) {
-					snprintf(path, sizeof path, "/dev/input/event%d", i);
-					fd = open(path, flags);
-					if (fd < 0)
-									continue;
-
-					ret = ioctl(fd, EVIOCGNAME(256), name);
-					if (ret < 0)
-									continue;
-					
-					if (strstr(name, name_needle))
-									return fd;
-					
-					close(fd);
-	}
-	
-	errno = ENOENT;
-	return -1;
-}
-
 void usage() {
 	fprintf(stderr, "Usage: sxmo_vibratepine duration_ms\n");
 	fprintf(stderr, "			 sxmo_vibratepine duration_ms strength_number\n");
@@ -82,7 +55,7 @@ int main(int argc, char* argv[])
 
 	durationMs = atoi(argv[argc--]);
 
-	fd = open_event_dev("vibrator", O_RDWR | O_CLOEXEC);
+	fd = open("/dev/input/by-path/platform-vibrator-event", O_RDWR | O_CLOEXEC);
 	syscall_error(fd < 0, "Can't open vibrator event device");
 	ret = ioctl(fd, EVIOCGEFFECTS, &effects);
 	syscall_error(ret < 0, "EVIOCGEFFECTS failed");
