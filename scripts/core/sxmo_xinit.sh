@@ -35,9 +35,10 @@ xdefaults() {
 	xmodmap /usr/share/sxmo/appcfg/xmodmap_caps_esc
 	xsetroot -mod 29 29 -fg '#0b3a4c' -bg '#082430'
 	xset s off -dpms
-	xrdb /usr/share/sxmo/appcfg/xresources_xcalc.xr
-	xrdb /usr/share/sxmo/appcfg/xresources_dmenu.xr
-	[ -e "$HOME"/.Xresources ] && xrdb "$HOME"/.Xresources
+	for xr in /usr/share/sxmo/appcfg/*.xr; do
+		xrdb -merge "$xr"
+	done
+	[ -e "$HOME"/.Xresources ] && xrdb -merge "$HOME"/.Xresources
 	synclient TapButton1=1 TapButton2=3 TapButton3=2 MinSpeed=0.25
 }
 
