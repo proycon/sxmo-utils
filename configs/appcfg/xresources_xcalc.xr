@@ -45,7 +45,7 @@ xcalc*ti.button47.background: rgb:b/b/b
 xcalc*ti.button48.background: rgb:b/b/b
 xcalc*ti.button49.background: rgb:b/b/b
 xcalc*ti.button52.background: rgb:b/b/b
-xcalcti.button37.foreground: rgb:3/3/3
+xcalc*ti.button37.foreground: rgb:3/3/3
 xcalc*ti.button38.foreground: rgb:3/3/3
 xcalc*ti.button39.foreground: rgb:3/3/3
 xcalc*ti.button42.foreground: rgb:3/3/3
@@ -85,6 +85,11 @@ xcalc*ti.button40.foreground: rgb:c/c/c
 xcalc*ti.button45.foreground: rgb:c/c/c
 xcalc*ti.button50.foreground: rgb:c/c/c
 xcalc*ti.button55.foreground: rgb:c/c/c
+
+xcalc*ti.button3.label: sqrt
+xcalc*ti.button21.label: \434
+xcalc*ti.button35.label: \367
+
 
 ! Fontsize = TODO..
 xcalc*font: -*-terminus-*-*-*-*-32-*-*-*-*-*-*-*
