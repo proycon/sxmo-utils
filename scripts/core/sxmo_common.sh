@@ -16,7 +16,7 @@ export CACHEDIR="$XDG_CACHE_HOME"/sxmo
 # shellcheck disable=SC2034
 export LOGDIR="$XDG_DATA_HOME"/sxmo/modem
 
-command -v "$KEYBOARD" || export KEYBOARD=svkbd-mobile-intl
+command -v "$KEYBOARD" > /dev/null || export KEYBOARD=svkbd-mobile-intl
 
 # This script ensures all sxmo scripts are using the busybox version of
 # certain coreutils rather than any other version that may be installed on the
