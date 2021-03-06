@@ -29,7 +29,7 @@ alias xargs="busybox xargs"
 
 SXMO_COMMON_INCLUDED=1
 
-[ "$SXMO_NO_ICONS" -eq 1 ] && return 0;
+[ "$SXMO_NO_ICONS" = "1" ] && return 0;
 
 #this script is meant to be sourced
 #the glyphs are often in the private use area and
