@@ -4,7 +4,7 @@
 # and defines some common settings
 
 # Small optimization to guard against including the script unnecessarily
-[ "$SXMO_COMMON_INCLUDED" -eq 1 ] && return 0;
+[ "$SXMO_COMMON_INCLUDED" = "1" ] && return 0;
 
 # we disable shellcheck SC2034 (variable not used)
 # for all the variables we define here
