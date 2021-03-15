@@ -45,14 +45,11 @@ xdefaults() {
 defaultkeyboard() {
 	if command -v svkbd-mobile-intl; then
 		export KEYBOARD=svkbd-mobile-intl
-		export KEYBOARD_ARGS=
 	elif command -v svkbd-mobile-plain; then
 		export KEYBOARD=svkbd-mobile-plain
-		export KEYBOARD_ARGS=
 	else
 		#legacy
 		export KEYBOARD=svkbd-sxmo
-		export KEYBOARD_ARGS=
 	fi
 }
 
