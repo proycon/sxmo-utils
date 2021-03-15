@@ -22,6 +22,9 @@ command -v "$KEYBOARD" > /dev/null || export KEYBOARD=svkbd-mobile-intl
 # certain coreutils rather than any other version that may be installed on the
 # user's computer
 
+#aliases aren't expanded in bash
+command -v shopt > /dev/null && shopt -s expand_aliases
+
 alias find="busybox find"
 alias pkill="busybox pkill"
 alias pgrep="busybox pgrep"
