@@ -27,4 +27,4 @@ for file in $files; do
     [ -e "$file" ] && chmod a+rw "$file"
 done
 
-chmod a+rw /sys/class/wakeup/*
+chmod -R a+rw /sys/class/wakeup/*
