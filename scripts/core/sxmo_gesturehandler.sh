@@ -75,10 +75,10 @@ if [ "$HANDLE" -ne 0 ]; then
 			sxmo_vol.sh down &
 			;;
 		"showkeyboard")
-			pidof "$KEYBOARD" || "$KEYBOARD" &
+			sxmo_keyboard.sh open
 			;;
 		"hidekeyboard")
-			pkill -9 "$KEYBOARD"
+			sxmo_keyboard.sh close
 			;;
 		"showmenu")
 			pidof dmenu || setsid -f sxmo_appmenu.sh &

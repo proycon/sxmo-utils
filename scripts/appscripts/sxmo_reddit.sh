@@ -7,12 +7,12 @@
 [ -z "$SXMO_SUBREDDITS" ] && SXMO_SUBREDDITS="pine64official pinephoneofficial unixporn postmarketos linux"
 
 menu() {
-	pidof "$KEYBOARD" || "$KEYBOARD" &
+	sxmo_keyboard.sh open
 	SUBREDDIT="$(
 		printf %b "Close Menu\n$(echo "$SXMO_SUBREDDITS" | tr " " '\n')" |
 		dmenu -p "Subreddit:" -c -l 10
 	)"
-	pkill "$KEYBOARD"
+	sxmo_keyboard.sh close
 	[ "Close Menu" = "$SUBREDDIT" ] && exit 0
 
 	REDDITRESULTS="$(

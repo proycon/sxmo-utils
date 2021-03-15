@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-pidof "$KEYBOARD" >&2 || "$KEYBOARD" &
+sxmo_keyboard.sh open
 OUTPUT="$(cat | dmenu "$@")"
-pkill "$KEYBOARD" >&2
+sxmo_keyboard.sh close
 echo "$OUTPUT"

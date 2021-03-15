@@ -29,7 +29,7 @@ timerrun() {
 }
 
 menu() {
-	pidof "$KEYBOARD" || "$KEYBOARD" &
+	sxmo_keyboard.sh open
 	TIMEINPUT="$(
 	echo "
 		1h
@@ -47,7 +47,7 @@ menu() {
 		Close Menu
 	" | awk 'NF' | awk '{$1=$1};1' | dmenu -p Timer -c -l 20
 	)"
-	pkill "$KEYBOARD"
+	sxmo_keyboard.sh close
 	[ "Close Menu" = "$TIMEINPUT" ] && exit 0
 	st -f Monospace-50 -e "$0" timerrun "$TIMEINPUT"
 }
