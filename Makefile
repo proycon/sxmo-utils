@@ -64,3 +64,5 @@ install: $(PROGRAMS)
 	install -D programs/sxmo_megiaudioroute $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_vibratepine $(DESTDIR)$(PREFIX)/bin/
 
+	echo "NOTICE: Do not forget to add sxmo-setpermissions to your init system, e.g. for openrc: rc-update add sxmo-setpermissions default && rc-service sxmo-setpermissions start" >&2
+
