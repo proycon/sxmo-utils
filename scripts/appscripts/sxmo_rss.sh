@@ -60,7 +60,7 @@ rsstimespanmenu() {
 			1 day ago
 			2 day ago
 			1970-01-01
-			Fetch $([ "$FETCHENABLED" = "1" ] && echo "enabled ✓" || echo "disabled (use cache)")
+			Fetch $([ "$FETCHENABLED" = "1" ] && echo "enabled $icon_chk" || echo "disabled (use cache)")
 		"
 		CHOICE="$(
 			echo "$CHOICES" |

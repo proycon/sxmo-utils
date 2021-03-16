@@ -177,12 +177,12 @@ incallmenuloop() {
 		$([ "$WINDOWIFIED" = 0 ] && echo "$icon_lck Screenlock                      ^ togglewindowify; sxmo_screenlock &")
 		$icon_aru Volume up                                                          ^ sxmo_vol.sh up
 		$icon_ard Volume down                                                          ^ sxmo_vol.sh down
-		$icon_phn Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo ✓)            ^ toggleflagset -e
-		$icon_mic Mic $(echo -- "$FLAGS" | grep -q -- -m && echo ✓)                 ^ toggleflagset -m
-		$icon_itm Linejack $(echo -- "$FLAGS" | grep -q -- -h && echo ✓)            ^ toggleflagset -h
-		$icon_itm Linemic  $(echo -- "$FLAGS" | grep -q -- -l && echo ✓)            ^ toggleflagset -l
-		$icon_spk Speakerphone $(echo -- "$FLAGS" | grep -q -- -s && echo ✓)        ^ toggleflagset -s
-		$icon_itm Echomic $(echo -- "$FLAGS" | grep -q -- -z && echo ✓)             ^ toggleflagset -z
+		$icon_phn Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo "$icon_chk")            ^ toggleflagset -e
+		$icon_mic Mic $(echo -- "$FLAGS" | grep -q -- -m && echo "$icon_chk")                 ^ toggleflagset -m
+		$icon_itm Linejack $(echo -- "$FLAGS" | grep -q -- -h && echo "$icon_chk")            ^ toggleflagset -h
+		$icon_itm Linemic  $(echo -- "$FLAGS" | grep -q -- -l && echo "$icon_chk")            ^ toggleflagset -l
+		$icon_spk Speakerphone $(echo -- "$FLAGS" | grep -q -- -s && echo "$icon_chk")        ^ toggleflagset -s
+		$icon_itm Echomic $(echo -- "$FLAGS" | grep -q -- -z && echo "$icon_chk")             ^ toggleflagset -z
 		$icon_mus DTMF Tones                                                        ^ dtmfmenu $CALLID
 		$icon_phx Hangup                                                            ^ hangup $CALLID
 	"

@@ -127,10 +127,10 @@ programchoicesinit() {
 		# Audio Out menu
 		CURRENTDEV="$(sxmo_audiocurrentdevice.sh)"
 		CHOICES="
-			$icon_hdp Headphones $([ "$CURRENTDEV" = "Headphone" ] && echo "✓") ^ 1 ^ sxmo_audioout.sh Headphones
-			$icon_spk Speaker $([ "$CURRENTDEV" = "Line Out" ] && echo "✓")     ^ 1 ^ sxmo_audioout.sh Speaker
-			$icon_phn Earpiece $([ "$CURRENTDEV" = "Earpiece" ] && echo "✓")    ^ 1 ^ sxmo_audioout.sh Earpiece
-			$icon_mut None $([ "$CURRENTDEV" = "None" ] && echo "✓")            ^ 1 ^ sxmo_audioout.sh None
+			$icon_hdp Headphones $([ "$CURRENTDEV" = "Headphone" ] && echo "$icon_chk") ^ 1 ^ sxmo_audioout.sh Headphones
+			$icon_spk Speaker $([ "$CURRENTDEV" = "Line Out" ] && echo "$icon_chk")     ^ 1 ^ sxmo_audioout.sh Speaker
+			$icon_phn Earpiece $([ "$CURRENTDEV" = "Earpiece" ] && echo "$icon_chk")    ^ 1 ^ sxmo_audioout.sh Earpiece
+			$icon_mut None $([ "$CURRENTDEV" = "None" ] && echo "$icon_chk")            ^ 1 ^ sxmo_audioout.sh None
 			$icon_aru Volume up                                       ^ 1 ^ sxmo_vol.sh up
 			$icon_ard Volume down                                     ^ 1 ^ sxmo_vol.sh down
 		"

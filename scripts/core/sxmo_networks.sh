@@ -5,7 +5,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 connections() {
-	ACTIVE="$(nmcli -c no -t c show --active | cut -d: -f1,3 | sed 's/$/ ✓/')"
+	ACTIVE="$(nmcli -c no -t c show --active | cut -d: -f1,3 | sed "s/$/ $icon_chk/")"
 	INACTIVE="$(nmcli -c no -t c show | cut -d: -f1,3)"
 	printf %b "$ACTIVE\n$INACTIVE" | sort -u -t: -k1,1
 }
@@ -13,7 +13,7 @@ connections() {
 toggleconnection() {
 	CONNLINE="$1"
 	CONNNAME="$(echo "$CHOICE" | cut -d: -f1)"
-	if echo "$CONNLINE" | grep "✓"; then
+	if echo "$CONNLINE" | grep "$icon_chk"; then
 		RES="$(nmcli c down "$CONNNAME" 2>&1)"
 	else
 		RES="$(nmcli c up "$CONNNAME" 2>&1)"

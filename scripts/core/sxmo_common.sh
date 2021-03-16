@@ -23,6 +23,7 @@ command -v "$KEYBOARD" > /dev/null || export KEYBOARD=svkbd-mobile-intl
 # user's computer
 
 #aliases aren't expanded in bash
+# shellcheck disable=SC2039
 command -v shopt > /dev/null && shopt -s expand_aliases
 
 alias find="busybox find"
@@ -31,6 +32,9 @@ alias pgrep="busybox pgrep"
 alias xargs="busybox xargs"
 
 SXMO_COMMON_INCLUDED=1
+
+# shellcheck disable=SC2034
+icon_chk="[x]" #we override this later if the user wants icons
 
 [ "$SXMO_NO_ICONS" = "1" ] && return 0;
 
@@ -212,6 +216,8 @@ icon_snd="" #send
 icon_phx="" #hangup
 # shellcheck disable=SC2034
 icon_wn2=""
+# shellcheck disable=SC2034
+icon_chk=""
 
 #allow the user to override icons
 if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/icons" ]; then

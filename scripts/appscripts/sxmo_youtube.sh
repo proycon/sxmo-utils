@@ -27,10 +27,10 @@ searchmenu() {
 		ENTRY="$(
 			printf %b "
 				Close Menu
-				Show 1 Result              $([ "$NRESULTS" = "1" ] && echo "✓")
-				Show 5 Results             $([ "$NRESULTS" = "5" ] && echo "✓")
-				Show 10 Results            $([ "$NRESULTS" = "10" ] && echo "✓")
-				Show 20 Results            $([ "$NRESULTS" = "20" ] && echo "✓")
+				Show 1 Result              $([ "$NRESULTS" = "1" ] && echo "$icon_chk")
+				Show 5 Results             $([ "$NRESULTS" = "5" ] && echo "$icon_chk")
+				Show 10 Results            $([ "$NRESULTS" = "10" ] && echo "$icon_chk")
+				Show 20 Results            $([ "$NRESULTS" = "20" ] && echo "$icon_chk")
 				$HISTORY
 			" |
 				xargs -0 echo |

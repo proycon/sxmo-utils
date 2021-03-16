@@ -214,11 +214,11 @@ menumaptype() {
 		CURRENTMAPTYPE="$(gsettings get org.foxtrotgps repo-name | tr -d "'")"
 		CHOICES=$(echo "
 			Close Menu
-			OSM               $([ "$CURRENTMAPTYPE" = "OSM" ] && echo "✓") ^ OSM
-			OpenCycleMap      $([ "$CURRENTMAPTYPE" = "OpenCycleMap" ] && echo "✓") ^ OpenCycleMap
-			Google Maps       $([ "$CURRENTMAPTYPE" = "Google Maps (testing only)" ] && echo "✓") ^ Google Maps (testing only)
-			Google Sat        $([ "$CURRENTMAPTYPE" = "Google Sat (testing only)" ] && echo "✓") ^ Google Sat (testing only)
-			Maps-for-free.com $([ "$CURRENTMAPTYPE" = "Maps-for-free.com" ] && echo "✓") ^ Maps-for-free.com
+			OSM               $([ "$CURRENTMAPTYPE" = "OSM" ] && echo "$icon_chk") ^ OSM
+			OpenCycleMap      $([ "$CURRENTMAPTYPE" = "OpenCycleMap" ] && echo "$icon_chk") ^ OpenCycleMap
+			Google Maps       $([ "$CURRENTMAPTYPE" = "Google Maps (testing only)" ] && echo "$icon_chk") ^ Google Maps (testing only)
+			Google Sat        $([ "$CURRENTMAPTYPE" = "Google Sat (testing only)" ] && echo "$icon_chk") ^ Google Sat (testing only)
+			Maps-for-free.com $([ "$CURRENTMAPTYPE" = "Maps-for-free.com" ] && echo "$icon_chk") ^ Maps-for-free.com
 		" | sed '/^[[:space:]]*$/d' | awk '{$1=$1};1')
 		CHOICE="$(
 			echo "$CHOICES" |
