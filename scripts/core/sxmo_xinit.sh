@@ -16,14 +16,14 @@ envvars() {
 	[ -z "$XDG_CONFIG_HOME" ] && export XDG_CONFIG_HOME=~/.config
 	[ -z "$XDG_CACHE_HOME" ] && export XDG_CACHE_HOME=~/.cache
 	[ -z "$XDG_DATA_HOME" ] && export XDG_DATA_HOME=~/.local/share
-	[ -z "$XDG_RUNTIME_HOME" ] && export XDG_RUNTIME_HOME=~/.local/run
+	[ -z "$XDG_RUNTIME_DIR" ] && export XDG_RUNTIME_DIR=~/.local/run
 	[ -z "$XDG_PICTURES_DIR" ] && export XDG_PICTURES_DIR=~/Pictures
 }
 
 setupxdgdir() {
-	mkdir -p $XDG_RUNTIME_HOME
-	chmod 700 $XDG_RUNTIME_HOME
-	chown "$USER:$USER" "$XDG_RUNTIME_HOME"
+	mkdir -p $XDG_RUNTIME_DIR
+	chmod 700 $XDG_RUNTIME_DIR
+	chown "$USER:$USER" "$XDG_RUNTIME_DIR"
 
 	mkdir -p "$XDG_CACHE_HOME/sxmo/"
 	chmod 700 "$XDG_CACHE_HOME"
