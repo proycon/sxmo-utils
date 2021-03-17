@@ -73,6 +73,11 @@ checkforfinishedcalls() {
 		mmcli -m "$(modem_n)" --voice-delete-call "$FINISHEDCALLID"
 		rm -f "$NOTIFDIR/incomingcall_${FINISHEDCALLID}_notification"* #there may be multiple actionable notification for one call
 
+		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/missed_call" ]; then
+			echo "sxmo_modemmonitor: Invoking missed call hook (async)">&2
+			"$XDG_CONFIG_HOME/sxmo/hooks/missed_call" "$CONTACTNAME" &
+		fi
+
 		TIME="$(date --iso-8601=seconds)"
 		mkdir -p "$LOGDIR"
 		if [ -f "$CACHEDIR/${FINISHEDCALLID}.discardedcall" ]; then
