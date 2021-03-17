@@ -207,7 +207,7 @@ programchoicesinit() {
 		# St
 		# First we try to handle the app running inside st:
 		WMNAME="${1:-$(echo "$XPROPOUT" | grep -E "^WM_NAME" | cut -d ' ' -f3-)}"
-		if echo "$WMNAME" | grep -i -E "\"(vi|vim|vis|nvim|neovim)\""; then
+		if echo "$WMNAME" | grep -i -E "(vi|vim|vis|nvim|neovim|kakoune)"; then
 			#Vim in st
 			CHOICES="
 				$icon_aru Scroll up        ^ 1 ^ key Ctrl+Shift+u
