@@ -42,6 +42,7 @@ while true; do
 
 	echo "$PICKED" | grep "Sort By" && sort_loop
 	echo "$PICKED" | grep "Close Menu" && exit 0
+	echo "$PICKED" | grep "Reload" && continue
 	[ -d "$PICKED" ] && cd "$PICKED" && continue
 	echo "$PICKED" | grep -E '^[*]$' && sxmo_open.sh -a ./*
 	[ -f "$PICKED" ] && sxmo_open.sh -a "$PICKED"
