@@ -5,7 +5,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 info() {
-	echo "$1" > /dev/stderr
+	echo "$1" >> /dev/stderr
 }
 
 err() {
