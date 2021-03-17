@@ -82,6 +82,7 @@ programchoicesinit() {
 				$(command -v midori     >/dev/null && echo "$icon_glb Midori      ^ 0 ^ midori")
 				$(command -v mutt       >/dev/null && echo "$icon_eml Mutt        ^ 0 ^ st -e mutt")
 				$(command -v nano       >/dev/null && echo "$icon_edt Nano        ^ 0 ^ st -e nano")
+				$(command -v navit      >/dev/null && echo "$icon_gps Navit       ^ 0 ^ navit")
 				$(command -v ncmpcpp    >/dev/null && echo "$icon_mus Ncmpcpp     ^ 0 ^ st -e ncmpcpp")
 				$(command -v neomutt    >/dev/null && echo "$icon_eml Neomutt     ^ 0 ^ st -e neomutt")
 				$(command -v neovim     >/dev/null && echo "$icon_vim Neovim      ^ 0 ^ st -e neovim")
