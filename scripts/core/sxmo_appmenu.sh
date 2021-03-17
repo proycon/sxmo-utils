@@ -418,8 +418,9 @@ getprogchoices() {
 	#shellcheck disable=SC2044
 	for NOTIFFILE in $(find "$NOTIFDIR" -name 'incomingcall*_notification'); do
 		NOTIFACTION="$(head -n1 "$NOTIFFILE")"
+		MESSAGE="$(tail -1 "$NOTIFFILE")"
 		CHOICES="
-			$icon_phn Pick up incoming call ^ 0 ^ $NOTIFACTION
+			$icon_phn $MESSAGE ^ 0 ^ $NOTIFACTION
 			$CHOICES
 		"
 		break
