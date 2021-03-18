@@ -8,7 +8,7 @@ DEVICE="unknown"
 
 #Detecting device
 if [ -e /sys/firmware/devicetree/base ]; then
-    if grep -q pinephone compatible; then
+    if grep -q pinephone /sys/firmware/devicetree/base/compatible; then
         DEVICE="pinephone"
     fi
 fi
