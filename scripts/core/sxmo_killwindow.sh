@@ -4,4 +4,8 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-xdotool windowkill "$(xdotool getactivewindow)"
+if [ "$1" = "close" ]; then
+	xdotool windowclose "$(xdotool getactivewindow)"
+else
+	xdotool windowkill "$(xdotool getactivewindow)"
+fi
