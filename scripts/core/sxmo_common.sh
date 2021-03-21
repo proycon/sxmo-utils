@@ -35,6 +35,8 @@ SXMO_COMMON_INCLUDED=1
 
 # shellcheck disable=SC2034
 icon_chk="[x]" #we override this later if the user wants icons
+# shellcheck disable=SC2034
+icon_wif="W" #we override this later if the user wants icons
 
 [ "$SXMO_NO_ICONS" = "1" ] && return 0;
 
@@ -220,6 +222,8 @@ icon_wn2=""
 icon_chk=""
 # shellcheck disable=SC2034
 icon_and=""
+# shellcheck disable=SC2034
+icon_wif=""
 
 #allow the user to override icons
 if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/icons" ]; then

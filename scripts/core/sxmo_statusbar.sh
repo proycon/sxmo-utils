@@ -25,12 +25,12 @@ update() {
 	WIRELESS=""
 	WLANSTATE="$(tr -d "\n" < /sys/class/net/wlan0/operstate)"
 	if [ "$WLANSTATE" = "up" ]; then
-		WIRELESS="W "
+		WIRELESS=" "
 	fi
 
 	# M symbol if modem monitoring is on & modem present
 	MODEMMON=""
-	pgrep -f sxmo_modemmonitor.sh && MODEMMON="M "
+	pgrep -f sxmo_modemmonitor.sh && MODEMMON=""
 
 	# Battery pct
 	PCT="$(cat /sys/class/power_supply/*-battery/capacity)"
@@ -38,21 +38,79 @@ update() {
 		cat /sys/class/power_supply/*-battery/status |
 		cut -c1
 	)"
+    if [ "$BATSTATUS" = "C" ]; then
+        if [ "$PCT" -lt 20 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 30 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 40 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 60 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 80 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 90 ]; then
+            BATSTATUS=""
+        else
+            BATSTATUS=""
+        fi
+    else
+        if [ "$PCT" -lt 10 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 20 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 30 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 40 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 50 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 60 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 70 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 80 ]; then
+            BATSTATUS=""
+        elif [ "$PCT" -lt 90 ]; then
+            BATSTATUS=""
+        else
+            BATSTATUS=""
+        fi
+    fi
 
 	# Volume
 	AUDIODEV="$(sxmo_audiocurrentdevice.sh)"
-	[ "$AUDIODEV" = "None" ] && VOL="" || VOL=$(echo "$AUDIODEV" | cut -c1 | tr L S)"$(
+    AUDIOSYMBOL=$(echo "$AUDIODEV" | cut -c1)
+    if [ "$AUDIOSYMBOL" = "L" ]; then
+        AUDIOSYMBOL="" #speakers, use no special symbol
+    elif [ "$AUDIOSYMBOL" = "H" ]; then
+        AUDIOSYMBOL=" "
+    elif [ "$AUDIOSYMBOL" = "E" ]; then
+        AUDIOSYMBOL=" " #earpiece
+    fi
+    VOL=0
+	[ "$AUDIODEV" = "None" ] && AUDIOSYMBOL="ﱝ" || VOL="$(
 		amixer sget "$AUDIODEV" |
 		grep -oE '([0-9]+)%' |
 		tr -d ' %' |
 		awk '{ s += $1; c++ } END { print s/c }'  |
 		xargs printf %.0f
 	)"
-
+    if [ "$AUDIODEV" != "None" ]; then
+        if [ "$VOL" -eq 0 ]; then
+            AUDIOSYMBOL="$AUDIOSYMBOLﱝ"
+        elif [ "$VOL" -lt 25 ]; then
+            AUDIOSYMBOL="$AUDIOSYMBOL奄"
+        elif [ "$VOL" -gt 75 ]; then
+            AUDIOSYMBOL="$AUDIOSYMBOL墳"
+        else
+            AUDIOSYMBOL="$AUDIOSYMBOL奔"
+        fi
+    fi
 	# Time
 	TIME="$(date +%R)"
 
-	BAR="${CALLINFO}${MODEMMON}${WIRELESS}${VOL} ${BATSTATUS}${PCT}% ${TIME}"
+	BAR="${CALLINFO}${MODEMMON}${WIRELESS} ${AUDIOSYMBOL} ${BATSTATUS} ${TIME}"
 	xsetroot -name "$BAR"
 }
 
