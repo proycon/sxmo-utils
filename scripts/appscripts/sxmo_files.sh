@@ -27,7 +27,8 @@ sort_loop() {
 
 
 while true; do
-	CHOICES="$(printf %b 'Reload\nClose Menu\nSort By\n../\n*\n'"$(ls -1p "$SORT" "$REVERSE")")"
+	# shellcheck disable=SC2086
+	CHOICES="$(printf %b 'Reload\nClose Menu\nSort By\n../\n*\n'"$(ls -1p $SORT $REVERSE)")"
 	DIR="$(basename "$(pwd)")"
 	TRUNCATED="$(printf %.7s "$DIR")"
 	if [ "$DIR" != "$TRUNCATED" ]; then
