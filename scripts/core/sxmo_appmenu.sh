@@ -215,7 +215,7 @@ programchoicesinit() {
 				$icon_trm Command prompt   ^ 0 ^ key Escape Shift+semicolon
 				$icon_cls Save             ^ 0 ^ key Escape Shift+semicolon w Return
 				$icon_cls Save and Quit    ^ 0 ^ key Escape Shift+semicolon w q Return
-				$icon_cls Quit             ^ 0 ^ key Escape Shift+semicolon q Return
+				$icon_cls Quit without saving  ^ 0 ^ key Escape Shift+semicolon q exclam Return
 				$icon_pst Paste Selection  ^ 0 ^ key Escape quotedbl asterisk p
 				$icon_pst Paste Clipboard  ^ 0 ^ key Escape quotedbl plus p
 				$icon_fnd Search           ^ 0 ^ key Escape /
