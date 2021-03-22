@@ -35,6 +35,13 @@ deletenetworkmenu() {
 	fi
 }
 
+getifname() {
+	IFTYPE="$1"
+	IFNAME="$(nmcli d | grep -m 1 "$IFTYPE" | cut -d' ' -f1)"
+	[ -z "$IFNAME" ] && notify-send "No interface with type $IFTYPE found" && IFNAME=lo
+	echo "$IFNAME"
+}
+
 addnetworkgsmmenu() {
 	CONNNAME="$(
 		echo "Close Menu" |
@@ -51,7 +58,7 @@ addnetworkgsmmenu() {
 	# TODO: Support gsm bearer username & password
 	nmcli c add \
 		type gsm \
-		ifname cdc-wdm0 \
+		ifname "$(getifname gsm)" \
 		con-name "$CONNNAME" \
 		apn "$APN"
 }
