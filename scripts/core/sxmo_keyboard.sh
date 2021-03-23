@@ -6,10 +6,14 @@ SXMO_NO_ICONS=1 #just to make it a bit faster
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+isopen() {
+	pidof "$KEYBOARD" > /dev/null
+}
+
 open() {
 	#Note: KEYBOARD_ARGS is not quoted by design as it may includes a pipe and further tools
 	# shellcheck disable=SC2086
-	pidof "$KEYBOARD" > /dev/null || eval "$KEYBOARD" $KEYBOARD_ARGS &
+	isopen || eval "$KEYBOARD" $KEYBOARD_ARGS &
 }
 
 close() {
@@ -20,6 +24,8 @@ if [ "$1" = "toggle" ]; then
 	close || open
 elif [ "$1" = "close" ]; then
 	close
+elif [ "$1" = "isopen" ]; then
+	isopen || exit 1
 else
 	open
 fi
