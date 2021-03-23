@@ -9,7 +9,7 @@ SXMO_NO_ICONS=1 #just to make it a bit faster
 open() {
 	#Note: KEYBOARD_ARGS is not quoted by design as it may includes a pipe and further tools
 	# shellcheck disable=SC2086
-	pidof -q "$KEYBOARD" || eval "$KEYBOARD" $KEYBOARD_ARGS &
+	pidof "$KEYBOARD" > /dev/null || eval "$KEYBOARD" $KEYBOARD_ARGS &
 }
 
 close() {
