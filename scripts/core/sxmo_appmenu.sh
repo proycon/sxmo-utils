@@ -391,6 +391,7 @@ programchoicesinit() {
 			$(command -v foxtrotgps >/dev/null && echo "$icon_gps Maps   ^ 0 ^ foxtrotgps")
 			$icon_phn Dialer                                             ^ 0 ^ sxmo_modemdial.sh
 			$icon_msg Texts                                              ^ 0 ^ sxmo_modemtext.sh
+			$icon_usr Contacts                                           ^ 0 ^ sxmo_contactmenu.sh
 			$(command -v megapixels >/dev/null && echo "$icon_cam Camera ^ 0 ^ GDK_SCALE=2 megapixels")
 			$icon_net Networks                                           ^ 0 ^ sxmo_networks.sh
 			$icon_mus Audio                                              ^ 0 ^ sxmo_appmenu.sh audioout
