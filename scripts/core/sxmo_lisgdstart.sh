@@ -36,12 +36,8 @@ else
 		-g "3,UD,B,*,sxmo_gesturehandler.sh killwindow" \
 		-g '2,RL,*,*,sxmo_gesturehandler.sh moveprevdesktop' \
 		-g '2,LR,*,*,sxmo_gesturehandler.sh movenextdesktop' \
-		-g '1,DU,R,L,sxmo_gesturehandler.sh scrollup_long' \
-		-g '1,UD,R,L,sxmo_gesturehandler.sh scrolldown_long' \
-		-g '1,DU,R,M,sxmo_gesturehandler.sh scrollup_med' \
-		-g '1,UD,R,M,sxmo_gesturehandler.sh scrolldown_med' \
-		-g '1,DU,R,S,sxmo_gesturehandler.sh scrollup_short' \
-		-g '1,UD,R,S,sxmo_gesturehandler.sh scrolldown_short' \
+		-g '1,DU,R,*,P,sxmo_gesturehandler.sh scrollup_short' \
+		-g '1,UD,R,*,P,sxmo_gesturehandler.sh scrolldown_short' \
 		-g '1,LR,R,S,sxmo_gesturehandler.sh scrollright_short' \
 		-g '1,RL,L,S,sxmo_gesturehandler.sh scrollleft_short' \
 		&
