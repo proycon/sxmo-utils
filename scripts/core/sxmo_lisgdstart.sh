@@ -21,12 +21,10 @@ else
 		-g '1,RL,B,L,sxmo_gesturehandler.sh back' \
 		-g '1,LR,L,*,sxmo_gesturehandler.sh prevdesktop' \
 		-g '1,RL,R,*,sxmo_gesturehandler.sh nextdesktop' \
-		-g '1,DU,L,L,sxmo_gesturehandler.sh unmute' \
-		-g '1,UD,L,L,sxmo_gesturehandler.sh mute' \
-		-g '1,DU,L,*,sxmo_gesturehandler.sh volup' \
-		-g '1,UD,L,*,sxmo_gesturehandler.sh voldown' \
-		-g '1,LR,T,*,sxmo_gesturehandler.sh brightnessup' \
-		-g '1,RL,T,*,sxmo_gesturehandler.sh brightnessdown' \
+		-g '1,DU,L,*,P,sxmo_gesturehandler.sh volup' \
+		-g '1,UD,L,*,P,sxmo_gesturehandler.sh voldown' \
+		-g '1,LR,T,*,P,sxmo_gesturehandler.sh brightnessup' \
+		-g '1,RL,T,*,P,sxmo_gesturehandler.sh brightnessdown' \
 		-g "1,DU,B,*,sxmo_gesturehandler.sh showkeyboard" \
 		-g "1,UD,B,*,sxmo_gesturehandler.sh hidekeyboard" \
 		-g "1,UD,T,*,sxmo_gesturehandler.sh showmenu" \
