@@ -289,6 +289,15 @@ programchoicesinit() {
 				$icon_mnu St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
 			"
 			WINNAME=ncmpcpp
+		elif echo "$WMNAME" | grep -i -w "weechat"; then
+			#weechat
+			CHOICES="
+				$icon_msg Hotlist Next            ^ 1 ^ key Alt+a
+				$icon_arl History Previous        ^ 1 ^ key Alt+Shift+comma
+				$icon_arr History Next            ^ 1 ^ key Alt+Shift+period
+				$icon_trm Buffer                  ^ 0 ^ type '/buffer '
+			"
+			WINNAME=weechat
 		else
 			STSELMODEON="$(
 				echo "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' '
@@ -448,6 +457,16 @@ key() {
 	xdotool windowactivate "$WIN"
 	xdotool key --delay 50 --clearmodifiers "$@"
 	#--window $WIN
+}
+
+type() {
+	xdotool windowactivate "$WIN"
+	xdotool type --delay 50 --clearmodifiers "$@"
+}
+
+typeenter() {
+	type "$@"
+	xdotool key Return
 }
 
 quit() {
