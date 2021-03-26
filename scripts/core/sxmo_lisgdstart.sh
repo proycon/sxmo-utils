@@ -12,7 +12,7 @@ else
 	#-g format:
 	#   fingers,swipe,edge,distance,command
 	#order matters, only the first match gets executed
-	lisgd "$@" -t 200 \
+	lisgd "$@" -t 125 \
 		-g '1,DRUL,BR,*,sxmo_hotcorner.sh bottomright' \
 		-g '1,DLUR,BL,*,sxmo_hotcorner.sh bottomleft' \
 		-g '1,ULDR,TL,*,sxmo_hotcorner.sh topleft' \
