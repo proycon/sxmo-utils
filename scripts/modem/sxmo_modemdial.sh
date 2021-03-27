@@ -17,20 +17,25 @@ modem_n() {
 }
 
 dialmenu() {
-	CONTACTS="$(sxmo_contacts.sh | grep -E "^\+?[0-9]+:")"
-	NUMBER="$(
-		printf %b "Close Menu\nMore contacts\n$CONTACTS" |
-		grep . |
-		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -i
-	)"
-	echo "$NUMBER" | grep "Close Menu" && kill -9 0
+	if [ -n "$1" ]; then
+		NUMBER="$1"
+	else
+		CONTACTS="$(sxmo_contacts.sh | grep -E "^\+?[0-9]+:")"
+		NUMBER="$(
+			printf %b "Close Menu\nMore contacts\n$CONTACTS" |
+			grep . |
+			sxmo_dmenu_with_kb.sh -l 10 -p Number -c -i
+		)"
+		echo "$NUMBER" | grep "Close Menu" && kill -9 0
 
-	echo "$NUMBER" | grep -q "More contacts" && NUMBER="$(
-		printf %b "Close Menu\n$(sxmo_contacts.sh --all)" |
-		grep . |
-		sxmo_dmenu_with_kb.sh -l 10 -p Number -c -i
-	)"
-	NUMBER="$(echo "$NUMBER" | cut -d: -f1 | tr -d -- '- ')"
+		echo "$NUMBER" | grep -q "More contacts" && NUMBER="$(
+			printf %b "Close Menu\n$(sxmo_contacts.sh --all)" |
+			grep . |
+			sxmo_dmenu_with_kb.sh -l 10 -p Number -c -i
+		)"
+		NUMBER="$(echo "$NUMBER" | cut -d: -f1 | tr -d -- '- ')"
+	fi
+
 	if [ -z "$NUMBER" ] || [ "$NUMBER" = "CloseMenu" ]; then
 		#no number selected (probably cancelled), silently discard
 		exit 0
@@ -49,7 +54,7 @@ dialmenu() {
 }
 
 modem_n || fatalerr "Couldn't determine modem number - is modem online?"
-CREATEDCALLID="$(dialmenu)"
+CREATEDCALLID="$(dialmenu "$1")"
 if [ -n "$CREATEDCALLID" ]; then
 	sxmo_modemcall.sh pickup "$CREATEDCALLID"
 fi

@@ -108,7 +108,7 @@ senddrafttextmenu() {
 
 tailtextlog() {
 	if [ "$TERMMODE" != "true" ]; then
-		st -e less +F "$LOGDIR/$1/sms.txt"
+		st -T "$1 SMS" -e less +F "$LOGDIR/$1/sms.txt"
 	else
 		less +F "$LOGDIR/$1/sms.txt"
 	fi
@@ -131,4 +131,8 @@ main() {
 	tailtextlog "$(echo "$CONTACTIDANDNUM" | cut -d: -f1)"
 }
 
-main
+if [ -n "$1" ]; then
+	sendnewtextmenu "$1"
+else
+	main
+fi

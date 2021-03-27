@@ -172,7 +172,7 @@ checkfornewtexts() {
 
 		sxmo_notificationwrite.sh \
 			random \
-			"st -e tail -n9999 -f '$LOGDIR/$NUM/sms.txt'" \
+			"st -T '$NUM SMS' -e less +F '$LOGDIR/$NUM/sms.txt'" \
 			"$LOGDIR/$NUM/sms.txt" \
 			"Message - $CONTACTNAME: $TEXT"
 

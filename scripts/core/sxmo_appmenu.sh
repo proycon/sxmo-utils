@@ -298,6 +298,14 @@ programchoicesinit() {
 				$icon_trm Buffer                  ^ 0 ^ type '/buffer '
 			"
 			WINNAME=weechat
+		elif echo "$WMNAME" | grep -i -w "sms"; then
+			number="$(echo "$WMNAME" | sed -e 's|^\"||' -e 's|\"$||' | cut -f1 -d' ')"
+			#sms
+			CHOICES="
+				$icon_msg Reply          ^ 0 ^ sxmo_modemtext.sh $number
+				$icon_phn Call           ^ 0 ^ sxmo_modemdial.sh $number
+			"
+			WINNAME=sms
 		else
 			STSELMODEON="$(
 				echo "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' '
