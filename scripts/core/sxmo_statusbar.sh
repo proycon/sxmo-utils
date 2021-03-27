@@ -18,14 +18,14 @@ update() {
 			cut -f1
 		)")"
 		CALLSECONDS="$(echo "$NOWS" - "$CALLSTARTS" | bc)"
-		CALLINFO=" ${CALLSECONDS}s "
+		CALLINFO="${CALLSECONDS}s"
 	fi
 
 	# W symbol if wireless is connect
 	WIRELESS=""
 	WLANSTATE="$(tr -d "\n" < /sys/class/net/wlan0/operstate)"
 	if [ "$WLANSTATE" = "up" ]; then
-		WIRELESS=" "
+		WIRELESS=""
 	fi
 
 	# M symbol if modem monitoring is on & modem present
@@ -38,79 +38,79 @@ update() {
 		cat /sys/class/power_supply/*-battery/status |
 		cut -c1
 	)"
-    if [ "$BATSTATUS" = "C" ]; then
-        if [ "$PCT" -lt 20 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 30 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 40 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 60 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 80 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 90 ]; then
-            BATSTATUS=""
-        else
-            BATSTATUS=""
-        fi
-    else
-        if [ "$PCT" -lt 10 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 20 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 30 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 40 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 50 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 60 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 70 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 80 ]; then
-            BATSTATUS=""
-        elif [ "$PCT" -lt 90 ]; then
-            BATSTATUS=""
-        else
-            BATSTATUS=""
-        fi
-    fi
+	if [ "$BATSTATUS" = "C" ]; then
+		if [ "$PCT" -lt 20 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 30 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 40 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 60 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 80 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 90 ]; then
+			BATSTATUS=""
+		else
+			BATSTATUS=""
+		fi
+	else
+		if [ "$PCT" -lt 10 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 20 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 30 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 40 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 50 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 60 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 70 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 80 ]; then
+			BATSTATUS=""
+		elif [ "$PCT" -lt 90 ]; then
+			BATSTATUS=""
+		else
+			BATSTATUS=""
+		fi
+	fi
 
 	# Volume
 	AUDIODEV="$(sxmo_audiocurrentdevice.sh)"
-    AUDIOSYMBOL=$(echo "$AUDIODEV" | cut -c1)
-    if [ "$AUDIOSYMBOL" = "L" ]; then
-        AUDIOSYMBOL="" #speakers, use no special symbol
-    elif [ "$AUDIOSYMBOL" = "H" ]; then
-        AUDIOSYMBOL=" "
-    elif [ "$AUDIOSYMBOL" = "E" ]; then
-        AUDIOSYMBOL=" " #earpiece
-    fi
-    VOL=0
-	[ "$AUDIODEV" = "None" ] && AUDIOSYMBOL="ﱝ" || VOL="$(
+	AUDIOSYMBOL=$(echo "$AUDIODEV" | cut -c1)
+	if [ "$AUDIOSYMBOL" = "L" ] || [ "$AUDIOSYMBOL" = "N" ]; then
+		AUDIOSYMBOL="" #speakers or none, use no special symbol
+	elif [ "$AUDIOSYMBOL" = "H" ]; then
+		AUDIOSYMBOL=" "
+	elif [ "$AUDIOSYMBOL" = "E" ]; then
+		AUDIOSYMBOL=" " #earpiece
+	fi
+	VOL=0
+	[ "$AUDIODEV" = "None" ] || VOL="$(
 		amixer sget "$AUDIODEV" |
 		grep -oE '([0-9]+)%' |
 		tr -d ' %' |
 		awk '{ s += $1; c++ } END { print s/c }'  |
 		xargs printf %.0f
 	)"
-    if [ "$AUDIODEV" != "None" ]; then
-        if [ "$VOL" -eq 0 ]; then
-            AUDIOSYMBOL="$AUDIOSYMBOLﱝ"
-        elif [ "$VOL" -lt 25 ]; then
-            AUDIOSYMBOL="$AUDIOSYMBOL奄"
-        elif [ "$VOL" -gt 75 ]; then
-            AUDIOSYMBOL="$AUDIOSYMBOL墳"
-        else
-            AUDIOSYMBOL="$AUDIOSYMBOL奔"
-        fi
-    fi
+	if [ "$AUDIODEV" != "None" ]; then
+		if [ "$VOL" -eq 0 ]; then
+			VOLUMESYMBOL="ﱝ"
+		elif [ "$VOL" -lt 25 ]; then
+			VOLUMESYMBOL="奄"
+		elif [ "$VOL" -gt 75 ]; then
+			VOLUMESYMBOL="墳"
+		else
+			VOLUMESYMBOL="奔"
+		fi
+	fi
 	# Time
 	TIME="$(date +%R)"
 
-	BAR="${CALLINFO}${MODEMMON}${WIRELESS} ${AUDIOSYMBOL} ${BATSTATUS} ${TIME}"
+	BAR="${CALLINFO} ${MODEMMON} ${WIRELESS} ${AUDIOSYMBOL}${VOLUMESYMBOL} ${BATSTATUS} ${TIME}"
 	xsetroot -name "$BAR"
 }
 
