@@ -54,12 +54,6 @@ defaultkeyboard() {
 }
 
 daemons() {
-	pkill conky
-	if [ -e "$XDG_CONFIG_HOME/sxmo/conky.conf" ]; then
-		conky -c $XDG_CONFIG_HOME/sxmo/conky.conf -d
-	else
-		conky -c /usr/share/sxmo/appcfg/conky.conf -d
-	fi
 	autocutsel &
 	autocutsel -selection PRIMARY &
 	sxmo_statusbar.sh &
@@ -71,10 +65,22 @@ daemonsneedingdbus() {
 	sxmo_lisgdstart.sh &
 }
 
+defaultconfig() {
+	mkdir -p "$XDG_CONFIG_HOME/sxmo"
+
+	echo '#!/usr/bin/env sh
+
+conky -c /usr/share/sxmo/appcfg/conky.conf -d
+' > "$XDG_CONFIG_HOME/sxmo/xinit"
+}
+
 customxinit() {
 	set -o allexport
 	# shellcheck disable=SC1090
-	[ -f "$XDG_CONFIG_HOME/sxmo/xinit" ] && . "$XDG_CONFIG_HOME/sxmo/xinit"
+	[ ! -f "$XDG_CONFIG_HOME/sxmo/xinit" ] && defaultconfig
+
+	# shellcheck disable=SC1090
+	. "$XDG_CONFIG_HOME/sxmo/xinit"
 	set +o allexport
 }
 
