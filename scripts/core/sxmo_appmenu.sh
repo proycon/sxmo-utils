@@ -93,7 +93,7 @@ programchoicesinit() {
 				$(command -v ranger     >/dev/null && echo "$icon_dir Ranger      ^ 0 ^ st -e ranger")
 				$(command -v sacc       >/dev/null && echo "$icon_itm Sacc        ^ 0 ^ st -e sacc i-logout.cz/1/bongusta")
 				$(command -v sic        >/dev/null && echo "$icon_itm Sic         ^ 0 ^ st -e sic")
-				$(command -v st         >/dev/null && echo "$icon_trm St          ^ 0 ^ st -e $SHELL -l")
+				$(command -v st         >/dev/null && echo "$icon_trm St          ^ 0 ^ st -e $SHELL")
 				$(command -v surf       >/dev/null && echo "$icon_glb Surf        ^ 0 ^ surf")
 				$(command -v syncthing  >/dev/null && echo "$icon_rld Syncthing          ^ 0 ^ syncthing")
 				$(command -v telegram-desktop >/dev/null && echo "$icon_tgm Telegram     ^ 0 ^ telegram-desktop")
