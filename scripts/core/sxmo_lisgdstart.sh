@@ -6,13 +6,20 @@
 
 pkill -9 lisgd
 
+if [ -z "$LISGD_THRESHOLD" ]; then
+	LISGD_THRESHOLD=125
+fi
+if [ -z "$LISGD_THRESHOLD_PRESSED" ]; then
+	LISGD_THRESHOLD_PRESSED=60
+fi
+
 if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/lisgdstart ]; then
 	"$XDG_CONFIG_HOME"/sxmo/hooks/lisgdstart &
 else
 	#-g format:
 	#   fingers,swipe,edge,distance,command
 	#order matters, only the first match gets executed
-	lisgd "$@" -t 125 \
+	lisgd "$@" -t "$LISGD_THRESHOLD" -T "$LISGD_THRESHOLD_PRESSED" \
 		-g '1,DRUL,BR,*,sxmo_hotcorner.sh bottomright' \
 		-g '1,DLUR,BL,*,sxmo_hotcorner.sh bottomleft' \
 		-g '1,ULDR,TL,*,sxmo_hotcorner.sh topleft' \
