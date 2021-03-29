@@ -67,17 +67,14 @@ daemonsneedingdbus() {
 
 defaultconfig() {
 	mkdir -p "$XDG_CONFIG_HOME/sxmo"
-
-	echo '#!/usr/bin/env sh
-
-conky -c /usr/share/sxmo/appcfg/conky.conf -d
-' > "$XDG_CONFIG_HOME/sxmo/xinit"
+	cp /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit"
+	chmod u+rx "$XDG_CONFIG_HOME/sxmo/xinit"
 }
 
 customxinit() {
 	set -o allexport
 	# shellcheck disable=SC1090
-	[ ! -f "$XDG_CONFIG_HOME/sxmo/xinit" ] && defaultconfig
+	[ ! -e "$XDG_CONFIG_HOME/sxmo/xinit" ] && defaultconfig
 
 	# shellcheck disable=SC1090
 	. "$XDG_CONFIG_HOME/sxmo/xinit"
