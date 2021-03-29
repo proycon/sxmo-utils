@@ -22,7 +22,7 @@ amixer sset 'Line Out Source' 'Mono Differential','Mono Differential'
 amixer set "Line Out" 50%
 
 # Play a funky startup tune
-mpv --quiet --no-video /usr/share/sxmo/startup.wav &
+mpv --quiet --no-video /usr/share/sxmo/startup.ogg &
 
 # enter SIM PIN (WARNING! SECURITY RISK!)
 #  the sleep is there because the modem
