@@ -42,8 +42,8 @@ mpv --quiet --no-video /usr/share/sxmo/startup.wav &
 # Note that this is just a subset of all available
 # parameters, see the sxmo documentation for more.
 
-# Use firefox as default browser
-[ -z "$BROWSER" ] && export BROWSER=firefox
+# Use firefox as default browser if installed
+command -v firefox && export BROWSER=firefox
 
 # Prepopulate Subreddits menu with custom subreddits
 #export SXMO_SUBREDDITS="postmarketos pinephoneOfficial pinephone unixporn"
