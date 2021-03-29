@@ -132,6 +132,7 @@ programchoicesinit() {
 			)
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
 			$icon_upc Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh
+			$icon_cfg Edit configuration         ^ 0 ^ st -e $EDITOR $XDG_CONFIG_HOME/sxmo/xinit
 		"
 		WINNAME=Config
 	elif echo "$WMCLASS" | grep -i "audioout"; then
