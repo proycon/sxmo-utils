@@ -31,6 +31,15 @@ update() {
 	# M symbol if modem monitoring is on & modem present
 	MODEMMON=""
 	pgrep -f sxmo_modemmonitor.sh && MODEMMON=""
+	if [ -n "$MODEMMON" ]; then
+		if [ -f /tmp/modem.locked.state ]; then
+			MODEMMON=""
+		elif [ -f /tmp/modem.registered.state ]; then
+			MODEMMON=""
+		elif [ -f /tmp/modem.connected.state ]; then
+			MODEMMON=""
+		fi
+	fi
 
 	# Battery pct
 	PCT="$(cat /sys/class/power_supply/*-battery/capacity)"

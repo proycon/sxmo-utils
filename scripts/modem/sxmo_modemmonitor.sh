@@ -182,10 +182,24 @@ checkfornewtexts() {
 	done
 }
 
+initialmodemstatus() {
+	rm /tmp/modem.*.state 2>/dev/null
+	state=$(mmcli -m "$(modem_n)")
+	if echo "$state" | grep -q -E "^.*state:.*connected.*$"; then
+		touch /tmp/modem.connected.state
+	elif echo "$state" | grep -q -E "^.*state:.*registered.*$"; then
+		touch /tmp/modem.registered.state
+	elif echo "$state" | grep -q -E "^.*state:.*locked.*$"; then
+		touch /tmp/modem.locked.state
+	fi
+}
+
 mainloop() {
+	#these may be premature and return nothing yet (because modem/sim might not be ready yet)
 	checkforfinishedcalls
 	checkforincomingcalls
 	checkfornewtexts
+
 
 	# Monitor for incoming calls
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Voice',type='signal',member='CallAdded'" | \
@@ -205,10 +219,41 @@ mainloop() {
 			echo "$line" | grep -E "^signal" && checkforfinishedcalls
 		done &
 
+	#Monitor for modem state changes
+	# arg1 holds the new state: MM_MODEM_STATE_FAILED = -1, MM_MODEM_STATE_UNKNOWN = 0, ... MM_MODEM_STATE_REGISTERED=8, MM_MODEM_STATE_CONNECTED = 11
+	initialmodemstatus
+	sxmo_statusbarupdate.sh
+
+	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem',type='signal',member='StateChanged'" | \
+		while read -r line; do
+			if echo "$line" | grep -E "^signal.*StateChanged"; then
+				rm /tmp/modem.*.state 2>/dev/null
+				read -r oldstate
+				read -r newstate
+				if echo "$newstate" | grep "int32 2"; then
+					touch /tmp/modem.locked.state
+				elif echo "$newstate" | grep "int32 8"; then
+					touch /tmp/modem.registered.state
+					checkforfinishedcalls
+					checkforincomingcalls
+					checkfornewtexts
+				elif echo "$newstate" | grep "int32 11"; then
+					touch /tmp/modem.connected.state
+					#3G/2G/4G available
+				fi
+				sxmo_statusbarupdate.sh
+			fi
+		done &
+
 	wait
 	wait
 	wait
+	wait
+
+	rm /tmp/modem.*.state 2>/dev/null
+	sxmo_statusbarupdate.sh
 }
+
 
 echo "sxmo_modemmonitor: starting -- $(date)" >&2
 rm -f "$CACHEDIR"/*.pickedupcall 2>/dev/null #new session, forget all calls we picked up previously
