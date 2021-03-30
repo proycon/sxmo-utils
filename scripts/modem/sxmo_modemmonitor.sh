@@ -191,6 +191,7 @@ initialmodemstatus() {
 		touch /tmp/modem.registered.state
 	elif echo "$state" | grep -q -E "^.*state:.*locked.*$"; then
 		touch /tmp/modem.locked.state
+		pidof sxmo_unlocksim.sh || sxmo_unlocksim.sh &
 	fi
 }
 
@@ -232,6 +233,7 @@ mainloop() {
 				read -r newstate
 				if echo "$newstate" | grep "int32 2"; then
 					touch /tmp/modem.locked.state
+					pidof sxmo_unlocksim.sh || sxmo_unlocksim.sh &
 				elif echo "$newstate" | grep "int32 8"; then
 					touch /tmp/modem.registered.state
 					checkforfinishedcalls
