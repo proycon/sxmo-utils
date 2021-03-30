@@ -32,6 +32,8 @@ alias find="busybox find"
 alias pkill="busybox pkill"
 alias pgrep="busybox pgrep"
 alias xargs="busybox xargs"
+alias less="busybox less"
+alias tail="busybox tail"
 
 SXMO_COMMON_INCLUDED=1
 

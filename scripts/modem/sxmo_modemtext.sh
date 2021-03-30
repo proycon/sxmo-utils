@@ -108,9 +108,9 @@ senddrafttextmenu() {
 
 tailtextlog() {
 	if [ "$TERMMODE" != "true" ]; then
-		st -T "$1 SMS" -e less +F "$LOGDIR/$1/sms.txt"
+		st -T "$1 SMS" -e tail -n9999 -f "$LOGDIR/$1/sms.txt"
 	else
-		less +F "$LOGDIR/$1/sms.txt"
+		tail -n9999 -f "$LOGDIR/$1/sms.txt"
 	fi
 }
 
