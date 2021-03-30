@@ -3,6 +3,9 @@
 # This script is executed (asynchronously) when you get an incoming call
 # You can use it to play a ring tone
 
+#vibrate the phone once
+sxmo_vibratepine 2500 &
+
 #we create a temporary trigger file /tmp/ring.trigger
 #and ring for as long as it exists
 #the missed_call or pickedup hooks delete
@@ -11,6 +14,7 @@ touch /tmp/ring.trigger
 i=0
 while [ -f /tmp/ring.trigger ]; do
 	#play the ring over and over again as long as the trigger persists
+	#(you may want to replace this with a vibration)
 	mpv --quiet --no-video /usr/share/sxmo/ring.ogg
 	i=$((i+1))
 	if [ $i -gt 10 ]; then
