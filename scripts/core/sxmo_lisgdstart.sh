@@ -14,7 +14,7 @@ if [ -z "$LISGD_THRESHOLD_PRESSED" ]; then
 fi
 
 if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/lisgdstart ]; then
-	"$XDG_CONFIG_HOME"/sxmo/hooks/lisgdstart &
+	"$XDG_CONFIG_HOME"/sxmo/hooks/lisgdstart "$@" &
 else
 	#-g format:
 	#   fingers,swipe,edge,distance,command
