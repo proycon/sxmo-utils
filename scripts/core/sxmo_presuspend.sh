@@ -7,6 +7,8 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 pkill -STOP conky
+pkill clickclack
+pkill $KEYBOARD
 
 # If this script returns a non-zero exit code, suspension will be cancelled
 
