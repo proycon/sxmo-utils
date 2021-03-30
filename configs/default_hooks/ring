@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+
+# This script is executed (asynchronously) when you get an incoming call
+# You can use it to play a ring tone
+
+#we create a temporary trigger file /tmp/ring.trigger
+#and ring for as long as it exists
+#the missed_call or pickedup hooks delete
+#delete this trigger again
+touch /tmp/ring.trigger
+i=0
+while [ -f /tmp/ring.trigger ]; do
+	#play the ring over and over again as long as the trigger persists
+	mpv --quiet --no-video /usr/share/sxmo/ring.ogg
+	i=$((i+1))
+	if [ $i -gt 10 ]; then
+		#safety check to protect against runaway endless ringing
+		rm /tmp/ring.trigger
+	fi
+done

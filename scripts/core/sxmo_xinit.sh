@@ -66,9 +66,30 @@ daemonsneedingdbus() {
 }
 
 defaultconfig() {
+	#this is only run on the very first start of sxmo
+
 	mkdir -p "$XDG_CONFIG_HOME/sxmo"
 	cp /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit"
 	chmod u+rx "$XDG_CONFIG_HOME/sxmo/xinit"
+
+	#Set some default hooks
+	mkdir -p "$XDG_CONFIG_HOME/sxmo/hooks"
+	if [ ! -e "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
+		cp /usr/share/sxmo/default_hooks/ring "$XDG_CONFIG_HOME/sxmo/hooks/ring"
+		chmod u+rx "$XDG_CONFIG_HOME/sxmo/hooks/ring"
+	fi
+	if [ ! -e "$XDG_CONFIG_HOME/sxmo/hooks/sms" ]; then
+		cp /usr/share/sxmo/default_hooks/sms "$XDG_CONFIG_HOME/sxmo/hooks/sms"
+		chmod u+rx "$XDG_CONFIG_HOME/sxmo/hooks/sms"
+	fi
+	if [ ! -e "$XDG_CONFIG_HOME/sxmo/hooks/pickup" ]; then
+		cp /usr/share/sxmo/default_hooks/pickup "$XDG_CONFIG_HOME/sxmo/hooks/pickup"
+		chmod u+rx "$XDG_CONFIG_HOME/sxmo/hooks/pickup"
+	fi
+	if [ ! -e "$XDG_CONFIG_HOME/sxmo/hooks/missed_call" ]; then
+		cp /usr/share/sxmo/default_hooks/missed_call "$XDG_CONFIG_HOME/sxmo/hooks/missed_call"
+		chmod u+rx "$XDG_CONFIG_HOME/sxmo/hooks/missed_call"
+	fi
 }
 
 customxinit() {

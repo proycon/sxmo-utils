@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+# This script is executed (asynchronously) when you pick up an incoming call
+
+# remove the ring trigger
+rm /tmp/ring.trigger
+
+# kill any existing playback
+pkill mpv
