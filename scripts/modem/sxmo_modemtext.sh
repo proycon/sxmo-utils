@@ -62,7 +62,11 @@ choosenumbermenu() {
 }
 
 sendnewtextmenu() {
-	NUMBER="$(choosenumbermenu)"
+	if [ -n "$1" ]; then
+		NUMBER="$1"
+	else
+		NUMBER="$(choosenumbermenu)"
+	fi
 	# Compose first version of msg
 	TEXT="$(editmsg "$NUMBER" 'Enter text message here')"
 	sendtextmenu "$NUMBER" "$TEXT"
