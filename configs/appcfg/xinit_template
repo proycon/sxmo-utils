@@ -65,4 +65,4 @@ command -v firefox && export BROWSER=firefox
 #export KEYBOARD_ARGS="-o | clickclack -f /usr/share/sxmo/keypress.wav"
 
 # Or, enable vibration feedback on keypress
-#export KEYBOARD_ARGS="-o | clickclack -v"
+#export KEYBOARD_ARGS="-o | clickclack -V"
