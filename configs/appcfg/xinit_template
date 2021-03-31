@@ -24,17 +24,12 @@ amixer set "Line Out" 50%
 # Play a funky startup tune
 #mpv --quiet --no-video ~/welcome.ogg &
 
-# enter SIM PIN (WARNING! SECURITY RISK!)
-#  the sleep is there because the modem
-#  might take a bit to be available
-#  after first boot.
-#sleep 20 && mmcli -i 0 --pin 1234
-
 # turn on modemmonitor on login
 # Note: if the modemmonitor is not on you can
 # not receive texts/calls!
-#sleep 22 && sxmo_modemmonitortoggle.sh on &
-
+# (there is a bit of a delay to
+# give the modem some time to set up)
+sleep 15 && sxmo_modemmonitortoggle.sh on &
 
 
 ### Configuration Parameters ###
