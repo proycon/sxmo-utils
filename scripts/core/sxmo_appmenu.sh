@@ -53,6 +53,7 @@ programchoicesinit() {
 		else
 			CHOICES="
 				$(command -v aerc       >/dev/null && echo "$icon_eml Aerc    	^ 0 ^ st -e aerc")
+				$(command -v amfora     >/dev/null && echo "$icon_glb Amfora      ^ 0 ^ st -e amfora")
 				$(command -v alpine     >/dev/null && echo "$icon_eml Alpine      ^ 0 ^ st -e alpine")
 				$(command -v anbox      >/dev/null && echo "$icon_and Anbox       ^ 0 ^ anbox")
 				$(command -v audacity   >/dev/null && echo "$icon_mic Audacity    ^ 0 ^ audacity")
@@ -78,6 +79,7 @@ programchoicesinit() {
 				$(command -v kontact    >/dev/null && echo "$icon_msg Kontact ^ 0 ^ kontact")
 				$(command -v konversation   >/dev/null && echo "$icon_msg Konversation ^ 0 ^ konversation")
 				$(command -v kwrite     >/dev/null && echo "$icon_edt Kwrite      ^ 0 ^ kwrite")
+				$(command -v lagrange   >/dev/null && echo "$icon_glb Lagrange    ^ 0 ^ lagrange")
 				$(command -v lf         >/dev/null && echo "$icon_dir Lf          ^ 0 ^ st -e lf")
 				$(command -v midori     >/dev/null && echo "$icon_glb Midori      ^ 0 ^ midori")
 				$(command -v mutt       >/dev/null && echo "$icon_eml Mutt        ^ 0 ^ st -e mutt")
