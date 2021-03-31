@@ -53,7 +53,7 @@ command -v firefox && export BROWSER=firefox
 #export SXMO_RTCWAKEINTERVAL=300
 
 # Immediately turn the screen off when locking the device
-#export SXMO_LOCK_SCREEN_OFF=1
+export SXMO_LOCK_SCREEN_OFF=1
 
 # Immediately suspend the phone when locking
 #export SXMO_LOCK_SUSPEND=1
