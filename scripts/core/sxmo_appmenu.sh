@@ -297,6 +297,8 @@ programchoicesinit() {
 				$icon_arl History Previous        ^ 1 ^ key Alt+Shift+comma
 				$icon_arr History Next            ^ 1 ^ key Alt+Shift+period
 				$icon_trm Buffer                  ^ 0 ^ type '/buffer '
+				$icon_aru Scroll up               ^ 1 ^ key Prior
+				$icon_ard Scroll down             ^ 1 ^ key Next
 			"
 			WINNAME=weechat
 		elif echo "$WMNAME" | grep -i -w "sms"; then
