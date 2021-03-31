@@ -11,7 +11,7 @@ modem_n() {
 }
 
 sim_n() {
-	SIMS="$(mmcli -m $(modem_n) | grep SIM)"
+	SIMS="$(mmcli -m "$(modem_n)" | grep SIM)"
 	echo "$SIMS" | grep -oE 'SIM\/([0-9]+)' | cut -d'/' -f2
 	return
 }
@@ -23,11 +23,12 @@ else
 	pkill dmenu #kill existing dmenu
 	while [ $retry -eq 1 ]; do
 		PICKED="$(
+			# shellcheck disable=SC2039
 			echo -e "Cancel\n0000\n1234" | sxmo_dmenu_with_kb.sh -l 3 -c -p "PIN:" | tr -d "\n\r "
 		)"
 		if [ -n "$PICKED" ] && [ "$PICKED" != "Cancel" ]; then
 			retry=0
-			mmcli -i $(sim_n) --pin "$PICKED" > /tmp/unlockmsg 2>&1 || retry=1
+			mmcli -i "$(sim_n)" --pin "$PICKED" > /tmp/unlockmsg 2>&1 || retry=1
 			MSG=$(cat /tmp/unlockmsg)
 			[ -n "$MSG" ] && notify-send "$MSG"
 			if echo "$MSG" | grep -q "not SIM-PIN locked"; then

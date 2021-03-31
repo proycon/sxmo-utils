@@ -229,7 +229,8 @@ mainloop() {
 		while read -r line; do
 			if echo "$line" | grep -E "^signal.*StateChanged"; then
 				rm /tmp/modem.*.state 2>/dev/null
-				read -r oldstate
+				# shellcheck disable=SC2034
+				read -r oldstate #unused but we need to read past it
 				read -r newstate
 				if echo "$newstate" | grep "int32 2"; then
 					touch /tmp/modem.locked.state
