@@ -20,6 +20,7 @@ if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/unlocksim" ]; then
 	"$XDG_CONFIG_HOME/sxmo/hooks/unlocksim" "$(sim_n)"
 else
 	retry=1
+	pkill dmenu #kill existing dmenu
 	while [ $retry -eq 1 ]; do
 		PICKED="$(
 			echo -e "Cancel\n0000\n1234" | sxmo_dmenu_with_kb.sh -l 3 -c -p "PIN:" | tr -d "\n\r "
