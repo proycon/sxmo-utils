@@ -7,7 +7,7 @@ echo "Updating all packages from repositories"
 sudo apk update
 
 echo "Upgrading all packages"
-sudo apk upgrade
+sudo apk upgrade -a
 
 echo "Upgrade complete - reboot for all changes to take effect"
 read -r
