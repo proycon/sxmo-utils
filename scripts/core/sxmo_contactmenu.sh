@@ -21,12 +21,13 @@ editcontactname() {
 		sxmo_dmenu_with_kb.sh -c -l 3 -p "Edit Contact"
 	)"
 
-	if echo "$PICKED" | grep -q "^Old name: "; then
-		editcontact "$1"
-	else
+	if ! echo "$PICKED" | grep -q "^Old name: "; then
 		newcontact="$oldnumber	$PICKED"
-		sed -i "s/^$1$/$newcontact/" "$CONTACTFILE" && editcontact "$newcontact"
+		sed -i "s/^$1$/$newcontact/" "$CONTACTFILE"
+		set -- "$newcontact"
 	fi
+
+	editcontact "$1"
 }
 
 editcontactnumber() {
@@ -39,12 +40,13 @@ editcontactnumber() {
 		sxmo_dmenu_with_kb.sh -c -l 3 -p "Edit Contact"
 	)"
 
-	if echo "$PICKED" | grep -q "^Old number: "; then
-		editcontact "$1"
-	else
+	if ! echo "$PICKED" | grep -q "^Old number: "; then
 		newcontact="$PICKED	$oldname"
-		sed -i "s/^$1$/$newcontact/" "$CONTACTFILE" && editcontact "$newcontact"
+		sed -i "s/^$1$/$newcontact/" "$CONTACTFILE"
+		set -- "$newcontact"
 	fi
+
+	editcontact "$1"
 }
 
 deletecontact() {
@@ -62,19 +64,42 @@ deletecontact() {
 editcontact() {
 	number="$(echo "$1" | cut -d"	" -f1)"
 	name="$(echo "$1" | cut -d"	" -f2)"
-	ENTRIES="$(printf %b "Cancel\nDelete\nName: $name\nNumber: $number")"
+	ENTRIES="$(printf %b "Cancel\nName: $name\nNumber: $number")"
 
 	PICKED="$(
 		echo "$ENTRIES" |
 		dmenu -c -l 4 -p "Edit Contact"
 	)"
 
-	if echo "$PICKED" | grep -q "^Delete"; then
-		deletecontact "$1"
-	elif echo "$PICKED" | grep -q "^Name: "; then
+	if echo "$PICKED" | grep -q "^Name: "; then
 		editcontactname "$1"
 	elif echo "$PICKED" | grep -q "^Number: "; then
 		editcontactnumber "$1"
+	else
+		showcontact "$1"
+	fi
+}
+
+showcontact() {
+	number="$(echo "$1" | cut -d"	" -f1)"
+	name="$(echo "$1" | cut -d"	" -f2)"
+	ENTRIES="$(printf %b "Cancel\nSend a Message\nCall\nEdit\nDelete")"
+
+	PICKED="$(
+		echo "$ENTRIES" |
+		dmenu -c -l 5 -p "$name"
+	)"
+
+	if echo "$PICKED" | grep -q "^Send a Message"; then
+		sxmo_modemtext.sh sendtextmenu  "$number"
+		exit
+	elif echo "$PICKED" | grep -q "^Call"; then
+		sxmo_modemdial.sh "$number"
+		exit
+	elif echo "$PICKED" | grep -q "^Edit"; then
+		editcontact "$1"
+	elif echo "$PICKED" | grep -q "^Delete"; then
+		deletecontact "$1" || showcontact "$1"
 	fi
 }
 
@@ -91,7 +116,7 @@ main() {
 		echo "$PICKED" | grep -q "Close Menu" && exit
 		echo "$PICKED" | grep -q "New Contact" && newcontact
 
-		editcontact "$(echo "$PICKED" | sed 's/: /\t/g')"
+		showcontact "$(echo "$PICKED" | sed 's/: /\t/g')"
 	done
 }
 
