@@ -59,7 +59,7 @@ programchoicesinit() {
 				$(command -v audacity   >/dev/null && echo "$icon_mic Audacity    ^ 0 ^ audacity")
 				$(command -v calcurse   >/dev/null && echo "$icon_clk Calcurse    ^ 0 ^ st -e calcurse")
 				$(command -v cmus       >/dev/null && echo "$icon_mus Cmus        ^ 0 ^ st -e cmus")
-				$(command -v dino       >/dev/null && echo "$icon_clk Dino        ^ 0 ^ GDK_SCALE=2 dino")
+				$(command -v dino       >/dev/null && echo "$icon_clk Dino        ^ 0 ^ GDK_SCALE=1 dino")
 				$(command -v dolphin    >/dev/null && echo "$icon_dir Dolphin     ^ 0 ^ dolphin")
 				$(command -v emacs      >/dev/null && echo "$icon_edt Emacs       ^ 0 ^ st -e emacs")
 				$(command -v epiphany   >/dev/null && echo "$icon_glb Epiphany    ^ 0 ^ epiphany")
