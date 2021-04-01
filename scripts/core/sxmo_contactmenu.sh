@@ -52,7 +52,7 @@ editcontactnumber() {
 deletecontact() {
 	name="$(echo "$1" | cut -d"	" -f2)"
 
-	ENTRIES="$(printf "$icon_chk Yes\n$icon_cls No")"
+	ENTRIES="$(printf "$icon_cls No\n$icon_chk Yes")"
 	PICKED="$(
 		echo "$ENTRIES" |
 		dmenu -c -l 3 -p "$icon_del Delete $name ?"
