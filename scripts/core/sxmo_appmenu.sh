@@ -55,7 +55,7 @@ programchoicesinit() {
 				$(command -v aerc       >/dev/null && echo "$icon_eml Aerc    	^ 0 ^ st -e aerc")
 				$(command -v amfora     >/dev/null && echo "$icon_glb Amfora      ^ 0 ^ st -e amfora")
 				$(command -v alpine     >/dev/null && echo "$icon_eml Alpine      ^ 0 ^ st -e alpine")
-				$(command -v anbox      >/dev/null && echo "$icon_and Anbox       ^ 0 ^ anbox")
+				$(command -v anbox-launch >/dev/null && echo "$icon_and Anbox       ^ 0 ^ anbox")
 				$(command -v audacity   >/dev/null && echo "$icon_mic Audacity    ^ 0 ^ audacity")
 				$(command -v calcurse   >/dev/null && echo "$icon_clk Calcurse    ^ 0 ^ st -e calcurse")
 				$(command -v cmus       >/dev/null && echo "$icon_mus Cmus        ^ 0 ^ st -e cmus")
