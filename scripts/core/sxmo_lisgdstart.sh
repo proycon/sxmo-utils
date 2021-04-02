@@ -23,7 +23,7 @@ else
 		-g '1,DRUL,BR,*,sxmo_hotcorner.sh bottomright' \
 		-g '1,DLUR,BL,*,sxmo_hotcorner.sh bottomleft' \
 		-g '1,ULDR,TL,*,sxmo_hotcorner.sh topleft' \
-		-g '1,DRUL,TR,*,sxmo_hotcorner.sh topright' \
+		-g '1,URDL,TR,*,sxmo_hotcorner.sh topright' \
 		-g '1,LR,B,L,sxmo_gesturehandler.sh enter' \
 		-g '1,RL,B,L,sxmo_gesturehandler.sh back' \
 		-g '1,LR,L,*,sxmo_gesturehandler.sh prevdesktop' \
