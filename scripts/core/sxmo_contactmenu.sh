@@ -3,9 +3,23 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+valid_number() {
+	number="$(echo "$1" | sed "s/^0\([0-9]\{9\}\)$/${DEFAULT_NUMBER_PREFIX:-0}\1/")"
+
+	if echo "$number" | grep -q "^+[0-9]\{11\}$"; then
+		echo "$number"
+	else
+		notify-send "\"$number\" is not a valid phone number"
+		notify-send "Valid format is \"+[0-9]{11}\""
+	fi
+}
+
 newcontact() {
 	name="$(echo | sxmo_dmenu_with_kb.sh -c -l 2 -p "$icon_usr Name")"
-	number="$(echo | sxmo_dmenu_with_kb.sh -c -l 2 -p "$icon_phl Number")"
+	while [ -z "$number" ]; do
+		number="$(echo | sxmo_dmenu_with_kb.sh -c -l 2 -p "$icon_phl Number")"
+		number="$(valid_number "$number")"
+	done
 
 	PICKED="$number	$name" # now act like if we picked this new contact
 	echo "$PICKED" >> "$CONTACTFILE"
@@ -35,18 +49,22 @@ editcontactnumber() {
 	oldname="$(echo "$1" | cut -d"	" -f2)"
 
 	ENTRIES="$(printf %b "Old number: $oldnumber")"
-	PICKED="$(
-		echo "$ENTRIES" |
-		sxmo_dmenu_with_kb.sh -c -l 3 -p "$icon_edt Edit Contact"
-	)"
+	PICKED= # already used var name
+	while [ -z "$PICKED" ]; do
+		PICKED="$(
+			echo "$ENTRIES" |
+			sxmo_dmenu_with_kb.sh -c -l 3 -p "$icon_edt Edit Contact"
+		)"
+		if echo "$PICKED" | grep -q "^Old number: "; then
+			editcontact "$1"
+			return
+		fi
+		PICKED="$(valid_number "$PICKED")"
+	done
 
-	if ! echo "$PICKED" | grep -q "^Old number: "; then
-		newcontact="$PICKED	$oldname"
-		sed -i "s/^$1$/$newcontact/" "$CONTACTFILE"
-		set -- "$newcontact"
-	fi
-
-	editcontact "$1"
+	newcontact="$PICKED	$oldname"
+	sed -i "s/^$1$/$newcontact/" "$CONTACTFILE"
+	editcontact "$newcontact"
 }
 
 deletecontact() {

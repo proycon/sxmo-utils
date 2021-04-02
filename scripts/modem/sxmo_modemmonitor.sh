@@ -47,11 +47,9 @@ lookupcontactname() {
 	if [ "$1" = "--" ]; then
 		echo "Unknown number"
 	else
-		NUMBER="$1"
+		NUMBER="$(echo "$1" | sed "s/^0\([0-9]\{9\}\)$/${DEFAULT_NUMBER_PREFIX:-0}\1/")"
 		CONTACT=$(sxmo_contacts.sh --all |
-			grep "$NUMBER:" | #this is not an exact match but a suffix match
-							  #which also works if the + and country code are missing
-							  #but may lead to false positives in rare cases (short numbers)
+			grep "^$NUMBER:" |
 			cut -d':' -f 2 |
 			sed 's/^[ \t]*//;s/[ \t]*$//' #strip leading/trailing whitespace
 		)

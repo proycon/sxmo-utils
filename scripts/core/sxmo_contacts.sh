@@ -20,6 +20,7 @@ contacts() {
 	grep -q . "$CONTACTSFILE" || echo " " > "$CONTACTSFILE"
 	RECENTCONTACTEDNUMBERSREVCHRON="$(
 		cut -f3 "$LOGFILE" |
+		sed "s/^0\([0-9]\{9\}\)$/${DEFAULT_NUMBER_PREFIX:-0}\1/" |
 		tac |
 		awk '!($0 in a){a[$0]; print}' |
 		sed '/^[[:space:]]*$/d'
