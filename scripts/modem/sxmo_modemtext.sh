@@ -74,7 +74,7 @@ sendtextmenu() {
 			menu dmenu -c -idx 1 -p "Confirm" -l 10
 		)"
 		if echo "$CONFIRM" | grep -q "Send"; then
-			(cat "$DRAFT" | sxmo_modemsendsms.sh "$NUMBER" -) && \
+			(sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT") && \
 			rm "$DRAFT" && \
 			echo "Sent text to $NUMBER">&2 && exit 0
 		elif echo "$CONFIRM" | grep -q "Edit"; then

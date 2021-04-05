@@ -52,6 +52,7 @@ editcontactnumber() {
 deletecontact() {
 	name="$(echo "$1" | cut -d"	" -f2)"
 
+	# shellcheck disable=SC2059
 	ENTRIES="$(printf "$icon_cls No\n$icon_chk Yes")"
 	PICKED="$(
 		echo "$ENTRIES" |
