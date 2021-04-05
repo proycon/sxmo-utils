@@ -135,12 +135,12 @@ checkforincomingcalls() {
 
 	sxmo_notificationwrite.sh \
 		"$NOTIFDIR/incomingcall_${VOICECALLID}_notification" \
-		"sxmo_modemcall.sh pickup $VOICECALLID" \
+		"sxmo_modemcall.sh pickup '$VOICECALLID'" \
 		none \
 		"Pickup - $CONTACTNAME" &
 	sxmo_notificationwrite.sh \
 		"$NOTIFDIR/incomingcall_${VOICECALLID}_notification_discard" \
-		"sxmo_modemcall.sh hangup $VOICECALLID" \
+		"sxmo_modemcall.sh hangup '$VOICECALLID'" \
 		none \
 		"Discard - $CONTACTNAME" &
 
@@ -175,7 +175,7 @@ checkfornewtexts() {
 
 		sxmo_notificationwrite.sh \
 			random \
-			"sxmo_modemtext.sh tailtextlog $NUM" \
+			"sxmo_modemtext.sh tailtextlog '$NUM'" \
 			"$LOGDIR/$NUM/sms.txt" \
 			"Message - $CONTACTNAME: $TEXT"
 
