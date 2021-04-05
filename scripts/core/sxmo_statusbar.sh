@@ -20,6 +20,16 @@ update() {
 		CALLSECONDS="$(echo "$NOWS" - "$CALLSTARTS" | bc)"
 		CALLINFO="${CALLSECONDS}s"
 	fi
+	
+	# symbol if wireguard/vpn is connected
+	VPN=""
+	VPNDEVICE="$(nmcli con show | grep vpn | awk '{ print $4 }')"
+	WGDEVICE="$(nmcli con show | grep wireguard | awk '{ print $4 }')"
+	if [ -n "$VPNDEVICE" ] && [ "$VPNDEVICE" != "--" ]; then 
+ 		VPN=" "
+	elif [ -n "$WGDEVICE" ] && [ "$WGDEVICE" != "--" ]; then
+ 		VPN=" "
+ 	fi
 
 	# W symbol if wireless is connect
 	WIRELESS=""
@@ -121,7 +131,7 @@ update() {
 	# Time
 	TIME="$(date +%R)"
 
-	BAR="${CALLINFO} ${MODEMMON} ${WIRELESS} ${AUDIOSYMBOL}${VOLUMESYMBOL} ${BATSTATUS} ${TIME}"
+	BAR="$(echo "${CALLINFO} ${MODEMMON} ${WIRELESS} ${VPN} ${AUDIOSYMBOL}${VOLUMESYMBOL} ${BATSTATUS} ${TIME}" | sed 's| \+| |g')"
 	xsetroot -name "$BAR"
 }
 
