@@ -17,6 +17,8 @@ export CACHEDIR="$XDG_CACHE_HOME"/sxmo
 export LOGDIR="$XDG_DATA_HOME"/sxmo/modem
 # shellcheck disable=SC2034
 export CONTACTFILE="$XDG_CONFIG_HOME/sxmo/contacts.tsv"
+# shellcheck disable=SC2034
+export MODEMSTATEFILE="$XDG_RUNTIME_DIR/sxmo.modem.state"
 
 command -v "$KEYBOARD" > /dev/null || export KEYBOARD=svkbd-mobile-intl
 

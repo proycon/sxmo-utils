@@ -12,6 +12,9 @@ err() {
 }
 
 gracefulexit() {
+	rm "$MODEMSTATEFILE"
+	sxmo_statusbarupdate.sh
+	sleep 1
 	echo "sxmo_modemmonitor: gracefully exiting (on signal or after error)">&2
 	kill -9 0
 }
@@ -183,15 +186,17 @@ checkfornewtexts() {
 }
 
 initialmodemstatus() {
-	rm /tmp/modem.*.state 2>/dev/null
+	touch "$MODEMSTATEFILE"
 	state=$(mmcli -m "$(modem_n)")
 	if echo "$state" | grep -q -E "^.*state:.*connected.*$"; then
-		touch /tmp/modem.connected.state
+		echo connected > "$MODEMSTATEFILE"
 	elif echo "$state" | grep -q -E "^.*state:.*registered.*$"; then
-		touch /tmp/modem.registered.state
+		echo registered > "$MODEMSTATEFILE"
 	elif echo "$state" | grep -q -E "^.*state:.*locked.*$"; then
-		touch /tmp/modem.locked.state
+		echo locked > "$MODEMSTATEFILE"
 		pidof sxmo_unlocksim.sh || sxmo_unlocksim.sh &
+	else
+		echo unknown > "$MODEMSTATEFILE"
 	fi
 }
 
@@ -228,21 +233,22 @@ mainloop() {
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem',type='signal',member='StateChanged'" | \
 		while read -r line; do
 			if echo "$line" | grep -E "^signal.*StateChanged"; then
-				rm /tmp/modem.*.state 2>/dev/null
 				# shellcheck disable=SC2034
 				read -r oldstate #unused but we need to read past it
 				read -r newstate
 				if echo "$newstate" | grep "int32 2"; then
-					touch /tmp/modem.locked.state
+					echo locked > "$MODEMSTATEFILE"
 					pidof sxmo_unlocksim.sh || sxmo_unlocksim.sh &
 				elif echo "$newstate" | grep "int32 8"; then
-					touch /tmp/modem.registered.state
+					echo registered > "$MODEMSTATEFILE"
 					checkforfinishedcalls
 					checkforincomingcalls
 					checkfornewtexts
 				elif echo "$newstate" | grep "int32 11"; then
-					touch /tmp/modem.connected.state
+					echo connected > "$MODEMSTATEFILE"
 					#3G/2G/4G available
+				else
+					echo unknown > "$MODEMSTATEFILE"
 				fi
 				sxmo_statusbarupdate.sh
 			fi
@@ -253,7 +259,7 @@ mainloop() {
 	wait
 	wait
 
-	rm /tmp/modem.*.state 2>/dev/null
+	rm "$MODEMSTATEFILE" 2>/dev/null
 	sxmo_statusbarupdate.sh
 }
 

@@ -30,14 +30,16 @@ update() {
 
 	# M symbol if modem monitoring is on & modem present
 	MODEMMON=""
-	pgrep -f sxmo_modemmonitor.sh && MODEMMON=""
-	if [ -n "$MODEMMON" ]; then
-		if [ -f /tmp/modem.locked.state ]; then
+	if [ -f "$MODEMSTATEFILE" ]; then
+		MODEMSTATE="$(cat "$MODEMSTATEFILE")"
+		if [ locked = "$MODEMSTATE" ]; then
 			MODEMMON=""
-		elif [ -f /tmp/modem.registered.state ]; then
+		elif [ registered = "$MODEMSTATE" ]; then
 			MODEMMON=""
-		elif [ -f /tmp/modem.connected.state ]; then
+		elif [ connected = "$MODEMSTATE" ]; then
 			MODEMMON=""
+		else
+			MODEMMON=""
 		fi
 	fi
 
