@@ -98,11 +98,14 @@ networksmenu() {
 				Launch Nmtui
 				Launch Ifconfig
 				Scan Wifi Networks
+				System Menu
 				Close Menu
 			" |
 			awk '{$1=$1};1' | grep '\w' | dmenu -c -p 'Networks' -l 14
 		)"
-		if [ "$CHOICE" = "Close Menu" ]; then
+		if [ "$CHOICE" = "System Menu" ]; then
+			sxmo_appmenu.sh sys && exit
+		elif [ "$CHOICE" = "Close Menu" ]; then
 			exit
 		elif [ "$CHOICE" = "Add a GSM Network" ]; then
 			addnetworkgsmmenu
@@ -113,9 +116,9 @@ networksmenu() {
 		elif [ "$CHOICE" = "Launch Nmtui" ]; then
 			st -e nmtui &
 		elif [ "$CHOICE" = "Launch Ifconfig" ]; then
-			st -f Terminus-14 -e watch -n 2 ifconfig &
+			st -e watch -n 2 ifconfig &
 		elif [ "$CHOICE" = "Scan Wifi Networks" ]; then
-			st -f Terminus-14 -e watch -n 2 nmcli d wifi list &
+			st -e watch -n 2 nmcli d wifi list &
 		else
 			toggleconnection "$CHOICE"
 		fi

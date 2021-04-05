@@ -94,6 +94,7 @@ programchoicesinit() {
 				$(command -v newsboat   >/dev/null && echo "$icon_rss Newsboat    ^ 0 ^ st -e newsboat")
 				$(command -v nnn        >/dev/null && echo "$icon_dir Nnn         ^ 0 ^ st -e nnn")
 				$(command -v pidgin     >/dev/null && echo "$icon_msg Pidgin      ^ 0 ^ pidgin")
+				$(command -v profanity  >/dev/null && echo "$icon_msg Profanity   ^ 0 ^ st -e profanity")
 				$(command -v qutebrowser>/dev/null && echo "$icon_glb Qutebrowser ^ 0 ^ qutebrowser")
 				$(command -v ranger     >/dev/null && echo "$icon_dir Ranger      ^ 0 ^ st -e ranger")
 				$(command -v sacc       >/dev/null && echo "$icon_itm Sacc        ^ 0 ^ st -e sacc i-logout.cz/1/bongusta")
