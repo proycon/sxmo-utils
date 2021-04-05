@@ -307,7 +307,7 @@ programchoicesinit() {
 			number="$(echo "$WMNAME" | sed -e 's|^\"||' -e 's|\"$||' | cut -f1 -d' ')"
 			#sms
 			CHOICES="
-				$icon_msg Reply          ^ 0 ^ sxmo_modemtext.sh $number
+				$icon_msg Reply          ^ 0 ^ sxmo_modemtext.sh sendtextmenu $number
 				$icon_phn Call           ^ 0 ^ sxmo_modemdial.sh $number
 			"
 			WINNAME=sms
