@@ -26,9 +26,9 @@ update() {
 	VPNDEVICE="$(nmcli con show | grep vpn | awk '{ print $4 }')"
 	WGDEVICE="$(nmcli con show | grep wireguard | awk '{ print $4 }')"
 	if [ -n "$VPNDEVICE" ] && [ "$VPNDEVICE" != "--" ]; then 
- 		VPN=" "
+ 		VPN=""
 	elif [ -n "$WGDEVICE" ] && [ "$WGDEVICE" != "--" ]; then
- 		VPN=" "
+ 		VPN=""
  	fi
 
 	# W symbol if wireless is connect

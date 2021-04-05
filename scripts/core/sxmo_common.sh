@@ -234,6 +234,8 @@ icon_wif=""
 icon_bth=""
 # shellcheck disable=SC2034
 icon_pls=""
+# shellcheck disable=SC2034
+icon_key=""
 
 #allow the user to override icons
 if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/icons" ]; then
