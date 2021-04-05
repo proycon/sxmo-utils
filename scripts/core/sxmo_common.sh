@@ -30,6 +30,9 @@ command -v "$KEYBOARD" > /dev/null || export KEYBOARD=svkbd-mobile-intl
 # shellcheck disable=SC2039
 command -v shopt > /dev/null && shopt -s expand_aliases
 
+alias dmenu="sxmo_dmenu.sh"
+alias st="sxmo_terminal.sh"
+
 alias find="busybox find"
 alias pkill="busybox pkill"
 alias pgrep="busybox pgrep"

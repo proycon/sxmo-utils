@@ -4,19 +4,9 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-TERMMODE=$([ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] && echo "true")
-
-menu() {
-	if [ "$TERMMODE" != "true" ]; then
-		"$@"
-	else
-		vis-menu -i -l 10
-	fi
-}
-
 err() {
 	echo "$1">&2
-	echo "$1" | menu dmenu -c -l 10
+	echo "$1" | dmenu -c -l 10
 	kill $$
 }
 
@@ -25,7 +15,7 @@ choosenumbermenu() {
 	NUMBER="$(
 		printf %b "\n$icon_cls Cancel\n$icon_grp More contacts\n$(sxmo_contacts.sh | grep -E "^\+?[0-9]+:")" |
 		awk NF |
-		menu sxmo_dmenu_with_kb.sh -p "Number" -l 10 -c -i |
+		sxmo_dmenu_with_kb.sh -p "Number" -l 10 -c -i |
 		cut -d: -f1 |
 		tr -d -- '- '
 	)"
@@ -33,7 +23,7 @@ choosenumbermenu() {
 		NUMBER="$( #joined words without space is not a bug
 			printf %b "\nCancel\n$(sxmo_contacts.sh --all)" |
 				grep . |
-				menu sxmo_dmenu_with_kb.sh -l 10 -p "Number" -c -i |
+				sxmo_dmenu_with_kb.sh -l 10 -p "Number" -c -i |
 				cut -d: -f1 |
 				tr -d -- '- '
 		)"
@@ -71,7 +61,7 @@ sendtextmenu() {
 	do
 		CONFIRM="$(
 			printf %b "$icon_edt Edit\n$icon_snd Send\n$icon_cls Cancel" |
-			menu dmenu -c -idx 1 -p "Confirm" -l 10
+			dmenu -c -idx 1 -p "Confirm" -l 10
 		)"
 		if echo "$CONFIRM" | grep -q "Send"; then
 			(sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT") && \
@@ -90,12 +80,7 @@ tailtextlog() {
 	CONTACTNAME="$(sxmo_contacts.sh | grep "^$NUMBER" | cut -d' ' -f2-)"
 	[ "Unknown Number" = "$CONTACTNAME" ] && CONTACTNAME="$CONTACTNAME ($NUMBER)"
 
-	set -- sh -c "tail -n9999 -f \"$LOGDIR/$NUMBER/sms.txt\" | sed \"s|$NUMBER|$CONTACTNAME|g\""
-	if [ "$TERMMODE" != "true" ]; then
-		st -T "$NUMBER SMS" -e "$@"
-	else
-		"$@"
-	fi
+	st -T "$NUMBER SMS" -e sh -c "tail -n9999 -f \"$LOGDIR/$NUMBER/sms.txt\" | sed \"s|$NUMBER|$CONTACTNAME|g\""
 }
 
 readtextmenu() {
@@ -107,7 +92,7 @@ readtextmenu() {
 			printf %b "$CONTACT" | xargs -IL echo "L logfile"
 		done
 	)"
-	PICKED="$(printf %b "$ENTRIES" | menu dmenu -p Texts -c -l 10 -i)"
+	PICKED="$(printf %b "$ENTRIES" | dmenu -p Texts -c -l 10 -i)"
 
 	if echo "$PICKED" | grep "Close Menu"; then
 		exit 1
