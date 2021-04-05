@@ -124,7 +124,7 @@ showcontact() {
 
 main() {
 	while true; do
-		CONTACTS="$(sed 's/\t/: /g' "$CONTACTFILE")"
+		CONTACTS="$(sxmo_contacts.sh --all)"
 		ENTRIES="$(echo "$CONTACTS" | xargs -0 printf "$icon_ret Close Menu\n$icon_pls New Contact\n%s")"
 
 		PICKED="$(
