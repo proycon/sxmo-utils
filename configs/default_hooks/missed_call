@@ -3,6 +3,7 @@
 # This script is executed (asynchronously) when you missed a call
 # You can use it to play a ring tone
 
-#we simply remove the ring trigger file
-#written by the ring hook and the ringing will stop
-rm /tmp/ring.trigger
+# kill existing ring playback
+MPVID="$(cat "$XDG_RUNTIME_DIR/sxmo.ring.pid")"
+kill $MPVID
+rm "$XDG_RUNTIME_DIR/sxmo.ring.pid"
