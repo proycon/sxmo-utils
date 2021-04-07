@@ -125,6 +125,40 @@ if [ "$HANDLE" -ne 0 ]; then
 		"back")
 			xdotool key BackSpace
 			;;
+		"powerbutton_one")
+			if echo "$WMCLASS" | grep -i "megapixels"; then
+				xdotool key --clearmodifiers "space"
+			else
+				sxmo_keyboard.sh toggle
+			fi
+			;;
+		"powerbutton_two")
+			sxmo_blinkled.sh blue && $TERMCMD -e "$SHELL"
+			;;
+		"powerbutton_three")
+			sxmo_blinkled.sh blue && $BROWSER
+			;;
+		"volup_one")
+			sxmo_appmenu.sh
+			;;
+		"volup_two")
+			sxmo_appmenu.sh sys
+			;;
+		"volup_three")
+			sxmo_lock.sh
+			;;
+		"voldown_one")
+			xdotool key --clearmodifiers Alt+space
+			;;
+		"voldown_two")
+			xdotool key --clearmodifiers Alt+Return	
+			;;
+		"voldown_three")
+			sxmo_blinkled.sh red && xdotool windowkill "$(xdotool getactivewindow)"
+			;;
+		"voldown_four")
+			sxmo_blinkled.sh red & xdotool windowclose "$(xdotool getactivewindow)"
+			;;
 		*)
 			#fallback, just execute the command
 			"$@"
