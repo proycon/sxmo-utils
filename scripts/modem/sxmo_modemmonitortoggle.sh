@@ -9,8 +9,8 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 if [ "$1" != "on" ] && pgrep -f sxmo_modemmonitor.sh; then
-	pgrep -f sxmo_modemmonitor.sh | grep -Ev "^${$}$" | xargs -IP kill -TERM P
-elif [ "$1" != "off" ]; then
+	pkill -TERM -f sxmo_modemmonitor.sh
+elif [ "$1" != "off" ] && ! pgrep -f sxmo_modemmonitor.sh; then
 	setsid -f sxmo_modemmonitor.sh &
 fi
 
