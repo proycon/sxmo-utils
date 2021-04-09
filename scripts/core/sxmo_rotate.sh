@@ -37,7 +37,7 @@ rotleft() {
 	sxmo_keyboard.sh close
 	xrandr -o left
 	applyptrmatrix 0 -1 1 1 0 0 0 0 1
-	pidof lisgd && pkill lisgd | sxmo_lisgdstart.sh -o -1 &
+	pidof lisgd && pkill lisgd | sxmo_lisgdstart.sh -o 3 &
 	exit 0
 }
 
