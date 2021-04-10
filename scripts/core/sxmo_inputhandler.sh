@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 
+# This script handles input actions, it is called by lisgd for gestures
+# and by dwm for button presses
+
 ACTION="$1"
 
 # include common definitions
@@ -10,9 +13,9 @@ XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
 WMCLASS="$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3- | cut -d ' ' -f1 | tr -d '\",')"
 
 HANDLE=1
-if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/gesture ]; then
+if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler ]; then
 	#hook script must exit with a zero exit code ONLY if it has handled the gesture!
-	"$XDG_CONFIG_HOME"/sxmo/hooks/gesture "$WMCLASS" "$@"
+	"$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler "$WMCLASS" "$@"
 	HANDLE=$?
 fi
 
@@ -151,7 +154,7 @@ if [ "$HANDLE" -ne 0 ]; then
 			xdotool key --clearmodifiers Alt+space
 			;;
 		"voldown_two")
-			xdotool key --clearmodifiers Alt+Return	
+			xdotool key --clearmodifiers Alt+Return
 			;;
 		"voldown_three")
 			sxmo_blinkled.sh red && xdotool windowkill "$(xdotool getactivewindow)"
@@ -159,6 +162,17 @@ if [ "$HANDLE" -ne 0 ]; then
 		"voldown_four")
 			sxmo_blinkled.sh red & xdotool windowclose "$(xdotool getactivewindow)"
 			;;
+        "topleftcorner")
+            sxmo_appmenu.sh sys &
+            ;;
+        "toprightcorner")
+            ;;
+        "bottomleftcorner")
+            sxmo_lock.sh &
+            ;;
+        "bottomrightcorner")
+            sxmo_rotate.sh &
+            ;;
 		*)
 			#fallback, just execute the command
 			"$@"
