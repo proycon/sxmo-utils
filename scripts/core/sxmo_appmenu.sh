@@ -89,7 +89,7 @@ programchoicesinit() {
 				$(command -v navit      >/dev/null && echo "$icon_gps Navit       ^ 0 ^ navit")
 				$(command -v ncmpcpp    >/dev/null && echo "$icon_mus Ncmpcpp     ^ 0 ^ st -e ncmpcpp")
 				$(command -v neomutt    >/dev/null && echo "$icon_eml Neomutt     ^ 0 ^ st -e neomutt")
-				$(command -v neovim     >/dev/null && echo "$icon_vim Neovim      ^ 0 ^ st -e neovim")
+				$(command -v nvim       >/dev/null && echo "$icon_vim Neovim      ^ 0 ^ st -e nvim")
 				$(command -v netsurf    >/dev/null && echo "$icon_glb Netsurf     ^ 0 ^ netsurf")
 				$(command -v newsboat   >/dev/null && echo "$icon_rss Newsboat    ^ 0 ^ st -e newsboat")
 				$(command -v nnn        >/dev/null && echo "$icon_dir Nnn         ^ 0 ^ st -e nnn")
