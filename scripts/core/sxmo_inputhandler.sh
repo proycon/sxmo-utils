@@ -166,6 +166,7 @@ if [ "$HANDLE" -ne 0 ]; then
 			sxmo_appmenu.sh sys &
 			;;
 		"toprightcorner")
+			sxmo_appmenu.sh scripts &
 			;;
 		"bottomleftcorner")
 			sxmo_lock.sh &
