@@ -162,17 +162,17 @@ if [ "$HANDLE" -ne 0 ]; then
 		"voldown_four")
 			sxmo_blinkled.sh red & xdotool windowclose "$(xdotool getactivewindow)"
 			;;
-        "topleftcorner")
-            sxmo_appmenu.sh sys &
-            ;;
-        "toprightcorner")
-            ;;
-        "bottomleftcorner")
-            sxmo_lock.sh &
-            ;;
-        "bottomrightcorner")
-            sxmo_rotate.sh &
-            ;;
+		"topleftcorner")
+			sxmo_appmenu.sh sys &
+			;;
+		"toprightcorner")
+			;;
+		"bottomleftcorner")
+			sxmo_lock.sh &
+			;;
+		"bottomrightcorner")
+			sxmo_rotate.sh &
+			;;
 		*)
 			#fallback, just execute the command
 			"$@"
