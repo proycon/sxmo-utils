@@ -136,6 +136,10 @@ programchoicesinit() {
 				pgrep -f "$(command -v sxmo_rotateautotoggle.sh)" > /dev/null &&
 				printf %b "On → Off ^ 0 ^ sxmo_rotateautotoggle.sh &" ||  printf %b "Off → On ^ 0 ^ sxmo_rotateautotoggle.sh &"
 			)
+			$icon_lck Proximity Lock $(
+				pgrep -f "$(command -v sxmo_proximitylock.sh)" > /dev/null &&
+				printf %b "On → Off ^ 0 ^ sxmo_proximitylocktoggle.sh &" ||  printf %b "Off → On ^ 0 ^ sxmo_proximitylocktoggle.sh &"
+			)
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
 			$icon_upc Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh
 			$icon_cfg Edit configuration         ^ 0 ^ st -e $EDITOR $XDG_CONFIG_HOME/sxmo/xinit

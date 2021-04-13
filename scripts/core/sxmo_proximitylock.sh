@@ -1,7 +1,16 @@
 #!/usr/bin/env sh
 
+islocked() {
+	pgrep -f sxmo_lock.sh > /dev/null
+}
+
+syncstate() {
+	islocked && STATE=locked || STATE=free
+}
+
 finish() {
 	kill $(jobs -p)
+	syncstate
 	[ free = "$STATE" ] && [ true = "$WASLOCKED" ] && sxmo_lock.sh &
 	exit 0
 }
@@ -18,10 +27,12 @@ TARGET=30
 mainloop() {
 	while true; do
 		distance="$(distance)"
+		# here we do not syncstate to allow user manual lock
 		if [ locked = "$STATE" ] && [ "$distance" -lt "$TARGET" ]; then
 			pkill -f sxmo_lock.sh
 			STATE=free
 		elif [ free = "$STATE" ] && [ "$distance" -gt "$TARGET" ]; then
+			islocked && pkill -f sxmo_lock.sh # we want screen-off on proximity
 			sxmo_lock.sh --screen-off &
 			STATE=locked
 		fi
@@ -29,7 +40,7 @@ mainloop() {
 	done
 }
 
-pgrep -f sxmo_lock.sh > /dev/null && STATE=locked || STATE=free
+syncstate
 if [ locked = "$STATE" ]; then
 	WASLOCKED=true
 

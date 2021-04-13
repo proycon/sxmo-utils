@@ -25,7 +25,7 @@ finish() {
 		echo "sxmo_modemcall: $1">&2
 		notify-send "$1"
 	fi
-	kill $LOCKPID
+	[ -n "$LOCKPID" ] && kill $LOCKPID
 	pkill -9 dmenu
 	exit 1
 }
@@ -257,8 +257,11 @@ incomingcallmenu() {
 
 modem_n || finish "Couldn't determine modem number - is modem online?"
 
-sxmo_proximitylock.sh &
-LOCKPID="$!"
+# do not duplicate proximity lock if already running
+if ! pgrep -f sxmo_proximitylock.sh > /dev/null; then
+	sxmo_proximitylock.sh &
+	LOCKPID="$!"
+fi
 
 "$@" &
 MAINPID="$!"
