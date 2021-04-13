@@ -14,14 +14,7 @@ modem_n() {
 
 
 finish() {
-	# E.g. hangup all calls, switch back to default audio, notify user, and die
 	sxmo_vibratepine 1000 &
-	mmcli -m "$(modem_n)" --voice-hangup-all
-	for CALLID in $(
-		mmcli -m "$(modem_n)" --voice-list-calls | grep -oE "Call\/[0-9]+" | cut -d'/' -f2
-	); do
-		mmcli -m "$(modem_n)" --voice-delete-call "$CALLID"
-	done
 	if [ -f "$ALSASTATEFILE" ]; then
 		alsactl --file "$ALSASTATEFILE" restore
 	else
@@ -32,12 +25,14 @@ finish() {
 		echo "sxmo_modemcall: $1">&2
 		notify-send "$1"
 	fi
-	kill -9 0
-	pkill -9 dmenu #just in case the call menu survived somehow?
+	kill $LOCKPID
+	pkill -9 dmenu
 	exit 1
 }
 
 gracefulexit() {
+	kill $MAINPID
+	wait $MAINPID
 	finish "Call ended"
 }
 
@@ -55,6 +50,20 @@ vid_to_number() {
 	grep call.properties.number |
 	cut -d ':' -f2 |
 	tr -d  ' '
+}
+
+number_to_contactname() {
+	NUMBER="$(echo "$1" | sed "s/^0\([0-9]\{9\}\)$/${DEFAULT_NUMBER_PREFIX:-0}\1/")"
+	CONTACT=$(sxmo_contacts.sh --all |
+		grep "^$NUMBER:" |
+		cut -d':' -f 2 |
+		sed 's/^[ \t]*//;s/[ \t]*$//' #strip leading/trailing whitespace
+	)
+	if [ -n "$CONTACT" ]; then
+		echo "$CONTACT"
+	else
+		echo "Unknown ($NUMBER)"
+	fi
 }
 
 log_event() {
@@ -88,7 +97,6 @@ toggleflagset() {
 
 acceptcall() {
 	CALLID="$1"
-	rm "$NOTIFDIR/incomingcall_${CALLID}_notification"* 2>dev/null #there can be multiple actionable notifications for one call (pickup/discard)
 	echo "sxmo_modemcall: Attempting to initialize CALLID $CALLID">&2
 	DIRECTION="$(
 		mmcli --voice-status -o "$CALLID" -K |
@@ -118,14 +126,20 @@ acceptcall() {
 
 hangup() {
 	CALLID="$1"
-	rm "$NOTIFDIR/incomingcall_${CALLID}_notification"* 2>dev/null #there can be multiple actionable notifications for one call (pickup/discard)
-	if [ ! -f "$CACHEDIR/${CALLID}.pickedupcall" ]; then
+	if [ -f "$CACHEDIR/${CALLID}.pickedupcall" ]; then
+		rm -f "$CACHEDIR/${CALLID}.pickedupcall"
+		touch "$CACHEDIR/${CALLID}.hangedupcall" #this signals that we hanged up this call to other asynchronously running processes
+		log_event "call_hangup" "$CALLID"
+	else
 		#this call was never picked up and hung up immediately, so it is a discarded call
 		touch "$CACHEDIR/${CALLID}.discardedcall" #this signals that we discarded this call to other asynchronously running processes
+		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/discard" ]; then
+			echo "sxmo_modemcall: Invoking discard hook (async)">&2
+			"$XDG_CONFIG_HOME/sxmo/hooks/discard" &
+		fi
+		log_event "call_discard" "$CALLID"
 	fi
 	modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --hangup
-	log_event "call_hangup" "$CALLID"
-	modem_cmd_errcheck -m "$(modem_n)" --voice-delete-call="$CALLID"
 	finish "Call with $NUMBER terminated"
 	exit 0
 }
@@ -151,23 +165,6 @@ incallsetup() {
 	toggleflagset "-2"
 	toggleflagset "-2"
 	toggleflagset "-2"
-}
-
-incallmonitor() {
-	CALLID="$1"
-	while true; do
-		sxmo_statusbarupdate.sh
-		if mmcli -m "$(modem_n)" -K -o "$CALLID" | grep -E "^call.properties.state.+terminated"; then
-			#note: deletion will be handled asynchronously by sxmo_modemmonitor's checkforfinishedcalls()
-			if [ "$NUMBER" = "--" ]; then
-				finish "Call with unknown number terminated"
-			else
-				finish "Call with $NUMBER terminated"
-			fi
-		fi
-		echo "sxmo_modemcall: Call still in progress">&2
-		sleep 3
-	done
 }
 
 incallmenuloop() {
@@ -225,9 +222,44 @@ dtmfmenu() {
 pickup() {
 	acceptcall "$1"
 	incallsetup "$1"
-	incallmonitor "$1" &
 	incallmenuloop "$1"
 }
 
+mute() {
+	touch "$CACHEDIR/$1.mutedring" #this signals that we muted this ring
+	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/mute_ring" ]; then
+		echo "sxmo_modemmonitor: Invoking mute_ring hook (async)">&2
+		"$XDG_CONFIG_HOME/sxmo/hooks/mute_ring" "$CONTACTNAME" &
+	fi
+	log_event "ring_mute" "$1"
+	finish "Ringing with $NUMBER muted"
+}
+
+incomingcallmenu() {
+	NUMBER=$(vid_to_number "$1")
+	CONTACTNAME=$(number_to_contactname "$NUMBER")
+
+	# wait for sxmo to be unlocked to display menus
+	while pgrep sxmo_screenlock > /dev/null; do sleep 0.3; done
+	PICKED="$(
+		printf %b "$icon_phn Pickup\n$icon_phx Hangup\n$icon_mut Mute\n" |
+		dmenu -c -l 5 -p "$CONTACTNAME"
+	)"
+
+	if echo "$PICKED" | grep -q "Pickup"; then
+		pickup "$1"
+	elif echo "$PICKED" | grep -q "Hangup"; then
+		hangup "$1"
+	elif echo "$PICKED" | grep -q "Mute"; then
+		mute "$1"
+	fi
+}
+
 modem_n || finish "Couldn't determine modem number - is modem online?"
-"$@"
+
+sxmo_proximitylock.sh &
+LOCKPID="$!"
+
+"$@" &
+MAINPID="$!"
+wait $MAINPID

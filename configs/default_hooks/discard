@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+# This script is executed (asynchronously) when you discard an incoming call
+
+exec "$(dirname "$0")/missed_call" "$@"

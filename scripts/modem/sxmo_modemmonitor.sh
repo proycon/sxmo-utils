@@ -72,30 +72,43 @@ checkforfinishedcalls() {
 	); do
 		FINISHEDNUMBER="$(lookupnumberfromcallid "$FINISHEDCALLID")"
 		mmcli -m "$(modem_n)" --voice-delete-call "$FINISHEDCALLID"
-		rm -f "$NOTIFDIR/incomingcall_${FINISHEDCALLID}_notification"* #there may be multiple actionable notification for one call
 
-		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/missed_call" ]; then
-			echo "sxmo_modemmonitor: Invoking missed call hook (async)">&2
-			"$XDG_CONFIG_HOME/sxmo/hooks/missed_call" "$CONTACTNAME" &
-		fi
+		rm -f "$CACHEDIR/${FINISHEDCALLID}.monitoredcall"
 
 		TIME="$(date --iso-8601=seconds)"
 		mkdir -p "$LOGDIR"
 		if [ -f "$CACHEDIR/${FINISHEDCALLID}.discardedcall" ]; then
+			#this call was discarded
 			echo "sxmo_modemmonitor: Discarded call from $FINISHEDNUMBER">&2
 			rm -f "$CACHEDIR/${FINISHEDCALLID}.discardedcall"
 			printf %b "$TIME\tcall_discarded\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
-			pkill -f sxmo_modemcall.sh #kill call (softly) in case it is still in progress (remote party hung up)
+			pkill -f sxmo_modemcall.sh
 			echo "sxmo_modemmonitor: Finished call from $FINISHEDNUMBER">&2
 			rm -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.hangedupcall" ]; then
+			#this call was hanged up
+			echo "sxmo_modemmonitor: Finished call from $FINISHEDNUMBER">&2
+			rm -f "$CACHEDIR/${FINISHEDCALLID}.hangedupcall"
+			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.mutedring" ]; then
+			#this ring was muted up
+			echo "sxmo_modemmonitor: Muted ring from $FINISHEDNUMBER">&2
+			rm -f "$CACHEDIR/${FINISHEDCALLID}.mutedring"
+			printf %b "$TIME\tring_muted\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		else
 			#this is a missed call
 			# Add a notification for every missed call
+			pkill -f sxmo_modemcall.sh
 			echo "sxmo_modemmonitor: Missed call from $FINISHEDNUMBER">&2
 			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+
+			if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/missed_call" ]; then
+				echo "sxmo_modemmonitor: Invoking missed call hook (async)">&2
+				"$XDG_CONFIG_HOME/sxmo/hooks/missed_call" "$CONTACTNAME" &
+			fi
 
 			CONTACT="$(lookupcontactname "$FINISHEDNUMBER")"
 			sxmo_notificationwrite.sh \
@@ -113,7 +126,10 @@ checkforincomingcalls() {
 		grep -Eo '[0-9]+ incoming \(ringing-in\)' |
 		grep -Eo '[0-9]+'
 	)"
-	echo "$VOICECALLID" | grep -v . && rm -f "$NOTIFDIR/incomingcall*" && return
+	[ -z "$VOICECALLID" ] && return
+
+	[ -f "$CACHEDIR/${VOICECALLID}.monitoredcall" ] && return # prevent multiple rings
+	touch "$CACHEDIR/${VOICECALLID}.monitoredcall" #this signals that we handled the call
 
 	# Determine the incoming phone number
 	echo "sxmo_modemmonitor: Incoming Call:">&2
@@ -131,16 +147,7 @@ checkforincomingcalls() {
 	mkdir -p "$LOGDIR"
 	printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
-	sxmo_notificationwrite.sh \
-		"$NOTIFDIR/incomingcall_${VOICECALLID}_notification" \
-		"sxmo_modemcall.sh pickup '$VOICECALLID'" \
-		none \
-		"Pickup - $CONTACTNAME" &
-	sxmo_notificationwrite.sh \
-		"$NOTIFDIR/incomingcall_${VOICECALLID}_notification_discard" \
-		"sxmo_modemcall.sh hangup '$VOICECALLID'" \
-		none \
-		"Discard - $CONTACTNAME" &
+	sxmo_modemcall.sh incomingcallmenu "$VOICECALLID" &
 
 	echo "sxmo_modemmonitor: Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)">&2
 }
