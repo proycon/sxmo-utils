@@ -9,5 +9,7 @@ wasopen="$(sxmo_keyboard.sh isopen && echo "yes")"
 
 sxmo_keyboard.sh open
 OUTPUT="$(cat | dmenu "$@")"
+exitcode=$?
 [ -z "$wasopen" ] && sxmo_keyboard.sh close
 echo "$OUTPUT"
+exit $exitcode
