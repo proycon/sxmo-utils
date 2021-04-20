@@ -296,6 +296,17 @@ programchoicesinit() {
 				$icon_mnu St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
 			"
 			WINNAME=ncmpcpp
+		elif echo "$WMNAME" | grep -i -E -w "(less|mless)"; then
+			#less
+			CHOICES="
+				$icon_arr Page next       ^ 1 ^ typeenter ':n'
+				$icon_arl Page previous   ^ 1 ^ typeenter ':p'
+				$icon_zmi Zoom in         ^ 1 ^ key Ctrl+Shift+Prior
+				$icon_zmo Zoom out        ^ 1 ^ key Ctrl+Shift+Next
+				$icon_aru Scroll up       ^ 1 ^ key Ctrl+Shift+b
+				$icon_ard Scroll down     ^ 1 ^ key Ctrl+Shift+f
+			"
+			WINNAME=less
 		elif echo "$WMNAME" | grep -i -w "weechat"; then
 			#weechat
 			CHOICES="
