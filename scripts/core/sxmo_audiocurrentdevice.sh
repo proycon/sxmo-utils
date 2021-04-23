@@ -1,8 +1,12 @@
 #!/usr/bin/env sh
+${SPEAKER:-"Line Out"}
+${HEADPHONE:-"Headphone"}
+${EARPIECE:-"Earpiece"}
+
 audiodevice() {
-	amixer sget "Earpiece" | grep -qE '\[on\]' && echo Earpiece && return
-	amixer sget "Headphone" | grep -qE '\[on\]' && echo Headphone && return
-	amixer sget "Line Out" | grep -qE '\[on\]' && echo Line Out && return
+	amixer sget "$EARPIECE" | grep -qE '\[on\]' && echo "$EARPIECE" && return
+	amixer sget "$HEADPHONE" | grep -qE '\[on\]' && echo "$HEADPHONE" && return
+	amixer sget "$SPEAKER" | grep -qE '\[on\]' && echo "$SPEAKER" && return
 	echo "None"
 }
 
