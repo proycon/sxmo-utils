@@ -20,6 +20,13 @@ envvars() {
 	[ -z "$XDG_PICTURES_DIR" ] && export XDG_PICTURES_DIR=~/Pictures
 }
 
+device_envvars() {
+	device="$(cut -d ',' -f 2 < /sys/firmware/devicetree/base/compatible)"
+	deviceprofile="$(which "sxmo_deviceprofile_$device.sh")"
+	# shellcheck disable=SC1090
+	[ -f "$deviceprofile" ] && . "$deviceprofile"
+}
+
 setupxdgdir() {
 	mkdir -p $XDG_RUNTIME_DIR
 	chmod 700 $XDG_RUNTIME_DIR
@@ -117,6 +124,8 @@ xinit() {
 	. "$(dirname "$0")/sxmo_common.sh"
 
 	envvars
+	# set device env vars here to allow potentially overriding envvars
+	device_envvars
 	setupxdgdir
 	xdefaults
 	daemons
