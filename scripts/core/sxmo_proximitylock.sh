@@ -9,7 +9,7 @@ syncstate() {
 }
 
 finish() {
-	kill $(jobs -p)
+	kill "$(jobs -p)"
 	syncstate
 	[ free = "$STATE" ] && [ true = "$WASLOCKED" ] && sxmo_lock.sh &
 	exit 0

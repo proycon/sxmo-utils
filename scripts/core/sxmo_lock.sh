@@ -5,7 +5,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 finish() {
-	kill $LOCKPID
+	kill "$LOCKPID"
 }
 trap 'finish' TERM INT
 

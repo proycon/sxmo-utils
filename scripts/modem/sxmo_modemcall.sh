@@ -25,14 +25,14 @@ finish() {
 		echo "sxmo_modemcall: $1">&2
 		notify-send "$1"
 	fi
-	[ -n "$LOCKPID" ] && kill $LOCKPID
+	[ -n "$LOCKPID" ] && kill "$LOCKPID"
 	pkill -9 dmenu
 	exit 1
 }
 
 gracefulexit() {
-	kill $MAINPID
-	wait $MAINPID
+	kill "$MAINPID"
+	wait "$MAINPID"
 	finish "Call ended"
 }
 
