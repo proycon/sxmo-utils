@@ -5,9 +5,9 @@ ARG="$1"
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-${SPEAKER:-"Line Out"}
-${HEADPHONE:-"Headphone"}
-${EARPIECE:-"Earpiece"}
+SPEAKER="${SPEAKER:-"Line Out"}"
+HEADPHONE="${HEADPHONE:-"Headphone"}"
+EARPIECE="${EARPIECE:-"Earpiece"}"
 
 amixer set "$SPEAKER" mute
 amixer set "$HEADPHONE" mute

@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
-${SPEAKER:-"Line Out"}
-${HEADPHONE:-"Headphone"}
-${EARPIECE:-"Earpiece"}
+SPEAKER=${SPEAKER:-"Line Out"}
+HEADPHONE=${HEADPHONE:-"Headphone"}
+EARPIECE=${EARPIECE:-"Earpiece"}
 
 audiodevice() {
 	amixer sget "$EARPIECE" | grep -qE '\[on\]' && echo "$EARPIECE" && return
