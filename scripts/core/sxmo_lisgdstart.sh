@@ -45,5 +45,5 @@ else
 		-g '1,UD,R,*,P,sxmo_inputhandler.sh scrolldown_short' \
 		-g '1,LR,R,S,sxmo_inputhandler.sh scrollright_short' \
 		-g '1,RL,L,S,sxmo_inputhandler.sh scrollleft_short' \
-		&
+		>"$CACHEDIR/lisgd.log" 2>&1 &
 fi
