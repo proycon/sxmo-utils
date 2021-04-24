@@ -17,12 +17,14 @@ MINSTEP=1
 STEP=$(echo "($MAX - $MIN) / 10" | bc | xargs -ISTP echo -e "$MINSTEP\nSTP" | sort -r | head -n1)
 
 setdelta() {
-	sxmo_setpinebacklight "$(
+	VAL="$(
 		xargs -IB echo B "$1" < $BACKLIGHT/brightness |
 		bc |
 		xargs -INUM echo -e "$MIN\nNUM" | sort -n | tail -n1 |
 		xargs -INUM echo -e "$MAX\nNUM" | sort -n | head -n1
 	)"
+	echo "$VAL" > "$BACKLIGHT/brightness" || exit 1
+	echo "set brightness to $VAL"
 
 	dunstify -i 0 -u normal -r 999 "☀ $(cat $BACKLIGHT/brightness)/${MAX}"
 }
