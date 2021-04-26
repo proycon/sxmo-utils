@@ -39,6 +39,11 @@ if [ "$HANDLE" -ne 0 ]; then
 					xdotool key s
 					HANDLE=0
 				fi
+			elif echo "$WMNAME" | grep -i -E -w "(less|mless)"; then
+				if [ "$ACTION" = "back" ] || [ "$ACTION" = "scrollleft_short" ]; then
+					xdotool key q
+					HANDLE=0
+				fi
 			fi
 			;;
 	esac
