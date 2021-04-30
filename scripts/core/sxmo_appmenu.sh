@@ -70,6 +70,7 @@ programchoicesinit() {
 				$(command -v gedit      >/dev/null && echo "$icon_edt Gedit       ^ 0 ^ gedit")
 				$(command -v geeqie     >/dev/null && echo "$icon_img Geeqie      ^ 0 ^ geeqie")
 				$(command -v giara      >/dev/null && echo "$icon_red Giara       ^ 0 ^ giara")
+				$(command -v gomuks     >/dev/null && echo "$icon_msg Gomuks      ^ 0 ^ st -e gomuks")
 				$(command -v gucharmap  >/dev/null && echo "$icon_inf Gucharmap   ^ 0 ^ gucharmap")
 				$(command -v hexchat    >/dev/null && echo "$icon_msg Hexchat     ^ 0 ^ hexchat")
 				$(command -v htop       >/dev/null && echo "$icon_cfg Htop        ^ 0 ^ st -e htop")
