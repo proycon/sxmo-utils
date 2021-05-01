@@ -19,6 +19,10 @@ export LOGDIR="$XDG_DATA_HOME"/sxmo/modem
 export CONTACTFILE="$XDG_CONFIG_HOME/sxmo/contacts.tsv"
 # shellcheck disable=SC2034
 export MODEMSTATEFILE="$XDG_RUNTIME_DIR/sxmo.modem.state"
+# shellcheck disable=SC2034
+export UNSUSPENDREASONFILE="$XDG_RUNTIME_DIR/sxmo.suspend.reason"
+# shellcheck disable=SC2034
+export LASTSTATE="$XDG_RUNTIME_DIR/sxmo.suspend.laststate"
 
 command -v "$KEYBOARD" > /dev/null || export KEYBOARD=svkbd-mobile-intl
 command -v "$EDITOR" > /dev/null || export EDITOR=vis

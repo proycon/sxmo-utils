@@ -9,6 +9,44 @@ ACTION="$1"
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+crust() {
+	if [ -n "$SXMO_RTCWAKEINTERVAL" ]; then
+		sxmo_screenlock.sh rtc "$SXMO_RTCWAKEINTERVAL"
+	else
+		sxmo_screenlock.sh crust
+	fi
+}
+
+lock_screen() {
+	if [ "$SXMO_LOCK_SCREEN_OFF" = "1" ]; then
+		sxmo_screenlock.sh off
+	else
+		sxmo_screenlock.sh lock
+	fi
+	if [ "$SXMO_LOCK_SUSPEND" = "1" ]; then
+		crust
+	fi
+}
+
+if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
+	case "$ACTION" in
+		"volup_three")
+			crust
+			;;
+		"voldown_three")
+			if [ "$(sxmo_screenlock.sh getCurState)" = "lock" ]; then
+				sxmo_screenlock.sh off
+			else
+				lock_screen
+			fi
+			;;
+		"powerbutton_three")
+			sxmo_screenlock.sh unlock
+			;;
+	esac
+	exit
+fi
+
 XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
 WMCLASS="$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3-)"
 WMNAME=$(echo "$XPROPOUT" | grep -E "^WM_NAME" | cut -d ' ' -f3-)
@@ -153,7 +191,7 @@ if [ "$HANDLE" -ne 0 ]; then
 			sxmo_appmenu.sh sys
 			;;
 		"volup_three")
-			sxmo_lock.sh
+			lock_screen
 			;;
 		"voldown_one")
 			xdotool key --clearmodifiers Super+space
@@ -174,7 +212,7 @@ if [ "$HANDLE" -ne 0 ]; then
 			sxmo_appmenu.sh scripts &
 			;;
 		"bottomleftcorner")
-			sxmo_lock.sh &
+			lock_screen
 			;;
 		"bottomrightcorner")
 			sxmo_rotate.sh &

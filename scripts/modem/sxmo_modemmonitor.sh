@@ -116,6 +116,13 @@ checkforfinishedcalls() {
 				"st -f Terminus-20 -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \
 				none \
 				"Missed call - $CONTACT"
+
+			if grep -q modem "$UNSUSPENDREASONFILE" && grep -q crust "$CACHEDIR/${FINISHEDCALLID}.laststate"; then
+				sleep 5 # maybe user just is too late
+				if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
+					sxmo_screenlock.sh crust
+				fi
+			fi
 		fi
 	done
 }
@@ -131,10 +138,14 @@ checkforincomingcalls() {
 	[ -f "$CACHEDIR/${VOICECALLID}.monitoredcall" ] && return # prevent multiple rings
 	touch "$CACHEDIR/${VOICECALLID}.monitoredcall" #this signals that we handled the call
 
+	cat "$LASTSTATE" > "$CACHEDIR/${VOICECALLID}.laststate"
+
 	# Determine the incoming phone number
 	echo "sxmo_modemmonitor: Incoming Call:">&2
 	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
 	CONTACTNAME=$(lookupcontactname "$INCOMINGNUMBER")
+
+	xset dpms force on
 
 	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
 		echo "sxmo_modemmonitor: Invoking ring hook (async)">&2
@@ -159,6 +170,8 @@ checkfornewtexts() {
 		grep -Eo '[0-9]+'
 	)"
 	echo "$TEXTIDS" | grep -v . && return
+
+	xset dpms force on
 
 	# Loop each textid received and read out the data into appropriate logfile
 	for TEXTID in $TEXTIDS; do
@@ -188,6 +201,13 @@ checkfornewtexts() {
 			"$XDG_CONFIG_HOME/sxmo/hooks/sms" "$CONTACTNAME" "$TEXT"
 		fi
 	done
+
+	if grep -q modem "$UNSUSPENDREASONFILE" && grep -q crust "$LASTSTATE"; then
+		sleep 5 # maybe user just is too late
+		if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
+			sxmo_screenlock.sh crust
+		fi
+	fi
 }
 
 initialmodemstatus() {

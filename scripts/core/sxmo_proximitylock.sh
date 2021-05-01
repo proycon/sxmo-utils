@@ -1,17 +1,12 @@
 #!/usr/bin/env sh
 
-islocked() {
-	pgrep -f sxmo_lock.sh > /dev/null
-}
-
-syncstate() {
-	islocked && STATE=locked || STATE=free
+isLocked() {
+	curState="$(sxmo_screenlock.sh getCurState)"
+	[ "$curState" = "lock" ] || [ "$curState" = "off" ]
 }
 
 finish() {
-	kill "$(jobs -p)"
-	syncstate
-	[ free = "$STATE" ] && [ true = "$WASLOCKED" ] && sxmo_lock.sh &
+	sxmo_screenlock.sh "$INITIALSTATE"
 	exit 0
 }
 
@@ -27,26 +22,15 @@ TARGET=30
 mainloop() {
 	while true; do
 		distance="$(distance)"
-		# here we do not syncstate to allow user manual lock
-		if [ locked = "$STATE" ] && [ "$distance" -lt "$TARGET" ]; then
-			pkill -f sxmo_lock.sh
-			STATE=free
-		elif [ free = "$STATE" ] && [ "$distance" -gt "$TARGET" ]; then
-			islocked && pkill -f sxmo_lock.sh # we want screen-off on proximity
-			sxmo_lock.sh --screen-off &
-			STATE=locked
+		if isLocked && [ "$distance" -lt "$TARGET" ]; then
+			sxmo_screenlock.sh unlock
+		elif ! isLocked && [ "$distance" -gt "$TARGET" ]; then
+			sxmo_screenlock.sh off
 		fi
 		sleep 0.5
 	done
 }
 
-syncstate
-if [ locked = "$STATE" ]; then
-	WASLOCKED=true
-
-	# we dont want to loose the initial lock if the phone is forgotten somewhere
-	# without proximity as this will prevent going back to crust
-	sxmo_movement.sh waitmovement
-fi
+INITIALSTATE="$(sxmo_screenlock.sh getCurState)"
 
 mainloop

@@ -171,7 +171,7 @@ incallmenuloop() {
 	echo "sxmo_modemcall: Current flags are $FLAGS">&2
 	CHOICES="
 		$([ "$WINDOWIFIED" = 0 ] && echo "$icon_wn2 Windowify" || echo "$icon_wn2 Unwindowify")   ^ togglewindowify
-		$([ "$WINDOWIFIED" = 0 ] && echo "$icon_lck Screenlock                      ^ togglewindowify; sxmo_screenlock &")
+		$([ "$WINDOWIFIED" = 0 ] && echo "$icon_lck Screenlock                      ^ togglewindowify; sxmo_screenlock.sh lock &")
 		$icon_aru Volume up                                                          ^ sxmo_vol.sh up
 		$icon_ard Volume down                                                          ^ sxmo_vol.sh down
 		$icon_phn Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo "$icon_chk")            ^ toggleflagset -e
@@ -239,8 +239,6 @@ incomingcallmenu() {
 	NUMBER=$(vid_to_number "$1")
 	CONTACTNAME=$(number_to_contactname "$NUMBER")
 
-	# wait for sxmo to be unlocked to display menus
-	while pgrep sxmo_screenlock > /dev/null; do sleep 0.3; done
 	PICKED="$(
 		printf %b "$icon_phn Pickup\n$icon_phx Hangup\n$icon_mut Mute\n" |
 		dmenu -c -l 5 -p "$CONTACTNAME"
