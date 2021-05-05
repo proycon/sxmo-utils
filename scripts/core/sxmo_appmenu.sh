@@ -407,6 +407,20 @@ programchoicesinit() {
 			$icon_rld Refresh     ^ 0 ^ key Ctrl+Shift+r
 		"
 		WINNAME=Firefox
+	elif echo "$WMCLASS" | grep -i lagrange; then
+		# Firefox
+		CHOICES="
+			$icon_mnu Toggle sidebar ^ 0 ^ key Ctrl+Shift+p
+			$icon_bok Open bookmarks ^ 0 ^ key Ctrl+l && typeenter 'about:bookmarks'
+			$icon_pls Add bookmark   ^ 0 ^ key Ctrl+d
+			$icon_zmi Zoom           ^ 1 ^ key Ctrl+equal
+			$icon_zmo Zoom           ^ 1 ^ key Ctrl+minus
+			$icon_aru Parent dir     ^ 1 ^ key Alt+Up
+			$icon_arl History        ^ 1 ^ key Alt+Left
+			$icon_arr History        ^ 1 ^ key Alt+Right
+			$icon_rld Refresh        ^ 0 ^ key Ctrl+r
+		"
+		WINNAME=Lagrange
 	elif echo "$WMCLASS" | grep -i foxtrot; then
 		# Foxtrot GPS
 		CHOICES="
