@@ -113,7 +113,8 @@ startdwm() {
 
 	exec dbus-run-session sh -c "
 		$0 daemonsneedingdbus;
-		. $0 customxinit;
+		set -- customxinit
+		. $0
 		dwm 2> "$XDG_CACHE_HOME/sxmo/dwm.log"
 	"
 }
