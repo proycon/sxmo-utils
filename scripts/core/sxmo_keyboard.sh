@@ -17,7 +17,7 @@ open() {
 }
 
 close() {
-	pkill "$KEYBOARD"
+	pkill -f "$KEYBOARD"
 }
 
 if [ "$1" = "toggle" ]; then

@@ -8,7 +8,7 @@
 
 pkill -STOP conky
 pkill clickclack
-pkill $KEYBOARD
+pkill -f "$KEYBOARD"
 
 # If this script returns a non-zero exit code, suspension will be cancelled
 
