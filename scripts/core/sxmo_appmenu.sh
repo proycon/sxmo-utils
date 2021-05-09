@@ -408,7 +408,7 @@ programchoicesinit() {
 		"
 		WINNAME=Firefox
 	elif echo "$WMCLASS" | grep -i lagrange; then
-		# Firefox
+		# Lagrange
 		CHOICES="
 			$icon_mnu Toggle sidebar ^ 0 ^ key Ctrl+Shift+p
 			$icon_bok Open bookmarks ^ 0 ^ key Ctrl+l && typeenter 'about:bookmarks'
