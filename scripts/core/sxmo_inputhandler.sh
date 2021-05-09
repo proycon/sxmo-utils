@@ -10,7 +10,7 @@ ACTION="$1"
 . "$(dirname "$0")/sxmo_common.sh"
 
 XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
-WMCLASS="$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3- | cut -d ' ' -f1 | tr -d '\",')"
+WMCLASS="$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3-)"
 
 HANDLE=1
 if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler ]; then
