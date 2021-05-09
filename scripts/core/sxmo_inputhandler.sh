@@ -11,11 +11,12 @@ ACTION="$1"
 
 XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
 WMCLASS="$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3-)"
+WMNAME=$(echo "$XPROPOUT" | grep -E "^WM_NAME" | cut -d ' ' -f3-)
 
 HANDLE=1
 if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler ]; then
 	#hook script must exit with a zero exit code ONLY if it has handled the gesture!
-	"$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler "$WMCLASS" "$@"
+	"$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler "$WMCLASS" "$WMNAME" "$@"
 	HANDLE=$?
 fi
 
@@ -30,7 +31,6 @@ if [ "$HANDLE" -ne 0 ]; then
 			;;
 		"st-256color")
 			# First we try to handle the app running inside st:
-			WMNAME=$(echo "$XPROPOUT" | grep -E "^WM_NAME" | cut -d ' ' -f3-)
 			if echo "$WMNAME" | grep -i -w tuir; then
 				if [ "$ACTION" = "enter" ]; then
 					xdotool key o
