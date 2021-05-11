@@ -28,7 +28,8 @@ sort_loop() {
 
 while true; do
 	# shellcheck disable=SC2086
-	CHOICES="$(printf %b 'Reload\nClose Menu\nSort By\n../\n*\n'"$(ls -1p $SORT $REVERSE)")"
+	FILES="$(ls -1p $SORT $REVERSE)"
+	CHOICES="$(printf %b 'Reload\nClose Menu\nSort By\n../\n*\n'"$FILES")"
 	DIR="$(basename "$(pwd)")"
 	TRUNCATED="$(printf %.7s "$DIR")"
 	if [ "$DIR" != "$TRUNCATED" ]; then
@@ -46,5 +47,7 @@ while true; do
 	echo "$PICKED" | grep "Reload" && continue
 	[ -d "$PICKED" ] && cd "$PICKED" && continue
 	echo "$PICKED" | grep -E '^[*]$' && sxmo_open.sh -a ./*
-	[ -f "$PICKED" ] && sxmo_open.sh -a "$PICKED"
+	if [ -f "$PICKED" ]; then
+		echo "$FILES" | sed -n -e "/$PICKED/,\$p" | tr '\n' '\0' | xargs -0 sxmo_open.sh -a
+	fi
 done
