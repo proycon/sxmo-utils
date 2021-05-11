@@ -39,7 +39,7 @@ while true; do
 	PICKED="$(
 		echo "$CHOICES" |
 		dmenu -c -p "$DIR" -l 20 -i
-	)"
+	)" || exit
 
 	echo "$PICKED" | grep "Sort By" && sort_loop
 	echo "$PICKED" | grep "Close Menu" && exit 0
