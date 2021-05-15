@@ -166,7 +166,7 @@ get_mime_type() {
 		if [ -r "$1" ]; then
 			mime_type="$(file -b --mime-type "$1")"
 		else
-			echo "This file does not exists?" > /dev/stderr
+			echo "This file does not exists?" >&2
 			exit 1
 		fi
 	fi
@@ -185,8 +185,8 @@ get_mime_type() {
 
 execute() {
 	if [ -n "$debug" ]; then
-		echo "The final command to execute is:" > /dev/stderr
-		echo "$@" > /dev/stderr
+		echo "The final command to execute is:" >&2
+		echo "$@" >&2
 		exit 0
 	fi
 
@@ -195,7 +195,7 @@ execute() {
 
 fetch_file() {
 	if [ -n "$debug" ]; then
-		echo "The file would be downloaded with '$*'" > /dev/stderr
+		echo "The file would be downloaded with '$*'" >&2
 		return
 	fi
 
@@ -260,7 +260,7 @@ run_desktop() {
 
 	desktop_path="$(find_desktop_path "$desktop")"
 	if [ -z "$desktop_path" ]; then
-		echo "We can't find the desktop file \"$desktop\"" > /dev/stderr
+		echo "We can't find the desktop file \"$desktop\"" >&2
 		return
 	fi
 
@@ -276,9 +276,9 @@ run_desktop() {
 	fi
 
 	if [ -n "$debug" ]; then
-		echo "Exec is \"$exec\"" > /dev/stderr
-		echo "Terminal is \"$terminal\"" > /dev/stderr
-		echo "Command is \"$command\"" > /dev/stderr
+		echo "Exec is \"$exec\"" >&2
+		echo "Terminal is \"$terminal\"" >&2
+		echo "Command is \"$command\"" >&2
 		exit 0
 	fi
 
@@ -291,20 +291,20 @@ run() {
 	mime_type="$(get_mime_type "$1")"
 
 	if [ -z "$mime_type" ]; then
-		echo "We failed to find the mime_type for \"$1\"" > /dev/stderr
+		echo "We failed to find the mime_type for \"$1\"">&2
 		exit 1
 	fi
 
 	desktops="$(get_mimeapps_mapping | filter_matching_desktops "$mime_type")"
 
 	if [ -n "$debug" ]; then
-		echo "The mime type is \"$mime_type\"" > /dev/stderr
-		echo "The matching desktops are:" > /dev/stderr
-		echo "$desktops" > /dev/stderr
+		echo "The mime type is \"$mime_type\"" >&2
+		echo "The matching desktops are:" >&2
+		echo "$desktops" >&2
 	fi
 
 	if [ -z "$desktops" ]; then
-		echo "There is no matching desktop to open \"$mime_type\"" > /dev/stderr
+		echo "There is no matching desktop to open \"$mime_type\"" >&2
 		exit 1
 	fi
 
