@@ -103,14 +103,17 @@ editcontact() {
 showcontact() {
 	number="$(echo "$1" | cut -d"	" -f1)"
 	name="$(echo "$1" | cut -d"	" -f2)"
-	ENTRIES="$(printf %b "$icon_ret Cancel\n$icon_msg Send a Message\n$icon_phn Call\n$icon_edt Edit\n$icon_del Delete")"
+	ENTRIES="$(printf %b "$icon_ret Cancel\n$icon_lst List Messages\n$icon_msg Send a Message\n$icon_phn Call\n$icon_edt Edit\n$icon_del Delete")"
 
 	PICKED="$(
 		echo "$ENTRIES" |
 		dmenu -c -l 5 -p "$icon_usr $name"
 	)"
 
-	if echo "$PICKED" | grep -q "Send a Message"; then
+	if echo "$PICKED" | grep -q "List Messages"; then
+		sxmo_modemtext.sh tailtextlog  "$number"
+		exit
+	elif echo "$PICKED" | grep -q "Send a Message"; then
 		sxmo_modemtext.sh sendtextmenu  "$number"
 		exit
 	elif echo "$PICKED" | grep -q "Call"; then
