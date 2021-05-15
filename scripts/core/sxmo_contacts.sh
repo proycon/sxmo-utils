@@ -65,6 +65,8 @@ elif [ "$1" = "--texted" ]; then
 	texted_contacts
 elif [ "$1" = "--called" ]; then
 	called_contacts
+elif [ -n "$*" ]; then
+	all_contacts | grep -i "$*"
 else
 	contacts
 fi
