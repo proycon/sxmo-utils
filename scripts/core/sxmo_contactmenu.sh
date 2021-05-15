@@ -16,6 +16,7 @@ valid_number() {
 
 newcontact() {
 	name="$(echo | sxmo_dmenu_with_kb.sh -c -l 2 -p "$icon_usr Name")"
+	number=
 	while [ -z "$number" ]; do
 		number="$(echo | sxmo_dmenu_with_kb.sh -c -l 2 -p "$icon_phl Number")"
 		number="$(valid_number "$number")"
