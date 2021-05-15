@@ -89,10 +89,7 @@ readtextmenu() {
 	# E.g. only display logfiles for directories that exist and join w contact name
 	ENTRIES="$(
 	printf %b "$icon_cls Close Menu\n$icon_edt Send a Text\n";
-		sxmo_contacts.sh | while read -r CONTACT; do
-			[ -d "$LOGDIR"/"$(printf %b "$CONTACT" | cut -d: -f1)" ] || continue
-			printf %b "$CONTACT" | xargs -IL echo "L logfile"
-		done
+		sxmo_contacts.sh --texted | xargs -IL echo "L logfile"
 	)"
 	PICKED="$(printf %b "$ENTRIES" | dmenu -p Texts -c -l 10 -i)" || exit
 

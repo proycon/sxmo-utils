@@ -16,22 +16,31 @@
 CONTACTSFILE="$XDG_CONFIG_HOME"/sxmo/contacts.tsv
 LOGFILE="$XDG_DATA_HOME"/sxmo/modem/modemlog.tsv
 
-contacts() {
-	grep -q . "$CONTACTSFILE" || echo " " > "$CONTACTSFILE"
-	RECENTCONTACTEDNUMBERSREVCHRON="$(
-		cut -f3 "$LOGFILE" |
-		sed "s/^0\([0-9]\{9\}\)$/${DEFAULT_NUMBER_PREFIX:-0}\1/" |
-		tac |
-		awk '!($0 in a){a[$0]; print}' |
-		sed '/^[[:space:]]*$/d'
-	)"
-	printf %b "$RECENTCONTACTEDNUMBERSREVCHRON" | awk -F'\t' '
+prepare_contacts_list() {
+	cut -f3 |
+	sed "s/^0\([0-9]\{9\}\)$/${DEFAULT_NUMBER_PREFIX:-0}\1/" |
+	tac |
+	awk '!($0 in a){a[$0]; print}' |
+	sed '/^[[:space:]]*$/d' |
+	awk -F'\t' '
 		FNR==NR{a[$1]=$2; next}
 		{
 			if (!a[$1]) a[$1] = "Unknown Number";
 			print $0 ": " a[$1]
 		}
 	' "$CONTACTSFILE" -
+}
+
+contacts() {
+	prepare_contacts_list < "$LOGFILE"
+}
+
+texted_contacts() {
+	grep "\(recv\|sent\)_txt" "$LOGFILE" | prepare_contacts_list
+}
+
+called_contacts() {
+	grep "call_\(pickup\|start\)" "$LOGFILE" | prepare_contacts_list
 }
 
 all_contacts() {
@@ -47,10 +56,16 @@ unknown_contacts() {
 		| grep "^+[0-9]\{9,14\}$"
 }
 
+[ -f "$CONTACTSFILE" ] || touch "$CONTACTSFILE"
+
 if [ "$1" = "--all" ]; then
 	all_contacts
 elif [ "$1" = "--unknown" ]; then
 	unknown_contacts
+elif [ "$1" = "--texted" ]; then
+	texted_contacts
+elif [ "$1" = "--called" ]; then
+	called_contacts
 else
 	contacts
 fi
