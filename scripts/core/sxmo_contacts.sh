@@ -40,8 +40,17 @@ all_contacts() {
 	}' "$CONTACTSFILE" | sort -f -k 2
 }
 
+unknown_contacts() {
+	contacts \
+		| grep "Unknown Number$" \
+		| cut -d: -f1 \
+		| grep "^+[0-9]\{9,14\}$"
+}
+
 if [ "$1" = "--all" ]; then
 	all_contacts
+elif [ "$1" = "--unknown" ]; then
+	unknown_contacts
 else
 	contacts
 fi
