@@ -34,8 +34,11 @@ alias dmenu="sxmo_dmenu.sh"
 alias st="sxmo_terminal.sh"
 
 alias find="busybox find"
-alias pkill="busybox pkill"
-alias pgrep="busybox pgrep"
+# Use native commands if busybox was compile without those apples (for example Debians busybox)
+if busybox pkill -l > /dev/null; then
+	alias pkill="busybox pkill"
+	alias pgrep="busybox pgrep"
+fi
 alias xargs="busybox xargs"
 alias less="busybox less"
 alias tail="busybox tail"
