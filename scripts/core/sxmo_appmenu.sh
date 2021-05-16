@@ -374,6 +374,9 @@ programchoicesinit() {
 			Send Ctrl-D      ^ 0 ^ key Ctrl+d
 			Send Ctrl-A      ^ 0 ^ key Ctrl+a
 			Send Ctrl-B      ^ 0 ^ key Ctrl+b
+			Send ESC:w       ^ 0 ^ key Escape Shift+semicolon w Return
+			Send ESC:wq      ^ 0 ^ key Escape Shift+semicolon w q Return
+			Send ESC:wq!     ^ 0 ^ key Escape Shift+semicolon q exclam Return
 		"
 		WINNAME=St
 		;;
