@@ -413,6 +413,7 @@ programchoicesinit() {
 			$icon_flt Pipe URL          ^ 0 ^ sxmo_urlhandler.sh
 			$icon_tab New Tab           ^ 0 ^ key Ctrl+t
 			$icon_win New Window        ^ 0 ^ key Ctrl+n
+			$icon_cls Close Tab         ^ 0 ^ key Ctrl+w
 			$icon_zmi Zoom            ^ 1 ^ key Ctrl+plus
 			$icon_zmo Zoom            ^ 1 ^ key Ctrl+minus
 			$icon_arl History        ^ 1 ^ key Alt+Left
