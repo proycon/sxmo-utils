@@ -315,6 +315,7 @@ programchoicesinit() {
 			CHOICES="
 				$icon_arr Page next       ^ 1 ^ typeenter ':n'
 				$icon_arl Page previous   ^ 1 ^ typeenter ':p'
+				$icon_cls Quit            ^ 0 ^ key q
 				$icon_zmi Zoom in         ^ 1 ^ key Ctrl+Shift+Prior
 				$icon_zmo Zoom out        ^ 1 ^ key Ctrl+Shift+Next
 				$icon_aru Scroll up       ^ 1 ^ key Ctrl+Shift+b
