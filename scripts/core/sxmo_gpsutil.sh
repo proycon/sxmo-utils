@@ -65,8 +65,8 @@ killexistingfoxtrotgps() {
 	WMCLASS="$(xprop -id "$ACTIVEWIN" | grep WM_CLASS | cut -d ' ' -f3-)"
 	if echo "$WMCLASS" | grep -i foxtrot; then
 		# E.g. by focusing back and refocuing forward we preserve ordering in stack
-		xdotool key Alt+k
-		xdotool key Alt+j
+		xdotool key Super+k
+		xdotool key Super+j
 		xdotool windowkill "$ACTIVEWIN" && return 0
 		return 1
 	else

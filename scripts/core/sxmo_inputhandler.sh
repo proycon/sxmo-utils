@@ -53,16 +53,16 @@ if [ "$HANDLE" -ne 0 ]; then
 	#standard handling
 	case "$ACTION" in
 		"prevdesktop")
-			xdotool key --clearmodifiers Alt+Shift+e
+			xdotool key --clearmodifiers Super+Shift+e
 			;;
 		"nextdesktop")
-			xdotool key --clearmodifiers Alt+Shift+r
+			xdotool key --clearmodifiers Super+Shift+r
 			;;
 		"moveprevdesktop")
-			xdotool key --clearmodifiers Alt+e
+			xdotool key --clearmodifiers Super+e
 			;;
 		"movenextdesktop")
-			xdotool key --clearmodifiers Alt+r
+			xdotool key --clearmodifiers Super+r
 			;;
 		"unmute")
 			sxmo_vol.sh unmute &
@@ -156,10 +156,10 @@ if [ "$HANDLE" -ne 0 ]; then
 			sxmo_lock.sh
 			;;
 		"voldown_one")
-			xdotool key --clearmodifiers Alt+space
+			xdotool key --clearmodifiers Super+space
 			;;
 		"voldown_two")
-			xdotool key --clearmodifiers Alt+Return
+			xdotool key --clearmodifiers Super+Return
 			;;
 		"voldown_three")
 			sxmo_blinkled.sh red && xdotool windowkill "$(xdotool getactivewindow)"

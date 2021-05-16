@@ -133,7 +133,7 @@ programchoicesinit() {
 				printf %b "Off → On" ||  printf %b "On → Off";
 				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 			)
-			$icon_cfg Bar Toggle                 ^ 1 ^ key Alt+b
+			$icon_cfg Bar Toggle                 ^ 1 ^ key Super+b
 			$icon_cfg Invert Colors              ^ 1 ^ xcalib -a -invert
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			$icon_ror Autorotate $(
