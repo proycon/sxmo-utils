@@ -319,6 +319,7 @@ programchoicesinit() {
 				$icon_zmo Zoom out        ^ 1 ^ key Ctrl+Shift+Next
 				$icon_aru Scroll up       ^ 1 ^ key Ctrl+Shift+b
 				$icon_ard Scroll down     ^ 1 ^ key Ctrl+Shift+f
+				$icon_mnu St menu       ^ 0 ^ sxmo_appmenu.sh st-256color
 			"
 			WINNAME=less
 		elif echo "$WMNAME" | grep -i -w "weechat"; then
@@ -330,6 +331,7 @@ programchoicesinit() {
 				$icon_trm Buffer                  ^ 0 ^ type '/buffer '
 				$icon_aru Scroll up               ^ 1 ^ key Prior
 				$icon_ard Scroll down             ^ 1 ^ key Next
+				$icon_mnu St menu       ^ 0 ^ sxmo_appmenu.sh st-256color
 			"
 			WINNAME=weechat
 		elif echo "$WMNAME" | grep -i -w "sms"; then
