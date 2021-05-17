@@ -14,14 +14,15 @@ gracefulexit() {
 
 programchoicesinit() {
 	XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
-	WMCLASS="${1:-$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3-)}"
+	WMCLASS="${1:-$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3- | tr '[:upper:]' '[:lower:]')}"
 	if [ -z "$XPROPOUT" ]; then
 		echo "sxmo_appmenu: detected no active window, no problem, opening system menu" >&2
 	else
 		echo "sxmo_appmenu: opening menu for wmclass $WMCLASS" >&2
 	fi
 
-	if echo "$WMCLASS" | grep -i "scripts"; then
+	case "$WMCLASS" in
+	scripts )
 		# Scripts menu
 		CHOICES="
 			$icon_mic Record          ^ 0 ^ sxmo_record.sh
@@ -46,8 +47,9 @@ programchoicesinit() {
 			"
 		fi
 		WINNAME=Scripts
-	elif echo "$WMCLASS" | grep -i "applications"; then
-	# Apps menu
+		;;
+	applications )
+		# Apps menu
 		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/apps" ]; then
 			CHOICES=$("$XDG_CONFIG_HOME/sxmo/hooks/apps")
 		else
@@ -117,7 +119,8 @@ programchoicesinit() {
 			"
 		fi
 		WINNAME=Apps
-	elif echo "$WMCLASS" | grep -i "config"; then
+		;;
+	config )
 		# System Control menu
 		CHOICES="
 			$icon_aru Brightness               ^ 1 ^ sxmo_brightness.sh up
@@ -146,7 +149,8 @@ programchoicesinit() {
 			$icon_cfg Edit configuration         ^ 0 ^ st -e $EDITOR $XDG_CONFIG_HOME/sxmo/xinit
 		"
 		WINNAME=Config
-	elif echo "$WMCLASS" | grep -i "audioout"; then
+		;;
+	audioout )
 		# Audio Out menu
 		CURRENTDEV="$(sxmo_audiocurrentdevice.sh)"
 		CHOICES="
@@ -158,7 +162,8 @@ programchoicesinit() {
 			$icon_ard Volume down                                     ^ 1 ^ sxmo_vol.sh down
 		"
 		WINNAME="Audio"
-	elif echo "$WMCLASS" | grep -i "power"; then
+		;;
+	power )
 		# Power menu
 		CHOICES="
 			$icon_lck Lock               ^ 0 ^ sxmo_lock.sh
@@ -169,7 +174,8 @@ programchoicesinit() {
 			$icon_pwr Poweroff           ^ 0 ^ st -e sudo poweroff
 		"
 		WINNAME="Power"
-	elif echo "$WMCLASS" | grep -i "mpv"; then
+		;;
+	*mpv* )
 		# MPV
 		CHOICES="
 			$icon_pau Pause        ^ 0 ^ key space
@@ -185,7 +191,8 @@ programchoicesinit() {
 			$icon_inf Seek Info    ^ 1 ^ key o
 		"
 		WINNAME=Mpv && return
-	elif echo "$WMCLASS" | grep -i "feh"; then
+		;;
+	*feh* )
 		# Feh
 		CHOICES="
 			$icon_arr Next          ^ 1 ^ key space
@@ -201,7 +208,8 @@ programchoicesinit() {
 			$icon_inf Toggle filename ^ 1 ^ key d
 		"
 		WINNAME=Feh && return
-	elif echo "$WMCLASS" | grep -i "sxiv"; then
+		;;
+	*sxiv* )
 		# Sxiv
 		CHOICES="
 			$icon_arr Next          ^ 1 ^ key space
@@ -215,7 +223,8 @@ programchoicesinit() {
 			$icon_grd Thumbnail     ^ 0 ^ key Return
 		"
 		WINNAME=Sxiv && return
-	elif echo "$WMCLASS" | grep -i "st-256color"; then
+		;;
+	*st-256color* )
 		# St
 		# First we try to handle the app running inside st:
 		WMNAME="${1:-$(echo "$XPROPOUT" | grep -E "^WM_NAME" | cut -d ' ' -f3-)}"
@@ -355,7 +364,8 @@ programchoicesinit() {
 			"
 			WINNAME=St
 		fi
-	elif echo "$WMCLASS" | grep -i "sthotkeys"; then
+		;;
+	*sthotkeys* )
 		#  St hotkeys
 		CHOICES="
 			Send Ctrl-C      ^ 0 ^ key Ctrl+c
@@ -366,7 +376,8 @@ programchoicesinit() {
 			Send Ctrl-B      ^ 0 ^ key Ctrl+b
 		"
 		WINNAME=St
-	elif echo "$WMCLASS" | grep -i netsurf; then
+		;;
+	*netsurf* )
 		# Netsurf
 		CHOICES="
 			$icon_flt Pipe URL          ^ 0 ^ sxmo_urlhandler.sh
@@ -376,7 +387,8 @@ programchoicesinit() {
 			$icon_arr History        ^ 1 ^ key Alt+Right
 		"
 		WINNAME=Netsurf
-	elif echo "$WMCLASS" | grep surf; then
+		;;
+	*surf* )
 		# Surf
 		CHOICES="
 			$icon_glb Navigate    ^ 0 ^ key Ctrl+g
@@ -394,7 +406,8 @@ programchoicesinit() {
 			$icon_rld Refresh     ^ 0 ^ key Ctrl+Shift+r
 		"
 		WINNAME=Surf
-	elif echo "$WMCLASS" | grep -i firefox; then
+		;;
+	*firefox* )
 		# Firefox
 		CHOICES="
 			$icon_flt Pipe URL          ^ 0 ^ sxmo_urlhandler.sh
@@ -407,7 +420,8 @@ programchoicesinit() {
 			$icon_rld Refresh     ^ 0 ^ key Ctrl+Shift+r
 		"
 		WINNAME=Firefox
-	elif echo "$WMCLASS" | grep -i lagrange; then
+		;;
+	*lagrange* )
 		# Lagrange
 		CHOICES="
 			$icon_mnu Toggle sidebar ^ 0 ^ key Ctrl+Shift+p
@@ -421,7 +435,8 @@ programchoicesinit() {
 			$icon_rld Refresh        ^ 0 ^ key Ctrl+r
 		"
 		WINNAME=Lagrange
-	elif echo "$WMCLASS" | grep -i foxtrot; then
+		;;
+	*foxtrot* )
 		# Foxtrot GPS
 		CHOICES="
 			$icon_itm Locations           ^ 0 ^ sxmo_gpsutil.sh menulocations
@@ -438,7 +453,8 @@ programchoicesinit() {
 			$icon_usr Locate Me           ^ 0 ^ sxmo_gpsutil.sh gpsgeoclueset
 		"
 		WINNAME=Maps
-	else
+		;;
+	* )
 		# Default system menu (no matches)
 		CHOICES="
 			$icon_grd Scripts                                            ^ 0 ^ sxmo_appmenu.sh scripts
@@ -456,7 +472,8 @@ programchoicesinit() {
 			$icon_pwr Power                                              ^ 0 ^ sxmo_appmenu.sh power
 		"
 		WINNAME=Sys
-	fi
+		;;
+	esac
 }
 
 getprogchoices() {
