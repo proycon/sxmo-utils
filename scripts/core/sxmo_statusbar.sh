@@ -54,10 +54,10 @@ update() {
 	fi
 
 	# Battery pct
-	PCT="$(cat /sys/class/power_supply/*-battery/capacity)"
+	BATTERY_DEVICE="${BATTERY_DEVICE:-"/sys/class/power_supply/*-battery"}"
+	PCT="$(cat "$BATTERY_DEVICE"/capacity)"
 	BATSTATUS="$(
-		cat /sys/class/power_supply/*-battery/status |
-		cut -c1
+		cut -c1 "$BATTERY_DEVICE"/status
 	)"
 	if [ "$BATSTATUS" = "C" ]; then
 		if [ "$PCT" -lt 20 ]; then
