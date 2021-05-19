@@ -5,10 +5,10 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 applyptrmatrix() {
-	PTRID="$(
-		xinput | grep -iE 'touchscreen.+pointer' | grep -oE 'id=[0-9]+' | cut -d= -f2
-	)"
-	xinput set-prop "$PTRID" --type=float --type=float "Coordinate Transformation Matrix" "$@"
+	TOUCH_POINTER_ID="${TOUCH_POINTER_ID:-
+		(xinput | grep -iE 'touchscreen.+pointer' | grep -oE 'id=[0-9]+' | cut -d= -f2)
+	}"
+	xinput set-prop "$TOUCH_POINTER_ID" --type=float --type=float "Coordinate Transformation Matrix" "$@"
 }
 
 isrotated() {
