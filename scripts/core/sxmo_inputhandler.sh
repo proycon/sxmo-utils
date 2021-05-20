@@ -162,10 +162,10 @@ if [ "$HANDLE" -ne 0 ]; then
 			xdotool key --clearmodifiers Super+Return
 			;;
 		"voldown_three")
-			sxmo_blinkled.sh red && xdotool windowkill "$(xdotool getactivewindow)"
+			sxmo_blinkled.sh red && sxmo_killwindow.sh
 			;;
 		"voldown_four")
-			sxmo_blinkled.sh red & xdotool windowclose "$(xdotool getactivewindow)"
+			sxmo_blinkled.sh red & sxmo_killwindow.sh close
 			;;
 		"topleftcorner")
 			sxmo_appmenu.sh sys &
