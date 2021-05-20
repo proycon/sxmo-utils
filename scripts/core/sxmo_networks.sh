@@ -94,6 +94,7 @@ networksmenu() {
 				$(connections)
 				Add a GSM Network
 				Add a WPA Network
+				Add a Hotspot
 				Delete a Network
 				Launch Nmtui
 				Launch Ifconfig
@@ -115,6 +116,9 @@ networksmenu() {
 				;;
 			"Add a WPA Network" )
 				addnetworkwpamenu
+				;;
+			"Add a Hotspot" )
+				sxmo_hotspot.sh
 				;;
 			"Delete a Network" )
 				deletenetworkmenu
