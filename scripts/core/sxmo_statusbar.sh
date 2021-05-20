@@ -54,7 +54,7 @@ update() {
 	fi
 
 	# Battery pct
-	BATTERY_DEVICE="${BATTERY_DEVICE:-"/sys/class/power_supply/*-battery"}"
+	BATTERY_DEVICE="${BATTERY_DEVICE:-"/sys/class/power_supply/axp20x-battery"}"
 	PCT="$(cat "$BATTERY_DEVICE"/capacity)"
 	BATSTATUS="$(
 		cut -c1 "$BATTERY_DEVICE"/status
