@@ -103,25 +103,35 @@ networksmenu() {
 			" |
 			awk '{$1=$1};1' | grep '\w' | dmenu -c -p 'Networks' -l 14
 		)"
-		if [ "$CHOICE" = "System Menu" ]; then
-			sxmo_appmenu.sh sys && exit
-		elif [ "$CHOICE" = "Close Menu" ]; then
-			exit
-		elif [ "$CHOICE" = "Add a GSM Network" ]; then
-			addnetworkgsmmenu
-		elif [ "$CHOICE" = "Add a WPA Network" ]; then
-			addnetworkwpamenu
-		elif [ "$CHOICE" = "Delete a Network" ]; then
-			deletenetworkmenu
-		elif [ "$CHOICE" = "Launch Nmtui" ]; then
-			st -e nmtui &
-		elif [ "$CHOICE" = "Launch Ifconfig" ]; then
-			st -e watch -n 2 ifconfig &
-		elif [ "$CHOICE" = "Scan Wifi Networks" ]; then
-			st -e watch -n 2 nmcli d wifi list &
-		else
-			toggleconnection "$CHOICE"
-		fi
+		case "$CHOICE" in
+			"System Menu" )
+				sxmo_appmenu.sh sys && exit
+				;;
+			"Close Menu" )
+				exit
+				;;
+			"Add a GSM Network" )
+				addnetworkgsmmenu
+				;;
+			"Add a WPA Network" )
+				addnetworkwpamenu
+				;;
+			"Delete a Network" )
+				deletenetworkmenu
+				;;
+			"Launch Nmtui" )
+				st -e nmtui &
+				;;
+			"Launch Ifconfig" )
+				st -e watch -n 2 ifconfig &
+				;;
+			"Scan Wifi Networks" )
+				st -e watch -n 2 nmcli d wifi list &
+				;;
+			*)
+				toggleconnection "$CHOICE"
+				;;
+		esac
 	done
 }
 
