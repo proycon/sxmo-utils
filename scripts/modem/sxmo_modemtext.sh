@@ -4,6 +4,8 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+TERMMODE=$([ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] && echo "true")
+
 err() {
 	echo "$1">&2
 	echo "$1" | dmenu -c -l 10
