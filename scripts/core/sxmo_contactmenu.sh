@@ -112,7 +112,7 @@ showcontact() {
 
 	PICKED="$(
 		echo "$ENTRIES" |
-		dmenu -c -l 5 -p "$icon_usr $name"
+		dmenu -c -l 6 -p "$icon_usr $name"
 	)"
 
 	if echo "$PICKED" | grep -q "List Messages"; then
