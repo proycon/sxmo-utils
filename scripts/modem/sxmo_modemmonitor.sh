@@ -65,7 +65,6 @@ checkforfinishedcalls() {
 	#find all finished calls
 	for FINISHEDCALLID in $(
 		mmcli -m "$(modem_n)" --voice-list-calls |
-		grep incoming |
 		grep terminated |
 		grep -oE "Call\/[0-9]+" |
 		cut -d'/' -f2
