@@ -5,7 +5,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 DIR="$1"
-[ -z "$DIR" ] && DIR="/home/$USER/"
+[ -z "$DIR" ] && DIR="$HOME"
 cd "$DIR" || exit 1
 
 SORT=
