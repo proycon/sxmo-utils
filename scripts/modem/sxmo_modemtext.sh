@@ -64,7 +64,7 @@ sendtextmenu() {
 		CONFIRM="$(
 			printf %b "$icon_edt Edit\n$icon_snd Send\n$icon_cls Cancel" |
 			dmenu -c -idx 1 -p "Confirm" -l 10
-		)"
+		)" || exit
 		if echo "$CONFIRM" | grep -q "Send"; then
 			(sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT") && \
 			rm "$DRAFT" && \
@@ -94,7 +94,7 @@ readtextmenu() {
 			printf %b "$CONTACT" | xargs -IL echo "L logfile"
 		done
 	)"
-	PICKED="$(printf %b "$ENTRIES" | dmenu -p Texts -c -l 10 -i)"
+	PICKED="$(printf %b "$ENTRIES" | dmenu -p Texts -c -l 10 -i)" || exit
 
 	if echo "$PICKED" | grep "Close Menu"; then
 		exit 1
