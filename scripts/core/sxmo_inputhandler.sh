@@ -208,10 +208,6 @@ case "$ACTION" in
 		exit 0
 		;;
 	"twodownbottomcorner")
-		sxmo_killwindow.sh close
-		exit 0
-		;;
-	"threedownbottomcorner")
 		sxmo_killwindow.sh
 		exit 0
 		;;
@@ -277,10 +273,6 @@ case "$ACTION" in
 		;;
 	"voldown_three")
 		sxmo_blinkled.sh red && sxmo_killwindow.sh
-		exit 0
-		;;
-	"voldown_four")
-		sxmo_blinkled.sh red & sxmo_killwindow.sh close
 		exit 0
 		;;
 	"topleftcorner")

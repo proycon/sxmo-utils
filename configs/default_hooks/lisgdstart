@@ -35,7 +35,6 @@ lisgd "$@" -t "$LISGD_THRESHOLD" -T "$LISGD_THRESHOLD_PRESSED" \
 	-g "1,DU,T,*,sxmo_inputhandler.sh uptopcorner" \
 	-g "2,UD,T,*,sxmo_inputhandler.sh twodowntopcorner" \
 	-g "2,UD,B,*,sxmo_inputhandler.sh twodownbottomcorner" \
-	-g "r,UD,B,*,sxmo_inputhandler.sh threedownbottomcorner" \
 	-g '1,DU,R,*,P,sxmo_inputhandler.sh uprightcorner' \
 	-g '1,UD,R,*,P,sxmo_inputhandler.sh downrightcorner' \
 	-g '1,LR,R,S,sxmo_inputhandler.sh rightrightcorner_short' \
