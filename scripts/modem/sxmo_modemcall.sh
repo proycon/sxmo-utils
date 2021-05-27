@@ -53,7 +53,7 @@ vid_to_number() {
 }
 
 number_to_contactname() {
-	NUMBER="$(echo "$1" | sed "s/^0\([0-9]\{9\}\)$/${DEFAULT_NUMBER_PREFIX:-0}\1/")"
+	NUMBER="$1"
 	CONTACT=$(sxmo_contacts.sh --all |
 		grep "^$NUMBER:" |
 		cut -d':' -f 2 |

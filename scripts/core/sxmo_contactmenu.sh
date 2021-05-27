@@ -4,14 +4,19 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 valid_number() {
-	number="$(echo "$1" | sed "s/^0\([0-9]\{9\}\)$/${DEFAULT_NUMBER_PREFIX:-0}\1/")"
-
-	if echo "$number" | grep -q "^+[0-9]\{11\}$"; then
-		echo "$number"
-	else
-		notify-send "\"$number\" is not a valid phone number"
-		notify-send "Valid format is \"+[0-9]{11}\""
+	if pn valid "$1"; then
+		echo "$1"
+		return
 	fi
+
+	REFORMATTED="$(pn find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
+	if pn valid "$REFORMATTED"; then
+		echo "$REFORMATTED"
+		return
+	fi
+
+	notify-send "\""$1"\" is not a valid phone number"
+	exit
 }
 
 newcontact() {

@@ -18,7 +18,6 @@ LOGFILE="$XDG_DATA_HOME"/sxmo/modem/modemlog.tsv
 
 prepare_contacts_list() {
 	cut -f3 |
-	sed "s/^0\([0-9]\{9\}\)$/${DEFAULT_NUMBER_PREFIX:-0}\1/" |
 	tac |
 	awk '!($0 in a){a[$0]; print}' |
 	sed '/^[[:space:]]*$/d' |

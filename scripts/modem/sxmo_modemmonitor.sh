@@ -35,6 +35,21 @@ modem_n() {
 	err "Couldn't find modem - is your modem enabled? Disabling modem monitor"
 }
 
+cleanupnumber() {
+	if pn valid "$1"; then
+		echo "$1"
+		return
+	fi
+
+	REFORMATTED="$(pn find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
+	if [ -n "$REFORMATTED" ]; then
+		echo "$REFORMATTED"
+		return
+	fi
+
+	echo "$1"
+}
+
 lookupnumberfromcallid() {
 	VOICECALLID=$1
 	mmcli -m "$(modem_n)" --voice-list-calls -o "$VOICECALLID" -K |
@@ -47,16 +62,15 @@ lookupcontactname() {
 	if [ "$1" = "--" ]; then
 		echo "Unknown number"
 	else
-		NUMBER="$(echo "$1" | sed "s/^0\([0-9]\{9\}\)$/${DEFAULT_NUMBER_PREFIX:-0}\1/")"
 		CONTACT=$(sxmo_contacts.sh --all |
-			grep "^$NUMBER:" |
+			grep "^$1:" |
 			cut -d':' -f 2 |
 			sed 's/^[ \t]*//;s/[ \t]*$//' #strip leading/trailing whitespace
 		)
 		if [ -n "$CONTACT" ]; then
 			echo "$CONTACT"
 		else
-			echo "Unknown ($NUMBER)"
+			echo "Unknown ($1)"
 		fi
 	fi
 }
@@ -70,6 +84,7 @@ checkforfinishedcalls() {
 		cut -d'/' -f2
 	); do
 		FINISHEDNUMBER="$(lookupnumberfromcallid "$FINISHEDCALLID")"
+		FINISHEDNUMBER="$(cleanupnumber "$FINISHEDNUMBER")"
 		mmcli -m "$(modem_n)" --voice-delete-call "$FINISHEDCALLID"
 
 		rm -f "$CACHEDIR/${FINISHEDCALLID}.monitoredcall"
@@ -142,6 +157,7 @@ checkforincomingcalls() {
 	# Determine the incoming phone number
 	echo "sxmo_modemmonitor: Incoming Call:">&2
 	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
+	INCOMINGNUMBER="$(cleanupnumber "$INCOMINGNUMBER")"
 	CONTACTNAME=$(lookupcontactname "$INCOMINGNUMBER")
 
 	xset dpms force on
@@ -181,6 +197,7 @@ checkfornewtexts() {
 			grep sms.content.number |
 			sed -E 's/^sms\.content\.number\s+:\s+//'
 		)"
+		NUM="$(cleanupnumber "$NUM")"
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 
 		mkdir -p "$LOGDIR/$NUM"
