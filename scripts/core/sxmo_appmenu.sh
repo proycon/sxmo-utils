@@ -310,6 +310,16 @@ programchoicesinit() {
 				$icon_mnu St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
 			"
 			WINNAME=ncmpcpp
+		elif echo "$WMNAME" | grep -i -w "aerc"; then
+			#aerc
+			CHOICES="
+				$icon_pau Archive	  ^ 0 ^ typeenter ':archive'
+				$icon_nxt Next Tab	  ^ 0 ^ typeenter ':next-tab'
+				$icon_prv Previous Tab	  ^ 0 ^ typeenter ':prev-tab'
+				$icon_itm Next Part	  ^ 0 ^ typeenter ':next-part'
+				$icon_trm Open		  ^ 0 ^ typeenter ':open'
+			"
+			WINNAME=aerc
 		elif echo "$WMNAME" | grep -i -E -w "(less|mless)"; then
 			#less
 			CHOICES="
