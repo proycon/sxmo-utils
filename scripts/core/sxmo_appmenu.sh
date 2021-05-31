@@ -313,11 +313,11 @@ programchoicesinit() {
 		elif echo "$WMNAME" | grep -i -w "aerc"; then
 			#aerc
 			CHOICES="
-				$icon_pau Archive	  ^ 0 ^ typeenter ':archive flat'
+				$icon_pau Archive	  ^ 1 ^ typeenter ':archive flat'
 				$icon_nxt Next Tab	  ^ 0 ^ typeenter ':next-tab'
 				$icon_prv Previous Tab	  ^ 0 ^ typeenter ':prev-tab'
 				$icon_cls Close Tab	  ^ 0 ^ typeenter ':close'
-				$icon_itm Next Part	  ^ 0 ^ typeenter ':next-part'
+				$icon_itm Next Part	  ^ 1 ^ typeenter ':next-part'
 				$icon_trm xdg-open Part	  ^ 0 ^ typeenter ':open'
 			"
 			WINNAME=aerc
