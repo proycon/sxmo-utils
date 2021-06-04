@@ -134,6 +134,7 @@ if [ "$HANDLE" -ne 0 ]; then
 			;;
 		"hidemenu")
 			pkill -9 dmenu
+			dunstctl close-all
 			;;
 		"closewindow")
 			sxmo_killwindow.sh close
