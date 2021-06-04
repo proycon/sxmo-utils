@@ -54,7 +54,7 @@ sendtextmenu() {
 	fi
 
 	if [ "$TERMMODE" != "true" ]; then
-		st -e "$EDITOR" "$DRAFT"
+		sxmo_terminal.sh "$EDITOR" "$DRAFT"
 	else
 		"$EDITOR" "$DRAFT"
 	fi

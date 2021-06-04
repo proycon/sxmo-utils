@@ -54,16 +54,16 @@ programchoicesinit() {
 			CHOICES=$("$XDG_CONFIG_HOME/sxmo/hooks/apps")
 		else
 			CHOICES="
-				$(command -v aerc       >/dev/null && echo "$icon_eml Aerc    	^ 0 ^ st -e aerc")
-				$(command -v amfora     >/dev/null && echo "$icon_glb Amfora      ^ 0 ^ st -e amfora")
-				$(command -v alpine     >/dev/null && echo "$icon_eml Alpine      ^ 0 ^ st -e alpine")
+				$(command -v aerc       >/dev/null && echo "$icon_eml Aerc    	^ 0 ^ sxmo_terminal.sh aerc")
+				$(command -v amfora     >/dev/null && echo "$icon_glb Amfora      ^ 0 ^ sxmo_terminal.sh amfora")
+				$(command -v alpine     >/dev/null && echo "$icon_eml Alpine      ^ 0 ^ sxmo_terminal.sh alpine")
 				$(command -v anbox-launch >/dev/null && echo "$icon_and Anbox       ^ 0 ^ anbox")
 				$(command -v audacity   >/dev/null && echo "$icon_mic Audacity    ^ 0 ^ audacity")
-				$(command -v calcurse   >/dev/null && echo "$icon_clk Calcurse    ^ 0 ^ st -e calcurse")
-				$(command -v cmus       >/dev/null && echo "$icon_mus Cmus        ^ 0 ^ st -e cmus")
+				$(command -v calcurse   >/dev/null && echo "$icon_clk Calcurse    ^ 0 ^ sxmo_terminal.sh calcurse")
+				$(command -v cmus       >/dev/null && echo "$icon_mus Cmus        ^ 0 ^ sxmo_terminal.sh cmus")
 				$(command -v dino       >/dev/null && echo "$icon_clk Dino        ^ 0 ^ GDK_SCALE=1 dino")
 				$(command -v dolphin    >/dev/null && echo "$icon_dir Dolphin     ^ 0 ^ dolphin")
-				$(command -v emacs      >/dev/null && echo "$icon_edt Emacs       ^ 0 ^ st -e emacs")
+				$(command -v emacs      >/dev/null && echo "$icon_edt Emacs       ^ 0 ^ sxmo_terminal.sh emacs")
 				$(command -v epiphany   >/dev/null && echo "$icon_glb Epiphany    ^ 0 ^ epiphany")
 				$(command -v firefox    >/dev/null && echo "$icon_ffx Firefox     ^ 0 ^ firefox")
 				$(command -v foliate    >/dev/null && echo "$icon_bok Foliate     ^ 0 ^ foliate")
@@ -72,48 +72,48 @@ programchoicesinit() {
 				$(command -v gedit      >/dev/null && echo "$icon_edt Gedit       ^ 0 ^ gedit")
 				$(command -v geeqie     >/dev/null && echo "$icon_img Geeqie      ^ 0 ^ geeqie")
 				$(command -v giara      >/dev/null && echo "$icon_red Giara       ^ 0 ^ giara")
-				$(command -v gomuks     >/dev/null && echo "$icon_msg Gomuks      ^ 0 ^ st -e gomuks")
+				$(command -v gomuks     >/dev/null && echo "$icon_msg Gomuks      ^ 0 ^ sxmo_terminal.sh gomuks")
 				$(command -v gucharmap  >/dev/null && echo "$icon_inf Gucharmap   ^ 0 ^ gucharmap")
 				$(command -v hexchat    >/dev/null && echo "$icon_msg Hexchat     ^ 0 ^ hexchat")
-				$(command -v htop       >/dev/null && echo "$icon_cfg Htop        ^ 0 ^ st -e htop")
-				$(command -v irssi      >/dev/null && echo "$icon_msg Irssi       ^ 0 ^ st -e irssi")
-				$(command -v ii         >/dev/null && echo "$icon_msg Ii          ^ 0 ^ st -e ii")
-				$(command -v ipython    >/dev/null && echo "$icon_trm IPython     ^ 0 ^ st -e ipython")
+				$(command -v htop       >/dev/null && echo "$icon_cfg Htop        ^ 0 ^ sxmo_terminal.sh htop")
+				$(command -v irssi      >/dev/null && echo "$icon_msg Irssi       ^ 0 ^ sxmo_terminal.sh irssi")
+				$(command -v ii         >/dev/null && echo "$icon_msg Ii          ^ 0 ^ sxmo_terminal.sh ii")
+				$(command -v ipython    >/dev/null && echo "$icon_trm IPython     ^ 0 ^ sxmo_terminal.sh ipython")
 				$(command -v kmail      >/dev/null && echo "$icon_eml KMail       ^ 0 ^ kmail")
 				$(command -v kontact    >/dev/null && echo "$icon_msg Kontact ^ 0 ^ kontact")
 				$(command -v konversation   >/dev/null && echo "$icon_msg Konversation ^ 0 ^ konversation")
 				$(command -v kwrite     >/dev/null && echo "$icon_edt Kwrite      ^ 0 ^ kwrite")
 				$(command -v lagrange   >/dev/null && echo "$icon_glb Lagrange    ^ 0 ^ lagrange")
-				$(command -v lf         >/dev/null && echo "$icon_dir Lf          ^ 0 ^ st -e lf")
+				$(command -v lf         >/dev/null && echo "$icon_dir Lf          ^ 0 ^ sxmo_terminal.sh lf")
 				$(command -v lollypop   >/dev/null && echo "$icon_mus Lollypop    ^ 0 ^ lollypop")
 				$(command -v midori     >/dev/null && echo "$icon_glb Midori      ^ 0 ^ midori")
-				$(command -v mutt       >/dev/null && echo "$icon_eml Mutt        ^ 0 ^ st -e mutt")
-				$(command -v nano       >/dev/null && echo "$icon_edt Nano        ^ 0 ^ st -e nano")
+				$(command -v mutt       >/dev/null && echo "$icon_eml Mutt        ^ 0 ^ sxmo_terminal.sh mutt")
+				$(command -v nano       >/dev/null && echo "$icon_edt Nano        ^ 0 ^ sxmo_terminal.sh nano")
 				$(command -v navit      >/dev/null && echo "$icon_gps Navit       ^ 0 ^ navit")
-				$(command -v ncmpcpp    >/dev/null && echo "$icon_mus Ncmpcpp     ^ 0 ^ st -e ncmpcpp")
-				$(command -v neomutt    >/dev/null && echo "$icon_eml Neomutt     ^ 0 ^ st -e neomutt")
-				$(command -v nvim       >/dev/null && echo "$icon_vim Neovim      ^ 0 ^ st -e nvim")
+				$(command -v ncmpcpp    >/dev/null && echo "$icon_mus Ncmpcpp     ^ 0 ^ sxmo_terminal.sh ncmpcpp")
+				$(command -v neomutt    >/dev/null && echo "$icon_eml Neomutt     ^ 0 ^ sxmo_terminal.sh neomutt")
+				$(command -v nvim       >/dev/null && echo "$icon_vim Neovim      ^ 0 ^ sxmo_terminal.sh nvim")
 				$(command -v netsurf    >/dev/null && echo "$icon_glb Netsurf     ^ 0 ^ netsurf")
-				$(command -v newsboat   >/dev/null && echo "$icon_rss Newsboat    ^ 0 ^ st -e newsboat")
-				$(command -v nnn        >/dev/null && echo "$icon_dir Nnn         ^ 0 ^ st -e nnn")
+				$(command -v newsboat   >/dev/null && echo "$icon_rss Newsboat    ^ 0 ^ sxmo_terminal.sh newsboat")
+				$(command -v nnn        >/dev/null && echo "$icon_dir Nnn         ^ 0 ^ sxmo_terminal.sh nnn")
 				$(command -v pidgin     >/dev/null && echo "$icon_msg Pidgin      ^ 0 ^ pidgin")
-				$(command -v profanity  >/dev/null && echo "$icon_msg Profanity   ^ 0 ^ st -e profanity")
+				$(command -v profanity  >/dev/null && echo "$icon_msg Profanity   ^ 0 ^ sxmo_terminal.sh profanity")
 				$(command -v qutebrowser>/dev/null && echo "$icon_glb Qutebrowser ^ 0 ^ qutebrowser")
-				$(command -v ranger     >/dev/null && echo "$icon_dir Ranger      ^ 0 ^ st -e ranger")
-				$(command -v sacc       >/dev/null && echo "$icon_itm Sacc        ^ 0 ^ st -e sacc i-logout.cz/1/bongusta")
-				$(command -v sic        >/dev/null && echo "$icon_itm Sic         ^ 0 ^ st -e sic")
-				$(command -v st         >/dev/null && echo "$icon_trm St          ^ 0 ^ st -e $SHELL")
+				$(command -v ranger     >/dev/null && echo "$icon_dir Ranger      ^ 0 ^ sxmo_terminal.sh ranger")
+				$(command -v sacc       >/dev/null && echo "$icon_itm Sacc        ^ 0 ^ sxmo_terminal.sh sacc i-logout.cz/1/bongusta")
+				$(command -v sic        >/dev/null && echo "$icon_itm Sic         ^ 0 ^ sxmo_terminal.sh sic")
+				$(command -v st         >/dev/null && echo "$icon_trm St          ^ 0 ^ sxmo_terminal.sh $SHELL")
 				$(command -v surf       >/dev/null && echo "$icon_glb Surf        ^ 0 ^ surf")
 				$(command -v syncthing  >/dev/null && echo "$icon_rld Syncthing          ^ 0 ^ syncthing")
 				$(command -v telegram-desktop >/dev/null && echo "$icon_tgm Telegram     ^ 0 ^ telegram-desktop")
-				$(command -v thunar     >/dev/null && echo "$icon_dir Thunar      ^ 0 ^ st -e thunar")
+				$(command -v thunar     >/dev/null && echo "$icon_dir Thunar      ^ 0 ^ sxmo_terminal.sh thunar")
 				$(command -v thunderbird >/dev/null && echo "$icon_eml Thunderbird     ^ 0 ^ thunderbird")
 				$(command -v totem      >/dev/null && echo "$icon_mvi Totem       ^ 0 ^ totem")
-				$(command -v tuir       >/dev/null && echo "$icon_red Tuir        ^ 0 ^ st -e tuir")
-				$(command -v weechat    >/dev/null && echo "$icon_msg Weechat     ^ 0 ^ st -e weechat")
-				$(command -v w3m        >/dev/null && echo "$icon_glb W3m         ^ 0 ^ st -e w3m duck.com")
-				$(command -v vim        >/dev/null && echo "$icon_vim Vim         ^ 0 ^ st -e vim")
-				$(command -v vis        >/dev/null && echo "$icon_vim Vis         ^ 0 ^ st -e vis")
+				$(command -v tuir       >/dev/null && echo "$icon_red Tuir        ^ 0 ^ sxmo_terminal.sh tuir")
+				$(command -v weechat    >/dev/null && echo "$icon_msg Weechat     ^ 0 ^ sxmo_terminal.sh weechat")
+				$(command -v w3m        >/dev/null && echo "$icon_glb W3m         ^ 0 ^ sxmo_terminal.sh w3m duck.com")
+				$(command -v vim        >/dev/null && echo "$icon_vim Vim         ^ 0 ^ sxmo_terminal.sh vim")
+				$(command -v vis        >/dev/null && echo "$icon_vim Vis         ^ 0 ^ sxmo_terminal.sh vis")
 				$(command -v vlc        >/dev/null && echo "$icon_mvi Vlc         ^ 0 ^ vlc")
 				$(command -v xcalc      >/dev/null && echo "$icon_clc Xcalc       ^ 0 ^ xcalc")
 			"
@@ -145,8 +145,8 @@ programchoicesinit() {
 				printf %b "On → Off ^ 0 ^ sxmo_proximitylocktoggle.sh &" ||  printf %b "Off → On ^ 0 ^ sxmo_proximitylocktoggle.sh &"
 			)
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
-			$icon_upc Upgrade Pkgs               ^ 0 ^ st -e sxmo_upgrade.sh
-			$icon_cfg Edit configuration         ^ 0 ^ st -e $EDITOR $XDG_CONFIG_HOME/sxmo/xinit
+			$icon_upc Upgrade Pkgs               ^ 0 ^ sxmo_terminal.sh sxmo_upgrade.sh
+			$icon_cfg Edit configuration         ^ 0 ^ sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/xinit
 		"
 		WINNAME=Config
 		;;
@@ -170,8 +170,8 @@ programchoicesinit() {
 			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_lock.sh --screen-off
 			$icon_zzz Suspend            ^ 0 ^ sxmo_lock.sh --suspend
 			$icon_out Logout             ^ 0 ^ pkill -9 dwm
-			$icon_rld Reboot             ^ 0 ^ st -e sudo reboot
-			$icon_pwr Poweroff           ^ 0 ^ st -e sudo poweroff
+			$icon_rld Reboot             ^ 0 ^ sxmo_terminal.sh sudo reboot
+			$icon_pwr Poweroff           ^ 0 ^ sxmo_terminal.sh sudo poweroff
 		"
 		WINNAME="Power"
 		;;

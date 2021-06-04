@@ -124,13 +124,13 @@ networksmenu() {
 				deletenetworkmenu
 				;;
 			"Launch Nmtui" )
-				st -e nmtui &
+				sxmo_terminal.sh nmtui &
 				;;
 			"Launch Ifconfig" )
-				st -e watch -n 2 ifconfig &
+				sxmo_terminal.sh watch -n 2 ifconfig &
 				;;
 			"Scan Wifi Networks" )
-				st -e watch -n 2 nmcli d wifi list &
+				sxmo_terminal.sh watch -n 2 nmcli d wifi list &
 				;;
 			*)
 				toggleconnection "$CHOICE"

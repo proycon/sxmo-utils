@@ -78,7 +78,7 @@ rsstimespanmenu() {
 
 	# Update Sfeed via sfeed_update (as long as user didn't request cached)
 	[ $FETCHENABLED = 1 ] &&
-		st -e sh -c "echo Fetching Feeds && sfeed_update $SFEEDCONF"
+		sxmo_terminal.sh sh -c "echo Fetching Feeds && sfeed_update $SFEEDCONF"
 
 	rssreadmenu
 }

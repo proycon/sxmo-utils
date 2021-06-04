@@ -11,4 +11,4 @@ modem_n() {
 	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 }
 
-st -e sh -c "mmcli -m $(modem_n) && read"
+sxmo_terminal.sh sh -c "mmcli -m $(modem_n) && read"

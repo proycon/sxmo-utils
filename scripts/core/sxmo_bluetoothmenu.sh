@@ -58,13 +58,13 @@ devicemenu() {
 		elif echo "$PICKED" | grep -q "Close Menu"; then
 			exit
 		elif echo "$PICKED" | grep -q "Disconnect"; then
-			st -e sh -c "bluetoothctl disconnect; sleep 1"
+			sxmo_terminal.sh sh -c "bluetoothctl disconnect; sleep 1"
 		elif echo "$PICKED" | grep -q "Scan"; then
 			notify-send "Scanning BT devices for 30 seconds..."
 			bluetoothctl --timeout=30 scan on && notify-send "End of scan" &
 		else
 			devicemac="$(echo "$DEVICES" | grep "  \^  $PICKED$" | sed 's|  ^  .*||'  )"
-			st -e sh -c "$0 connect $devicemac; sleep 1"
+			sxmo_terminal.sh sh -c "$0 connect $devicemac; sleep 1"
 		fi
 	done
 }

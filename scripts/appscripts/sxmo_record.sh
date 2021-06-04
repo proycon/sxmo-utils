@@ -23,7 +23,7 @@ record() {
 
 	TEMPFILE="$(mktemp --suffix=.wav)"
 	NOW="$(date '+%y%m%d_%H%M%S')"
-	st -e arecord -D plug:"$DEVICE" -vv -f cd -c "$CHANNELS" "$TEMPFILE"
+	sxmo_terminal.sh arecord -D plug:"$DEVICE" -vv -f cd -c "$CHANNELS" "$TEMPFILE"
 	FILENAME="${NOW}_${PRETTYNAME}_$(getdur "$TEMPFILE").wav"
 	FILE="${SXMO_RECDIR}/${FILENAME}"
 	mv "$TEMPFILE" "$FILE"
@@ -46,7 +46,7 @@ recordconfirm() {
 			dmenu -p "$DUR" -c -l 10
 		)"
 		if echo "$PICK" | grep "Playback"; then
-			st -e mpv -ao=alsa -v "$FILE"
+			sxmo_terminal.sh mpv -ao=alsa -v "$FILE"
 		elif echo "$PICK" | grep "Delete Recording"; then
 			rm "$FILE"
 			echo "File deleted." | dmenu -c -l 10

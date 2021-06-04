@@ -143,7 +143,7 @@ weathermenu() {
 		PLACE="$(printf %b "$CHOICE" | cut -d: -f1 | awk '{$1=$1};1')"
 		LAT="$(printf %b "$CHOICE" | cut -d: -f2- | awk '{$1=$1};1' | cut -d ' ' -f1)"
 		LON="$(printf %b "$CHOICE" | cut -d: -f2- | awk '{$1=$1};1' | cut -d ' ' -f2)"
-		st -e "$0" getweathertexttable "$LAT" "$LON" "$PLACE"
+		sxmo_terminal.sh "$0" getweathertexttable "$LAT" "$LON" "$PLACE"
 	fi
 }
 

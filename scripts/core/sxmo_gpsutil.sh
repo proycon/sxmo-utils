@@ -106,7 +106,7 @@ gpslatlonset() {
 	X="$(echo "$(lon2px "$LON" "$ZOOM") - ($WINW / 2)" | bc -l | cut -d. -f1)"
 
 	killexistingfoxtrotgps
-	st -e sh -c "
+	sxmo_terminal.sh sh -c "
 		gsettings set org.foxtrotgps global-zoom $ZOOM;
 		gsettings set org.foxtrotgps global-x $X;
 		gsettings set org.foxtrotgps global-y $Y;
@@ -231,7 +231,7 @@ menumaptype() {
 		IDX="$(printf %b "$CHOICES" | grep -n "$CHOICE" | cut -d: -f1)"
 		killexistingfoxtrotgps
 		gsettings set org.foxtrotgps repo-name "$SETCHOICE"
-		st -e foxtrotgps &
+		sxmo_terminal.sh foxtrotgps &
 	done
 }
 

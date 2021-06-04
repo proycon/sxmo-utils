@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+# You can export a different terminal in your xinit
+TERMCMD="${TERMCMD:-st}"
 TERMMODE=$([ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] && echo "true")
 
 if [ "$TERMMODE" = "true" ]; then
@@ -8,7 +10,7 @@ if [ "$TERMMODE" = "true" ]; then
 	done
 	shift
 else
-	set -- st "$@"
+	set -- "$TERMCMD" -e "$@"
 fi
 
 if [ -z "$*" ]; then
