@@ -32,7 +32,6 @@ command -v "$EDITOR" > /dev/null || export EDITOR=vis
 command -v shopt > /dev/null && shopt -s expand_aliases
 
 alias dmenu="sxmo_dmenu.sh"
-alias st="sxmo_terminal.sh"
 
 alias find="busybox find"
 # Use native commands if busybox was compile without those apples (for example Debians busybox)
