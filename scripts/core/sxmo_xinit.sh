@@ -104,7 +104,7 @@ customxinit() {
 	# shellcheck disable=SC1090
 	[ ! -e "$XDG_CONFIG_HOME/sxmo/xinit" ] && defaultconfig
 
-	# shellcheck disable=SC1090
+	# shellcheck disable=SC1090,SC1091
 	. "$XDG_CONFIG_HOME/sxmo/xinit"
 	set +o allexport
 }

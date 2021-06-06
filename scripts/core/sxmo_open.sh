@@ -42,7 +42,7 @@ get_mimeapps_entries_from_desktop_dir() {
 		grep --include "*.desktop" '^MimeType=' "$desktop_path" \
 		| tr ';' '\n' \
 		| cut -d= -f2 \
-		| xargs -i{} printf "%s=%s\n" "{}" "$(basename "$desktop_path")"
+		| xargs -I{} printf "%s=%s\n" "{}" "$(basename "$desktop_path")"
 	done
 }
 

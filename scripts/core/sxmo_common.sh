@@ -32,7 +32,7 @@ command -v "$EDITOR" > /dev/null || export EDITOR=vis
 # user's computer
 
 #aliases aren't expanded in bash
-# shellcheck disable=SC2039
+# shellcheck disable=SC2039,SC3044
 command -v shopt > /dev/null && shopt -s expand_aliases
 
 alias dmenu="sxmo_dmenu.sh"

@@ -23,7 +23,7 @@ else
 	pkill dmenu #kill existing dmenu
 	while [ $retry -eq 1 ]; do
 		PICKED="$(
-			# shellcheck disable=SC2039
+			# shellcheck disable=SC2039,SC3037
 			echo -e "Cancel\n0000\n1234" | sxmo_dmenu_with_kb.sh -l 3 -c -p "PIN:" | tr -d "\n\r "
 		)"
 		if [ -n "$PICKED" ] && [ "$PICKED" != "Cancel" ]; then

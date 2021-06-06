@@ -24,9 +24,9 @@ saveAllEventCounts() {
 }
 
 whichWake() {
-	if [ "$(cat $WAKEUPRTC)" -gt "$(cat $OLD_RTC_WAKECOUNT)" ] ; then
+	if [ "$(cat "$WAKEUPRTC")" -gt "$(cat "$OLD_RTC_WAKECOUNT")" ] ; then
 		echo "rtc"
-	elif [ "$(cat $MODEMUPRTC)" -gt "$(cat $OLD_MODEM_WAKECOUNT)" ] ; then
+	elif [ "$(cat "$MODEMUPRTC")" -gt "$(cat "$OLD_MODEM_WAKECOUNT")" ] ; then
 		echo "modem"
 	else
 		# button does not have a active count so if it's none of the above, it has to be the button
