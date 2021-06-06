@@ -63,6 +63,11 @@ updateLed() {
 	esac
 }
 
+if [ "$1" != "getCurState" ]; then
+	d=$(date)
+	echo "sxmo_screenlock: transitioning to stage $1 ($d)" >&2
+fi
+
 if [ "$1" = "lock" ] ; then
 	# always echo last state first so that user can use it in their hooks
 	# TODO: Document LASTSTATE
@@ -134,6 +139,9 @@ elif [ "$1" = "crust" ] ; then
 
 	echo "crust" > "$LASTSTATE"
 
+	d=$(date)
+	echo "sxmo_screenlock: woke up from crust ($d)" >&2
+
 	updateLed
 	xset dpms force on
 
@@ -165,19 +173,23 @@ elif [ "$1" = "rtc" ] ; then
 
 	xset dpms force off
 	rtcwake -m mem -s "$2"
-	whichWake > "$UNSUSPENDREASONFILE"
+	UNSUSPENDREASON=$(whichWake)
+	echo "$UNSUSPENDREASON" > "$UNSUSPENDREASONFILE"
 
 	echo "crust" > "$LASTSTATE"
 
 	updateLed
 
-	if [ "$(whichWake)" = "rtc" ]; then
+	if [ "$UNSUSPENDREASON" = "rtc" ]; then
 		WAKEHOOK="$XDG_CONFIG_HOME/sxmo/hooks/rtcwake";
-	elif [ "$(whichWake)" = "button" ]; then
+	elif [ "$UNSUSPENDREASON" = "button" ]; then
 		WAKEHOOK="$XDG_CONFIG_HOME/sxmo/hooks/postwake";
 	fi
 
-	if [ "$(whichWake)" != "rtc" ]; then
+	d=$(date)
+	echo "sxmo_screenlock: woke up from crust (reason=$UNSUSPENDREASON) ($d)" >&2
+
+	if [ "$UNSUSPENDREASON" != "rtc" ]; then
 		xset dpms force on
 	fi
 
@@ -193,4 +205,4 @@ elif [ "$1" = "getCurState" ] ; then
 fi
 
 
-echo "usage: sxmo_screenlock.sh [lock|unlock|off|crust|rtc|getCurState]"
+echo "usage: sxmo_screenlock.sh [lock|unlock|off|crust|rtc|getCurState]">&2
