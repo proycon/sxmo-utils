@@ -61,41 +61,41 @@ update() {
 	)"
 	if [ "$BATSTATUS" = "C" ]; then
 		if [ "$PCT" -lt 20 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 30 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 40 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 60 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 80 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 90 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		else
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		fi
 	else
 		if [ "$PCT" -lt 10 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 20 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 30 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 40 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 50 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 60 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 70 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 80 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		elif [ "$PCT" -lt 90 ]; then
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		else
-			BATSTATUS=""
+			BATSTATUS="$PCT% "
 		fi
 	fi
 
