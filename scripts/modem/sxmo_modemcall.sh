@@ -106,6 +106,7 @@ acceptcall() {
 	)"
 	if [ "$DIRECTION" = "outgoing" ]; then
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --start
+		touch "$CACHEDIR/${CALLID}.initiatedcall" #this signals that we started this call
 		log_event "call_start" "$CALLID"
 		echo "sxmo_modemcall: Started call $CALLID">&2
 	elif [ "$DIRECTION" = "incoming" ]; then

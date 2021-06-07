@@ -103,9 +103,14 @@ checkforfinishedcalls() {
 			rm -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.hangedupcall" ]; then
-			#this call was hanged up
+			#this call was hung up by the user
 			echo "sxmo_modemmonitor: Finished call from $FINISHEDNUMBER">&2
 			rm -f "$CACHEDIR/${FINISHEDCALLID}.hangedupcall"
+			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.initiatedcall" ]; then
+			#this call was hung up by the contact
+			echo "sxmo_modemmonitor: Finished call from $FINISHEDNUMBER">&2
+			rm -f "$CACHEDIR/${FINISHEDCALLID}.initiatedcall"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.mutedring" ]; then
 			#this ring was muted up
