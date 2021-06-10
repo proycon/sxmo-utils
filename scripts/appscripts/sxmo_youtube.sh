@@ -5,16 +5,16 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 HISTORY_FILE="$XDG_CACHE_HOME"/sxmo/youtubehistory.tsv
-NRESULTS=5
 AUDIOONLY=0
 
 youtubesearch() {
 	QUERY="$1"
-	NRESULTS="$2"
-	youtube-dl -f '[height<420]' -e --get-id --get-duration "ytsearch$NRESULTS:$QUERY" |
-		paste - - - -d ' ' |
-		awk -F" " '{DUR=$NF; NF-=1; print DUR " " $0}' |
-		sed -E 's#([^ ]+)$#ytdl://\1#g'
+	youtube-cli "$QUERY" |
+		grep -Ev '^(Channelid|Atom feed|Channel title|Published|Viewcount|Userid):' |
+		sed -E 's/^(URL|Duration):\s+/\t/g' |
+		tr -d '\n' |
+		sed 's/===/\n/g' |
+		gawk -F'\t' '{ print $3 " " $1 " " $2}'
 }
 
 searchmenu() {
@@ -27,10 +27,6 @@ searchmenu() {
 		ENTRY="$(
 			printf %b "
 				Close Menu
-				Show 1 Result              $([ "$NRESULTS" = "1" ] && echo "$icon_chk")
-				Show 5 Results             $([ "$NRESULTS" = "5" ] && echo "$icon_chk")
-				Show 10 Results            $([ "$NRESULTS" = "10" ] && echo "$icon_chk")
-				Show 20 Results            $([ "$NRESULTS" = "20" ] && echo "$icon_chk")
 				$HISTORY
 			" |
 				xargs -0 echo |
@@ -41,12 +37,10 @@ searchmenu() {
 
 		if [ "Close Menu" = "$ENTRY" ]; then
 			exit 0
-		elif echo "$ENTRY" | grep -E "Show [0-9]+ Results*"; then
-			NRESULTS="$(echo "$ENTRY" | grep -oE "[0-9]+")"
 		else
 			ENTRY="$(echo "$ENTRY" | sed 's#^History: ##')"
 			printf %b "$ENTRY\n" >> "$HISTORY_FILE"
-			youtubesearch "$ENTRY" "$NRESULTS" | resultsmenu
+			youtubesearch "$ENTRY" | resultsmenu
 		fi
 	done
 }
@@ -64,7 +58,7 @@ resultsmenu() {
 				xargs -0 echo |
 				sed '/^[[:space:]]*$/d' |
 				awk '{$1=$1};1' |
-				dmenu -c -l 10 -p "Results" -fn Terminus-20
+				dmenu -c -l 10 -p "Results"
 		)"
 
 		if [ "Change Search" = "$PICKED" ]; then
@@ -91,4 +85,4 @@ audio() {
 	searchmenu
 }
 
-$1
+"$@"
