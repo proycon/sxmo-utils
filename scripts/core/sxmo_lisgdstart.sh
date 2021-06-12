@@ -24,26 +24,32 @@ else
 		-g '1,DLUR,BL,*,sxmo_inputhandler.sh bottomleftcorner' \
 		-g '1,ULDR,TL,*,sxmo_inputhandler.sh topleftcorner' \
 		-g '1,URDL,TR,*,sxmo_inputhandler.sh toprightcorner' \
-		-g '1,LR,B,L,sxmo_inputhandler.sh enter' \
-		-g '1,RL,B,L,sxmo_inputhandler.sh back' \
-		-g '1,LR,L,*,sxmo_inputhandler.sh prevdesktop' \
-		-g '1,RL,R,*,sxmo_inputhandler.sh nextdesktop' \
-		-g '1,DU,L,*,P,sxmo_inputhandler.sh volup' \
-		-g '1,UD,L,*,P,sxmo_inputhandler.sh voldown' \
-		-g '1,LR,T,*,P,sxmo_inputhandler.sh brightnessup' \
-		-g '1,RL,T,*,P,sxmo_inputhandler.sh brightnessdown' \
-		-g "1,DU,B,*,sxmo_inputhandler.sh showkeyboard" \
-		-g "1,UD,B,*,sxmo_inputhandler.sh hidekeyboard" \
-		-g "1,UD,T,*,sxmo_inputhandler.sh showmenu" \
-		-g "1,DU,T,*,sxmo_inputhandler.sh hidemenu" \
-		-g "2,UD,T,*,sxmo_inputhandler.sh showsysmenu" \
-		-g "2,UD,B,*,sxmo_inputhandler.sh closewindow" \
-		-g "3,UD,B,*,sxmo_inputhandler.sh killwindow" \
-		-g '2,RL,*,*,sxmo_inputhandler.sh moveprevdesktop' \
-		-g '2,LR,*,*,sxmo_inputhandler.sh movenextdesktop' \
-		-g '1,DU,R,*,P,sxmo_inputhandler.sh scrollup_short' \
-		-g '1,UD,R,*,P,sxmo_inputhandler.sh scrolldown_short' \
-		-g '1,LR,R,S,sxmo_inputhandler.sh scrollright_short' \
-		-g '1,RL,L,S,sxmo_inputhandler.sh scrollleft_short' \
+		-g '1,LR,B,L,sxmo_inputhandler.sh rightbottomcorner' \
+		-g '1,RL,B,L,sxmo_inputhandler.sh leftbottomcorner' \
+		-g '1,LR,L,*,sxmo_inputhandler.sh rightleftcorner' \
+		-g '1,RL,R,*,sxmo_inputhandler.sh leftrightcorner' \
+		-g '1,DU,L,*,P,sxmo_inputhandler.sh upleftcorner' \
+		-g '1,UD,L,*,P,sxmo_inputhandler.sh downleftcorner' \
+		-g '1,LR,T,*,P,sxmo_inputhandler.sh righttopcorner' \
+		-g '1,RL,T,*,P,sxmo_inputhandler.sh lefttopcorner' \
+		-g "1,DU,B,*,sxmo_inputhandler.sh upbottomcorner" \
+		-g "1,UD,B,*,sxmo_inputhandler.sh downbottomcorner" \
+		-g "1,UD,T,*,sxmo_inputhandler.sh downtopcorner" \
+		-g "1,DU,T,*,sxmo_inputhandler.sh uptopcorner" \
+		-g "2,UD,T,*,sxmo_inputhandler.sh twodowntopcorner" \
+		-g "2,UD,B,*,sxmo_inputhandler.sh twodownbottomcorner" \
+		-g "r,UD,B,*,sxmo_inputhandler.sh threedownbottomcorner" \
+		-g '1,DU,R,*,P,sxmo_inputhandler.sh uprightcorner' \
+		-g '1,UD,R,*,P,sxmo_inputhandler.sh downrightcorner' \
+		-g '1,LR,R,S,sxmo_inputhandler.sh rightrightcorner_short' \
+		-g '1,RL,L,S,sxmo_inputhandler.sh leftrightcorner_short' \
+		-g '1,RL,*,*,sxmo_inputhandler.sh left' \
+		-g '1,LR,*,*,sxmo_inputhandler.sh right' \
+		-g '1,DU,*,*,sxmo_inputhandler.sh up' \
+		-g '1,UD,*,*,sxmo_inputhandler.sh down' \
+		-g '2,RL,*,*,sxmo_inputhandler.sh twoleft' \
+		-g '2,LR,*,*,sxmo_inputhandler.sh tworight' \
+		-g '2,DU,*,*,sxmo_inputhandler.sh twoup' \
+		-g '2,UD,*,*,sxmo_inputhandler.sh twodown' \
 		>"$CACHEDIR/lisgd.log" 2>&1 &
 fi
