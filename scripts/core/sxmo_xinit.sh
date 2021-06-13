@@ -73,36 +73,31 @@ daemonsneedingdbus() {
 }
 
 defaultconfig() {
-	#this is only run on the very first start of sxmo
+	if [ ! -r "$2" ]; then
+		mkdir -p "$(dirname "$2")"
+		cp "$1" "$2"
+		chmod "$3" "$2"
+	fi
+}
 
-	mkdir -p "$XDG_CONFIG_HOME/sxmo"
-	cp /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit"
-	chmod u+rx "$XDG_CONFIG_HOME/sxmo/xinit"
+defaultconfigs() {
+	[ -r "$XDG_CONFIG_HOME/sxmo/xinit" ] && return
 
-	#Set some default hooks
-	mkdir -p "$XDG_CONFIG_HOME/sxmo/hooks"
-	if [ ! -e "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
-		cp /usr/share/sxmo/default_hooks/ring "$XDG_CONFIG_HOME/sxmo/hooks/ring"
-		chmod u+rx "$XDG_CONFIG_HOME/sxmo/hooks/ring"
-	fi
-	if [ ! -e "$XDG_CONFIG_HOME/sxmo/hooks/sms" ]; then
-		cp /usr/share/sxmo/default_hooks/sms "$XDG_CONFIG_HOME/sxmo/hooks/sms"
-		chmod u+rx "$XDG_CONFIG_HOME/sxmo/hooks/sms"
-	fi
-	if [ ! -e "$XDG_CONFIG_HOME/sxmo/hooks/pickup" ]; then
-		cp /usr/share/sxmo/default_hooks/pickup "$XDG_CONFIG_HOME/sxmo/hooks/pickup"
-		chmod u+rx "$XDG_CONFIG_HOME/sxmo/hooks/pickup"
-	fi
-	if [ ! -e "$XDG_CONFIG_HOME/sxmo/hooks/missed_call" ]; then
-		cp /usr/share/sxmo/default_hooks/missed_call "$XDG_CONFIG_HOME/sxmo/hooks/missed_call"
-		chmod u+rx "$XDG_CONFIG_HOME/sxmo/hooks/missed_call"
-	fi
+	defaultconfig /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit" 744
+
+	defaultconfig /usr/share/sxmo/default_hooks/discard "$XDG_CONFIG_HOME/sxmo/hooks/discard" 744
+	defaultconfig /usr/share/sxmo/default_hooks/missed_call "$XDG_CONFIG_HOME/sxmo/hooks/missed_call" 744
+	defaultconfig /usr/share/sxmo/default_hooks/mute_ring "$XDG_CONFIG_HOME/sxmo/hooks/mute_ring" 744
+	defaultconfig /usr/share/sxmo/default_hooks/pickup "$XDG_CONFIG_HOME/sxmo/hooks/pickup" 744
+	defaultconfig /usr/share/sxmo/default_hooks/postwake "$XDG_CONFIG_HOME/sxmo/hooks/postwake" 744
+	defaultconfig /usr/share/sxmo/default_hooks/ring "$XDG_CONFIG_HOME/sxmo/hooks/ring" 744
+	defaultconfig /usr/share/sxmo/default_hooks/rtcwake "$XDG_CONFIG_HOME/sxmo/hooks/rtcwake" 744
+	defaultconfig /usr/share/sxmo/default_hooks/sms "$XDG_CONFIG_HOME/sxmo/hooks/sms" 744
 }
 
 customxinit() {
 	set -o allexport
-	# shellcheck disable=SC1090
-	[ ! -e "$XDG_CONFIG_HOME/sxmo/xinit" ] && defaultconfig
+	defaultconfigs
 
 	# shellcheck disable=SC1090,SC1091
 	. "$XDG_CONFIG_HOME/sxmo/xinit"
