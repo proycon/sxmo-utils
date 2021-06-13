@@ -15,7 +15,7 @@ valid_number() {
 		return
 	fi
 
-	notify-send "\""$1"\" is not a valid phone number"
+	notify-send "\"$1\" is not a valid phone number"
 	exit
 }
 
