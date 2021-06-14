@@ -113,6 +113,42 @@ case "$WMCLASS" in
 						;;
 				esac
 				;;
+			*"amfora"*)
+				case "$ACTION" in
+					"downright")
+						key Tab
+						exit 0
+						;;
+					"upleft")
+						key Shift+Tab
+						exit 0
+						;;
+					"down")
+						key d
+						exit 0
+						;;
+					"up")
+						key u
+						exit 0
+						;;
+					"right")
+						key Return
+						exit 0
+						;;
+					"upright")
+						key Ctrl+t
+						exit 0
+						;;
+					"left")
+						key b
+						exit 0
+						;;
+					"downleft")
+						key Ctrl+w
+						exit 0
+						;;
+				esac
+				;;
 		esac
 esac
 

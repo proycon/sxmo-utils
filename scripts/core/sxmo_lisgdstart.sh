@@ -47,6 +47,10 @@ else
 		-g '1,LR,*,*,sxmo_inputhandler.sh right' \
 		-g '1,DU,*,*,sxmo_inputhandler.sh up' \
 		-g '1,UD,*,*,sxmo_inputhandler.sh down' \
+		-g '1,DRUL,*,*,sxmo_inputhandler.sh upleft' \
+		-g '1,URDL,*,*,sxmo_inputhandler.sh downleft' \
+		-g '1,DLUR,*,*,sxmo_inputhandler.sh upright' \
+		-g '1,ULDR,*,*,sxmo_inputhandler.sh downright' \
 		-g '2,RL,*,*,sxmo_inputhandler.sh twoleft' \
 		-g '2,LR,*,*,sxmo_inputhandler.sh tworight' \
 		-g '2,DU,*,*,sxmo_inputhandler.sh twoup' \
