@@ -38,6 +38,8 @@ defaultconfigs() {
 	defaultconfig /usr/share/sxmo/default_hooks/ring "$XDG_CONFIG_HOME/sxmo/hooks/ring" 744
 	defaultconfig /usr/share/sxmo/default_hooks/rtcwake "$XDG_CONFIG_HOME/sxmo/hooks/rtcwake" 744
 	defaultconfig /usr/share/sxmo/default_hooks/sms "$XDG_CONFIG_HOME/sxmo/hooks/sms" 744
+	defaultconfig /usr/share/sxmo/default_hooks/battery "$XDG_CONFIG_HOME/sxmo/hooks/battery" 744
+	defaultconfig /usr/share/sxmo/default_hooks/battery_crit "$XDG_CONFIG_HOME/sxmo/hooks/battery_crit" 744
 }
 
 defaultconfigs
