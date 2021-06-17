@@ -76,7 +76,7 @@ tailtextlog() {
 	CONTACTNAME="$(sxmo_contacts.sh | grep "^$NUMBER" | cut -d' ' -f2-)"
 	[ "Unknown Number" = "$CONTACTNAME" ] && CONTACTNAME="$CONTACTNAME ($NUMBER)"
 
-	st -T "$NUMBER SMS" -e sh -c "tail -n9999 -f \"$LOGDIR/$NUMBER/sms.txt\" | sed \"s|$NUMBER|$CONTACTNAME|g\""
+	TERMNAME="$NUMBER SMS" sxmo_terminal.sh sh -c "tail -n9999 -f \"$LOGDIR/$NUMBER/sms.txt\" | sed \"s|$NUMBER|$CONTACTNAME|g\""
 }
 
 readtextmenu() {
