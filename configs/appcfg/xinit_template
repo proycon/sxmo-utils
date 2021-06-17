@@ -52,7 +52,8 @@ command -v firefox && export BROWSER=firefox
 #(useful for getting notifications)
 #export SXMO_RTCWAKEINTERVAL=300
 
-export TERMCMD="st -e"
+# Change the default terminal command
+# export TERMCMD="st -e"
 
 # Immediately turn the screen off when locking the device
 export SXMO_LOCK_SCREEN_OFF=1

@@ -4,8 +4,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-TERMMODE=$([ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] && echo "true")
-
 err() {
 	echo "$1">&2
 	echo "$1" | dmenu -c -l 10
@@ -53,11 +51,7 @@ sendtextmenu() {
 		echo 'Enter text message here' > "$DRAFT"
 	fi
 
-	if [ "$TERMMODE" != "true" ]; then
-		sxmo_terminal.sh "$EDITOR" "$DRAFT"
-	else
-		"$EDITOR" "$DRAFT"
-	fi
+	sxmo_terminal.sh "$EDITOR" "$DRAFT"
 
 	while true
 	do
