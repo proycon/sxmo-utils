@@ -220,7 +220,7 @@ case "$ACTION" in
 		exit 0
 		;;
 	"powerbutton_two")
-		sxmo_blinkled.sh blue && $TERMCMD -e "$SHELL"
+		sxmo_blinkled.sh blue && $TERMCMD "$SHELL"
 		exit 0
 		;;
 	"powerbutton_three")
