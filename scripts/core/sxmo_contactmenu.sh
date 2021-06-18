@@ -30,7 +30,7 @@ newcontact() {
 	name="$(echo | sxmo_dmenu_with_kb.sh -c -l 2 -p "$icon_usr Name")"
 	number=
 	while [ -z "$number" ]; do
-		number="$(sxmo_contacts.sh --unknown | sxmo_dmenu_with_kb.sh -c -l 10 -p "$icon_phl Number")"
+		number="$(sxmo_contacts.sh --unknown | sxmo_dmenu_with_kb.sh -t -c -l 10 -p "$icon_phl Number")"
 		number="$(valid_number "$number")"
 	done
 
@@ -66,7 +66,7 @@ editcontactnumber() {
 	while [ -z "$PICKED" ]; do
 		PICKED="$(
 			echo "$ENTRIES" |
-			sxmo_dmenu_with_kb.sh -c -l 10 -p "$icon_edt Edit Contact"
+			sxmo_dmenu_with_kb.sh -t -c -l 10 -p "$icon_edt Edit Contact"
 		)"
 		if echo "$PICKED" | grep -q "(Old number)$"; then
 			editcontact "$1"
