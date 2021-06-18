@@ -16,6 +16,13 @@ valid_number() {
 	fi
 
 	notify-send "\"$1\" is not a valid phone number"
+
+	PICKED="$(printf "Ok\nUse as it is\n" | dmenu -c -l 2 -p "Invalid Number")"
+	if [ "$PICKED" = "Use as it is" ]; then
+		echo "$1"
+		return
+	fi
+
 	exit
 }
 
