@@ -4,13 +4,13 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 valid_number() {
-	if pn valid ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1"; then
+	if pn valid "$1"; then
 		echo "$1"
 		return
 	fi
 
 	REFORMATTED="$(pn find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
-	if pn valid ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$REFORMATTED"; then
+	if pn valid "$REFORMATTED"; then
 		echo "$REFORMATTED"
 		return
 	fi
