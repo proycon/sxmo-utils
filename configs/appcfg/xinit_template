@@ -25,9 +25,9 @@ amixer set "Line Out" 50%
 #mpv --quiet --no-video ~/welcome.ogg &
 
 # You will sometime get SMS or calls from not
-#  country code prefixed phone numbers. To ensure
-#  we match your contacts, we will use this one.
-#export DEFAULT_NUMBER_PREFIX=+33
+#  country code prefixed phone numbers. To make
+#  it easy to fixup configure the default countryu.
+#export DEFAULT_COUNTRY=FR
 
 # turn on modemmonitor on login
 # Note: if the modemmonitor is not on you can
