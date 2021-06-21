@@ -145,15 +145,10 @@ elif [ "$1" = "crust" ] ; then
 	updateLed
 	xset dpms force on
 
-	# all we know is it's not the rtc. Maybe modem?
-	# TODO: Check mmcli or something or sxmo's notifs when
-	# https://gitlab.freedesktop.org/mobile-broadband/ModemManager/-/issues/356
-	# https://gitlab.com/postmarketOS/pmaports/-/merge_requests/2066
-	# fixed
-	# TODO: Document UNSUSPENDREASONFILE
-	echo "nonrtc" > "$UNSUSPENDREASONFILE"
+	UNSUSPENDREASON=$(whichWake)
+	echo "$UNSUSPENDREASON" > "$UNSUSPENDREASONFILE"
 
-	if [ "$(whichWake)" = "button" ] && [ -x "$XDG_CONFIG_HOME/sxmo/hooks/postwake" ]; then
+	if [ "$UNSUSPENDREASON" = "button" ] && [ -x "$XDG_CONFIG_HOME/sxmo/hooks/postwake" ]; then
 		"$XDG_CONFIG_HOME/sxmo/hooks/postwake"
 	fi
 
