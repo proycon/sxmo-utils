@@ -151,6 +151,7 @@ programchoicesinit() {
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
 			$icon_upc Upgrade Pkgs               ^ 0 ^ sxmo_terminal.sh sxmo_upgrade.sh
 			$icon_cfg Edit configuration         ^ 0 ^ sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/xinit
+			$icon_cfg Postmarketos Tweaks	     ^ 0 ^ GDK_SCALE=1 pmos-tweaks
 		"
 		WINNAME=Config
 		;;
