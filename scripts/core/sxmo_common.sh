@@ -46,6 +46,7 @@ fi
 alias xargs="busybox xargs"
 alias less="busybox less"
 alias tail="busybox tail"
+alias grep="busybox grep"
 
 SXMO_COMMON_INCLUDED=1
 
