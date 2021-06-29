@@ -100,6 +100,7 @@ elif [ "$1" = "unlock" ] ; then
 	xset dpms force on
 	xinput enable "$TOUCH_POINTER_ID"
 	sxmo_lisgdstart.sh
+	echo 16000 > "$NETWORKRTCSCAN"
 
 	updateLed
 	exit 0
@@ -120,41 +121,6 @@ elif [ "$1" = "off" ] ; then
 	exit 0
 elif [ "$1" = "crust" ] ; then
 	getCurState > "$LASTSTATE"
-
-	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/presuspend" ]; then
-		"$XDG_CONFIG_HOME/sxmo/hooks/presuspend"
-	fi
-
-	echo 1 > "$REDLED_PATH"
-	echo 0 > "$BLUELED_PATH"
-	xset dpms force off
-
-	# configure crust
-	# TODO: disable all wakeup sources other than button, rtc, and modem.
-	# TODO: make sure there is logic in whichWake and saveAllEventCounts functions
-	# Do I need to unbind? https://git.sr.ht/~mil/sxmo-utils/commit/bcf4f5c24968df0055d15a9fca649f67de9ced6a
-	echo "deep" > /sys/power/mem_sleep # deep sleep
-
-	echo "mem" > /sys/power/state
-
-	echo "crust" > "$LASTSTATE"
-
-	d=$(date)
-	echo "sxmo_screenlock: woke up from crust ($d)" >&2
-
-	updateLed
-	xset dpms force on
-
-	UNSUSPENDREASON=$(whichWake)
-	echo "$UNSUSPENDREASON" > "$UNSUSPENDREASONFILE"
-
-	if [ "$UNSUSPENDREASON" = "button" ] && [ -x "$XDG_CONFIG_HOME/sxmo/hooks/postwake" ]; then
-		"$XDG_CONFIG_HOME/sxmo/hooks/postwake"
-	fi
-
-	exit 0
-elif [ "$1" = "rtc" ] ; then
-	getCurState > "$LASTSTATE"
 	# USER MUST USE sxmo_screenlock.sh rtc rather than using rtcwake directly.
 	# With this new version of lock, we dont check the exit code of the user hook. User must execute "sxmo_screenlock.sh rtc $TIME" at the end of their hook (depending on whether they want to re-rtc)
 	echo 1 > "$REDLED_PATH"
@@ -167,19 +133,18 @@ elif [ "$1" = "rtc" ] ; then
 	fi
 
 	xset dpms force off
-	rtcwake -m mem -s "$2"
-	UNSUSPENDREASON=$(whichWake)
+	suspend_time="$(($(mnc)-10))"
+	if [ "$suspend_time" -gt 0 ]; then
+		rtcwake -m mem -s "$suspend_time"
+		UNSUSPENDREASON=$(whichWake)
+	else
+		UNSUSPENDREASON=rtc # we fake the crust for those seconds
+	fi
 	echo "$UNSUSPENDREASON" > "$UNSUSPENDREASONFILE"
 
 	echo "crust" > "$LASTSTATE"
 
 	updateLed
-
-	if [ "$UNSUSPENDREASON" = "rtc" ]; then
-		WAKEHOOK="$XDG_CONFIG_HOME/sxmo/hooks/rtcwake";
-	elif [ "$UNSUSPENDREASON" = "button" ]; then
-		WAKEHOOK="$XDG_CONFIG_HOME/sxmo/hooks/postwake";
-	fi
 
 	d=$(date)
 	echo "sxmo_screenlock: woke up from crust (reason=$UNSUSPENDREASON) ($d)" >&2
@@ -188,16 +153,18 @@ elif [ "$1" = "rtc" ] ; then
 		xset dpms force on
 	fi
 
-	if [ -x "$WAKEHOOK" ]; then
+	if [ "$UNSUSPENDREASON" = "button" ] && [ -x "$XDG_CONFIG_HOME/sxmo/hooks/postwake" ]; then
 		echo 1200 > "$NETWORKRTCSCAN"
-		"$WAKEHOOK"
-		echo 16000 > "$NETWORKRTCSCAN"
+		"$XDG_CONFIG_HOME/sxmo/hooks/postwake"
 	fi
 	exit 0
 elif [ "$1" = "getCurState" ] ; then
 	getCurState
 	exit 0
+elif [ "$1" = "updateLed" ] ; then
+	updateLed
+	exit 0
 fi
 
 
-echo "usage: sxmo_screenlock.sh [lock|unlock|off|crust|rtc|getCurState]">&2
+echo "usage: sxmo_screenlock.sh [lock|unlock|off|crust|rtc|getCurState|updateLed]">&2

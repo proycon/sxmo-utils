@@ -10,6 +10,8 @@
 # for all the variables we define here
 
 # shellcheck disable=SC2034
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-$HOME/.local/run}"
+# shellcheck disable=SC2034
 export NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
 # shellcheck disable=SC2034
 export CACHEDIR="$XDG_CACHE_HOME"/sxmo

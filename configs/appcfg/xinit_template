@@ -48,10 +48,6 @@ command -v firefox && export BROWSER=firefox
 # Prepopulate Subreddits menu with custom subreddits
 #export SXMO_SUBREDDITS="postmarketos pinephoneOfficial pinephone unixporn"
 
-# Temporarily wake every 5 minutes during sleep
-#(useful for getting notifications)
-#export SXMO_RTCWAKEINTERVAL=300
-
 # Change the default terminal command
 # export TERMCMD="st -e"
 

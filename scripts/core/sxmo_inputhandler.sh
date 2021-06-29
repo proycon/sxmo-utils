@@ -9,14 +9,6 @@ ACTION="$1"
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-crust() {
-	if [ -n "$SXMO_RTCWAKEINTERVAL" ]; then
-		sxmo_screenlock.sh rtc "$SXMO_RTCWAKEINTERVAL"
-	else
-		sxmo_screenlock.sh crust
-	fi
-}
-
 lock_screen() {
 	if [ "$SXMO_LOCK_SCREEN_OFF" = "1" ]; then
 		sxmo_screenlock.sh off
@@ -24,7 +16,7 @@ lock_screen() {
 		sxmo_screenlock.sh lock
 	fi
 	if [ "$SXMO_LOCK_SUSPEND" = "1" ]; then
-		crust
+		sxmo_screenlock.sh crust
 	fi
 }
 
@@ -46,7 +38,7 @@ typeenter() {
 if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
 	case "$ACTION" in
 		"volup_three")
-			crust
+			sxmo_screenlock.sh crust
 			;;
 		"voldown_three")
 			if [ "$(sxmo_screenlock.sh getCurState)" = "lock" ]; then

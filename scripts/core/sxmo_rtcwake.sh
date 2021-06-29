@@ -1,11 +1,40 @@
 #!/usr/bin/env sh
 
-# This script (and anything it calls) should return as quickly as possible
-# as it blocks the system from suspending (and processing input) until done
+# shellcheck disable=SC1090
+. "$(which sxmo_common.sh)"
 
-# If this script returns a non-zero exit code, the system will wake up
+REDLED_PATH="/sys/class/leds/red:indicator/brightness"
+BLUELED_PATH="/sys/class/leds/blue:indicator/brightness"
 
-if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/rtcwake" ]; then
-	"$XDG_CONFIG_HOME/sxmo/hooks/rtcwake"
-	exit $?
-fi
+finish() {
+	kill $BLINKPID
+
+	sxmo_screenlock.sh updateLed
+
+	if grep -q rtc "$UNSUSPENDREASONFILE"; then
+		# Going back to crust
+		if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
+			sxmo_screenlock.sh crust
+		fi
+	fi
+
+	exit 0
+}
+
+trap 'finish' TERM INT EXIT
+
+blink() {
+	while [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; do
+		echo 1 > "$REDLED_PATH"
+		echo 0 > "$BLUELED_PATH"
+		sleep 0.25
+		echo 0 > "$REDLED_PATH"
+		echo 1 > "$BLUELED_PATH"
+		sleep 0.25
+	done
+}
+
+blink &
+BLINKPID=$!
+
+"$@"
