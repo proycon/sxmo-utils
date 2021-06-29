@@ -86,6 +86,7 @@ checkforfinishedcalls() {
 		FINISHEDNUMBER="$(lookupnumberfromcallid "$FINISHEDCALLID")"
 		FINISHEDNUMBER="$(cleanupnumber "$FINISHEDNUMBER")"
 		mmcli -m "$(modem_n)" --voice-delete-call "$FINISHEDCALLID"
+		rm -f "$NOTIFDIR/incomingcall_${FINISHEDCALLID}_notification"* #there may be multiple actionable notification for one call
 
 		rm -f "$CACHEDIR/${FINISHEDCALLID}.monitoredcall"
 
@@ -178,6 +179,11 @@ checkforincomingcalls() {
 	mkdir -p "$LOGDIR"
 	printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
+	sxmo_notificationwrite.sh \
+		"$NOTIFDIR/incomingcall_${VOICECALLID}_notification" \
+		"sxmo_modemcall.sh incomingcallmenu '$VOICECALLID'" \
+		none \
+		"Incoming Call - $CONTACTNAME" &
 	sxmo_modemcall.sh incomingcallmenu "$VOICECALLID" &
 
 	echo "sxmo_modemmonitor: Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)">&2

@@ -252,6 +252,7 @@ incomingcallmenu() {
 	elif echo "$PICKED" | grep -q "Mute"; then
 		mute "$1"
 	fi
+	rm -f "$NOTIFDIR/incomingcall_${1}_notification"* #there may be multiple actionable notification for one call
 }
 
 modem_n || finish "Couldn't determine modem number - is modem online?"
