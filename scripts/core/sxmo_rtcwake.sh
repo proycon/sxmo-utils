@@ -7,7 +7,7 @@ REDLED_PATH="/sys/class/leds/red:indicator/brightness"
 BLUELED_PATH="/sys/class/leds/blue:indicator/brightness"
 
 finish() {
-	kill $BLINKPID
+	kill "$BLINKPID"
 
 	sxmo_screenlock.sh updateLed
 
