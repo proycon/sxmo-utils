@@ -19,7 +19,7 @@ rotnormal() {
 	sxmo_keyboard.sh close
 	xrandr -o normal
 	applyptrmatrix 0 0 0 0 0 0 0 0 0
-	pidof lisgd && pkill lisgd | sxmo_lisgdstart.sh -o 0 &
+	pidof lisgd && pkill lisgd | sxmo_hooks.sh lisgdstart -o 0 &
 	exit 0
 }
 
@@ -27,7 +27,7 @@ rotright() {
 	sxmo_keyboard.sh close
 	xrandr -o right
 	applyptrmatrix 0 1 0 -1 0 1 0 0 1
-	pidof lisgd && pkill lisgd | sxmo_lisgdstart.sh -o 1 &
+	pidof lisgd && pkill lisgd | sxmo_hooks.sh lisgdstart -o 1 &
 	exit 0
 }
 
@@ -35,7 +35,7 @@ rotleft() {
 	sxmo_keyboard.sh close
 	xrandr -o left
 	applyptrmatrix 0 -1 1 1 0 0 0 0 1
-	pidof lisgd && pkill lisgd | sxmo_lisgdstart.sh -o 3 &
+	pidof lisgd && pkill lisgd | sxmo_hooks.sh lisgdstart -o 3 &
 	exit 0
 }
 

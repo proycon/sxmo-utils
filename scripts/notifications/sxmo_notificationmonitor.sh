@@ -10,20 +10,6 @@ gracefulexit() {
 	kill -9 0
 }
 
-notificationhook() {
-	if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/notification ]; then
-		"$XDG_CONFIG_HOME"/sxmo/hooks/notification "$@"
-	else
-		VIBS=5
-		VIBI=0
-		while [ $VIBI -lt $VIBS ]; do
-			sxmo_vibratepine 400 &
-			sleep 0.5
-			VIBI=$(echo $VIBI+1 | bc)
-		done
-	fi
-}
-
 handlenewnotiffile(){
 	NOTIFFILE="$1"
 
@@ -31,7 +17,7 @@ handlenewnotiffile(){
 		echo "Invalid notification file $NOTIFFILE found (<3 lines -- see notif spec in sxmo_notifwrite.sh), deleting!" >&2
 		rm -f "$NOTIFFILE"
 	else
-		notificationhook "$NOTIFFILE" &
+		sxmo_hooks.sh notification "$NOTIFFILE" &
 		NOTIFACTION="$(awk NR==1 "$NOTIFFILE")"
 		NOTIFWATCHFILE="$(awk NR==2 "$NOTIFFILE")"
 		NOTIFMSG="$(tail -n+3 "$NOTIFFILE" | cut -c1-70)"

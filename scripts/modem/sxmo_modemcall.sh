@@ -110,10 +110,8 @@ acceptcall() {
 		log_event "call_start" "$CALLID"
 		echo "sxmo_modemcall: Started call $CALLID">&2
 	elif [ "$DIRECTION" = "incoming" ]; then
-		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/pickup" ]; then
-			echo "sxmo_modemcall: Invoking pickup hook (async)">&2
-			"$XDG_CONFIG_HOME/sxmo/hooks/pickup" &
-		fi
+		echo "sxmo_modemcall: Invoking pickup hook (async)">&2
+		sxmo_hooks.sh pickup &
 		touch "$CACHEDIR/${CALLID}.pickedupcall" #this signals that we picked this call up
 											     #to other asynchronously running processes
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --accept
@@ -134,10 +132,8 @@ hangup() {
 	else
 		#this call was never picked up and hung up immediately, so it is a discarded call
 		touch "$CACHEDIR/${CALLID}.discardedcall" #this signals that we discarded this call to other asynchronously running processes
-		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/discard" ]; then
-			echo "sxmo_modemcall: Invoking discard hook (async)">&2
-			"$XDG_CONFIG_HOME/sxmo/hooks/discard" &
-		fi
+		echo "sxmo_modemcall: Invoking discard hook (async)">&2
+		sxmo_hooks.sh discard &
 		log_event "call_discard" "$CALLID"
 	fi
 	modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --hangup
@@ -228,10 +224,8 @@ pickup() {
 
 mute() {
 	touch "$CACHEDIR/$1.mutedring" #this signals that we muted this ring
-	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/mute_ring" ]; then
-		echo "sxmo_modemmonitor: Invoking mute_ring hook (async)">&2
-		"$XDG_CONFIG_HOME/sxmo/hooks/mute_ring" "$CONTACTNAME" &
-	fi
+	echo "sxmo_modemmonitor: Invoking mute_ring hook (async)">&2
+	sxmo_hooks.sh mute_ring "$CONTACTNAME" &
 	log_event "ring_mute" "$1"
 	finish "Ringing with $NUMBER muted"
 }

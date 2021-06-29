@@ -70,7 +70,7 @@ daemonsneedingdbus() {
 	dunst -conf /usr/share/sxmo/appcfg/dunst.conf &
 	sxmo_notificationmonitor.sh &
 	sxmo_networkmonitor.sh &
-	sxmo_lisgdstart.sh &
+	sxmo_hooks.sh lisgdstart &
 }
 
 defaultconfig() {
@@ -85,15 +85,6 @@ defaultconfigs() {
 	[ -r "$XDG_CONFIG_HOME/sxmo/xinit" ] && return
 
 	defaultconfig /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit" 744
-
-	defaultconfig /usr/share/sxmo/default_hooks/discard "$XDG_CONFIG_HOME/sxmo/hooks/discard" 744
-	defaultconfig /usr/share/sxmo/default_hooks/missed_call "$XDG_CONFIG_HOME/sxmo/hooks/missed_call" 744
-	defaultconfig /usr/share/sxmo/default_hooks/mute_ring "$XDG_CONFIG_HOME/sxmo/hooks/mute_ring" 744
-	defaultconfig /usr/share/sxmo/default_hooks/pickup "$XDG_CONFIG_HOME/sxmo/hooks/pickup" 744
-	defaultconfig /usr/share/sxmo/default_hooks/postwake "$XDG_CONFIG_HOME/sxmo/hooks/postwake" 744
-	defaultconfig /usr/share/sxmo/default_hooks/ring "$XDG_CONFIG_HOME/sxmo/hooks/ring" 744
-	defaultconfig /usr/share/sxmo/default_hooks/rtcwake "$XDG_CONFIG_HOME/sxmo/hooks/rtcwake" 744
-	defaultconfig /usr/share/sxmo/default_hooks/sms "$XDG_CONFIG_HOME/sxmo/hooks/sms" 744
 }
 
 customxinit() {

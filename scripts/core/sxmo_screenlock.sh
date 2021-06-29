@@ -73,9 +73,7 @@ if [ "$1" = "lock" ] ; then
 	# TODO: Document LASTSTATE
 	getCurState > "$LASTSTATE"
 	# Do we want this hook after disabling all the input devices so users can enable certain devices?
-	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/lock" ]; then
-		"$XDG_CONFIG_HOME/sxmo/hooks/lock"
-	fi
+	sxmo_hooks.sh lock
 
 	xset dpms 0 0 0
 	xset dpms force on
@@ -92,14 +90,12 @@ if [ "$1" = "lock" ] ; then
 	exit 0
 elif [ "$1" = "unlock" ] ; then
 	getCurState > "$LASTSTATE"
-	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/unlock" ]; then
-		"$XDG_CONFIG_HOME/sxmo/hooks/unlock"
-	fi
+	sxmo_hooks.sh unlock
 
 	xset dpms 0 0 0
 	xset dpms force on
 	xinput enable "$TOUCH_POINTER_ID"
-	sxmo_lisgdstart.sh
+	sxmo_hooks.sh lisgdstart &
 	echo 16000 > "$NETWORKRTCSCAN"
 
 	updateLed
@@ -107,9 +103,7 @@ elif [ "$1" = "unlock" ] ; then
 elif [ "$1" = "off" ] ; then
 	getCurState > "$LASTSTATE"
 	# TODO: document this hook
-	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/screenoff" ]; then
-		"$XDG_CONFIG_HOME/sxmo/hooks/screenoff"
-	fi
+	sxmo_hooks.sh screenoff
 
 	xset dpms 0 0 3
 	xset dpms force off
@@ -128,9 +122,7 @@ elif [ "$1" = "crust" ] ; then
 
 	saveAllEventCounts
 
-	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/presuspend" ]; then
-		"$XDG_CONFIG_HOME/sxmo/hooks/presuspend"
-	fi
+	sxmo_hooks.sh presuspend
 
 	xset dpms force off
 	suspend_time="$(($(mnc)-10))"
@@ -153,9 +145,9 @@ elif [ "$1" = "crust" ] ; then
 		xset dpms force on
 	fi
 
-	if [ "$UNSUSPENDREASON" = "button" ] && [ -x "$XDG_CONFIG_HOME/sxmo/hooks/postwake" ]; then
+	if [ "$UNSUSPENDREASON" = "button" ]; then
 		echo 1200 > "$NETWORKRTCSCAN"
-		"$XDG_CONFIG_HOME/sxmo/hooks/postwake"
+		sxmo_hooks.sh postwake
 	fi
 	exit 0
 elif [ "$1" = "getCurState" ] ; then

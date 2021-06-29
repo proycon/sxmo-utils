@@ -32,6 +32,7 @@ clean:
 
 install: $(PROGRAMS)
 	cd configs && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
+	cd configs && find default_hooks -type f -exec install -D -m 0655 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
 	cd resources && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 

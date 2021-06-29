@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+[ "$(xrandr  | grep DSI-1  | cut -d ' ' -f 5)" = "right" ] && ORIENTATION=1 || ORIENTATION=0
+sxmo_hooks.sh lisgdstart -o $ORIENTATION &

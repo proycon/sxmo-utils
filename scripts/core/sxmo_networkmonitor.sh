@@ -21,22 +21,16 @@ dbus-monitor --system "interface='org.freedesktop.NetworkManager',type='signal',
 			if echo "$newstate" | grep "int32 70"; then
 				#network just connected (70=NM_STATE_CONNECTED_GLOBAL)
 				echo "network up">&2
-				if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/network-up" ]; then
-					"$XDG_CONFIG_HOME/sxmo/hooks/network-up" &
-				fi
+				sxmo_hooks.sh network-up &
 				sxmo_statusbarupdate.sh
 			elif echo "$newstate" | grep "int32 20"; then
 				#network just disconnected (20=NM_STATE_DISCONNECTED)
 				echo "network down">&2
-				if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/network-down" ]; then
-					"$XDG_CONFIG_HOME/sxmo/hooks/network-down" &
-				fi
+				sxmo_hooks.sh network-down &
 				sxmo_statusbarupdate.sh
 			elif echo "$newstate" | grep "int32 30"; then
 				#network is going down (30=NM_STATE_DISCONNECTING)
-				if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/network-pre-down" ]; then
-					"$XDG_CONFIG_HOME/sxmo/hooks/network-pre-down" &
-				fi
+				sxmo_hooks.sh network-pre-down &
 			fi
 		fi
 	done &

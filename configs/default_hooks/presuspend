@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+# This script is called prior to suspending
+
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(which sxmo_common.sh)"
+
+pkill -STOP conky
+pkill clickclack
+pkill -f "$KEYBOARD"

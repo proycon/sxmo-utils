@@ -255,6 +255,4 @@ icon_bok=""
 icon_map=""
 
 #allow the user to override icons
-if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/icons" ]; then
-	"$XDG_CONFIG_HOME/sxmo/hooks/icons"
-fi
+sxmo_hooks.sh icons

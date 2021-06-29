@@ -125,10 +125,8 @@ checkforfinishedcalls() {
 			echo "sxmo_modemmonitor: Missed call from $FINISHEDNUMBER">&2
 			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
-			if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/missed_call" ]; then
-				echo "sxmo_modemmonitor: Invoking missed call hook (async)">&2
-				"$XDG_CONFIG_HOME/sxmo/hooks/missed_call" "$CONTACTNAME" &
-			fi
+			echo "sxmo_modemmonitor: Invoking missed call hook (async)">&2
+			sxmo_hooks.sh missed_call "$CONTACTNAME" &
 
 			CONTACT="$(lookupcontactname "$FINISHEDNUMBER")"
 			sxmo_notificationwrite.sh \
@@ -168,12 +166,8 @@ checkforincomingcalls() {
 
 	xset dpms force on
 
-	if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
-		echo "sxmo_modemmonitor: Invoking ring hook (async)">&2
-		"$XDG_CONFIG_HOME/sxmo/hooks/ring" "$CONTACTNAME" &
-	else
-		sxmo_vibratepine 2500 &
-	fi
+	echo "sxmo_modemmonitor: Invoking ring hook (async)">&2
+	sxmo_hooks.sh ring "$CONTACTNAME" &
 
 	TIME="$(date --iso-8601=seconds)"
 	mkdir -p "$LOGDIR"
@@ -224,9 +218,7 @@ checkfornewtexts() {
 			"$LOGDIR/$NUM/sms.txt" \
 			"Message - $CONTACTNAME: $TEXT"
 
-		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/sms" ]; then
-			"$XDG_CONFIG_HOME/sxmo/hooks/sms" "$CONTACTNAME" "$TEXT"
-		fi
+		sxmo_hooks.sh sms "$CONTACTNAME" "$TEXT"
 	done
 
 	if grep -q modem "$UNSUSPENDREASONFILE" && grep -q crust "$LASTSTATE"; then
@@ -246,7 +238,7 @@ initialmodemstatus() {
 		echo registered > "$MODEMSTATEFILE"
 	elif echo "$state" | grep -q -E "^.*state:.*locked.*$"; then
 		echo locked > "$MODEMSTATEFILE"
-		pidof sxmo_unlocksim.sh || sxmo_unlocksim.sh &
+		pidof unlocksim || sxmo_hooks.sh unlocksim &
 	else
 		echo unknown > "$MODEMSTATEFILE"
 	fi
@@ -290,7 +282,7 @@ mainloop() {
 				read -r newstate
 				if echo "$newstate" | grep "int32 2"; then
 					echo locked > "$MODEMSTATEFILE"
-					pidof sxmo_unlocksim.sh || sxmo_unlocksim.sh &
+					pidof unlocksim || sxmo_hooks.sh unlocksim &
 				elif echo "$newstate" | grep "int32 8"; then
 					echo registered > "$MODEMSTATEFILE"
 					checkforfinishedcalls
