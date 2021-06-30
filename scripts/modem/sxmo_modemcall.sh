@@ -237,7 +237,7 @@ incomingcallmenu() {
 	PICKED="$(
 		printf %b "$icon_phn Pickup\n$icon_phx Hangup\n$icon_mut Mute\n" |
 		dmenu -c -l 5 -p "$CONTACTNAME"
-	)"
+	)" || exit
 
 	if echo "$PICKED" | grep -q "Pickup"; then
 		pickup "$1"
