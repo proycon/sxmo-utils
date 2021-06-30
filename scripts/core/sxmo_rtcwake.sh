@@ -11,11 +11,11 @@ finish() {
 
 	sxmo_screenlock.sh updateLed
 
-	if grep -q rtc "$UNSUSPENDREASONFILE"; then
+	if grep -q crust "$LASTSTATE" \
+		&& grep -q rtc "$UNSUSPENDREASONFILE" \
+		&& [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
 		# Going back to crust
-		if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
-			sxmo_screenlock.sh crust
-		fi
+		sxmo_screenlock.sh crust
 	fi
 
 	exit 0
