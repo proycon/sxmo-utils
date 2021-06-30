@@ -18,7 +18,7 @@ defaultconfig() {
 			(
 				printf "\e[31mThe file \e[32m%s\e[31m differs\e[0m\n" "$2"
 				smartdiff -ud "$2" "$1"
-			) | less -RXF
+			) | less -RF
 			printf "\e[33mDo you want to apply the default? [y/N]\e[0m "
 			read -r reply < /dev/tty
 			if [ "y" = "$reply" ]; then
