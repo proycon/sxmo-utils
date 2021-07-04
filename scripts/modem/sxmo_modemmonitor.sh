@@ -110,6 +110,7 @@ checkforfinishedcalls() {
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.initiatedcall" ]; then
 			#this call was hung up by the contact
+			pkill -f sxmo_modemcall.sh
 			echo "sxmo_modemmonitor: Finished call from $FINISHEDNUMBER">&2
 			rm -f "$CACHEDIR/${FINISHEDCALLID}.initiatedcall"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
