@@ -155,10 +155,10 @@ elif [ "$1" = "crust" ] ; then
 		xset dpms force on
 	fi
 
-	if [ "$UNSUSPENDREASON" = "button" ]; then
+	if [ "$UNSUSPENDREASON" != "modem" ]; then
 		echo 1200 > "$NETWORKRTCSCAN"
-		sxmo_hooks.sh postwake
 	fi
+	sxmo_hooks.sh postwake "$UNSUSPENDREASON"
 	exit 0
 elif [ "$1" = "getCurState" ] ; then
 	getCurState
