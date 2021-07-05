@@ -359,6 +359,20 @@ programchoicesinit() {
 				$icon_phn Call           ^ 0 ^ sxmo_modemdial.sh $number
 			"
 			WINNAME=sms
+		elif echo "$WMNAME" | grep -i -w "cmus"; then
+			# cmus
+			# requires `:set set_term_title=false` in cmus to match the application
+			CHOICES="
+				$icon_itm Play            ^ 0 ^ cmus-remote -p
+				$icon_pau Pause           ^ 0 ^ cmus-remote -u
+				$icon_stp Stop            ^ 0 ^ cmus-remote -s
+				$icon_nxt Next track      ^ 0 ^ cmus-remote -n
+				$icon_prv Previous track  ^ 0 ^ cmus-remote -r
+				$icon_rld Toggle repeat   ^ 0 ^ cmus-remote -R
+				$icon_sfl Toggle random   ^ 0 ^ cmus-remote -S
+				$icon_mnu St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
+			"
+			WINNAME=cmus
 		else
 			STSELMODEON="$(
 				echo "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' '
