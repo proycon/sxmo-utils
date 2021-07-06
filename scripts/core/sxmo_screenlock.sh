@@ -131,6 +131,9 @@ elif [ "$1" = "crust" ] ; then
 
 	xset dpms force off
 	suspend_time="$(($(mnc)-10))"
+	if [ "$suspend_time" -gt 268435455 ]; then
+		suspend_time=268435455
+	fi
 	if [ "$suspend_time" -gt 0 ]; then
 		rtcwake -m mem -s "$suspend_time"
 		UNSUSPENDREASON=$(whichWake)
