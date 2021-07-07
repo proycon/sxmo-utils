@@ -39,10 +39,18 @@ lisgd "$@" -t "$LISGD_THRESHOLD" -T "$LISGD_THRESHOLD_PRESSED" \
 	-g '1,UD,R,*,P,sxmo_inputhandler.sh downrightcorner' \
 	-g '1,LR,R,S,sxmo_inputhandler.sh rightrightcorner_short' \
 	-g '1,RL,L,S,sxmo_inputhandler.sh leftrightcorner_short' \
-	-g '1,RL,*,*,sxmo_inputhandler.sh left' \
-	-g '1,LR,*,*,sxmo_inputhandler.sh right' \
-	-g '1,DU,*,*,sxmo_inputhandler.sh up' \
-	-g '1,UD,*,*,sxmo_inputhandler.sh down' \
+	-g '1,RL,*,L,sxmo_inputhandler.sh longoneleft' \
+	-g '1,LR,*,L,sxmo_inputhandler.sh longoneright' \
+	-g '1,DU,*,L,sxmo_inputhandler.sh longoneup' \
+	-g '1,UD,*,L,sxmo_inputhandler.sh longonedown' \
+	-g '1,RL,*,M,sxmo_inputhandler.sh mediumoneleft' \
+	-g '1,LR,*,M,sxmo_inputhandler.sh mediumoneright' \
+	-g '1,DU,*,M,sxmo_inputhandler.sh mediumoneup' \
+	-g '1,UD,*,M,sxmo_inputhandler.sh mediumonedown' \
+	-g '1,RL,*,*,sxmo_inputhandler.sh oneleft' \
+	-g '1,LR,*,*,sxmo_inputhandler.sh oneright' \
+	-g '1,DU,*,*,sxmo_inputhandler.sh oneup' \
+	-g '1,UD,*,*,sxmo_inputhandler.sh onedown' \
 	-g '1,DRUL,*,*,sxmo_inputhandler.sh upleft' \
 	-g '1,URDL,*,*,sxmo_inputhandler.sh downleft' \
 	-g '1,DLUR,*,*,sxmo_inputhandler.sh upright' \

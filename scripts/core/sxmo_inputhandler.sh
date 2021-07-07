@@ -95,11 +95,11 @@ case "$WMCLASS" in
 						type  d
 						exit 0
 						;;
-					"left")
+					*"oneleft")
 						typeenter ":n"
 						exit 0
 						;;
-					"right")
+					*"oneright")
 						typeenter ":p"
 						exit 0
 						;;
@@ -115,15 +115,15 @@ case "$WMCLASS" in
 						key Shift+Tab
 						exit 0
 						;;
-					"down")
+					*"onedown")
 						key d
 						exit 0
 						;;
-					"up")
+					*"oneup")
 						key u
 						exit 0
 						;;
-					"right")
+					*"oneright")
 						key Return
 						exit 0
 						;;
@@ -131,7 +131,7 @@ case "$WMCLASS" in
 						key Ctrl+t
 						exit 0
 						;;
-					"left")
+					*"oneleft")
 						key b
 						exit 0
 						;;
