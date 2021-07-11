@@ -12,6 +12,16 @@ gracefulexit() {
 	kill -9 0
 }
 
+confirm() {
+	PICKED="$(echo -e "Yes\nNo" | dmenu -l 16 -c -p "Confirm $1")"
+
+	if [ "$PICKED" = "Yes" ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 programchoicesinit() {
 	XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
 	WMCLASS="${1:-$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3- | tr '[:upper:]' '[:lower:]')}"
@@ -174,9 +184,9 @@ programchoicesinit() {
 			$icon_lck Lock               ^ 0 ^ sxmo_screenlock.sh lock
 			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_screenlock.sh off
 			$icon_zzz Suspend            ^ 0 ^ sxmo_screenlock.sh lock && sxmo_screenlock.sh crust
-			$icon_out Logout             ^ 0 ^ pkill -9 dwm
-			$icon_rld Reboot             ^ 0 ^ sxmo_terminal.sh sudo reboot
-			$icon_pwr Poweroff           ^ 0 ^ sxmo_terminal.sh sudo poweroff
+			$icon_out Logout             ^ 0 ^ confirm Logout && pkill -9 dwm
+			$icon_rld Reboot             ^ 0 ^ confirm Reboot && sxmo_terminal.sh sudo reboot
+			$icon_pwr Poweroff           ^ 0 ^ confirm Poweroff && sxmo_terminal.sh sudo poweroff
 		"
 		WINNAME="Power"
 		;;
