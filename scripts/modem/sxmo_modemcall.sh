@@ -202,16 +202,14 @@ incallmenuloop() {
 
 dtmfmenu() {
 	CALLID="$1"
-	DTMFINDEX=0
 	NUMS="0123456789*#ABCD"
 
 	while true; do
 		PICKED="$(
 			echo "$NUMS" | grep -o . | sed '1 iReturn to Call Menu' |
-			dmenu "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -l 20 -c -idx $DTMFINDEX -p "DTMF Tone"
+			dmenu "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -l 20 -c -p "DTMF Tone"
 		)"
 		echo "$PICKED" | grep "Return to Call Menu" && return
-		DTMFINDEX=$(echo "$NUMS" | grep -bo "$PICKED" | cut -d: -f1 | xargs -IN echo 2+N | bc)
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --send-dtmf="$PICKED"
 	done
 }
