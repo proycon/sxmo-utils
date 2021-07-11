@@ -39,7 +39,7 @@ mimeapps_to_desktop_mapping() {
 # This will generate the added mapping from all destkop entries in a dir
 get_mimeapps_entries_from_desktop_dir() {
 	for desktop_path in "$1"/*.desktop; do
-		grep --include "*.desktop" '^MimeType=' "$desktop_path" \
+		grep '^MimeType=' "$desktop_path" \
 		| tr ';' '\n' \
 		| cut -d= -f2 \
 		| xargs -I{} printf "%s=%s\n" "{}" "$(basename "$desktop_path")"
