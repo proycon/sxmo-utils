@@ -12,13 +12,13 @@
 # shellcheck disable=SC2034
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-$HOME/.local/run}"
 # shellcheck disable=SC2034
-export NOTIFDIR="$XDG_DATA_HOME"/sxmo/notifications
+export NOTIFDIR="${XDG_DATA_HOME:-$HOME/.local/share}"/sxmo/notifications
 # shellcheck disable=SC2034
-export CACHEDIR="$XDG_CACHE_HOME"/sxmo
+export CACHEDIR="${XDG_CACHE_HOME:-$HOME/.cache}"/sxmo
 # shellcheck disable=SC2034
-export LOGDIR="$XDG_DATA_HOME"/sxmo/modem
+export LOGDIR="${XDG_DATA_HOME:-$HOME/.local/share}"/sxmo/modem
 # shellcheck disable=SC2034
-export CONTACTFILE="$XDG_CONFIG_HOME/sxmo/contacts.tsv"
+export CONTACTFILE="${XDG_CONFIG_HOME:-$HOME/.config}/sxmo/contacts.tsv"
 # shellcheck disable=SC2034
 export MODEMSTATEFILE="$XDG_RUNTIME_DIR/sxmo.modem.state"
 # shellcheck disable=SC2034
