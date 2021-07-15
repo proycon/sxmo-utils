@@ -65,22 +65,3 @@ export SXMO_LOCK_SCREEN_OFF=1
 
 # Or, enable vibration feedback on keypress
 #export KEYBOARD_ARGS="-o | clickclack -V"
-
-## Configuration parameters for sxmo_batterymonitor ##
-
-# The following values are the defaults
-
-# enable (1) or disable (0) the warning
-#export BM_WARN=1
-
-# enable (1) or disable (0) repeating warnings and hook executions
-#export BM_LOOP=0
-
-# set a threshold for the warning
-#export BM_WARN_THRESHOLD=15
-
-# set a threshold for the action (executes battery hook)
-#export BM_WARN_CRIT_THRESHOLD=5
-
-#let the daemon check every 5 minutes (300s)
-sxmo_batterymonitor -i 300

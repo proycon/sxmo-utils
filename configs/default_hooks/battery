@@ -1,6 +1,0 @@
-#!/usr/bin/env sh
-
-# This script is executed when sxmo_batterymonitor detects a battery capacity below the set threshold
-# You can use it to shutdown, play a notification sound, send a message, etc
-
-mpv --no-video /usr/share/sxmo/notify.ogg >/dev/null && notify-send \"battery low\" && sxmo_vibratepine 1500 &
