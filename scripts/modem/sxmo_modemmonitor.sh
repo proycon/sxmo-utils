@@ -286,6 +286,9 @@ mainloop() {
 					pidof unlocksim || sxmo_hooks.sh unlocksim &
 				elif echo "$newstate" | grep "int32 8"; then
 					echo registered > "$MODEMSTATEFILE"
+					#if there is a PIN entry menu open, kill it:
+					# shellcheck disable=SC2009
+					ps aux | grep dmenu | grep PIN | gawk '{ print $1 }' | xargs kill
 					checkforfinishedcalls
 					checkforincomingcalls
 					checkfornewtexts
