@@ -179,7 +179,8 @@ elif [ "$1" = "crust" ] ; then
 	if [ "$UNSUSPENDREASON" != "modem" ]; then
 		echo 1200 > "$NETWORKRTCSCAN"
 	fi
-	sxmo_hooks.sh postwake "$UNSUSPENDREASON"
+	#this will in turn invoke the postwake hook
+	sxmo_postwake.sh "$UNSUSPENDREASON"
 	exit 0
 elif [ "$1" = "getCurState" ] ; then
 	getCurState

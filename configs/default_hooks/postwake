@@ -1,45 +1,9 @@
 #!/usr/bin/env sh
 
-. "$(which sxmo_common.sh)"
+UNSUSPENDREASON="$1"
 
-if [ "$1" = "modem" ]; then
-	# Modem wakeup will be handled by the modemmonitor loops
-	# We should not manage the phone lock state here
-	exit 0
-fi
+#The UNSUSPENDREASON can be "usb power", "modem", "rtc" (real-time clock
+#periodic wakeup) or "button". You will likely want to check against this and
+#decide what to do
 
-REDLED_PATH="/sys/class/leds/red:indicator/brightness"
-BLUELED_PATH="/sys/class/leds/blue:indicator/brightness"
-
-finish() {
-	kill $BLINKPID
-
-	echo 0 > "$REDLED_PATH"
-	echo 0 > "$BLUELED_PATH"
-
-	# Going back to crust
-	if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
-		sxmo_screenlock.sh crust
-	fi
-
-	exit 0
-}
-
-trap 'finish' TERM INT EXIT
-
-blink() {
-	while [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; do
-		echo 1 > "$REDLED_PATH"
-		echo 0 > "$BLUELED_PATH"
-		sleep 0.25
-		echo 0 > "$REDLED_PATH"
-		echo 1 > "$BLUELED_PATH"
-		sleep 0.25
-	done
-}
-
-blink &
-BLINKPID=$!
-
-# Replace this by wathever you want to do
-sleep 5
+# Add here whatever you want to do
