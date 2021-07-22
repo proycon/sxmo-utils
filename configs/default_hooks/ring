@@ -3,8 +3,8 @@
 # This script is executed (asynchronously) when you get an incoming call
 # You can use it to play a ring tone
 
-# Start the mpv ring until another hook kill it
-mpv --quiet --no-video --loop /usr/share/sxmo/ring.ogg &
+# Start the mpv ring until another hook kill it or the max (10) is reached
+mpv --quiet --no-video --loop=10 /usr/share/sxmo/ring.ogg &
 MPVID=$!
 echo "$MPVID" > "$XDG_RUNTIME_DIR/sxmo.ring.pid"
 
