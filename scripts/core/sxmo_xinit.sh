@@ -47,6 +47,11 @@ xdefaults() {
 	done
 	[ -e "$HOME"/.Xresources ] && xrdb -merge "$HOME"/.Xresources
 	synclient TapButton1=1 TapButton2=3 TapButton3=2 MinSpeed=0.25
+	SCREENWIDTH=$(xrandr | grep "Screen 0" | cut -d" " -f 8)
+	SCREENHEIGHT=$(xrandr | grep "Screen 0" | cut -d" " -f 10 | tr -d ",")
+	if [ "$SCREENWIDTH" -lt 1024 ] || [ "$SCREENHEIGHT" -lt 768 ]; then
+		gsettings set org.gtk.Settings.FileChooser window-size "($SCREENWIDTH,$((SCREENHEIGHT / 2)))"
+	fi
 }
 
 defaultkeyboard() {
