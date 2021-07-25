@@ -151,10 +151,13 @@ elif [ "$1" = "crust" ] ; then
 
 	#turn screen off
 	xset dpms force off
-	suspend_time="$(($(mnc)-10))"
 
 	YEARS8_TO_SEC=268435455
-	if [ "$suspend_time" -gt "$YEARS8_TO_SEC" ]; then
+	if command -v mnc > /dev/null; then
+		#wake up 10 seconds before the next cron event
+		suspend_time="$(($(mnc)-10))"
+	fi
+	if [ -z "$suspend_time" ] || [ "$suspend_time" -gt "$YEARS8_TO_SEC" ]; then
 		suspend_time="$YEARS8_TO_SEC"
 	fi
 	if [ "$suspend_time" -gt 0 ]; then
