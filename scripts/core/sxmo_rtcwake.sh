@@ -14,8 +14,14 @@ finish() {
 	if grep -q crust "$LASTSTATE" \
 		&& grep -q rtc "$UNSUSPENDREASONFILE" \
 		&& [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
-		echo "sxmo_rtcwake: going back to crust ($(date))" >&2
-		sxmo_screenlock.sh crust
+		WAKEPROCS=$(pgrep -f sxmo_rtcwake.sh | wc -l)
+		if [ "$WAKEPROCS" -gt 2 ]; then
+			#each process also spawns a blink subprocess, so we check if there are more than two rather than one:
+			echo "sxmo_rtcwake: returning without crust, other sxmo_rtcwake process is still running ($(date))" >&2
+		else
+			echo "sxmo_rtcwake: going back to crust ($(date))" >&2
+			sxmo_screenlock.sh crust
+		fi
 	else
 		echo "sxmo_rtcwake: returning without crust ($(date))" >&2
 	fi
