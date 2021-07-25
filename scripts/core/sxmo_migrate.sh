@@ -19,7 +19,7 @@ resolvedifference() {
 	(
 		printf "\e[31mThe file \e[32m%s\e[31m differs\e[0m\n" "$userfile"
 		smartdiff -ud "$userfile" "$defaultfile"
-	) | less -RF
+	) | more
 
 	printf "\e[33mDo you want to apply the default? [y/N], or perhaps open an editor [e]?\e[0m "
 	read -r reply < /dev/tty
