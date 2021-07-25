@@ -48,6 +48,8 @@ update() {
 			MODEMMON=""
 		elif [ connected = "$MODEMSTATE" ]; then
 			MODEMMON=""
+		elif [ failed = "$MODEMSTATE" ] || [ disconnected = "$MODEMSTATE" ]; then
+			MODEMMON=""
 		else
 			MODEMMON=""
 		fi

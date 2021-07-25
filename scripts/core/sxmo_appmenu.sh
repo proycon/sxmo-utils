@@ -140,6 +140,7 @@ programchoicesinit() {
 			$icon_aru Brightness               ^ 1 ^ sxmo_brightness.sh up
 			$icon_ard Brightness               ^ 1 ^ sxmo_brightness.sh down
 			$icon_phn Modem Toggle               ^ 1 ^ sxmo_modemmonitortoggle.sh
+			$icon_phn Modem Reset                ^ 1 ^ sxmo_modemmonitortoggle.sh reset
 			$icon_inf Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
 			$icon_phl Modem Log                  ^ 0 ^ sxmo_modemlog.sh
 			$icon_wif Wifi $(

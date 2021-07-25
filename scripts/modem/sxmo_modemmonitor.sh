@@ -295,6 +295,10 @@ mainloop() {
 				elif echo "$newstate" | grep "int32 11"; then
 					echo connected > "$MODEMSTATEFILE"
 					#3G/2G/4G available
+				elif echo "$newstate" | grep "int32 -1"; then
+					echo failed > "$MODEMSTATEFILE"
+				elif echo "$newstate" | grep "int32 3"; then
+					echo disabled > "$MODEMSTATEFILE"
 				else
 					echo unknown > "$MODEMSTATEFILE"
 				fi
@@ -302,6 +306,35 @@ mainloop() {
 			fi
 		done &
 
+	(   #check whether the modem is still alive every minute, reset the modem if not
+		while :
+		do
+			sleep 60
+			TRIES=0
+			while [ "$TRIES" -lt 10 ]; do
+				MODEMS="$(mmcli -L)"
+				if echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' > /dev/null; then
+					break
+				elif grep -q rtc "$UNSUSPENDREASONFILE"; then
+					#don't bother checking in rtc-wake situations
+					TRIES=0
+					break
+				else
+					TRIES=$((TRIES+1))
+					echo "sxmo_modemmonitor: modem not found, waiting for modem... (try #$TRIES)">&2
+					sleep 2
+					if [ "$TRIES" -eq 10 ]; then
+						echo failed > "$MODEMSTATEFILE"
+						echo "sxmo_modemmonitor: forcing modem reset">&2
+						sxmo_modemmonitortoggle.sh reset #will kill the modemmonitor too
+						break
+					fi
+				fi
+			done
+		done
+	) &
+
+	wait
 	wait
 	wait
 	wait
