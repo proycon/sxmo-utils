@@ -54,8 +54,8 @@ install: $(PROGRAMS)
 
 	install -D programs/sxmo_megiaudioroute $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_vibratepine $(DESTDIR)$(PREFIX)/bin/
-
-	echo "NOTICE 1: Do not forget to add sxmo-setpermissions to your init system, e.g. for openrc: rc-update add sxmo-setpermissions default && rc-service sxmo-setpermissions start" >&2
-
-	echo "NOTICE 2: It is recommended you interactively run sxmo_migrate.sh after an upgrade to check your configuration files and custom hooks against the defaults (it will not make any changes unless explicitly told to)" >&2
-
+	@echo "-------------------------------------------------------------------">&2
+	@echo "NOTICE 1: Do not forget to add sxmo-setpermissions to your init system, e.g. for openrc: rc-update add sxmo-setpermissions default && rc-service sxmo-setpermissions start" >&2
+	@echo "-------------------------------------------------------------------">&2
+	@echo "NOTICE 2: It is recommended you interactively run sxmo_migrate.sh after an upgrade to check your configuration files and custom hooks against the defaults (it will not make any changes unless explicitly told to)" >&2
+	@echo "-------------------------------------------------------------------">&2
