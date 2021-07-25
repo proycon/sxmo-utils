@@ -13,7 +13,7 @@ gracefulexit() {
 }
 
 confirm() {
-	PICKED="$(echo -e "Yes\nNo" | dmenu -l 16 -c -p "Confirm $1")"
+	PICKED="$(printf "Yes\nNo\n" | dmenu -l 16 -c -p "Confirm $1")"
 
 	if [ "$PICKED" = "Yes" ]; then
 		return 0

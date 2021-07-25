@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
 . "$(which sxmo_common.sh)"
 
 UNSUSPENDREASON="$1"
@@ -16,7 +18,7 @@ REDLED_PATH="/sys/class/leds/red:indicator/brightness"
 BLUELED_PATH="/sys/class/leds/blue:indicator/brightness"
 
 finish() {
-	kill $BLINKPID
+	kill "$BLINKPID"
 
 	echo 0 > "$REDLED_PATH"
 	echo 0 > "$BLUELED_PATH"

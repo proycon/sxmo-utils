@@ -52,7 +52,7 @@ checkhooks() {
 						$EDITOR "$hook" "$defaulthook"
 					fi
 				else
-					printf "\e[33mHook $hook is identical to the default, so you don't need a custom hook, remove it? [Y/n]\e[0m"
+					printf "\e[33mHook %s is identical to the default, so you don't need a custom hook, remove it? [Y/n]\e[0m" "$hook"
 					if [ "n" != "$reply" ]; then
 						rm "$hook"
 					fi

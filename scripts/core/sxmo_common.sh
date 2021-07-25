@@ -18,7 +18,9 @@ export CACHEDIR="${XDG_CACHE_HOME:-$HOME/.cache}"/sxmo
 # shellcheck disable=SC2034
 export LOGDIR="${XDG_DATA_HOME:-$HOME/.local/share}"/sxmo/modem
 # shellcheck disable=SC2034
-export CONTACTFILE="${XDG_CONFIG_HOME:-$HOME/.config}/sxmo/contacts.tsv"
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+# shellcheck disable=SC2034
+export CONTACTFILE="$XDG_CONFIG_HOME/sxmo/contacts.tsv"
 # shellcheck disable=SC2034
 export MODEMSTATEFILE="$XDG_RUNTIME_DIR/sxmo.modem.state"
 # shellcheck disable=SC2034
@@ -255,4 +257,5 @@ icon_bok=""
 icon_map=""
 
 #allow the user to override icons
-[ -x "$XDG_CONFIG_HOME/sxmo/hooks/icons" ] && source "$XDG_CONFIG_HOME/sxmo/hooks/icons"
+# shellcheck disable=SC1091
+[ -x "$XDG_CONFIG_HOME/sxmo/hooks/icons" ] && . "$XDG_CONFIG_HOME/sxmo/hooks/icons"
