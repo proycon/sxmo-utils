@@ -10,6 +10,7 @@ if [ "$UNSUSPENDREASON" = "modem" ] || [ "$UNSUSPENDREASON" = "rtc" ]; then
 	# Rtc wakeup will eventually be handled by the rtcwake script
 	# We should not manage those phone lock state here
 	# we will still call the postwake hook though
+	echo "sxmo_postwake: invoking postwake hook after wakeup (reason=$UNSUSPENDREASON, 2, $(date))" >&2
 	sxmo_hooks.sh postwake "$UNSUSPENDREASON"
 	exit 0
 fi
@@ -25,6 +26,7 @@ finish() {
 
 	# Going back to crust
 	if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
+		echo "[$(date)] Going back to crust" >&2
 		sxmo_screenlock.sh crust
 	fi
 
@@ -38,7 +40,7 @@ blink() {
 		echo 1 > "$REDLED_PATH"
 		echo 0 > "$BLUELED_PATH"
 		sleep 0.25
-		echo 0 > "$REDLED_PATH"
+		echo 1 > "$REDLED_PATH"
 		echo 1 > "$BLUELED_PATH"
 		sleep 0.25
 	done
@@ -51,5 +53,6 @@ BLINKPID=$!
 # the unlock functionality to function well
 sleep 5 &
 SLEEPPID=$!
+echo "sxmo_postwake: invoking postwake hook after wakeup (reason=$UNSUSPENDREASON, 1, $(date))" >&2
 sxmo_hooks.sh postwake "$UNSUSPENDREASON"
 wait $SLEEPPID

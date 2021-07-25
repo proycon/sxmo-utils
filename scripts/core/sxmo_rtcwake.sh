@@ -14,8 +14,10 @@ finish() {
 	if grep -q crust "$LASTSTATE" \
 		&& grep -q rtc "$UNSUSPENDREASONFILE" \
 		&& [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
-		# Going back to crust
+		echo "sxmo_rtcwake: going back to crust ($(date))" >&2
 		sxmo_screenlock.sh crust
+	else
+		echo "sxmo_rtcwake: not returning to crust ($(date))" >&2
 	fi
 
 	exit 0
@@ -28,7 +30,7 @@ blink() {
 		echo 1 > "$REDLED_PATH"
 		echo 0 > "$BLUELED_PATH"
 		sleep 0.25
-		echo 0 > "$REDLED_PATH"
+		echo 1 > "$REDLED_PATH"
 		echo 1 > "$BLUELED_PATH"
 		sleep 0.25
 	done
@@ -37,4 +39,5 @@ blink() {
 blink &
 BLINKPID=$!
 
+echo "sxmo_rtcwake: Running sxmo_rtcwake for $* ($(date))" >&2
 "$@"

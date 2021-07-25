@@ -138,7 +138,6 @@ elif [ "$1" = "off" ] ; then
 elif [ "$1" = "crust" ] ; then
 	getCurState > "$LASTSTATE"
 	# USER MUST USE sxmo_screenlock.sh rtc rather than using rtcwake directly.
-	# With this new version of lock, we dont check the exit code of the user hook. User must execute "sxmo_screenlock.sh rtc $TIME" at the end of their hook (depending on whether they want to re-rtc)
 	echo 1 > "$REDLED_PATH"
 	echo 0 > "$BLUELED_PATH"
 
