@@ -49,6 +49,10 @@ if [ "$1" = "--strict" ]; then
 	fi
 fi
 
+if [ -z "$DISPLAY" ]; then
+	export DISPLAY=":0"
+fi
+
 trap 'finish' TERM INT EXIT
 
 blink &
