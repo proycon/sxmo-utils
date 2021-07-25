@@ -95,29 +95,24 @@ checkforfinishedcalls() {
 		if [ -f "$CACHEDIR/${FINISHEDCALLID}.discardedcall" ]; then
 			#this call was discarded
 			echo "sxmo_modemmonitor: Discarded call from $FINISHEDNUMBER">&2
-			rm -f "$CACHEDIR/${FINISHEDCALLID}.discardedcall"
 			printf %b "$TIME\tcall_discarded\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
 			pkill -f sxmo_modemcall.sh
 			echo "sxmo_modemmonitor: Finished call from $FINISHEDNUMBER">&2
-			rm -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.hangedupcall" ]; then
 			#this call was hung up by the user
 			echo "sxmo_modemmonitor: Finished call from $FINISHEDNUMBER">&2
-			rm -f "$CACHEDIR/${FINISHEDCALLID}.hangedupcall"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.initiatedcall" ]; then
 			#this call was hung up by the contact
 			pkill -f sxmo_modemcall.sh
 			echo "sxmo_modemmonitor: Finished call from $FINISHEDNUMBER">&2
-			rm -f "$CACHEDIR/${FINISHEDCALLID}.initiatedcall"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.mutedring" ]; then
 			#this ring was muted up
 			echo "sxmo_modemmonitor: Muted ring from $FINISHEDNUMBER">&2
-			rm -f "$CACHEDIR/${FINISHEDCALLID}.mutedring"
 			printf %b "$TIME\tring_muted\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		else
 			#this is a missed call
@@ -155,6 +150,7 @@ checkforincomingcalls() {
 	[ -z "$VOICECALLID" ] && return
 
 	[ -f "$CACHEDIR/${VOICECALLID}.monitoredcall" ] && return # prevent multiple rings
+	rm -f "$CACHEDIR/${VOICECALLID}.*" # we cleanup all dangling event files
 	touch "$CACHEDIR/${VOICECALLID}.monitoredcall" #this signals that we handled the call
 
 	cat "$LASTSTATE" > "$CACHEDIR/${VOICECALLID}.laststate"
