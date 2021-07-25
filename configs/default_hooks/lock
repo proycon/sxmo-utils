@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-pkill -9 lisgd
+# This hook is called when the system reaches a locked state

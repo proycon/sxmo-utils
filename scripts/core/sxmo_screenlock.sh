@@ -83,12 +83,11 @@ if [ "$1" = "lock" ] ; then
 	# always echo last state first so that user can use it in their hooks
 	# TODO: Document LASTSTATE
 	getCurState > "$LASTSTATE"
-	# Do we want this hook after disabling all the input devices so users can enable certain devices?
-	sxmo_hooks.sh lock
 
 	#turn screen on
 	xset dpms 0 0 0
 	xset dpms force on
+
 
 	# TODO: Could be improved by running xinput and disabling ALL input devices automatically but would need
 	# to decide on the hook issues. Do we want a prelock and postlock? Or should users
@@ -99,12 +98,14 @@ if [ "$1" = "lock" ] ; then
 	killall lisgd
 
 	updateLed
+
+	# Do we want this hook after disabling all the input devices so users can enable certain devices?
+	sxmo_hooks.sh lock
 	exit 0
 elif [ "$1" = "unlock" ] ; then
 	#normal unlocked state, screen on
 
 	getCurState > "$LASTSTATE"
-	sxmo_hooks.sh unlock
 
 	#turn screen back on
 	xset dpms 0 0 0
@@ -112,17 +113,18 @@ elif [ "$1" = "unlock" ] ; then
 
 	#start responding to touch input again
 	xinput enable "$TOUCH_POINTER_ID"
-	sxmo_hooks.sh lisgdstart &
+	[ "$(xrandr  | grep DSI-1  | cut -d ' ' -f 5)" = "right" ] && ORIENTATION=1 || ORIENTATION=0
+	sxmo_hooks.sh lisgdstart -o "$ORIENTATION" &
 	echo 16000 > "$NETWORKRTCSCAN"
 
 	updateLed
+
+	sxmo_hooks.sh unlock
 	exit 0
 elif [ "$1" = "off" ] ; then
 	#locked state with screen off
 
 	getCurState > "$LASTSTATE"
-	# TODO: document this hook
-	sxmo_hooks.sh screenoff
 
 	#turn screen off, but have dpms temporarily enable
 	#the screen when a button is pressed
@@ -134,6 +136,8 @@ elif [ "$1" = "off" ] ; then
 	killall lisgd
 
 	updateLed
+
+	sxmo_hooks.sh screenoff
 	exit 0
 elif [ "$1" = "crust" ] ; then
 	getCurState > "$LASTSTATE"
