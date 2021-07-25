@@ -72,7 +72,7 @@ updateLed() {
 	esac
 }
 
-if [ "$1" != "getCurState" ]; then
+if [ "$1" != "getCurState" ] && [ "$1" != "updateLed" ]; then
 	d=$(date)
 	echo "sxmo_screenlock: transitioning to stage $1 ($d)" >&2
 fi

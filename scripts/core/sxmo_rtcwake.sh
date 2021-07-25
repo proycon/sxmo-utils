@@ -17,13 +17,12 @@ finish() {
 		echo "sxmo_rtcwake: going back to crust ($(date))" >&2
 		sxmo_screenlock.sh crust
 	else
-		echo "sxmo_rtcwake: not returning to crust ($(date))" >&2
+		echo "sxmo_rtcwake: returning without crust ($(date))" >&2
 	fi
 
 	exit 0
 }
 
-trap 'finish' TERM INT EXIT
 
 blink() {
 	while [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; do
@@ -35,6 +34,16 @@ blink() {
 		sleep 0.25
 	done
 }
+
+if [ "$1" = "--strict" ]; then
+	shift
+	#don't run if we're not in crust or not waked by rtc
+	if ! grep -q crust "$LASTSTATE" || ! grep -q rtc "$UNSUSPENDREASONFILE"; then
+		exit 0
+	fi
+fi
+
+trap 'finish' TERM INT EXIT
 
 blink &
 BLINKPID=$!
