@@ -142,6 +142,11 @@ programchoicesinit() {
 			$icon_phn Modem Toggle               ^ 1 ^ sxmo_modemmonitortoggle.sh
 			$icon_inf Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
 			$icon_phl Modem Log                  ^ 0 ^ sxmo_modemlog.sh
+			$icon_wif Wifi $(
+				rfkill -rn | grep wlan | grep -qE "unblocked unblocked" &&
+				printf %b "On → Off" ||  printf %b "Off → On";
+				printf %b "^ 1 ^ sudo sxmo_wifitoggle.sh"
+			)
 			$icon_fll Flashlight $(
 				grep -qE '^0$' /sys/class/leds/white:flash/brightness &&
 				printf %b "Off → On" ||  printf %b "On → Off";
