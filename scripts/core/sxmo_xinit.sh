@@ -117,8 +117,7 @@ xinit() {
 	. "$(dirname "$0")/sxmo_common.sh"
 
 	envvars
-	# set device env vars here to allow potentially overriding envvars
-	device_envvars
+	device_envvars # set device env vars here to allow potentially overriding envvars
 	setupxdgdir
 	xdefaults
 	daemons
@@ -126,7 +125,7 @@ xinit() {
 }
 
 if [ -z "$1" ]; then
-	xinit
+	xinit 2> ~/.xinit.log #hard-coded location because at this stage we're not sure the xdg dirs exist yet
 else
 	"$1"
 fi
