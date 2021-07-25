@@ -87,11 +87,11 @@ case "$WMCLASS" in
 						type q
 						exit 0
 						;;
-					"twodown")
+					*"onedown")
 						type u
 						exit 0
 						;;
-					"twoup")
+					*"oneup")
 						type  d
 						exit 0
 						;;
@@ -116,11 +116,11 @@ case "$WMCLASS" in
 						exit 0
 						;;
 					*"onedown")
-						key d
+						key u
 						exit 0
 						;;
 					*"oneup")
-						key u
+						key d
 						exit 0
 						;;
 					*"oneright")
@@ -140,6 +140,17 @@ case "$WMCLASS" in
 						exit 0
 						;;
 				esac
+				;;
+		esac
+		# Now we try generic st actions
+		case "$ACTION" in
+			*"onedown")
+				key Ctrl+Shift+B
+				exit 0
+				;;
+			*"oneup")
+				key Ctrl+Shift+F
+				exit 0
 				;;
 		esac
 esac
