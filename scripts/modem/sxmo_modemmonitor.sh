@@ -150,7 +150,7 @@ checkforincomingcalls() {
 	[ -z "$VOICECALLID" ] && return
 
 	[ -f "$CACHEDIR/${VOICECALLID}.monitoredcall" ] && return # prevent multiple rings
-	rm -f "$CACHEDIR/${VOICECALLID}.*" # we cleanup all dangling event files
+	find "$CACHEDIR" -name "$VOICECALLID.*" -delete # we cleanup all dangling event files
 	touch "$CACHEDIR/${VOICECALLID}.monitoredcall" #this signals that we handled the call
 
 	cat "$LASTSTATE" > "$CACHEDIR/${VOICECALLID}.laststate"

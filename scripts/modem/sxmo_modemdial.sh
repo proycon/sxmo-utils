@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 trap "gracefulexit" INT TERM
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 fatalerr() {
 	# E.g. hangup all calls, switch back to default audio, notify user, and die
 	mmcli -m "$(mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2)" --voice-hangup-all
@@ -49,6 +53,7 @@ dialmenu() {
 		grep -Eo "Call/[0-9]+" |
 		grep -oE "[0-9]+"
 	)"
+	find "$CACHEDIR" -name "$CALLID.*" -delete # we cleanup all dangling event files
 	echo "Starting call with CALLID: $CALLID" >&2
 	echo "$CALLID"
 }
