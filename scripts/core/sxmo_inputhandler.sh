@@ -279,7 +279,7 @@ case "$ACTION" in
 		exit 0
 		;;
 	"voldown_two")
-		key Super+Return
+		key Super+x
 		exit 0
 		;;
 	"voldown_three")
