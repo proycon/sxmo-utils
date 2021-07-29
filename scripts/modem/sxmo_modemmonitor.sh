@@ -318,7 +318,7 @@ mainloop() {
 				else
 					TRIES=$((TRIES+1))
 					echo "sxmo_modemmonitor: modem not found, waiting for modem... (try #$TRIES)">&2
-					sleep 2
+					sleep 3
 					if [ "$TRIES" -eq 10 ]; then
 						echo failed > "$MODEMSTATEFILE"
 						echo "sxmo_modemmonitor: forcing modem reset">&2
