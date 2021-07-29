@@ -155,7 +155,7 @@ elif [ "$1" = "crust" ] ; then
 	YEARS8_TO_SEC=268435455
 	if command -v mnc > /dev/null; then
 		#wake up 10 seconds before the next cron event
-		suspend_time="$(($(mnc)-10))"
+		suspend_time="$(($(crontab -l | grep sxmo_rtcwake | mnc)-10))"
 	fi
 	if [ -z "$suspend_time" ] || [ "$suspend_time" -gt "$YEARS8_TO_SEC" ]; then
 		suspend_time="$YEARS8_TO_SEC"
