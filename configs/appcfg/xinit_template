@@ -52,7 +52,8 @@ command -v firefox && export BROWSER=firefox
 # export TERMCMD="st -e"
 
 # Immediately turn the screen off when locking the device
-export SXMO_LOCK_SCREEN_OFF=1
+# (e.g. disables blue led / screen on lock mode all together)
+#export SXMO_LOCK_SCREEN_OFF=1
 
 # Immediately suspend the phone when locking
 #export SXMO_LOCK_SUSPEND=1
