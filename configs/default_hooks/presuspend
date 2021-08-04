@@ -6,7 +6,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(which sxmo_common.sh)"
 
-pkill -STOP conky
 pkill clickclack
 pkill -f "$KEYBOARD"
 pkill mpv #if any audio/video is playing, kill it (it might stutter otherwise)

@@ -2,4 +2,3 @@
 
 # This hook is called when the system becomes unlocked again
 
-pkill -CONT conky
