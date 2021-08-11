@@ -43,10 +43,10 @@ recreateexistingnotifs() {
 }
 
 syncled() {
-	sxmo_setpineled green 0
+	sxmo_setpineled.sh green 0
 	if [ "$(find "$NOTIFDIR"/ -type f | wc -l)" -gt 0 ]; then
 		sleep 0.1
-		sxmo_setpineled green 1
+		sxmo_setpineled.sh green 1
 	fi
 }
 

@@ -6,12 +6,12 @@
 
 PIDS=""
 for i in "$@"; do
-	sxmo_setpineled "$i" 150 &
+	sxmo_setpineled.sh "$i" 150 &
 	PIDS="$PIDS $!"
 done
 
 echo "$PIDS" | grep -E '[^ ]+' | xargs wait
 
 for i in "$@"; do
-	sxmo_setpineled "$i" 0
+	sxmo_setpineled.sh "$i" 0
 done

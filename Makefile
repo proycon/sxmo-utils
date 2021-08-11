@@ -3,7 +3,6 @@ PREFIX:=/usr
 .PHONY: install shellcheck
 
 PROGRAMS = \
-	programs/sxmo_setpineled \
 	programs/sxmo_megiaudioroute \
 	programs/sxmo_vibratepine
 
@@ -14,9 +13,6 @@ test: shellcheck
 shellcheck:
 	shellcheck -x scripts/*/*
 
-programs/sxmo_setpineled: programs/sxmo_setpineled.c
-	gcc -o programs/sxmo_setpineled programs/sxmo_setpineled.c
-
 programs/sxmo_megiaudioroute: programs/sxmo_megiaudioroute.c
 	gcc -o programs/sxmo_megiaudioroute programs/sxmo_megiaudioroute.c
 
@@ -24,7 +20,7 @@ programs/sxmo_vibratepine: programs/sxmo_vibratepine.c
 	gcc -o programs/sxmo_vibratepine programs/sxmo_vibratepine.c
 
 clean:
-	rm -f programs/sxmo_setpineled programs/sxmo_megiaudioroute programs/sxmo_vibratepine
+	rm -f programs/sxmo_megiaudioroute programs/sxmo_vibratepine
 
 install: $(PROGRAMS)
 	cd configs && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
@@ -51,8 +47,6 @@ install: $(PROGRAMS)
 
 	# Bin
 	install -D -t $(DESTDIR)$(PREFIX)/bin scripts/*/*
-
-	install -D -m 0755 programs/sxmo_setpineled $(DESTDIR)$(PREFIX)/bin/
 
 	install -D programs/sxmo_megiaudioroute $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_vibratepine $(DESTDIR)$(PREFIX)/bin/
