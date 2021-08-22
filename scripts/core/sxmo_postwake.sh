@@ -34,7 +34,7 @@ finish() {
 	echo 0 > "$REDLED_PATH"
 	echo 0 > "$BLUELED_PATH"
 
-	wait $HOOKPID
+	wait "$HOOKPID"
 
 	# Going back to crust
 	if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
@@ -82,5 +82,5 @@ HOOKPID=$!
 checkstate &
 CHECKPID=$!
 
-wait $SLEEPPID
-wait $HOOKPID
+wait "$SLEEPPID"
+wait "$HOOKPID"

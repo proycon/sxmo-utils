@@ -249,6 +249,21 @@ programchoicesinit() {
 		"
 		WINNAME=Sxiv && return
 		;;
+	*sthotkeys* )
+		#  St hotkeys
+		CHOICES="
+			Send Ctrl-C      ^ 0 ^ sxmo_type -M Ctrl -k c
+			Send Ctrl-Z      ^ 0 ^ sxmo_type -M Ctrl -k z
+			Send Ctrl-L      ^ 0 ^ sxmo_type -M Ctrl -k l
+			Send Ctrl-D      ^ 0 ^ sxmo_type -M Ctrl -k d
+			Send Ctrl-A      ^ 0 ^ sxmo_type -M Ctrl -k a
+			Send Ctrl-B      ^ 0 ^ sxmo_type -M Ctrl -k b
+			Send ESC:w       ^ 0 ^ sxmo_type -k Escape -M Shift -k semicolon -m Shift -k w -k Return
+			Send ESC:wq      ^ 0 ^ sxmo_type -k Escape -M Shift -k semicolon -m Shift -k w -k q -k Return
+			Send ESC:wq!     ^ 0 ^ sxmo_type -k Escape -M Shift -k semicolon -m Shift -k q -k exclam -k Return
+		"
+		WINNAME=St
+		;;
 	*foot*|*st* )
 		# First we try to handle the app running inside the terminal:
 		WMNAME="${1:-$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
@@ -438,21 +453,6 @@ programchoicesinit() {
 					;;
 			esac
 		fi
-		;;
-	*sthotkeys* )
-		#  St hotkeys
-		CHOICES="
-			Send Ctrl-C      ^ 0 ^ sxmo_type -M Ctrl -k c
-			Send Ctrl-Z      ^ 0 ^ sxmo_type -M Ctrl -k z
-			Send Ctrl-L      ^ 0 ^ sxmo_type -M Ctrl -k l
-			Send Ctrl-D      ^ 0 ^ sxmo_type -M Ctrl -k d
-			Send Ctrl-A      ^ 0 ^ sxmo_type -M Ctrl -k a
-			Send Ctrl-B      ^ 0 ^ sxmo_type -M Ctrl -k b
-			Send ESC:w       ^ 0 ^ sxmo_type -k Escape -M Shift -k semicolon -m Shift -k w -k Return
-			Send ESC:wq      ^ 0 ^ sxmo_type -k Escape -M Shift -k semicolon -m Shift -k w -k q -k Return
-			Send ESC:wq!     ^ 0 ^ sxmo_type -k Escape -M Shift -k semicolon -m Shift -k q -k exclam -k Return
-		"
-		WINNAME=St
 	;;
 	*netsurf* )
 		# Netsurf
@@ -609,7 +609,6 @@ mainloop() {
 		echo "$PICKED" | grep . || quit
 		LOOP="$(echo "$PROGCHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f2)"
 		CMD="$(echo "$PROGCHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f3)"
-		DMENUIDX="$(echo "$PROGCHOICES" | grep -m1 -F -n "$PICKED" | cut -d ':' -f1)"
 		echo "sxmo_appmenu: Eval: <$CMD> from picked <$PICKED> with loop <$LOOP>">&2
 		if echo "$LOOP" | grep 1; then
 			eval "$CMD"
@@ -622,7 +621,6 @@ mainloop() {
 }
 
 pgrep -f "$(command -v sxmo_appmenu.sh)" | grep -Ev "^${$}$" | xargs -r kill -TERM
-DMENUIDX=0
 PICKED=""
 ARGS="$*"
 mainloop
