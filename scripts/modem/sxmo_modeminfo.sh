@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 err() {
-	printf %b "$1" | dmenu -c -l 10
+	printf %b "$1" | dmenu
 	exit
 }
 

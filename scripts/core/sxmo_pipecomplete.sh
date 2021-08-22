@@ -7,7 +7,7 @@ menu() {
 		printf %b "$(
 		echo "Close Menu";
 			echo "$INPUT" | grep -Eo '\S+' | tr -d '[:blank:]' | sort | uniq
-		)" | sxmo_dmenu_with_kb.sh -p "$PROMPT" -l 10 -i -c
+		)" | sxmo_dmenu_with_kb.sh -p "$PROMPT" -i
 	)"
 }
 

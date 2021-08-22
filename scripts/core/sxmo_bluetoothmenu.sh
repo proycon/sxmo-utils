@@ -50,7 +50,7 @@ devicemenu() {
 
 		PICKED="$(
 			echo "$ENTRIES" |
-			dmenu -i -c -l 10 -p "Devices"
+			dmenu -i -p "Devices"
 		)" || exit
 
 		if echo "$PICKED" | grep -q "Refresh"; then

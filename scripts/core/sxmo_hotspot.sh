@@ -2,19 +2,19 @@
 
 while [ -z "$SSID" ]; do
 	SSID="$(
-		echo "$ENTRIES" | sxmo_dmenu_with_kb.sh -c -p "SSID"
+		echo "$ENTRIES" | sxmo_dmenu_with_kb.sh -p "SSID"
 	)"
 done
 
 while [ -z "$key" ]; do
 	key="$(
-		echo "$ENTRIES" | sxmo_dmenu_with_kb.sh -c -p "pass"
+		echo "$ENTRIES" | sxmo_dmenu_with_kb.sh -p "pass"
 	)"
 done
 
 while [ -z "$key1" ]; do
 	key1="$(
-		echo "$ENTRIES" | sxmo_dmenu_with_kb.sh -c -p "confirm"
+		echo "$ENTRIES" | sxmo_dmenu_with_kb.sh -p "confirm"
 	)"
 done
 
@@ -25,7 +25,7 @@ fi
 
 while [ -z "$channel" ]; do
 	channel="$(
-		echo "11" | sxmo_dmenu_with_kb.sh -l 1 -c -p "channels"
+		echo "11" | sxmo_dmenu_with_kb.sh -p "channels"
 	)"
 done
 

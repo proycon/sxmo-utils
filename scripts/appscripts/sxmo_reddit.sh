@@ -10,7 +10,7 @@ menu() {
 	sxmo_keyboard.sh open
 	SUBREDDIT="$(
 		printf %b "Close Menu\n$(echo "$SXMO_SUBREDDITS" | tr " " '\n')" |
-		dmenu -p "Subreddit:" -c -l 10
+		sxmo_dmenu.sh -p "Subreddit:"
 	)"
 	sxmo_keyboard.sh close
 	[ "Close Menu" = "$SUBREDDIT" ] && exit 0
@@ -29,7 +29,7 @@ menu() {
 	while true; do
 		RESULT="$(
 			printf %b "Close Menu\n$REDDITRESULTS" |
-			dmenu -c -l 10 -fn Terminus-20
+			sxmo_dmenu.sh -fn Terminus-20
 		)"
 
 		[ "Close Menu" = "$RESULT" ] && exit 0

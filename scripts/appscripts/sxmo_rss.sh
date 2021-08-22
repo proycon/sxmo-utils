@@ -66,7 +66,7 @@ rsstimespanmenu() {
 			echo "$CHOICES" |
 			sed '/^[[:space:]]*$/d' |
 			awk '{$1=$1};1' |
-			dmenu -p "RSS Timespan" -c -l 10
+			sxmo_dmenu.sh -p "RSS Timespan"
 		)"
 
 		if echo "$CHOICE" | grep "Fetch"; then
@@ -101,7 +101,7 @@ rssreadmenu() {
 	DMENUIDX=1
 	while true; do
 		# Show list of items
-		PICKED="$(printf %b "$CHOICES" | dmenu -idx $DMENUIDX -p "RSS ($TIMESPANABBR)" -c -l 20 -fn Terminus-15)"
+		PICKED="$(printf %b "$CHOICES" | sxmo_dmenu.sh -ix $DMENUIDX -p "RSS ($TIMESPANABBR)" -fn Terminus-15)"
 		DMENUIDX="$(echo "$CHOICES" | grep -m1 -F -n "$PICKED" | cut -d ':' -f1)"
 		if [ "$PICKED" = "Close Menu" ]; then
 			die Closed Menu

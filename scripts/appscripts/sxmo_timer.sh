@@ -45,11 +45,11 @@ menu() {
 		1m
 		30s
 		Close Menu
-	" | awk 'NF' | awk '{$1=$1};1' | dmenu -p Timer -c -l 20
+	" | awk 'NF' | awk '{$1=$1};1' | sxmo_dmenu.sh -p Timer
 	)"
 	sxmo_keyboard.sh close
 	[ "Close Menu" = "$TIMEINPUT" ] && exit 0
-	st -f Monospace-50 -e "$0" timerrun "$TIMEINPUT"
+	sxmo_terminal.sh -f Monospace-50 "$0" timerrun "$TIMEINPUT"
 }
 
 if [ $# -gt 0 ]; then "$@"; else menu; fi

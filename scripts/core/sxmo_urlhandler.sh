@@ -46,7 +46,7 @@ COMMAND=$(
 		sed "s/URL/'URL'/g" |
 		sed -e '/^\s*$/d' |
 		sed -e 's/^\s*//' |
-		dmenu -p "Pipe URL" -c -l 20
+		dmenu -p "Pipe URL"
 )
 
 [ "$COMMAND" = "Close Menu" ] && exit 1

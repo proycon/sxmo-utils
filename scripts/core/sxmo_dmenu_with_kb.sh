@@ -1,15 +1,18 @@
 #!/usr/bin/env sh
 
-TERMMODE=$([ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] && echo "true")
-if [ "$TERMMODE" = "true" ]; then
-	exec vis-menu -i -l 10
+if [ "$(sxmo_wm.sh)" != "ssh" ]; then
+	if sxmo_keyboard.sh isopen; then
+		wasopen="1"
+	fi
+	sxmo_keyboard.sh open
 fi
 
-wasopen="$(sxmo_keyboard.sh isopen && echo "yes")"
-
-sxmo_keyboard.sh open
-OUTPUT="$(cat | dmenu "$@")"
+OUTPUT="$(cat | sxmo_dmenu.sh "$@")"
 exitcode=$?
-[ -z "$wasopen" ] && sxmo_keyboard.sh close
-echo "$OUTPUT"
+
+if [ -z "$wasopen" ]; then
+	sxmo_keyboard.sh close
+fi
+
+printf %s "$OUTPUT"
 exit $exitcode

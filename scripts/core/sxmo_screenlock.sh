@@ -43,14 +43,12 @@ whichWake() {
 
 getCurState() {
 	#get the current state of the lock
-	if xinput list-props "$TOUCH_POINTER_ID" | grep "Device Enabled" | grep -q "0$"; then
-		if xset q | grep -q "Off: 3"; then
-			echo "off" #locked, and screen off
-		else
-			echo "lock" #locked, but screen on
-		fi
+	if sxmo_wm.sh inputevent | grep -q on ; then
+		printf "unlock" #normal mode, not locked
+	elif sxmo_wm.sh dpms | grep -q off; then
+		printf "lock" #locked, but screen on
 	else
-		echo "unlock" #normal mode, not locked
+		printf "off" #locked, and screen off
 	fi
 }
 
@@ -84,17 +82,8 @@ if [ "$1" = "lock" ] ; then
 	# TODO: Document LASTSTATE
 	getCurState > "$LASTSTATE"
 
-	#turn screen on
-	xset dpms 0 0 0
-	xset dpms force on
-
-
-	# TODO: Could be improved by running xinput and disabling ALL input devices automatically but would need
-	# to decide on the hook issues. Do we want a prelock and postlock? Or should users
-	# be expected to edit the source code for disabling certain input devices?
-	# this code allows us to not use the slock locking mechanism in the original sxmo_lock.sh
-	# when combined with a working slock (see ~iv's) implementation, this should be secure.
-	xinput disable "$TOUCH_POINTER_ID"
+	sxmo_wm.sh dpms off
+	sxmo_wm.sh inputevent off
 	killall lisgd
 
 	updateLed
@@ -107,14 +96,10 @@ elif [ "$1" = "unlock" ] ; then
 
 	getCurState > "$LASTSTATE"
 
-	#turn screen back on
-	xset dpms 0 0 0
-	xset dpms force on
+	sxmo_wm.sh dpms off
+	sxmo_wm.sh inputevent on
+	sxmo_hooks.sh lisgdstart &
 
-	#start responding to touch input again
-	xinput enable "$TOUCH_POINTER_ID"
-	[ "$(xrandr  | grep DSI-1  | cut -d ' ' -f 5)" = "right" ] && ORIENTATION=1 || ORIENTATION=0
-	sxmo_hooks.sh lisgdstart -o "$ORIENTATION" &
 	echo 16000 > "$NETWORKRTCSCAN"
 
 	updateLed
@@ -126,13 +111,8 @@ elif [ "$1" = "off" ] ; then
 
 	getCurState > "$LASTSTATE"
 
-	#turn screen off, but have dpms temporarily enable
-	#the screen when a button is pressed
-	xset dpms 0 0 3
-	xset dpms force off
-
-	# stop responding to touch input
-	xinput disable "$TOUCH_POINTER_ID"
+	sxmo_wm.sh dpms on
+	sxmo_wm.sh inputevent off
 	killall lisgd
 
 	updateLed
@@ -148,9 +128,6 @@ elif [ "$1" = "crust" ] ; then
 	saveAllEventCounts
 
 	sxmo_hooks.sh presuspend
-
-	#turn screen off
-	xset dpms force off
 
 	YEARS8_TO_SEC=268435455
 	if command -v mnc > /dev/null; then
@@ -176,12 +153,6 @@ elif [ "$1" = "crust" ] ; then
 
 	d=$(date)
 	echo "sxmo_screenlock: woke up from crust (reason=$UNSUSPENDREASON) ($d)" >&2
-
-	if [ "$UNSUSPENDREASON" != "rtc" ]; then
-		#turn screen on only when we didn't wake up from an rtc event
-		xset dpms force on
-	fi
-
 	if [ "$UNSUSPENDREASON" != "modem" ]; then
 		echo 1200 > "$NETWORKRTCSCAN"
 	fi

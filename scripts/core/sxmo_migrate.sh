@@ -60,5 +60,13 @@ checkhooks() {
 	fi
 }
 
-defaultconfig /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit" 744
+case "$(sxmo_wm.sh)" in
+	sway)
+		defaultconfig /usr/share/sxmo/appcfg/sway_template "$XDG_CONFIG_HOME/sxmo/sway" 744
+		;;
+	xorg|dwm)
+		defaultconfig /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit" 744
+		;;
+esac
+
 checkhooks

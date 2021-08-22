@@ -34,7 +34,7 @@ amixer set "Line Out" 50%
 # not receive texts/calls!
 # (there is a bit of a delay to
 # give the modem some time to set up)
-sleep 15 && sxmo_modemmonitortoggle.sh on &
+sxmo_modemmonitortoggle.sh restart &
 
 
 ### Configuration Parameters ###

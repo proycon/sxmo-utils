@@ -13,7 +13,7 @@ menu() {
 		find /usr/share/zoneinfo -type f |
 		sed  's#^/usr/share/zoneinfo/##g' |
 		sort |
-		sxmo_dmenu_with_kb.sh -p Timezone -c -l 10 -i
+		sxmo_dmenu_with_kb.sh -p Timezone -i
 	)"
 	sxmo_terminal.sh "$0" change "$T"
 }

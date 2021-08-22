@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Sxmo
+Exec=sxmo_winit.sh
+Terminal=false
+Type=Application

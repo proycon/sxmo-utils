@@ -161,8 +161,6 @@ checkforincomingcalls() {
 	INCOMINGNUMBER="$(cleanupnumber "$INCOMINGNUMBER")"
 	CONTACTNAME=$(lookupcontactname "$INCOMINGNUMBER")
 
-	xset dpms force on
-
 	echo "sxmo_modemmonitor: Invoking ring hook (async)">&2
 	sxmo_hooks.sh ring "$CONTACTNAME" &
 
@@ -187,8 +185,6 @@ checkfornewtexts() {
 		grep -Eo '[0-9]+'
 	)"
 	echo "$TEXTIDS" | grep -v . && return
-
-	xset dpms force on
 
 	# Loop each textid received and read out the data into appropriate logfile
 	for TEXTID in $TEXTIDS; do
@@ -321,8 +317,8 @@ mainloop() {
 					sleep 3
 					if [ "$TRIES" -eq 10 ]; then
 						echo failed > "$MODEMSTATEFILE"
-						echo "sxmo_modemmonitor: forcing modem reset">&2
-						sxmo_modemmonitortoggle.sh reset #will kill the modemmonitor too
+						echo "sxmo_modemmonitor: forcing modem restart">&2
+						sxmo_modemmonitortoggle.sh restart #will kill the modemmonitor too
 						break
 					fi
 				fi

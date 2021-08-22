@@ -4,21 +4,6 @@ WMCLASS="$1"
 WMNAME="$2"
 ACTION="$3"
 
-key() {
-	xdotool windowactivate "$WIN"
-	xdotool key --delay 50 --clearmodifiers "$@"
-}
-
-type() {
-	xdotool windowactivate "$WIN"
-	xdotool type --delay 50 --clearmodifiers "$@"
-}
-
-typeenter() {
-	type "$@"
-	xdotool key Return
-}
-
 # You must exit 0 if you handled the input to not trigger default behaviors
 
 if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
@@ -35,24 +20,24 @@ exit 1 # Remove this in your user hook
 # Please share your recipes to the community :D
 
 case "$WMCLASS" in
-	*"st-256color"*)
+	*"foot"*)
 		case "$WMNAME" in
 			*"weechat"*)
 				case "$ACTION" in
 					*"oneleft")
-						key Alt+a
+						sxmo_type.sh -M Alt -k a
 						exit 0
 						;;
 					*"oneright")
-						key Alt+Shift+comma
+						sxmo_type.sh -M Alt -k less
 						exit 0
 						;;
 					*"oneup")
-						key Page_Down
+						sxmo_type.sh -k Page_Down
 						exit 0
 						;;
 					*"onedown")
-						key Page_Up
+						sxmo_type.sh -k Page_Up
 						exit 0
 						;;
 			esac
@@ -62,19 +47,19 @@ case "$WMCLASS" in
 	*"mpv"*)
 		case "$ACTION" in
 			"oneright")
-				key Left
+				sxmo_type.sh -k Left
 				exit 0
 				;;
 			"oneleft")
-				key Right
+				sxmo_type.sh -k Right
 				exit 0
 				;;
-			"upone")
-				key m
+			"oneup")
+				sxmo_type.sh m
 				exit 0
 				;;
 			"onedown")
-				key p
+				sxmo_type.sh p
 				exit 0
 				;;
 		esac

@@ -5,9 +5,11 @@ envvars() {
 	# shellcheck disable=SC1091
 	[ -f /etc/profile ] && . /etc/profile
 	# shellcheck source=/dev/null
+	export BEMENU_OPTS='--fn "Monospace 11"'
 	[ -f "$HOME"/.profile ] && . "$HOME"/.profile
-	command -v "$TERMCMD" || export TERMCMD="st -e"
-	command -v "$BROWSER" || export BROWSER=surf
+	export MOZ_ENABLE_WAYLAND=1
+	command -v "$TERMCMD" || export TERMCMD="foot"
+	command -v "$BROWSER" || export BROWSER=firefox
 	command -v "$EDITOR" || export EDITOR=vis
 	command -v "$SHELL" || export SHELL=/bin/sh
 	command -v "$KEYBOARD" || defaultkeyboard
@@ -37,45 +39,13 @@ setupxdgdir() {
 	chown "$USER:$USER" "$XDG_CACHE_HOME"
 }
 
-xdefaults() {
+defaults() {
 	alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
-	xmodmap /usr/share/sxmo/appcfg/xmodmap_caps_esc
-	xsetroot -mod 29 29 -fg '#0b3a4c' -bg '#082430'
-	xset s off -dpms
-	for xr in /usr/share/sxmo/appcfg/*.xr; do
-		xrdb -merge "$xr"
-	done
 	[ -e "$HOME"/.Xresources ] && xrdb -merge "$HOME"/.Xresources
-	synclient TapButton1=1 TapButton2=3 TapButton3=2 MinSpeed=0.25
-	SCREENWIDTH=$(xrandr | grep "Screen 0" | cut -d" " -f 8)
-	SCREENHEIGHT=$(xrandr | grep "Screen 0" | cut -d" " -f 10 | tr -d ",")
-	if [ "$SCREENWIDTH" -lt 1024 ] || [ "$SCREENHEIGHT" -lt 768 ]; then
-		gsettings set org.gtk.Settings.FileChooser window-size "($SCREENWIDTH,$((SCREENHEIGHT / 2)))"
-	fi
 }
 
 defaultkeyboard() {
-	if command -v svkbd-mobile-intl; then
-		export KEYBOARD=svkbd-mobile-intl
-	elif command -v svkbd-mobile-plain; then
-		export KEYBOARD=svkbd-mobile-plain
-	else
-		#legacy
-		export KEYBOARD=svkbd-sxmo
-	fi
-}
-
-daemons() {
-	autocutsel &
-	autocutsel -selection PRIMARY &
-	sxmo_statusbar.sh &
-}
-
-daemonsneedingdbus() {
-	dunst -conf /usr/share/sxmo/appcfg/dunst.conf &
-	sxmo_notificationmonitor.sh &
-	sxmo_networkmonitor.sh &
-	sxmo_hooks.sh lisgdstart &
+	export KEYBOARD=wvkbd
 }
 
 defaultconfig() {
@@ -87,31 +57,20 @@ defaultconfig() {
 }
 
 defaultconfigs() {
-	[ -r "$XDG_CONFIG_HOME/sxmo/xinit" ] && return
+	[ -r "$XDG_CONFIG_HOME/sxmo/sway" ] && return
 
-	defaultconfig /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit" 744
+	defaultconfig /usr/share/sxmo/appcfg/sway_template "$XDG_CONFIG_HOME/sxmo/sway" 744
+	defaultconfig /usr/share/sxmo/appcfg/mako.conf "$XDG_CONFIG_HOME/mako/config" 744
+	defaultconfig /usr/share/sxmo/appcfg/foot.ini "$XDG_CONFIG_HOME/foot/foot.ini" 744
 }
 
-customxinit() {
-	set -o allexport
-	defaultconfigs
-
-	# shellcheck disable=SC1090,SC1091
-	. "$XDG_CONFIG_HOME/sxmo/xinit"
-	set +o allexport
-}
-
-startdwm() {
-
+startsway() {
 	exec dbus-run-session sh -c "
-		set -- customxinit
-		. $0
-		$0 daemonsneedingdbus
-		dwm 2> "$XDG_CACHE_HOME/sxmo/dwm.log"
+		/usr/bin/sway -c "$XDG_CONFIG_HOME/sxmo/sway" 2> "$XDG_CACHE_HOME/sxmo/sway.log"
 	"
 }
 
-xinit() {
+init() {
 	envvars
 	device_envvars # set device env vars here to allow potentially overriding envvars
 
@@ -120,13 +79,13 @@ xinit() {
 	. "$(dirname "$0")/sxmo_common.sh"
 
 	setupxdgdir
-	xdefaults
-	daemons
-	startdwm
+	defaults
+	defaultconfigs
+	startsway
 }
 
 if [ -z "$1" ]; then
-	xinit 2> ~/.xinit.log #hard-coded location because at this stage we're not sure the xdg dirs exist yet
+	init 2> ~/.init.log #hard-coded location because at this stage we're not sure the xdg dirs exist yet
 else
 	"$1"
 fi

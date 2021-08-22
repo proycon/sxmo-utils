@@ -22,7 +22,7 @@ notificationmenu() {
 		sed '/^[[:space:]]*$/d' |
 		awk '{$1=$1};1' |
 		cut -d^ -f1 |
-		dmenu -c -i -p "Notifs" -l 20
+		dmenu -i -p "Notifs"
 	)"
 
 	echo "$PICKEDCONTENT" | grep -q "Close Menu" && exit 1

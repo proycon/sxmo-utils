@@ -26,7 +26,7 @@ finish() {
 		notify-send "$1"
 	fi
 	[ -n "$LOCKPID" ] && kill "$LOCKPID"
-	pkill -9 dmenu
+	sxmo_dmemu.sh close
 	exit 1
 }
 
@@ -181,13 +181,13 @@ incallmenuloop() {
 		$icon_phx Hangup                                                            ^ hangup $CALLID
 	"
 
-	pkill -9 dmenu # E.g. just incase user is playing with btns or hits a menu by mistake
+	pkill -9 bemenu # E.g. just incase user is playing with btns or hits a menu by mistake
 	echo "$CHOICES" |
 		xargs -0 echo |
 		cut -d'^' -f1 |
 		sed '/^[[:space:]]*$/d' |
 		awk '{$1=$1};1' | #this cryptic statement trims leading/trailing whitespace from a string
-		dmenu -idx $DMENUIDX -l 14 "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -p "$NUMBER" |
+		dmenu -ix $DMENUIDX "$([ "$WINDOWIFIED" = 0 ] && echo "" || echo "-wm")" -p "$NUMBER" |
 		(
 			PICKED="$(cat)";
 			echo "sxmo_modemcall: Picked is $PICKED">&2
@@ -207,7 +207,7 @@ dtmfmenu() {
 	while true; do
 		PICKED="$(
 			echo "$NUMS" | grep -o . | sed '1 iReturn to Call Menu' |
-			dmenu "$([ "$WINDOWIFIED" = 0 ] && echo "-c" || echo "-wm")" -l 20 -c -p "DTMF Tone"
+			dmenu "$([ "$WINDOWIFIED" = 0 ] && echo "" || echo "-wm")" -p "DTMF Tone"
 		)"
 		echo "$PICKED" | grep "Return to Call Menu" && return
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --send-dtmf="$PICKED"
@@ -234,7 +234,7 @@ incomingcallmenu() {
 
 	PICKED="$(
 		printf %b "$icon_phn Pickup\n$icon_phx Hangup\n$icon_mut Mute\n" |
-		dmenu -c -l 5 -p "$CONTACTNAME"
+		dmenu -p "$CONTACTNAME"
 	)" || exit
 
 	if echo "$PICKED" | grep -q "Pickup"; then

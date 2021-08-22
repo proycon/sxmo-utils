@@ -17,7 +17,7 @@ valid_number() {
 
 	notify-send "\"$1\" is not a valid phone number"
 
-	PICKED="$(printf "Ok\nUse as it is\n" | dmenu -c -l 2 -p "Invalid Number")"
+	PICKED="$(printf "Ok\nUse as it is\n" | dmenu -p "Invalid Number")"
 	if [ "$PICKED" = "Use as it is" ]; then
 		echo "$1"
 		return
@@ -27,10 +27,10 @@ valid_number() {
 }
 
 newcontact() {
-	name="$(echo | sxmo_dmenu_with_kb.sh -c -l 2 -p "$icon_usr Name")"
+	name="$(echo | sxmo_dmenu_with_kb.sh -p "$icon_usr Name")"
 	number=
 	while [ -z "$number" ]; do
-		number="$(sxmo_contacts.sh --unknown | sxmo_dmenu_with_kb.sh -t -c -l 10 -p "$icon_phl Number")"
+		number="$(sxmo_contacts.sh --unknown | sxmo_dmenu_with_kb.sh -p "$icon_phl Number")"
 		number="$(valid_number "$number")"
 	done
 
@@ -45,7 +45,7 @@ editcontactname() {
 	ENTRIES="$(printf %b "Old name: $oldname")"
 	PICKED="$(
 		echo "$ENTRIES" |
-		sxmo_dmenu_with_kb.sh -c -l 3 -p "$icon_edt Edit Contact"
+		sxmo_dmenu_with_kb.sh -p "$icon_edt Edit Contact"
 	)"
 
 	if ! echo "$PICKED" | grep -q "^Old name: "; then
@@ -66,7 +66,7 @@ editcontactnumber() {
 	while [ -z "$PICKED" ]; do
 		PICKED="$(
 			echo "$ENTRIES" |
-			sxmo_dmenu_with_kb.sh -t -c -l 10 -p "$icon_edt Edit Contact"
+			sxmo_dmenu_with_kb.sh -p "$icon_edt Edit Contact"
 		)"
 		if echo "$PICKED" | grep -q "(Old number)$"; then
 			editcontact "$1"
@@ -87,7 +87,7 @@ deletecontact() {
 	ENTRIES="$(printf "$icon_cls No\n$icon_chk Yes")"
 	PICKED="$(
 		echo "$ENTRIES" |
-		dmenu -c -l 3 -p "$icon_del Delete $name ?"
+		dmenu -p "$icon_del Delete $name ?"
 	)"
 
 	echo "$PICKED" | grep -q "Yes" && sed -i "/^$1$/d" "$CONTACTFILE"
@@ -100,7 +100,7 @@ editcontact() {
 
 	PICKED="$(
 		echo "$ENTRIES" |
-		dmenu -c -l 4 -p "$icon_edt Edit Contact"
+		dmenu -p "$icon_edt Edit Contact"
 	)"
 
 	if echo "$PICKED" | grep -q "Name: "; then
@@ -119,7 +119,7 @@ showcontact() {
 
 	PICKED="$(
 		echo "$ENTRIES" |
-		dmenu -c -l 6 -p "$icon_usr $name"
+		dmenu -p "$icon_usr $name"
 	)"
 
 	if echo "$PICKED" | grep -q "List Messages"; then
@@ -145,7 +145,7 @@ main() {
 
 		PICKED="$(
 			echo "$ENTRIES" |
-			sxmo_dmenu_with_kb.sh -i -c -l 10 -p "$icon_lst Contacts"
+			sxmo_dmenu_with_kb.sh -i -p "$icon_lst Contacts"
 		)"
 
 		echo "$PICKED" | grep -q "Close Menu" && exit

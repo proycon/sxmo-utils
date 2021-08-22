@@ -6,7 +6,7 @@
 
 sxmo_keyboard.sh open
 SEARCHQUERY="$(
-	echo "Close Menu" | dmenu -t -p "Search:" -c -l 20
+	echo "Close Menu" | sxmo_dmenu.sh -p "Search:"
 )"
 sxmo_keyboard.sh close
 [ "Close Menu" = "$SEARCHQUERY" ] && exit 0

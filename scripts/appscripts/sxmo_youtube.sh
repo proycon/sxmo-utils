@@ -32,7 +32,7 @@ searchmenu() {
 				xargs -0 echo |
 				sed '/^[[:space:]]*$/d' |
 				awk '{$1=$1};1' |
-				sxmo_dmenu_with_kb.sh -p "Yt Search" -c -l 10
+				sxmo_dmenu_with_kb.sh -p "Yt Search"
 		)"
 
 		if [ "Close Menu" = "$ENTRY" ]; then
@@ -58,7 +58,7 @@ resultsmenu() {
 				xargs -0 echo |
 				sed '/^[[:space:]]*$/d' |
 				awk '{$1=$1};1' |
-				dmenu -c -l 10 -p "Results"
+				sxmo_dmenu.sh -p "Results"
 		)"
 
 		if [ "Change Search" = "$PICKED" ]; then

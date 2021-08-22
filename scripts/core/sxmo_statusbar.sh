@@ -5,7 +5,6 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 trap "update" USR1
-pgrep -f sxmo_statusbar.sh | grep -v $$ | xargs -r kill -9
 
 update() {
 	# In-call.. show length of call
@@ -134,14 +133,18 @@ update() {
 	TIME="$(date +%R)"
 
 	BAR="$(echo "${CALLINFO} ${MODEMMON} ${WIRELESS} ${VPN} ${AUDIOSYMBOL}${VOLUMESYMBOL} ${BATSTATUS} ${TIME}" | sed 's| \+| |g')"
-	xsetroot -name "$BAR"
+
+	case "$(sxmo_wm.sh)" in
+		sway) printf "%s\n" "$BAR";;
+		dwm) xsetroot -name "$BAR";;
+	esac
 }
 
 # E.g. on first boot justs to make sure the bar comes in quickly
-update && sleep 1 && update && sleep 1
+update
 
 while :
 do
-	update
 	sleep 30 & wait
+	update
 done

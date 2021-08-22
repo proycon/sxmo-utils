@@ -16,7 +16,7 @@ sort_loop() {
 
 	PICKED="$(
 		printf %b "$CHOICES" |
-		dmenu -c -p "Sort" -l 10 -i
+		sxmo_dmenu.sh -p "Sort" -i
 	)"
 
 	echo "$PICKED" | grep -q "date" && SORT="--sort=t"
@@ -39,7 +39,7 @@ while true; do
 
 	PICKED="$(
 		echo "$CHOICES" |
-		dmenu -c -p "$DIR" -l 20 -i
+		sxmo_dmenu.sh -p "$DIR" -i
 	)" || exit
 
 	echo "$PICKED" | grep "Sort By" && sort_loop

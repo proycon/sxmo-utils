@@ -1,5 +1,13 @@
 #!/usr/bin/env sh
 
+# The goal of this script is to handle post hibernation behavior
+# If we woke up cause of the button :
+# We want to trigger the hook and wait for it to finish while blinking.
+# Or at least, blink for some seconds.
+# If we woke up cause of the modem or rtc :
+# The modem monitor or rtcwake scripts will handle everything
+# We still trigger the hooks without doing anything else
+
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(which sxmo_common.sh)"
@@ -19,10 +27,14 @@ REDLED_PATH="/sys/class/leds/red:indicator/brightness"
 BLUELED_PATH="/sys/class/leds/blue:indicator/brightness"
 
 finish() {
+	kill "$SLEEPPID"
+	kill "$CHECKPID"
 	kill "$BLINKPID"
 
 	echo 0 > "$REDLED_PATH"
 	echo 0 > "$BLUELED_PATH"
+
+	wait $HOOKPID
 
 	# Going back to crust
 	if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
@@ -36,7 +48,7 @@ finish() {
 trap 'finish' TERM INT EXIT
 
 blink() {
-	while [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; do
+	while : ; do
 		echo 1 > "$REDLED_PATH"
 		echo 0 > "$BLUELED_PATH"
 		sleep 0.25
@@ -46,13 +58,29 @@ blink() {
 	done
 }
 
-blink &
-BLINKPID=$!
+checkstate() {
+	while [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ] ; do
+		sleep 0.25
+	done
+	finish
+}
+
+sxmo_wm.sh dpms off
 
 # call the user hook, but ensure we wait at least 5 seconds which is essential for
 # the unlock functionality to function well
 sleep 5 &
 SLEEPPID=$!
+
+blink &
+BLINKPID=$!
+
 echo "sxmo_postwake: invoking postwake hook after wakeup (reason=$UNSUSPENDREASON, 1, $(date))" >&2
-sxmo_hooks.sh postwake "$UNSUSPENDREASON"
+sxmo_hooks.sh postwake "$UNSUSPENDREASON" &
+HOOKPID=$!
+
+checkstate &
+CHECKPID=$!
+
 wait $SLEEPPID
+wait $HOOKPID

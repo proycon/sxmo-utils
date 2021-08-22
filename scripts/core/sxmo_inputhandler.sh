@@ -20,24 +20,9 @@ lock_screen() {
 	fi
 }
 
-key() {
-	xdotool windowactivate "$WIN"
-	xdotool key --delay 50 --clearmodifiers "$@"
-}
-
-type() {
-	xdotool windowactivate "$WIN"
-	xdotool type --delay 50 --clearmodifiers "$@"
-}
-
-typeenter() {
-	type "$@"
-	xdotool key Return
-}
-
-XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
-WMCLASS="$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3-)"
-WMNAME=$(echo "$XPROPOUT" | grep -E "^WM_NAME" | cut -d ' ' -f3-)
+XPROPOUT="$(sxmo_wm.sh focusedwindow)"
+WMCLASS="$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
+WMNAME="$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
 
 if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler ]; then
 	#hook script must exit with a zero exit code ONLY if it has handled the gesture!
@@ -63,44 +48,61 @@ if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
 	exit
 fi
 
+if sxmo_dmenu.sh isopen; then
+	case "$ACTION" in
+		"volup_one")
+			sxmo_type.sh -k Up
+			exit
+			;;
+		"voldown_one")
+			sxmo_type.sh -k Down
+			exit
+			;;
+		"powerbutton_one")
+			sxmo_type.sh -k Return
+			exit
+			;;
+	esac
+fi
+
 #special context-sensitive handling
 case "$WMCLASS" in
-	*"st-256color"*)
+	*"foot"*)
 		# First we try to handle the app running inside st:
 		case "$WMNAME" in
 			*"tuir"*)
 				if [ "$ACTION" = "rightbottomcorner" ]; then
-					type o
+					sxmo_type.sh o
 					exit 0
 				elif [ "$ACTION" = "leftbottomcorner" ]; then
-					type s
+					sxmo_type.sh s
 					exit 0
 				fi
 				;;
 			*"less"*)
 				case "$ACTION" in
 					"leftbottomcorner")
-						type q
+						sxmo_type.sh q
 						exit 0
 						;;
 					"leftrightcorner_short")
-						type q
+						sxmo_type.sh q
 						exit 0
 						;;
 					*"onedown")
-						type u
+						sxmo_type.sh u
 						exit 0
 						;;
 					*"oneup")
-						type  d
+						sxmo_type.sh d
 						exit 0
 						;;
 					*"oneleft")
-						typeenter ":n"
+						sxmo_type.sh ":n" -k Return
 						exit 0
 						;;
 					*"oneright")
-						typeenter ":p"
+						sxmo_type.sh ":p" -k Return
 						exit 0
 						;;
 				esac
@@ -108,35 +110,35 @@ case "$WMCLASS" in
 			*"amfora"*)
 				case "$ACTION" in
 					"downright")
-						key Tab
+						sxmo_type.sh -k Tab
 						exit 0
 						;;
 					"upleft")
-						key Shift+Tab
+						sxmo_type.sh -M Shift -k Tab
 						exit 0
 						;;
 					*"onedown")
-						key u
+						sxmo_type.sh u
 						exit 0
 						;;
 					*"oneup")
-						key d
+						sxmo_type.sh d
 						exit 0
 						;;
 					*"oneright")
-						key Return
+						sxmo_type.sh -k Return
 						exit 0
 						;;
 					"upright")
-						key Ctrl+t
+						sxmo_type.sh -M Ctrl t
 						exit 0
 						;;
 					*"oneleft")
-						key b
+						sxmo_type.sh b
 						exit 0
 						;;
 					"downleft")
-						key Ctrl+w
+						sxmo_type.sh -M Ctrl w
 						exit 0
 						;;
 				esac
@@ -145,11 +147,11 @@ case "$WMCLASS" in
 		# Now we try generic st actions
 		case "$ACTION" in
 			*"onedown")
-				key Ctrl+Shift+B
+				sxmo_type.sh -M Shift -k Page_Up
 				exit 0
 				;;
 			*"oneup")
-				key Ctrl+Shift+F
+				sxmo_type.sh -M Shift -k Page_Down
 				exit 0
 				;;
 		esac
@@ -157,28 +159,60 @@ esac
 
 #standard handling
 case "$ACTION" in
+	"powerbutton_one")
+		if echo "$WMCLASS" | grep -i "megapixels"; then
+			sxmo_type.sh -k space
+		else
+			sxmo_keyboard.sh toggle
+		fi
+			exit 0
+		;;
+	"powerbutton_two")
+		sxmo_blinkled.sh blue && $TERMCMD "$SHELL"
+		exit 0
+		;;
+	"powerbutton_three")
+		sxmo_blinkled.sh blue && $BROWSER
+		exit 0
+		;;
+	"voldown_one")
+		swaymsg layout toggle splith splitv tabbed
+		exit
+		;;
+	"voldown_two")
+		swaymsg focus tiling
+		exit
+		;;
+	"voldown_three")
+		sxmo_killwindow.sh
+		exit
+		;;
+	"volup_one")
+		sxmo_appmenu.sh
+		exit
+		;;
+	"volup_two")
+		sxmo_appmenu.sh sys
+		exit
+		;;
+	"volup_three")
+		sxmo_screenlock.sh lock
+		exit
+		;;
 	"rightleftcorner")
-		key Super+Shift+e
+		sxmo_workspace.sh previous
 		exit 0
 		;;
 	"leftrightcorner")
-		key Super+Shift+r
+		sxmo_workspace.sh next
 		exit 0
 		;;
-	"twoleft") # Move window previous
-		key Super+e
+	"twoleft")
+		sxmo_workspace.sh move-previous
 		exit 0
 		;;
-	"tworight") # Move window next
-		key Super+r
-		exit 0
-		;;
-	"unmute")
-		sxmo_vol.sh unmute &
-		exit 0
-		;;
-	"mute")
-		sxmo_vol.sh mute &
+	"tworight")
+		sxmo_workspace.sh move-next
 		exit 0
 		;;
 	"righttopcorner")
@@ -206,15 +240,15 @@ case "$ACTION" in
 		exit 0
 		;;
 	"downtopcorner")
-		pidof dmenu || setsid -f sxmo_appmenu.sh &
+		sxmo_dmenu.sh isopen || sxmo_appmenu.sh &
 		exit 0
 		;;
 	"twodowntopcorner")
-		pidof dmenu || setsid -f sxmo_appmenu.sh sys &
+		sxmo_dmenu.sh isopen || sxmo_appmenu.sh sys &
 		exit 0
 		;;
 	"uptopcorner")
-		pkill -9 dmenu
+		sxmo_dmenu.sh close
 		dunstctl close-all
 		exit 0
 		;;
@@ -223,67 +257,27 @@ case "$ACTION" in
 		exit 0
 		;;
 	"uprightcorner")
-		xdotool key Up
+		sxmo_type.sh -k Up
 		exit 0
 		;;
 	"downrightcorner")
-		xdotool key Down
+		sxmo_type.sh -k Down
 		exit 0
 		;;
 	"leftrightcorner_short")
-		xdotool key Left
+		sxmo_type.sh -k Left
 		exit 0
 		;;
 	"rightrightcorner_short")
-		xdotool key Right
+		sxmo_type.sh -k Right
 		exit 0
 		;;
 	"rightbottomcorner")
-		xdotool key Return
+		sxmo_type.sh -k Return
 		exit 0
 		;;
 	"leftbottomcorner")
-		xdotool key BackSpace
-		exit 0
-		;;
-	"powerbutton_one")
-		if echo "$WMCLASS" | grep -i "megapixels"; then
-			key "space"
-		else
-			sxmo_keyboard.sh toggle
-		fi
-		exit 0
-		;;
-	"powerbutton_two")
-		sxmo_blinkled.sh blue && $TERMCMD "$SHELL"
-		exit 0
-		;;
-	"powerbutton_three")
-		sxmo_blinkled.sh blue && $BROWSER
-		exit 0
-		;;
-	"volup_one")
-		sxmo_appmenu.sh
-		exit 0
-		;;
-	"volup_two")
-		sxmo_appmenu.sh sys
-		exit 0
-		;;
-	"volup_three")
-		lock_screen
-		exit 0
-		;;
-	"voldown_one")
-		key Super+space
-		exit 0
-		;;
-	"voldown_two")
-		key Super+x
-		exit 0
-		;;
-	"voldown_three")
-		sxmo_blinkled.sh red && sxmo_killwindow.sh
+		sxmo_type.sh -k BackSpace
 		exit 0
 		;;
 	"topleftcorner")

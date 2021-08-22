@@ -6,7 +6,7 @@
 
 err() {
 	echo "$1">&2
-	echo "$1" | dmenu -c -l 10
+	echo "$1" | dmenu
 	kill $$
 }
 
@@ -15,7 +15,7 @@ choosenumbermenu() {
 	NUMBER="$(
 		printf %b "\n$icon_cls Cancel\n$icon_grp More contacts\n$(sxmo_contacts.sh | grep -E "^\+?[0-9]+:")" |
 		awk NF |
-		sxmo_dmenu_with_kb.sh -p "Number" -l 10 -c -i |
+		sxmo_dmenu_with_kb.sh -p "Number" -i |
 		cut -d: -f1 |
 		tr -d -- '- '
 	)"
@@ -23,7 +23,7 @@ choosenumbermenu() {
 		NUMBER="$( #joined words without space is not a bug
 			printf %b "\nCancel\n$(sxmo_contacts.sh --all)" |
 				grep . |
-				sxmo_dmenu_with_kb.sh -l 10 -p "Number" -c -i |
+				sxmo_dmenu_with_kb.sh -p "Number" -i |
 				cut -d: -f1 |
 				tr -d -- '- '
 		)"
@@ -57,7 +57,7 @@ sendtextmenu() {
 	do
 		CONFIRM="$(
 			printf %b "$icon_edt Edit\n$icon_snd Send\n$icon_cls Cancel" |
-			dmenu -c -idx 1 -p "Confirm" -l 10
+			dmenu -i -p "Confirm"
 		)" || exit
 		if echo "$CONFIRM" | grep -q "Send"; then
 			(sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT") && \
@@ -85,7 +85,7 @@ readtextmenu() {
 	printf %b "$icon_cls Close Menu\n$icon_edt Send a Text\n";
 		sxmo_contacts.sh --texted | xargs -IL echo "L logfile"
 	)"
-	PICKED="$(printf %b "$ENTRIES" | dmenu -p Texts -c -l 10 -i)" || exit
+	PICKED="$(printf %b "$ENTRIES" | dmenu -p Texts -i)" || exit
 
 	if echo "$PICKED" | grep "Close Menu"; then
 		exit 1

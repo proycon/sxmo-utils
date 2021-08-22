@@ -68,7 +68,7 @@ link_select() {
 		dump_links_with_titles |
 		awk '!x[$0]++' |
 		# sort | uniq
-		dmenu -p "$DMENU_PROMPT" -l 10 -i -c |
+		dmenu -p "$DMENU_PROMPT" -i |
 		awk -F' ' '{print $NF}' |
 		link_normalize "$(xprop -id "$SURF_WINDOW" _SURF_URI | cut -d '"' -f 2)"
 }

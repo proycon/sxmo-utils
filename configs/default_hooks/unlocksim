@@ -17,7 +17,7 @@ sim_n() {
 }
 
 retry=1
-pkill dmenu #kill existing dmenu
+sxmo_dmenu.sh close
 while [ $retry -eq 1 ]; do
 	PICKED="$(
 		# shellcheck disable=SC2039,SC3037

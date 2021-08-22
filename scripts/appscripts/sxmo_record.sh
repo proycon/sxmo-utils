@@ -43,13 +43,13 @@ recordconfirm() {
 				Delete Recording
 			" |
 			xargs -0 echo | sed '/^[[:space:]]*$/d' | awk '{$1=$1};1' |
-			dmenu -p "$DUR" -c -l 10
+			sxmo_dmenu.sh -p "$DUR"
 		)"
 		if echo "$PICK" | grep "Playback"; then
 			sxmo_terminal.sh mpv -ao=alsa -v "$FILE"
 		elif echo "$PICK" | grep "Delete Recording"; then
 			rm "$FILE"
-			echo "File deleted." | dmenu -c -l 10
+			echo "File deleted." | sxmo_dmenu.sh
 			return
 		else
 			return
@@ -72,7 +72,7 @@ recordmenu() {
 			xargs -0 echo |
 			sed '/^[[:space:]]*$/d' |
 			awk '{$1=$1};1' |
-			dmenu -c -p "Record" -l 20
+			sxmo_dmenu.sh -p "Record"
 		)"
 
 		if [ "$OPTION" = "Line Jack" ]; then

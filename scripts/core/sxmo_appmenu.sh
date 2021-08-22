@@ -5,15 +5,13 @@ trap gracefulexit INT TERM
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-WIN=$(xdotool getwindowfocus)
-
 gracefulexit() {
 	echo "Gracefully exiting $0">&2
 	kill -9 0
 }
 
 confirm() {
-	PICKED="$(printf "Yes\nNo\n" | dmenu -l 16 -c -p "Confirm $1")"
+	PICKED="$(printf "Yes\nNo\n" | dmenu -p "Confirm $1")"
 
 	if [ "$PICKED" = "Yes" ]; then
 		return 0
@@ -22,9 +20,13 @@ confirm() {
 	fi
 }
 
+sxmo_type() {
+	sxmo_type.sh -s 200 "$@" # dunno why this is necessary but it sucks without
+}
+
 programchoicesinit() {
-	XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
-	WMCLASS="${1:-$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3- | tr '[:upper:]' '[:lower:]')}"
+	XPROPOUT="$(sxmo_wm.sh focusedwindow)"
+	WMCLASS="${1:-$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
 	if [ -z "$XPROPOUT" ]; then
 		echo "sxmo_appmenu: detected no active window, no problem, opening system menu" >&2
 	else
@@ -116,7 +118,8 @@ programchoicesinit() {
 				$(command -v ranger     >/dev/null && echo "$icon_dir Ranger      ^ 0 ^ sxmo_terminal.sh ranger")
 				$(command -v sacc       >/dev/null && echo "$icon_itm Sacc        ^ 0 ^ sxmo_terminal.sh sacc i-logout.cz/1/bongusta")
 				$(command -v sic        >/dev/null && echo "$icon_itm Sic         ^ 0 ^ sxmo_terminal.sh sic")
-				$(command -v st         >/dev/null && echo "$icon_trm St          ^ 0 ^ sxmo_terminal.sh $SHELL")
+				$(command -v st         >/dev/null && echo "$icon_trm St          ^ 0 ^ st -e $SHELL")
+				$(command -v foot       >/dev/null && echo "$icon_trm Foot        ^ 0 ^ foot $SHELL")
 				$(command -v surf       >/dev/null && echo "$icon_glb Surf        ^ 0 ^ surf")
 				$(command -v syncthing  >/dev/null && echo "$icon_rld Syncthing          ^ 0 ^ syncthing")
 				$(command -v telegram-desktop >/dev/null && echo "$icon_tgm Telegram     ^ 0 ^ telegram-desktop")
@@ -153,7 +156,7 @@ programchoicesinit() {
 				printf %b "Off → On" ||  printf %b "On → Off";
 				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 			)
-			$icon_cfg Bar Toggle                 ^ 1 ^ key Super+b
+			$icon_cfg Idle Config                ^ 1 ^ sxmo_idle.sh config
 			$icon_cfg Invert Colors              ^ 1 ^ xcalib -a -invert
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			$icon_ror Autorotate $(
@@ -165,6 +168,7 @@ programchoicesinit() {
 				printf %b "On → Off ^ 0 ^ sxmo_proximitylocktoggle.sh &" ||  printf %b "Off → On ^ 0 ^ sxmo_proximitylocktoggle.sh &"
 			)
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
+			$icon_rol Toggle WM                  ^ 1 ^ sxmo_terminal.sh sxmo_wmtoggle.sh
 			$icon_upc Upgrade Pkgs               ^ 0 ^ sxmo_terminal.sh sxmo_upgrade.sh
 			$icon_cfg Edit configuration         ^ 0 ^ sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/xinit
 			$(command -v pmos-tweaks >/dev/null && echo "$icon_cfg PostmarketOS Tweaks	     ^ 0 ^ GDK_SCALE=1 pmos-tweaks")
@@ -199,172 +203,171 @@ programchoicesinit() {
 	*mpv* )
 		# MPV
 		CHOICES="
-			$icon_pau Pause        ^ 0 ^ key space
-			$icon_fbw Seek       ^ 1 ^ key Left
-			$icon_ffw Seek       ^ 1 ^ key Right
-			$icon_aru App Volume ↑ ^ 1 ^ key 0
-			$icon_ard App Volume ↓ ^ 1 ^ key 9
-			$icon_aru Speed up      ^ 1 ^ key bracketright
-			$icon_ard Speed down    ^ 1 ^ key bracketleft
-			$icon_cam Screenshot   ^ 1 ^ key s
-			$icon_itm Loopmark     ^ 1 ^ key l
-			$icon_inf Info         ^ 1 ^ key i
-			$icon_inf Seek Info    ^ 1 ^ key o
+			$icon_pau Pause        ^ 0 ^ sxmo_type -k Space
+			$icon_fbw Seek       ^ 1 ^ sxmo_type -k Left
+			$icon_ffw Seek       ^ 1 ^ sxmo_type -k Right
+			$icon_aru App Volume ↑ ^ 1 ^ sxmo_type 0
+			$icon_ard App Volume ↓ ^ 1 ^ sxmo_type 9
+			$icon_aru Speed up      ^ 1 ^ sxmo_type -k bracketRight
+			$icon_ard Speed down    ^ 1 ^ sxmo_type -k bracketLeft
+			$icon_cam Screenshot   ^ 1 ^ sxmo_type s
+			$icon_itm Loopmark     ^ 1 ^ sxmo_type l
+			$icon_inf Info         ^ 1 ^ sxmo_type i
+			$icon_inf Seek Info    ^ 1 ^ sxmo_type o
 		"
 		WINNAME=Mpv && return
 		;;
 	*feh* )
 		# Feh
 		CHOICES="
-			$icon_arr Next          ^ 1 ^ key space
-			$icon_arl Previous      ^ 1 ^ key BackSpace
-			$icon_zmi Zoom in       ^ 1 ^ key up
-			$icon_zmo Zoom out      ^ 1 ^ key down
-			$icon_exp Zoom to fit   ^ 1 ^ key slash
-			$icon_shr Zoom to fill  ^ 1 ^ key exlam
-			$icon_rol Rotate        ^ 1 ^ key less
-			$icon_ror Rotate        ^ 1 ^ key greater
-			$icon_a2y Flip          ^ 1 ^ key underscore
-			$icon_a2x Mirror        ^ 1 ^ key bar
-			$icon_inf Toggle filename ^ 1 ^ key d
+			$icon_arr Next          ^ 1 ^ sxmo_type -k Space
+			$icon_arl Previous      ^ 1 ^ sxmo_type -k BackSpace
+			$icon_zmi Zoom in       ^ 1 ^ sxmo_type -k up
+			$icon_zmo Zoom out      ^ 1 ^ sxmo_type -k down
+			$icon_exp Zoom to fit   ^ 1 ^ sxmo_type -k slash
+			$icon_shr Zoom to fill  ^ 1 ^ sxmo_type '!'
+			$icon_rol Rotate        ^ 1 ^ sxmo_type -k less
+			$icon_ror Rotate        ^ 1 ^ sxmo_type -k greater
+			$icon_a2y Flip          ^ 1 ^ sxmo_type -k underscore
+			$icon_a2x Mirror        ^ 1 ^ sxmo_type -k bar
+			$icon_inf Toggle filename ^ 1 ^ sxmo_type d
 		"
 		WINNAME=Feh && return
 		;;
 	*sxiv* )
 		# Sxiv
 		CHOICES="
-			$icon_arr Next          ^ 1 ^ key space
-			$icon_arl Previous      ^ 1 ^ key BackSpace
-			$icon_zmi Zoom in       ^ 1 ^ key equal
-			$icon_zmo Zoom out      ^ 1 ^ key minus
-			$icon_rol Rotate        ^ 1 ^ key less
-			$icon_ror Rotate        ^ 1 ^ key greater
-			$icon_a2y Flip          ^ 1 ^ key question
-			$icon_a2x Mirror        ^ 1 ^ key bar
-			$icon_grd Thumbnail     ^ 0 ^ key Return
+			$icon_arr Next          ^ 1 ^ sxmo_type -k Space
+			$icon_arl Previous      ^ 1 ^ sxmo_type -k BackSpace
+			$icon_zmi Zoom in       ^ 1 ^ sxmo_type -k equal
+			$icon_zmo Zoom out      ^ 1 ^ sxmo_type -k minus
+			$icon_rol Rotate        ^ 1 ^ sxmo_type -k less
+			$icon_ror Rotate        ^ 1 ^ sxmo_type -k greater
+			$icon_a2y Flip          ^ 1 ^ sxmo_type -k question
+			$icon_a2x Mirror        ^ 1 ^ sxmo_type -k bar
+			$icon_grd Thumbnail     ^ 0 ^ sxmo_type -k Return
 		"
 		WINNAME=Sxiv && return
 		;;
-	*st-256color* )
-		# St
-		# First we try to handle the app running inside st:
-		WMNAME="${1:-$(echo "$XPROPOUT" | grep -E "^WM_NAME" | cut -d ' ' -f3-)}"
+	*foot*|*st* )
+		# First we try to handle the app running inside the terminal:
+		WMNAME="${1:-$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
 		if echo "$WMNAME" | grep -i -E "(vi|vim|vis|nvim|neovim|kakoune)"; then
-			#Vim in st
+			#Vim in foot
 			CHOICES="
-				$icon_aru Scroll up        ^ 1 ^ key Ctrl+Shift+u
-				$icon_ard Scroll down      ^ 1 ^ key Ctrl+Shift+d
-				$icon_trm Command prompt   ^ 0 ^ key Escape Shift+semicolon
-				$icon_cls Save             ^ 0 ^ key Escape Shift+semicolon w Return
-				$icon_cls Save and Quit    ^ 0 ^ key Escape Shift+semicolon w q Return
-				$icon_cls Quit without saving  ^ 0 ^ key Escape Shift+semicolon q exclam Return
-				$icon_pst Paste Selection  ^ 0 ^ key Escape quotedbl asterisk p
-				$icon_pst Paste Clipboard  ^ 0 ^ key Escape quotedbl plus p
-				$icon_fnd Search           ^ 0 ^ key Escape /
-				$icon_zmi Zoom in          ^ 1 ^ key Ctrl+Shift+Prior
-				$icon_zmo Zoom out         ^ 1 ^ key Ctrl+Shift+Next
-				$icon_mnu St menu          ^ 0 ^ sxmo_appmenu.sh st-256color
+				$icon_aru Scroll up        ^ 1 ^ sxmo_type -M Ctrl u
+				$icon_ard Scroll down      ^ 1 ^ sxmo_type -M Ctrl d
+				$icon_trm Command prompt   ^ 0 ^ sxmo_type -k Escape ':'
+				$icon_cls Save             ^ 0 ^ sxmo_type -k Escape ':w' -k Return
+				$icon_cls Save and Quit    ^ 0 ^ sxmo_type -k Escape ':wq' -k Return
+				$icon_cls Quit without saving  ^ 0 ^ sxmo_type -k Escape ':q!' -k Return
+				$icon_pst Paste Selection  ^ 0 ^ sxmo_type -k Escape -k quotedbl -k asterisk -k p
+				$icon_pst Paste Clipboard  ^ 0 ^ wl-paste
+				$icon_fnd Search           ^ 0 ^ sxmo_type -k Escape /
+				$icon_zmi Zoom in          ^ 1 ^ sxmo_type -k Prior
+				$icon_zmo Zoom out         ^ 1 ^ sxmo_type -k Next
+				$icon_mnu Terminal menu    ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=Vim
 		elif echo "$WMNAME" | grep -i -w "nano"; then
-			#Nano in st
+			#Nano in foot
 			CHOICES="
-				$icon_aru Scroll up       ^ 1 ^ key Prior
-				$icon_ard Scroll down     ^ 1 ^ key Next
-				$icon_sav Save            ^ 0 ^ key Ctrl+O
-				$icon_cls Quit            ^ 0 ^ key Ctrl+X
-				$icon_pst Paste           ^ 0 ^ key Ctrl+U
-				$icon_itm Type complete   ^ 0 ^ key Ctrl+Shift+u
-				$icon_cpy Copy complete   ^ 0 ^ key Ctrl+Shift+i
-				$icon_zmi Zoom in         ^ 1 ^ key Ctrl+Shift+Prior
-				$icon_zmo Zoom out        ^ 1 ^ key Ctrl+Shift+Next
-				$icon_mnu St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
+				$icon_aru Scroll up       ^ 1 ^ sxmo_type -k Prior
+				$icon_ard Scroll down     ^ 1 ^ sxmo_type -k Next
+				$icon_sav Save            ^ 0 ^ sxmo_type -M Ctrl o
+				$icon_cls Quit            ^ 0 ^ sxmo_type -M Ctrl x
+				$icon_pst Paste           ^ 0 ^ sxmo_type -M Ctrl u
+				$icon_itm Type complete   ^ 0 ^ sxmo_type -M Shift -M Ctrl u
+				$icon_cpy Copy complete   ^ 0 ^ sxmo_type -M Shift -M Ctrl i
+				$icon_zmi Zoom in         ^ 1 ^ sxmo_type -k Prior
+				$icon_zmo Zoom out        ^ 1 ^ sxmo_type -k Next
+				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=Nano
 		elif echo "$WMNAME" | grep -i -w "tuir"; then
-			#tuir (reddit client) in st
+			#tuir (reddit client) in foot
 			CHOICES="
-				$icon_aru Previous      ^ 1 ^ key k
-				$icon_ard Next          ^ 1 ^ key j
-				$icon_aru Scroll up     ^ 1 ^ key Prior
-				$icon_ard Scroll down   ^ 1 ^ key Next
-				$icon_ret Open          ^ 0 ^ key o
-				$icon_arl Back          ^ 0 ^ key h
-				$icon_arr Comments      ^ 0 ^ key l
-				$icon_edt Post          ^ 0 ^ key c
-				$icon_rld Refresh       ^ 0 ^ key r
-				$icon_cls Quit          ^ 0 ^ key q
-				$icon_zmi Zoom in       ^ 1 ^ key Ctrl+Shift+Prior
-				$icon_zmo Zoom out      ^ 1 ^ key Ctrl+Shift+Next
-				$icon_mnu St menu       ^ 0 ^ sxmo_appmenu.sh st-256color
+				$icon_aru Previous      ^ 1 ^ sxmo_type k
+				$icon_ard Next          ^ 1 ^ sxmo_type j
+				$icon_aru Scroll up     ^ 1 ^ sxmo_type -k Prior
+				$icon_ard Scroll down   ^ 1 ^ sxmo_type -k Next
+				$icon_ret Open          ^ 0 ^ sxmo_type o
+				$icon_arl Back          ^ 0 ^ sxmo_type h
+				$icon_arr Comments      ^ 0 ^ sxmo_type l
+				$icon_edt Post          ^ 0 ^ sxmo_type c
+				$icon_rld Refresh       ^ 0 ^ sxmo_type r
+				$icon_cls Quit          ^ 0 ^ sxmo_type q
+				$icon_zmi Zoom in       ^ 1 ^ sxmo_type -k Prior
+				$icon_zmo Zoom out      ^ 1 ^ sxmo_type -k Next
+				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=tuir
 		elif echo "$WMNAME" | grep -i -w "w3m"; then
 			#w3m
 			CHOICES="
-				$icon_arl Back          ^ 1 ^ key B
-				$icon_glb Goto URL        ^ 1 ^ key U
-				$icon_arr Next Link       ^ 1 ^ key Tab
-				$icon_arl Previous Link   ^ 1 ^ key Shift+Tab
-				$icon_tab Open tab        ^ 0 ^ key T
-				$icon_cls Close tab       ^ 0 ^ Ctrl+q
-				$icon_itm Next tab        ^ 1 ^ key braceright
-				$icon_itm Previous tab    ^ 1 ^ key braceleft
-				$icon_zmi Zoom in          ^ 1 ^ key Ctrl+Shift+Prior
-				$icon_zmo Zoom out          ^ 1 ^ key Ctrl+Shift+Next
-				$icon_mnu St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
+				$icon_arl Back          ^ 1 ^ sxmo_type b
+				$icon_glb Goto URL        ^ 1 ^ sxmo_type u
+				$icon_arr Next Link       ^ 1 ^ sxmo_type -k Tab
+				$icon_arl Previous Link   ^ 1 ^ sxmo_type -M Shift -k Tab
+				$icon_tab Open tab        ^ 0 ^ sxmo_type t
+				$icon_cls Close tab       ^ 0 ^ sxmo_type -M Ctrl q
+				$icon_itm Next tab        ^ 1 ^ sxmo_type -k braceRight
+				$icon_itm Previous tab    ^ 1 ^ sxmo_type -k braceLeft
+				$icon_zmi Zoom in          ^ 1 ^ sxmo_type -k Prior
+				$icon_zmo Zoom out          ^ 1 ^ sxmo_type -k Next
+				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=w3m
 		elif echo "$WMNAME" | grep -i -w "ncmpcpp"; then
 			#ncmpcpp
 			CHOICES="
-				$icon_lst Playlist        ^ 0 ^ key 1
-				$icon_fnd Browser         ^ 0 ^ key 2
-				$icon_fnd Search          ^ 0 ^ key 3
-				$icon_nxt Next track      ^ 0 ^ key greater
-				$icon_prv Previous track  ^ 0 ^ key less
-				$icon_pau Pause           ^ 0 ^ key p
-				$icon_stp Stop            ^ 0 ^ key s
-				$icon_rld Toggle repeat   ^ 0 ^ key r
-				$icon_sfl Toggle random   ^ 0 ^ key z
-				$icon_itm Toggle consume  ^ 0 ^ key R
-				$icon_mnu St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
+				$icon_lst Playlist        ^ 0 ^ sxmo_type 1
+				$icon_fnd Browser         ^ 0 ^ sxmo_type 2
+				$icon_fnd Search          ^ 0 ^ sxmo_type 3
+				$icon_nxt Next track      ^ 0 ^ sxmo_type -k greater
+				$icon_prv Previous track  ^ 0 ^ sxmo_type -k less
+				$icon_pau Pause           ^ 0 ^ sxmo_type p
+				$icon_stp Stop            ^ 0 ^ sxmo_type s
+				$icon_rld Toggle repeat   ^ 0 ^ sxmo_type r
+				$icon_sfl Toggle random   ^ 0 ^ sxmo_type z
+				$icon_itm Toggle consume  ^ 0 ^ sxmo_type R
+				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=ncmpcpp
 		elif echo "$WMNAME" | grep -i -w "aerc"; then
 			#aerc
 			CHOICES="
-				$icon_pau Archive	  ^ 1 ^ typeenter ':archive flat'
-				$icon_nxt Next Tab	  ^ 0 ^ typeenter ':next-tab'
-				$icon_prv Previous Tab	  ^ 0 ^ typeenter ':prev-tab'
-				$icon_cls Close Tab	  ^ 0 ^ typeenter ':close'
-				$icon_itm Next Part	  ^ 1 ^ typeenter ':next-part'
-				$icon_trm xdg-open Part	  ^ 0 ^ typeenter ':open'
+				$icon_pau Archive	  ^ 1 ^ sxmo_type ':archive flat' -k Return
+				$icon_nxt Next Tab	  ^ 0 ^ sxmo_type ':next-tab' -k Return
+				$icon_prv Previous Tab	  ^ 0 ^ sxmo_type ':prev-tab' -k Return
+				$icon_cls Close Tab	  ^ 0 ^ sxmo_type ':close' -k Return
+				$icon_itm Next Part	  ^ 1 ^ sxmo_type ':next-part' -k Return
+				$icon_trm xdg-open Part	  ^ 0 ^ sxmo_type ':open' -k Return
 			"
 			WINNAME=aerc
 		elif echo "$WMNAME" | grep -i -E -w "(less|mless)"; then
 			#less
 			CHOICES="
-				$icon_arr Page next       ^ 1 ^ typeenter ':n'
-				$icon_arl Page previous   ^ 1 ^ typeenter ':p'
-				$icon_cls Quit            ^ 0 ^ key q
-				$icon_zmi Zoom in         ^ 1 ^ key Ctrl+Shift+Prior
-				$icon_zmo Zoom out        ^ 1 ^ key Ctrl+Shift+Next
-				$icon_aru Scroll up       ^ 1 ^ key Ctrl+Shift+b
-				$icon_ard Scroll down     ^ 1 ^ key Ctrl+Shift+f
-				$icon_mnu St menu       ^ 0 ^ sxmo_appmenu.sh st-256color
+				$icon_arr Page next       ^ 1 ^ sxmo_type ':n' -k Return
+				$icon_arl Page previous   ^ 1 ^ sxmo_type ':p' -k Return
+				$icon_cls Quit            ^ 0 ^ sxmo_type q
+				$icon_zmi Zoom in         ^ 1 ^ sxmo_type -M Ctrl +
+				$icon_zmo Zoom out        ^ 1 ^ sxmo_type -M Ctrl -k Minus
+				$icon_aru Scroll up       ^ 1 ^ sxmo_type -k Prior
+				$icon_ard Scroll down     ^ 1 ^ sxmo_type -k Next
+				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=less
 		elif echo "$WMNAME" | grep -i -w "weechat"; then
 			#weechat
 			CHOICES="
-				$icon_msg Hotlist Next            ^ 1 ^ key Alt+a
-				$icon_arl History Previous        ^ 1 ^ key Alt+Shift+comma
-				$icon_arr History Next            ^ 1 ^ key Alt+Shift+period
-				$icon_trm Buffer                  ^ 0 ^ type '/buffer '
-				$icon_aru Scroll up               ^ 1 ^ key Prior
-				$icon_ard Scroll down             ^ 1 ^ key Next
-				$icon_mnu St menu       ^ 0 ^ sxmo_appmenu.sh st-256color
+				$icon_msg Hotlist Next            ^ 1 ^ sxmo_type -M Alt a
+				$icon_arl History Previous        ^ 1 ^ sxmo_type -M Alt -k Less
+				$icon_arr History Next            ^ 1 ^ sxmo_type -M Alt -k Greater
+				$icon_trm Buffer                  ^ 0 ^ sxmo_type '/buffer '
+				$icon_aru Scroll up               ^ 1 ^ sxmo_type -k Prior
+				$icon_ard Scroll down             ^ 1 ^ sxmo_type -k Next
+				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=weechat
 		elif echo "$WMNAME" | grep -i -w "sms"; then
@@ -373,6 +376,9 @@ programchoicesinit() {
 			CHOICES="
 				$icon_msg Reply          ^ 0 ^ sxmo_modemtext.sh sendtextmenu $number
 				$icon_phn Call           ^ 0 ^ sxmo_modemdial.sh $number
+				$icon_aru Scroll up       ^ 1 ^ sxmo_type -M Shift -M Ctrl b
+				$icon_ard Scroll down     ^ 1 ^ sxmo_type -M Shift -M Ctrl f
+				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=sms
 		elif echo "$WMNAME" | grep -i -w "cmus"; then
@@ -386,76 +392,95 @@ programchoicesinit() {
 				$icon_prv Previous track  ^ 0 ^ cmus-remote -r
 				$icon_rld Toggle repeat   ^ 0 ^ cmus-remote -R
 				$icon_sfl Toggle random   ^ 0 ^ cmus-remote -S
-				$icon_mnu St menu         ^ 0 ^ sxmo_appmenu.sh st-256color
+				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=cmus
 		else
-			STSELMODEON="$(
-				echo "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' '
-			)"
-			CHOICES="
-				$icon_itm Type complete   ^ 0 ^ key Ctrl+Shift+u
-				$icon_cpy Copy complete   ^ 0 ^ key Ctrl+Shift+i
-				$icon_itm Selmode $(
-				  [ "$STSELMODEON" = 1 ] &&
-				  printf %b 'On → Off' ||
-				  printf %b 'Off → On'
-				  printf %b '^ 0 ^ key Ctrl+Shift+s'
-				)
-				$([ "$STSELMODEON" = 1 ] && echo 'Copy selection ^ 0 ^ key Ctrl+Shift+c')
-				$icon_pst Paste           ^ 0 ^ key Ctrl+Shift+v
-				$icon_zmi Zoom in         ^ 1 ^ key Ctrl+Shift+Prior
-				$icon_zmo Zoom out        ^ 1 ^ key Ctrl+Shift+Next
-				$icon_aru Scroll up       ^ 1 ^ key Ctrl+Shift+b
-				$icon_ard Scroll down     ^ 1 ^ key Ctrl+Shift+f
-				$icon_a2x Invert          ^ 1 ^ key Ctrl+Shift+x
-				$icon_kbd Hotkeys         ^ 0 ^ sxmo_appmenu.sh sthotkeys
-			"
-			WINNAME=St
+			# Now we fallback to the default terminal menu
+			case "$WMCLASS" in
+				*st*)
+					STSELMODEON="$(
+						echo "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' '
+					)"
+					CHOICES="
+						$icon_itm Type complete   ^ 0 ^ sxmo_type -M Ctrl -M Shift -k u
+						$icon_cpy Copy complete   ^ 0 ^ sxmo_type -M Ctrl -M Shift -k i
+						$icon_itm Selmode $(
+						  [ "$STSELMODEON" = 1 ] &&
+						  printf %b 'On → Off' ||
+						  printf %b 'Off → On'
+						  printf %b '^ 0 ^ sxmo_type -M Ctrl -M Shift -k s'
+						)
+						$([ "$STSELMODEON" = 1 ] && echo 'Copy selection ^ 0 ^ sxmo_type -M Ctrl -M Shift -k c')
+						$icon_pst Paste           ^ 0 ^ sxmo_type -M Ctrl -M Shift -k v
+						$icon_zmi Zoom in         ^ 1 ^ sxmo_type -M Ctrl -M Shift -k Prior
+						$icon_zmo Zoom out        ^ 1 ^ sxmo_type -M Ctrl -M Shift -k Next
+						$icon_aru Scroll up       ^ 1 ^ sxmo_type -M Ctrl -M Shift -k b
+						$icon_ard Scroll down     ^ 1 ^ sxmo_type -M Ctrl -M Shift -k f
+						$icon_a2x Invert          ^ 1 ^ sxmo_type -M Ctrl -M Shift -k x
+						$icon_kbd Hotkeys         ^ 0 ^ sxmo_appmenu.sh sthotkeys
+					"
+					WINNAME=St
+					;;
+				*foot*)
+					CHOICES="
+						$icon_itm Type complete   ^ 0 ^ sxmo_type -M Shift -M Ctrl u
+						$icon_cpy Copy complete   ^ 0 ^ sxmo_type -M Shift -M Ctrl i
+						$icon_pst Paste           ^ 0 ^ sxmo_type -M Shift -M Ctrl v
+						$icon_zmi Zoom in         ^ 1 ^ sxmo_type -M Ctrl +
+						$icon_zmo Zoom out        ^ 1 ^ sxmo_type -M Ctrl -k Minus
+						$icon_aru Scroll up       ^ 1 ^ sxmo_type -k Prior
+						$icon_ard Scroll down     ^ 1 ^ sxmo_type -k Next
+						$icon_a2x Invert          ^ 1 ^ sxmo_type -M Shift -M Ctrl x
+						$icon_kbd Hotkeys         ^ 0 ^ sxmo_appmenu.sh sthotkeys
+					"
+					WINNAME=Foot
+					;;
+			esac
 		fi
 		;;
 	*sthotkeys* )
 		#  St hotkeys
 		CHOICES="
-			Send Ctrl-C      ^ 0 ^ key Ctrl+c
-			Send Ctrl-Z      ^ 0 ^ key Ctrl+z
-			Send Ctrl-L      ^ 0 ^ key Ctrl+l
-			Send Ctrl-D      ^ 0 ^ key Ctrl+d
-			Send Ctrl-A      ^ 0 ^ key Ctrl+a
-			Send Ctrl-B      ^ 0 ^ key Ctrl+b
-			Send ESC:w       ^ 0 ^ key Escape Shift+semicolon w Return
-			Send ESC:wq      ^ 0 ^ key Escape Shift+semicolon w q Return
-			Send ESC:wq!     ^ 0 ^ key Escape Shift+semicolon q exclam Return
+			Send Ctrl-C      ^ 0 ^ sxmo_type -M Ctrl -k c
+			Send Ctrl-Z      ^ 0 ^ sxmo_type -M Ctrl -k z
+			Send Ctrl-L      ^ 0 ^ sxmo_type -M Ctrl -k l
+			Send Ctrl-D      ^ 0 ^ sxmo_type -M Ctrl -k d
+			Send Ctrl-A      ^ 0 ^ sxmo_type -M Ctrl -k a
+			Send Ctrl-B      ^ 0 ^ sxmo_type -M Ctrl -k b
+			Send ESC:w       ^ 0 ^ sxmo_type -k Escape -M Shift -k semicolon -m Shift -k w -k Return
+			Send ESC:wq      ^ 0 ^ sxmo_type -k Escape -M Shift -k semicolon -m Shift -k w -k q -k Return
+			Send ESC:wq!     ^ 0 ^ sxmo_type -k Escape -M Shift -k semicolon -m Shift -k q -k exclam -k Return
 		"
 		WINNAME=St
-		;;
+	;;
 	*netsurf* )
 		# Netsurf
 		CHOICES="
 			$icon_flt Pipe URL          ^ 0 ^ sxmo_urlhandler.sh
-			$icon_zmi Zoom            ^ 1 ^ key Ctrl+plus
-			$icon_zmo Zoom            ^ 1 ^ key Ctrl+minus
-			$icon_arl History        ^ 1 ^ key Alt+Left
-			$icon_arr History        ^ 1 ^ key Alt+Right
+			$icon_zmi Zoom            ^ 1 ^ sxmo_type -M Ctrl -k plus
+			$icon_zmo Zoom            ^ 1 ^ sxmo_type -M Ctrl -k minus
+			$icon_arl History        ^ 1 ^ sxmo_type -M Alt -k Left
+			$icon_arr History        ^ 1 ^ sxmo_type -M Alt -k Right
 		"
 		WINNAME=Netsurf
 		;;
 	*surf* )
 		# Surf
 		CHOICES="
-			$icon_glb Navigate    ^ 0 ^ key Ctrl+g
-			$icon_lnk Link Menu   ^ 0 ^ key Ctrl+d
+			$icon_glb Navigate    ^ 0 ^ sxmo_type -M Ctrl g
+			$icon_lnk Link Menu   ^ 0 ^ sxmo_type -M Ctrl d
 			$icon_flt Pipe URL    ^ 0 ^ sxmo_urlhandler.sh
-			$icon_fnd Search Page ^ 0 ^ key Ctrl+f
-			$icon_fnd Find Next   ^ 0 ^ key Ctrl+n
-			$icon_zmi Zoom      ^ 1 ^ key Ctrl+Shift+k
-			$icon_zmo Zoom      ^ 1 ^ key Ctrl+Shift+j
-			$icon_aru Scroll    ^ 1 ^ key Shift+space
-			$icon_ard Scroll    ^ 1 ^ key space
-			$icon_itm JS Toggle   ^ 1 ^ key Ctrl+Shift+s
-			$icon_arl History   ^ 1 ^ key Ctrl+h
-			$icon_arr History   ^ 1 ^ key Ctrl+l
-			$icon_rld Refresh     ^ 0 ^ key Ctrl+Shift+r
+			$icon_fnd Search Page ^ 0 ^ sxmo_type -M Ctrl f
+			$icon_fnd Find Next   ^ 0 ^ sxmo_type -M Ctrl n
+			$icon_zmi Zoom      ^ 1 ^ sxmo_type -M Shift -M Ctrl k
+			$icon_zmo Zoom      ^ 1 ^ sxmo_type -M Shift -M Ctrl j
+			$icon_aru Scroll    ^ 1 ^ sxmo_type -M Shift -k Space
+			$icon_ard Scroll    ^ 1 ^ sxmo_type -k Space
+			$icon_itm JS Toggle   ^ 1 ^ sxmo_type -M Shift -M Ctrl s
+			$icon_arl History   ^ 1 ^ sxmo_type -M Ctrl h
+			$icon_arr History   ^ 1 ^ sxmo_type -M Ctrl l
+			$icon_rld Refresh     ^ 0 ^ sxmo_type -M Shift -M Ctrl r
 		"
 		WINNAME=Surf
 		;;
@@ -463,29 +488,29 @@ programchoicesinit() {
 		# Firefox
 		CHOICES="
 			$icon_flt Pipe URL          ^ 0 ^ sxmo_urlhandler.sh
-			$icon_tab New Tab           ^ 0 ^ key Ctrl+t
-			$icon_win New Window        ^ 0 ^ key Ctrl+n
-			$icon_cls Close Tab         ^ 0 ^ key Ctrl+w
-			$icon_zmi Zoom            ^ 1 ^ key Ctrl+plus
-			$icon_zmo Zoom            ^ 1 ^ key Ctrl+minus
-			$icon_arl History        ^ 1 ^ key Alt+Left
-			$icon_arr History        ^ 1 ^ key Alt+Right
-			$icon_rld Refresh     ^ 0 ^ key Ctrl+Shift+r
+			$icon_tab New Tab           ^ 0 ^ sxmo_type -M Ctrl t
+			$icon_win New Window        ^ 0 ^ sxmo_type -M Ctrl n
+			$icon_cls Close Tab         ^ 0 ^ sxmo_type -M Ctrl w
+			$icon_zmi Zoom            ^ 1 ^ sxmo_type -M Ctrl -k plus
+			$icon_zmo Zoom            ^ 1 ^ sxmo_type -M Ctrl -k minus
+			$icon_arl History        ^ 1 ^ sxmo_type -M Alt -k Left
+			$icon_arr History        ^ 1 ^ sxmo_type -M Alt -k Right
+			$icon_rld Refresh     ^ 0 ^ sxmo_type -M Shift -M Ctrl r
 		"
 		WINNAME=Firefox
 		;;
 	*lagrange* )
 		# Lagrange
 		CHOICES="
-			$icon_mnu Toggle sidebar ^ 0 ^ key Ctrl+Shift+p
-			$icon_bok Open bookmarks ^ 0 ^ key Ctrl+l && typeenter 'about:bookmarks'
-			$icon_pls Add bookmark   ^ 0 ^ key Ctrl+d
-			$icon_zmi Zoom           ^ 1 ^ key Ctrl+equal
-			$icon_zmo Zoom           ^ 1 ^ key Ctrl+minus
-			$icon_aru Parent dir     ^ 1 ^ key Alt+Up
-			$icon_arl History        ^ 1 ^ key Alt+Left
-			$icon_arr History        ^ 1 ^ key Alt+Right
-			$icon_rld Refresh        ^ 0 ^ key Ctrl+r
+			$icon_mnu Toggle sidebar ^ 0 ^ sxmo_type -M Shift -M Ctrl p
+			$icon_bok Open bookmarks ^ 0 ^ sxmo_type -M Ctrl l && sxmo_type 'about:bookmarks' -k Return
+			$icon_pls Add bookmark   ^ 0 ^ sxmo_type -M Ctrl d
+			$icon_zmi Zoom           ^ 1 ^ sxmo_type -M Ctrl -k equal
+			$icon_zmo Zoom           ^ 1 ^ sxmo_type -M Ctrl -k minus
+			$icon_aru Parent dir     ^ 1 ^ sxmo_type -M Alt -k Up
+			$icon_arl History        ^ 1 ^ sxmo_type -M Alt -k Left
+			$icon_arr History        ^ 1 ^ sxmo_type -M Alt -k Right
+			$icon_rld Refresh        ^ 0 ^ sxmo_type -M Ctrl r
 		"
 		WINNAME=Lagrange
 		;;
@@ -498,11 +523,11 @@ programchoicesinit() {
 			$icon_itm Drop Pin            ^ 0 ^ sxmo_gpsutil.sh droppin
 			$icon_fnd Region Search       ^ 0 ^ sxmo_gpsutil.sh menuregionsearch
 			$icon_itm Region Details      ^ 0 ^ sxmo_gpsutil.sh details
-			$icon_zmi Zoom              ^ 1 ^ key i
-			$icon_zmo Zoom              ^ 1 ^ key o
+			$icon_zmi Zoom              ^ 1 ^ sxmo_type i
+			$icon_zmo Zoom              ^ 1 ^ sxmo_type o
 			$icon_itm Map Type            ^ 0 ^ sxmo_gpsutil.sh menumaptype
-			$icon_itm Panel Toggle        ^ 1 ^ key m
-			$icon_itm GPSD Toggle         ^ 1 ^ key a
+			$icon_itm Panel Toggle        ^ 1 ^ sxmo_type m
+			$icon_itm GPSD Toggle         ^ 1 ^ sxmo_type a
 			$icon_usr Locate Me           ^ 0 ^ sxmo_gpsutil.sh gpsgeoclueset
 		"
 		WINNAME=Maps
@@ -571,22 +596,6 @@ getprogchoices() {
 	PROGCHOICES="$(echo "$CHOICES" | xargs -0 echo | sed '/^[[:space:]]*$/d' | awk '{$1=$1};1')"
 }
 
-key() {
-	xdotool windowactivate "$WIN"
-	xdotool key --delay 50 --clearmodifiers "$@"
-	#--window $WIN
-}
-
-type() {
-	xdotool windowactivate "$WIN"
-	xdotool type --delay 50 --clearmodifiers "$@"
-}
-
-typeenter() {
-	type "$@"
-	xdotool key Return
-}
-
 quit() {
 	exit 0
 }
@@ -595,7 +604,7 @@ mainloop() {
 	getprogchoices "$ARGS"
 	echo "$PROGCHOICES" |
 	cut -d'^' -f1 |
-	dmenu -idx "$DMENUIDX" -l 16 -c -p "$WINNAME" | (
+	dmenu -i -p "$WINNAME" | (
 		PICKED="$(cat)"
 		echo "$PICKED" | grep . || quit
 		LOOP="$(echo "$PROGCHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f2)"
