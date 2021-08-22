@@ -1,0 +1,82 @@
+#!/bin/sh
+
+WMCLASS="$1"
+WMNAME="$2"
+ACTION="$3"
+
+key() {
+	xdotool windowactivate "$WIN"
+	xdotool key --delay 50 --clearmodifiers "$@"
+}
+
+type() {
+	xdotool windowactivate "$WIN"
+	xdotool type --delay 50 --clearmodifiers "$@"
+}
+
+typeenter() {
+	type "$@"
+	xdotool key Return
+}
+
+# You must exit 0 if you handled the input to not trigger default behaviors
+
+if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
+	# Here you could override locked input handlers
+	exit 1
+fi
+
+# Here you can handle normal input handler
+
+exit 1 # Remove this in your user hook
+
+# Here is an example of possible custom actions
+# We already exited but you may adapt it for you own use cases
+# Please share your recipes to the community :D
+
+case "$WMCLASS" in
+	*"st-256color"*)
+		case "$WMNAME" in
+			*"weechat"*)
+				case "$ACTION" in
+					*"oneleft")
+						key Alt+a
+						exit 0
+						;;
+					*"oneright")
+						key Alt+Shift+comma
+						exit 0
+						;;
+					*"oneup")
+						key Page_Down
+						exit 0
+						;;
+					*"onedown")
+						key Page_Up
+						exit 0
+						;;
+			esac
+			;;
+		esac
+		;;
+	*"mpv"*)
+		case "$ACTION" in
+			"oneright")
+				key Left
+				exit 0
+				;;
+			"oneleft")
+				key Right
+				exit 0
+				;;
+			"upone")
+				key m
+				exit 0
+				;;
+			"onedown")
+				key p
+				exit 0
+				;;
+		esac
+		;;
+esac

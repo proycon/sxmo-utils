@@ -35,6 +35,15 @@ typeenter() {
 	xdotool key Return
 }
 
+XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
+WMCLASS="$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3-)"
+WMNAME=$(echo "$XPROPOUT" | grep -E "^WM_NAME" | cut -d ' ' -f3-)
+
+if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler ]; then
+	#hook script must exit with a zero exit code ONLY if it has handled the gesture!
+	"$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler "$WMCLASS" "$WMNAME" "$@" && exit
+fi
+
 if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
 	case "$ACTION" in
 		"volup_three")
@@ -52,15 +61,6 @@ if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
 			;;
 	esac
 	exit
-fi
-
-XPROPOUT="$(xprop -id "$(xdotool getactivewindow)")"
-WMCLASS="$(echo "$XPROPOUT" | grep WM_CLASS | cut -d ' ' -f3-)"
-WMNAME=$(echo "$XPROPOUT" | grep -E "^WM_NAME" | cut -d ' ' -f3-)
-
-if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler ]; then
-	#hook script must exit with a zero exit code ONLY if it has handled the gesture!
-	"$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler "$WMCLASS" "$WMNAME" "$@" && exit
 fi
 
 #special context-sensitive handling
