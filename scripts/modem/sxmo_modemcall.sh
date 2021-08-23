@@ -26,7 +26,7 @@ finish() {
 		notify-send "$1"
 	fi
 	[ -n "$LOCKPID" ] && kill "$LOCKPID"
-	sxmo_dmemu.sh close
+	sxmo_dmenu.sh close
 	exit 1
 }
 
