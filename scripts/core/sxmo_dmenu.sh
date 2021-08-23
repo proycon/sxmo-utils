@@ -28,7 +28,7 @@ esac > /dev/null
 
 case "$(sxmo_wm.sh)" in
 	sway)
-		exec bemenu --scrollbar autohide -n -w -c -l "$(sxmo_rotate.sh isrotated && printf 7 ||  printf 23)" "$@"
+		exec bemenu --scrollbar autohide -n -w -c -l "$(sxmo_rotate.sh isrotated && printf 5 ||  printf 15)" "$@"
 		;;
 	xorg|dwm)
 		exec dmenu -c -l "$(sxmo_rotate.sh isrotated && printf 7 || printf 23)" "$@"
