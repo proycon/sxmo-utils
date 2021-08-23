@@ -16,22 +16,24 @@ else
 	counter=1
 fi
 
+printf %s "$counter" > "$count_file"
+
 shift "$counter"
 if [ "$#" -eq 0 ]; then
 	exit
 fi
-printf %s "$counter" > "$count_file"
 
 sleep "$threshold"
 
-if [ "$counter" != "$(cat "$count_file")" ]; then
+new_counter="$(cat "$count_file")"
+if [ "$counter" != "$new_counter" ] && [ "$#" -ne 1 ]; then # Only the last count can overflow
 	exit
 fi
 
 eval "$1" &
 
-if [ "$#" -eq 1 ]; then
-	sleep "$threshold" # prevent holded presses to chain
+if [ "$counter" != "$new_counter" ]; then # overlowed
+	printf "%s * 2" "$threshold" | bc | xargs sleep
 fi
 
 rm "$count_file"
