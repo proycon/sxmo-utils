@@ -35,6 +35,6 @@ case "$(sxmo_wm.sh)" in
 		;;
 	ssh)
 		export BEMENU_BACKEND=curses
-		exec bemenu "$@"
+		exec bemenu -w "$@"
 		;;
 esac

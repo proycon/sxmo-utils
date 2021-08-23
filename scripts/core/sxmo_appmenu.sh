@@ -6,12 +6,12 @@ trap gracefulexit INT TERM
 . "$(dirname "$0")/sxmo_common.sh"
 
 gracefulexit() {
-	echo "Gracefully exiting $0">&2
+	printf "Gracefully exiting %s\n" "$0">&2
 	kill -9 0
 }
 
 confirm() {
-	PICKED="$(printf "Yes\nNo\n" | dmenu -p "Confirm $1")"
+	PICKED="$(printf "Yes\nNo\n" | sxmo_dmenu.sh -p "Confirm $1")"
 
 	if [ "$PICKED" = "Yes" ]; then
 		return 0
@@ -30,9 +30,9 @@ programchoicesinit() {
 	XPROPOUT="$(sxmo_wm.sh focusedwindow)"
 	WMCLASS="${1:-$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
 	if [ -z "$XPROPOUT" ]; then
-		echo "sxmo_appmenu: detected no active window, no problem, opening system menu" >&2
+		printf "sxmo_appmenu: detected no active window, no problem, opening system menu\n" >&2
 	else
-		echo "sxmo_appmenu: opening menu for wmclass $WMCLASS" >&2
+		printf "sxmo_appmenu: opening menu for wmclass %s\n" "$WMCLASS" >&2
 	fi
 
 	case "$WMCLASS" in
@@ -188,7 +188,7 @@ programchoicesinit() {
 			$icon_aru Volume up                                       ^ 1 ^ sxmo_vol.sh up
 			$icon_ard Volume down                                     ^ 1 ^ sxmo_vol.sh down
 		"
-		WINNAME="Audio"
+		WINNAME=Audio
 		;;
 	power )
 		# Power menu
@@ -200,7 +200,7 @@ programchoicesinit() {
 			$icon_rld Reboot             ^ 0 ^ confirm Reboot && sxmo_terminal.sh sudo reboot
 			$icon_pwr Poweroff           ^ 0 ^ confirm Poweroff && sxmo_terminal.sh sudo poweroff
 		"
-		WINNAME="Power"
+		WINNAME=Power
 		;;
 	*mpv* )
 		# MPV
@@ -217,7 +217,7 @@ programchoicesinit() {
 			$icon_inf Info         ^ 1 ^ sxmo_type i
 			$icon_inf Seek Info    ^ 1 ^ sxmo_type o
 		"
-		WINNAME=Mpv && return
+		WINNAME=Mpv
 		;;
 	*feh* )
 		# Feh
@@ -234,7 +234,7 @@ programchoicesinit() {
 			$icon_a2x Mirror        ^ 1 ^ sxmo_type -k bar
 			$icon_inf Toggle filename ^ 1 ^ sxmo_type d
 		"
-		WINNAME=Feh && return
+		WINNAME=Feh
 		;;
 	*sxiv* )
 		# Sxiv
@@ -249,7 +249,7 @@ programchoicesinit() {
 			$icon_a2x Mirror        ^ 1 ^ sxmo_type -k bar
 			$icon_grd Thumbnail     ^ 0 ^ sxmo_type -k Return
 		"
-		WINNAME=Sxiv && return
+		WINNAME=Sxiv
 		;;
 	*sthotkeys* )
 		#  St hotkeys
@@ -269,7 +269,7 @@ programchoicesinit() {
 	*foot*|*st* )
 		# First we try to handle the app running inside the terminal:
 		WMNAME="${1:-$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
-		if echo "$WMNAME" | grep -i -E "(vi|vim|vis|nvim|neovim|kakoune)"; then
+		if printf %s "$WMNAME" | grep -qi -E "(vi|vim|vis|nvim|neovim|kakoune)"; then
 			#Vim in foot
 			CHOICES="
 				$icon_aru Scroll up        ^ 1 ^ sxmo_type -M Ctrl u
@@ -286,7 +286,7 @@ programchoicesinit() {
 				$icon_mnu Terminal menu    ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=Vim
-		elif echo "$WMNAME" | grep -i -w "nano"; then
+		elif printf %s "$WMNAME" | grep -qi -w "nano"; then
 			#Nano in foot
 			CHOICES="
 				$icon_aru Scroll up       ^ 1 ^ sxmo_type -k Prior
@@ -301,7 +301,7 @@ programchoicesinit() {
 				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=Nano
-		elif echo "$WMNAME" | grep -i -w "tuir"; then
+		elif printf %s "$WMNAME" | grep -qi -w "tuir"; then
 			#tuir (reddit client) in foot
 			CHOICES="
 				$icon_aru Previous      ^ 1 ^ sxmo_type k
@@ -319,7 +319,7 @@ programchoicesinit() {
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=tuir
-		elif echo "$WMNAME" | grep -i -w "w3m"; then
+		elif printf %s "$WMNAME" | grep -qi -w "w3m"; then
 			#w3m
 			CHOICES="
 				$icon_arl Back          ^ 1 ^ sxmo_type b
@@ -335,7 +335,7 @@ programchoicesinit() {
 				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=w3m
-		elif echo "$WMNAME" | grep -i -w "ncmpcpp"; then
+		elif printf %s "$WMNAME" | grep -qi -w "ncmpcpp"; then
 			#ncmpcpp
 			CHOICES="
 				$icon_lst Playlist        ^ 0 ^ sxmo_type 1
@@ -351,7 +351,7 @@ programchoicesinit() {
 				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=ncmpcpp
-		elif echo "$WMNAME" | grep -i -w "aerc"; then
+		elif printf %s "$WMNAME" | grep -qi -w "aerc"; then
 			#aerc
 			CHOICES="
 				$icon_pau Archive	  ^ 1 ^ sxmo_type ':archive flat' -k Return
@@ -362,7 +362,7 @@ programchoicesinit() {
 				$icon_trm xdg-open Part	  ^ 0 ^ sxmo_type ':open' -k Return
 			"
 			WINNAME=aerc
-		elif echo "$WMNAME" | grep -i -E -w "(less|mless)"; then
+		elif printf %s "$WMNAME" | grep -qi -E -w "(less|mless)"; then
 			#less
 			CHOICES="
 				$icon_arr Page next       ^ 1 ^ sxmo_type ':n' -k Return
@@ -375,7 +375,7 @@ programchoicesinit() {
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=less
-		elif echo "$WMNAME" | grep -i -w "weechat"; then
+		elif printf %s "$WMNAME" | grep -qi -w "weechat"; then
 			#weechat
 			CHOICES="
 				$icon_msg Hotlist Next            ^ 1 ^ sxmo_type -M Alt a
@@ -387,8 +387,8 @@ programchoicesinit() {
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=weechat
-		elif echo "$WMNAME" | grep -i -w "sms"; then
-			number="$(echo "$WMNAME" | sed -e 's|^\"||' -e 's|\"$||' | cut -f1 -d' ')"
+		elif printf %s "$WMNAME" | grep -qi -w "sms"; then
+			number="$(printf %s "$WMNAME" | sed -e 's|^\"||' -e 's|\"$||' | cut -f1 -d' ')"
 			#sms
 			CHOICES="
 				$icon_msg Reply          ^ 0 ^ sxmo_modemtext.sh sendtextmenu $number
@@ -398,7 +398,7 @@ programchoicesinit() {
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=sms
-		elif echo "$WMNAME" | grep -i -w "cmus"; then
+		elif printf %s "$WMNAME" | grep -qi -w "cmus"; then
 			# cmus
 			# requires `:set set_term_title=false` in cmus to match the application
 			CHOICES="
@@ -417,7 +417,7 @@ programchoicesinit() {
 			case "$WMCLASS" in
 				*st*)
 					STSELMODEON="$(
-						echo "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' '
+						printf %s "$XPROPOUT" | grep -E '^_ST_SELMODE.+=' | cut -d= -f2 | tr -d ' '
 					)"
 					CHOICES="
 						$icon_itm Type complete   ^ 0 ^ sxmo_type -M Ctrl -M Shift -k u
@@ -544,7 +544,7 @@ programchoicesinit() {
 			$icon_phn Dialer                                             ^ 0 ^ sxmo_modemdial.sh
 			$icon_msg Texts                                              ^ 0 ^ sxmo_modemtext.sh
 			$icon_usr Contacts                                           ^ 0 ^ sxmo_contactmenu.sh
-			$(command -v bluetoothctl >/dev/null && echo "$icon_bth Bluetooth ^ 0 ^ sxmo_bluetoothmenu.sh")
+			$(command -v bluetoothctl >/dev/null && echo "$icon_bth Bluetooth ^ 1 ^ sxmo_bluetoothmenu.sh")
 			$(command -v megapixels >/dev/null && echo "$icon_cam Camera ^ 0 ^ GDK_SCALE=2 megapixels")
 			$icon_net Networks                                           ^ 0 ^ sxmo_networks.sh
 			$icon_mus Audio                                              ^ 0 ^ sxmo_appmenu.sh audioout
@@ -584,7 +584,7 @@ getprogchoices() {
 	done
 
 	# Decorate menu at bottom w/ system menu entry if not system menu
-	echo $WINNAME | grep -v Sys && CHOICES="
+	echo $WINNAME | grep -qv Sys && CHOICES="
 		$CHOICES
 		$icon_mnu System Menu   ^ 0 ^ sxmo_appmenu.sh sys
 	"
@@ -595,7 +595,7 @@ getprogchoices() {
 		$icon_cls Close Menu    ^ 0 ^ quit
 	"
 
-	PROGCHOICES="$(echo "$CHOICES" | xargs -0 echo | sed '/^[[:space:]]*$/d' | awk '{$1=$1};1')"
+	CHOICES="$(printf "%s\n" "$CHOICES" | xargs -0 echo | sed '/^[[:space:]]*$/d' | awk '{$1=$1};1')"
 }
 
 quit() {
@@ -603,26 +603,25 @@ quit() {
 }
 
 mainloop() {
-	getprogchoices "$ARGS"
-	echo "$PROGCHOICES" |
-	cut -d'^' -f1 |
-	dmenu -i -p "$WINNAME" | (
-		PICKED="$(cat)"
-		echo "$PICKED" | grep . || quit
-		LOOP="$(echo "$PROGCHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f2)"
-		CMD="$(echo "$PROGCHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f3)"
-		echo "sxmo_appmenu: Eval: <$CMD> from picked <$PICKED> with loop <$LOOP>">&2
-		if echo "$LOOP" | grep 1; then
-			eval "$CMD"
-			mainloop
-		else
-			eval "$CMD" &
-			quit
-		fi
-	) & wait
+	getprogchoices "$@"
+	PICKED="$(
+		printf "%s\n" "$CHOICES" |
+		cut -d'^' -f1 |
+		sxmo_dmenu.sh -i -p "$WINNAME"
+	)" || quit
+	LOOP="$(printf "%s\n" "$CHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f2)"
+	CMD="$(printf "%s\n" "$CHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f3)"
+
+	printf "%s\n" "sxmo_appmenu: Eval: <$CMD> from picked <$PICKED> with loop <$LOOP>">&2
+
+	if printf %s "$LOOP" | grep -q 1; then
+		eval "$CMD"
+		mainloop
+	else
+		eval "$CMD" &
+		wait
+		quit
+	fi
 }
 
-pgrep -f "$(command -v sxmo_appmenu.sh)" | grep -Ev "^${$}$" | xargs -r kill -TERM
-PICKED=""
-ARGS="$*"
-mainloop
+mainloop "$@"
