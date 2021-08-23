@@ -60,12 +60,27 @@ checkhooks() {
 	fi
 }
 
+sway() {
+	defaultconfig /usr/share/sxmo/appcfg/sway_template "$XDG_CONFIG_HOME/sxmo/sway" 744
+	defaultconfig /usr/share/sxmo/appcfg/foot.ini "$XDG_CONFIG_HOME/foot/foot.ini" 744
+	defaultconfig /usr/share/sxmo/appcfg/mako.conf "$XDG_CONFIG_HOME/mako/config" 744
+}
+
+xorg() {
+	defaultconfig /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit" 744
+	defaultconfig /usr/share/sxmo/appcfg/dunst.conf "$XDG_CONFIG_HOME/dunst/dunstrc" 744
+}
+
 case "$(sxmo_wm.sh)" in
 	sway)
-		defaultconfig /usr/share/sxmo/appcfg/sway_template "$XDG_CONFIG_HOME/sxmo/sway" 744
+		sway
 		;;
 	xorg|dwm)
-		defaultconfig /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit" 744
+		xorg
+		;;
+	ssh|none)
+		sway
+		xorg
 		;;
 esac
 
