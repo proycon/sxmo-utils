@@ -196,7 +196,7 @@ case "$ACTION" in
 		exit
 		;;
 	"volup_three")
-		sxmo_screenlock.sh lock
+		lock_screen
 		exit
 		;;
 	"rightleftcorner")
