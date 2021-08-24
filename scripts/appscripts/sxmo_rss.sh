@@ -101,7 +101,7 @@ rssreadmenu() {
 	DMENUIDX=1
 	while true; do
 		# Show list of items
-		PICKED="$(printf %b "$CHOICES" | sxmo_dmenu.sh -ix $DMENUIDX -p "RSS ($TIMESPANABBR)" -fn Terminus-15)"
+		PICKED="$(printf %b "$CHOICES" | sxmo_dmenu.sh --index $DMENUIDX -p "RSS ($TIMESPANABBR)" -fn Terminus-15)"
 		DMENUIDX="$(echo "$CHOICES" | grep -m1 -F -n "$PICKED" | cut -d ':' -f1)"
 		if [ "$PICKED" = "Close Menu" ]; then
 			die Closed Menu

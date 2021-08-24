@@ -223,7 +223,7 @@ menumaptype() {
 		CHOICE="$(
 			echo "$CHOICES" |
 			awk -F^ '{ print $1 }' |
-			dmenu -ix "$IDX" -p "Map Type" |
+			dmenu --index "$IDX" -p "Map Type" |
 			awk '{$1=$1};1'
 		)"
 		echo "$CHOICE" | grep "Close Menu" && exit 0
