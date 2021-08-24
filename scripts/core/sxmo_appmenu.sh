@@ -24,6 +24,8 @@ sxmo_type() {
 	sxmo_type.sh -s 200 "$@" # dunno why this is necessary but it sucks without
 }
 
+wm="$(sxmo_wm.sh)"
+
 programchoicesinit() {
 	XPROPOUT="$(sxmo_wm.sh focusedwindow)"
 	WMCLASS="${1:-$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
@@ -156,7 +158,7 @@ programchoicesinit() {
 				printf %b "Off → On" ||  printf %b "On → Off";
 				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 			)
-			$icon_cfg Idle Config                ^ 1 ^ sxmo_idle.sh config
+			$([ "$wm" = sway ] && printf "$icon_cfg Idle Config                ^ 1 ^ sxmo_idle.sh config")
 			$icon_cfg Invert Colors              ^ 1 ^ xcalib -a -invert
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			$icon_ror Autorotate $(
