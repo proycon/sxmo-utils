@@ -187,7 +187,7 @@ incallmenuloop() {
 		cut -d'^' -f1 |
 		sed '/^[[:space:]]*$/d' |
 		awk '{$1=$1};1' | #this cryptic statement trims leading/trailing whitespace from a string
-		dmenu -ix $DMENUIDX "$([ "$WINDOWIFIED" = 0 ] && echo "" || echo "-wm")" -p "$NUMBER" |
+		dmenu -idx $DMENUIDX "$([ "$WINDOWIFIED" = 0 ] && echo "" || echo "-wm")" -p "$NUMBER" |
 		(
 			PICKED="$(cat)";
 			echo "sxmo_modemcall: Picked is $PICKED">&2
