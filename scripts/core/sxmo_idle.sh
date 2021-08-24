@@ -82,7 +82,11 @@ configmenu() {
 			printf "" | \
 				sxmo_dmenu_with_kb.sh -p "New value"
 		)"
-		[ "$new_value" -gt 5 ] || unset new_value
+		if ! [ "$new_value" -eq "$new_value" ]; then
+			unset new_value # not an integer value
+		elif [ "$new_value" -lt 5 ] && [ "$new_value" -ne 0 ]; then
+			unset new_value
+		fi
 	done
 
 	sed -i "s|$target $old_value|$target $new_value|" "$CACHEDIR"/sxmo.idle.state
