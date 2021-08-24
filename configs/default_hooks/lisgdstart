@@ -13,39 +13,19 @@ if [ -z "$LISGD_THRESHOLD_PRESSED" ]; then
 	LISGD_THRESHOLD_PRESSED=60
 fi
 
-case "$(sxmo_wm.sh)" in
-	sway)
-		output="$(
-			swaymsg -t get_outputs \
-				| jq -r '.[] | select(.name == "DSI-1") | {transform: .transform, width: .current_mode.width, height: .current_mode.height}' \
-				| sed "s|normal|0|"
-		)"
-		transform="$(printf %s "$output" | jq -r .transform)"
-		width="$(printf %s "$output" | jq -r .width)"
-		height="$(printf %s "$output" | jq -r .height)"
-		orientation="$((transform / 90))"
-		;;
-	dwm)
-		output="$(xrandr | grep DSI-1 | cut -d' ' -f4)"
-		height="$(printf %s "$output" | cut -d'x' -f2 | cut -d'+' -f1)"
-		width="$(printf %s "$output" | cut -d'x' -f1)"
-		case "$(xrandr | grep DSI-1 | cut -d' ' -f 5)" in
-			right) orientation=1;;
-			left) orientation=3;;
-			inverted) orientation=2;;
-			*) orientation=0;;
-		esac
-		if [ "$((orientation%2))" -ne 0 ]; then
-			tmp="$height"
-			height="$width"
-			width="$tmp"
-		fi
-esac
+if [ dwm = "$(sxmo_wm.sh)" ]; then
+	case "$(xrandr | grep DSI-1 | cut -d' ' -f 5)" in
+		right) orientation=1;;
+		left) orientation=3;;
+		inverted) orientation=2;;
+		*) orientation=0;;
+	esac
+fi
 
 #-g format:
 #   fingers,swipe,edge,distance,command
 #order matters, only the first match gets executed
-lisgd "$@" -o "$orientation" -h "$height" -w "$width" \
+lisgd "$@" ${orientation:+-o $orientation} \
 	-t "$LISGD_THRESHOLD" -T "$LISGD_THRESHOLD_PRESSED" \
 	-g '1,DRUL,BR,*,sxmo_inputhandler.sh bottomrightcorner' \
 	-g '1,DLUR,BL,*,sxmo_inputhandler.sh bottomleftcorner' \
