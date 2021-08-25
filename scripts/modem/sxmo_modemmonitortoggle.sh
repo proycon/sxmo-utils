@@ -10,14 +10,46 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+if [ -f /etc/os-release ]; then
+	# freedesktop.org and systemd
+	. /etc/os-release
+	OS=$NAME
+else
+	OS="Unknown"
+fi
+
+daemon_start() {
+	case $OS in
+		"Alpine Linux"|postmarketOS)
+			sudo rc-service "$1" start
+			;;
+	esac
+}
+
+daemon_stop() {
+	case $OS in
+		"Alpine Linux"|postmarketOS)
+			sudo rc-service "$1" stop
+			;;
+	esac
+}
+
+daemon_isrunning() {
+	case $OS in
+		"Alpine Linux"|postmarketOS)
+			rc-service "$1" status | grep -q started
+			;;
+	esac
+}
+
 ensure_daemon() {
 	TRIES=0
-	while ! rc-service "$1" status | grep -q started; do
+	while ! daemon_isrunning "$1"; do
 		if [ "$TRIES" -eq 10 ]; then
 			return 1
 		fi
 		TRIES=$((TRIES+1))
-		sudo rc-service "$1" start
+		daemon_start "$1"
 		sleep 5
 	done
 
@@ -25,16 +57,15 @@ ensure_daemon() {
 }
 
 ensure_daemons() {
-	if (rc-service eg25-manager status | grep -q started) &&
-		(rc-service modemmanager status | grep -q started); then
+	if (daemon_isrunning eg25-manager) && (daemon_isrunning modemmanager); then
 		return
 	fi
 
 	echo "sxmo_modemmonitortoggle: forcing modem restart" >&2
 	notify-send "Resetting modem daemons, this may take a minute..."
 
-	sudo rc-service modemmanager stop
-	sudo rc-service eg25-manager stop
+	daemon_stop modemmanager
+	daemon_stop eg25-manager
 	sleep 2
 
 	if ! (ensure_daemon eg25-manager && ensure_daemon modemmanager); then
