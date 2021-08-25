@@ -31,7 +31,11 @@ case "$(sxmo_wm.sh)" in
 		exec bemenu --scrollbar autohide -n -w -c -l "$(sxmo_rotate.sh isrotated && printf 5 ||  printf 15)" "$@"
 		;;
 	xorg|dwm)
-		exec dmenu -c -l "$(sxmo_rotate.sh isrotated && printf 7 || printf 23)" "$@"
+		if sxmo_keyboard.sh isopen; then
+			exec dmenu -c -l "$(sxmo_rotate.sh isrotated && printf 2 || printf 5)" "$@"
+		else
+			exec dmenu -c -l "$(sxmo_rotate.sh isrotated && printf 7 || printf 23)" "$@"
+		fi
 		;;
 	ssh)
 		export BEMENU_BACKEND=curses
