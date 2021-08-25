@@ -85,7 +85,7 @@ readtextmenu() {
 	printf %b "$icon_cls Close Menu\n$icon_edt Send a Text\n";
 		sxmo_contacts.sh --texted | xargs -IL echo "L logfile"
 	)"
-	PICKED="$(printf %b "$ENTRIES" | dmenu -p Texts -i)" || exit
+	PICKED="$(printf %b "$ENTRIES" | sxmo_dmenu_with_kb.sh -p "Texts" -i)" || exit
 
 	if echo "$PICKED" | grep "Close Menu"; then
 		exit 1
