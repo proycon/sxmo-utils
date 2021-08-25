@@ -158,7 +158,7 @@ programchoicesinit() {
 				printf %b "Off → On" ||  printf %b "On → Off";
 				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 			)
-			$([ "$wm" = sway ] && printf "$icon_cfg Idle Config                ^ 1 ^ sxmo_idle.sh config")
+			$([ "$wm" = sway ] && echo "$icon_cfg Idle Config                ^ 1 ^ sxmo_idle.sh config")
 			$icon_cfg Invert Colors              ^ 1 ^ xcalib -a -invert
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			$icon_ror Autorotate $(
