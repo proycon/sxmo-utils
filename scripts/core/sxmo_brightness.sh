@@ -17,6 +17,7 @@ up() {
 }
 
 down() {
+	light -N 5
 	light -U 5
 }
 
