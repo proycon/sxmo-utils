@@ -23,6 +23,10 @@ daemon_start() {
 		"Alpine Linux"|postmarketOS)
 			sudo rc-service "$1" start
 			;;
+		"Arch Linux ARM"|alarm)
+			[ "$1" = "modemmanager" ] && set -- ModemManager
+			sudo systemctl start "$1"
+			;;
 	esac
 }
 
@@ -31,6 +35,10 @@ daemon_stop() {
 		"Alpine Linux"|postmarketOS)
 			sudo rc-service "$1" stop
 			;;
+		"Arch Linux ARM"|alarm)
+			[ "$1" = "modemmanager" ] && set -- ModemManager
+			sudo systemctl stop "$1"
+			;;
 	esac
 }
 
@@ -38,6 +46,10 @@ daemon_isrunning() {
 	case $OS in
 		"Alpine Linux"|postmarketOS)
 			rc-service "$1" status | grep -q started
+			;;
+		"Arch Linux ARM"|alarm)
+			[ "$1" = "modemmanager" ] && set -- ModemManager
+			systemctl status "$1" | grep -q running
 			;;
 	esac
 }
