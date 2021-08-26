@@ -5,14 +5,14 @@ envvars() {
 	# shellcheck disable=SC1091
 	[ -f /etc/profile ] && . /etc/profile
 	export BEMENU_OPTS='--fn "Monospace 11"'
-	# shellcheck source=/dev/null
-	[ -f "$HOME"/.profile ] && . "$HOME"/.profile
 	export MOZ_ENABLE_WAYLAND=1
 	command -v "$TERMCMD" || export TERMCMD="foot"
 	command -v "$BROWSER" || export BROWSER=firefox
 	command -v "$EDITOR" || export EDITOR=vis
 	command -v "$SHELL" || export SHELL=/bin/sh
-	command -v "$KEYBOARD" || defaultkeyboard
+	command -v "$KEYBOARD" || export KEYBOARD=wvkbd-mobintl
+	# shellcheck source=/dev/null
+	[ -f "$HOME"/.profile ] && . "$HOME"/.profile
 	[ -z "$MPV_HOME" ] && export MPV_HOME=/usr/share/sxmo/mpv
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 	[ -z "$XDG_CONFIG_HOME" ] && export XDG_CONFIG_HOME=~/.config
@@ -42,10 +42,6 @@ setupxdgdir() {
 defaults() {
 	alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
 	[ -e "$HOME"/.Xresources ] && xrdb -merge "$HOME"/.Xresources
-}
-
-defaultkeyboard() {
-	export KEYBOARD=wvkbd
 }
 
 defaultconfig() {

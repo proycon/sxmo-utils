@@ -4,13 +4,13 @@
 envvars() {
 	# shellcheck disable=SC1091
 	[ -f /etc/profile ] && . /etc/profile
-	# shellcheck source=/dev/null
-	[ -f "$HOME"/.profile ] && . "$HOME"/.profile
 	command -v "$TERMCMD" || export TERMCMD="st -e"
 	command -v "$BROWSER" || export BROWSER=surf
 	command -v "$EDITOR" || export EDITOR=vis
 	command -v "$SHELL" || export SHELL=/bin/sh
 	command -v "$KEYBOARD" || defaultkeyboard
+	# shellcheck source=/dev/null
+	[ -f "$HOME"/.profile ] && . "$HOME"/.profile
 	[ -z "$MPV_HOME" ] && export MPV_HOME=/usr/share/sxmo/mpv
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 	[ -z "$XDG_CONFIG_HOME" ] && export XDG_CONFIG_HOME=~/.config
