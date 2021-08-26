@@ -16,21 +16,35 @@ swaytransforms() {
 }
 
 xorgisrotated() {
-	case "$(xrandr | grep primary | cut -d' ' -f 5)" in
-		*right*|*left*) return 0;;
-		*) return 1;;
-	esac
+	rotation="$(
+		xrandr | grep primary | cut -d' ' -f 5 | sed s/\(//
+	)"
+	if [ "$rotation" = "normal" ]; then
+		return 1;
+	fi
+	printf %s "$rotation"
+	return 0;
 }
 
 swayisrotated() {
-	swaytransforms | grep DSI-1 | grep -q 0
+	rotation="$(
+		swaytransforms \
+		| grep DSI-1 \
+		| cut -d" " -f2 \
+		| sed -e s/90/right/ -e s/270/left/ -e s/180/reverse/
+	)"
+	if [ "$rotation" = "normal" ]; then
+		return 1;
+	fi
+	printf %s "$rotation"
+	return 0;
 }
 
 xorgrotnormal() {
 	sxmo_keyboard.sh close
 	xrandr -o normal
 	applyptrmatrix 0 0 0 0 0 0 0 0 0
-	sxmo_hooks.sh lisgdstart
+	sxmo_hooks.sh lisgdstart &
 	exit 0
 }
 
@@ -50,7 +64,7 @@ xorgrotright() {
 
 swayrotright() {
 	swaymsg -- output  DSI-1 transform 90
-	sxmo_hooks.sh lisgdstart
+	sxmo_hooks.sh lisgdstart &
 	exit 0
 }
 
@@ -58,13 +72,13 @@ xorgrotleft() {
 	sxmo_keyboard.sh close
 	xrandr -o left
 	applyptrmatrix 0 -1 1 1 0 0 0 0 1
-	sxmo_hooks.sh lisgdstart
+	sxmo_hooks.sh lisgdstart &
 	exit 0
 }
 
 swayrotleft() {
 	swaymsg -- output  DSI-1 transform 270
-	sxmo_hooks.sh lisgdstart
+	sxmo_hooks.sh lisgdstart &
 	exit 0
 }
 
