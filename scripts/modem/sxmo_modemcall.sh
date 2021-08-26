@@ -141,19 +141,10 @@ hangup() {
 	exit 0
 }
 
-togglewindowify() {
-	if [ "$WINDOWIFIED" = "0" ]; then
-		WINDOWIFIED=1
-	else
-		WINDOWIFIED=0
-	fi
-}
-
 incallsetup() {
 	DMENUIDX=0
 	CALLID="$1"
 	NUMBER="$(vid_to_number "$CALLID")"
-	WINDOWIFIED=0
 	# E.g. There's some bug with the modem that' requires us to toggle the
 	# DAI a few times before starting the call for it to kick in
 	FLAGS=" "
@@ -167,8 +158,6 @@ incallsetup() {
 incallmenuloop() {
 	echo "sxmo_modemcall: Current flags are $FLAGS">&2
 	CHOICES="
-		$([ "$WINDOWIFIED" = 0 ] && echo "$icon_wn2 Windowify" || echo "$icon_wn2 Unwindowify")   ^ togglewindowify
-		$([ "$WINDOWIFIED" = 0 ] && echo "$icon_lck Screenlock                      ^ togglewindowify; sxmo_screenlock.sh lock &")
 		$icon_aru Volume up                                                          ^ sxmo_vol.sh up
 		$icon_ard Volume down                                                          ^ sxmo_vol.sh down
 		$icon_phn Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo "$icon_chk")            ^ toggleflagset -e
@@ -181,23 +170,23 @@ incallmenuloop() {
 		$icon_phx Hangup                                                            ^ hangup $CALLID
 	"
 
-	pkill -9 bemenu # E.g. just incase user is playing with btns or hits a menu by mistake
-	echo "$CHOICES" |
-		xargs -0 echo |
-		cut -d'^' -f1 |
-		sed '/^[[:space:]]*$/d' |
-		awk '{$1=$1};1' | #this cryptic statement trims leading/trailing whitespace from a string
-		dmenu --index "$DMENUIDX" "$([ "$WINDOWIFIED" != 0 ] && echo "" || echo "-wm")" -p "$NUMBER" |
-		(
-			PICKED="$(cat)";
-			echo "sxmo_modemcall: Picked is $PICKED">&2
-			echo "$PICKED" | grep -Ev "."
-			CMD=$(echo "$CHOICES" | grep "$PICKED" | cut -d'^' -f2)
-			DMENUIDX=$(echo "$(echo "$CHOICES" | grep -n "$PICKED" | cut -d ':' -f1)" - 1 | bc)
-			echo "sxmo_modemcall: Eval in call context: $CMD">&2
-			eval "$CMD"
-			incallmenuloop
-		) & wait # E.g. bg & wait to allow for SIGINT propogation
+	PICKED="$(
+		echo "$CHOICES" |
+			xargs -0 echo |
+			cut -d'^' -f1 |
+			sed '/^[[:space:]]*$/d' |
+			awk '{$1=$1};1' |
+			dmenu --index "$DMENUIDX" -p "$NUMBER"
+	)" || hangup "$CALLID" # in case the menu is closed
+
+	echo "sxmo_modemcall: Picked is $PICKED" >&2
+	echo "$PICKED" | grep -Ev "."
+
+	CMD="$(echo "$CHOICES" | grep "$PICKED" | cut -d'^' -f2)"
+	DMENUIDX="$(printf "%s - 2" "$(echo "$CHOICES" | grep -n "$PICKED" | cut -d ':' -f1)" | bc)"
+	echo "sxmo_modemcall: Eval in call context: $CMD" >&2
+	eval "$CMD"
+	incallmenuloop
 }
 
 dtmfmenu() {
@@ -207,9 +196,9 @@ dtmfmenu() {
 	while true; do
 		PICKED="$(
 			echo "$NUMS" | grep -o . | sed '1 iReturn to Call Menu' |
-			dmenu "$([ "$WINDOWIFIED" = 0 ] && echo "" || echo "-wm")" -p "DTMF Tone"
-		)"
-		echo "$PICKED" | grep "Return to Call Menu" && return
+			dmenu -p "DTMF Tone"
+		)" || return
+		echo "$PICKED" | grep -q "Return to Call Menu" && return
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --send-dtmf="$PICKED"
 	done
 }
