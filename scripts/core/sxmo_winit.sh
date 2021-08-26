@@ -4,7 +4,7 @@
 envvars() {
 	# shellcheck disable=SC1091
 	[ -f /etc/profile ] && . /etc/profile
-	export BEMENU_OPTS='--fn "Monospace 11"'
+	export BEMENU_OPTS='--fn "Monospace 14"'
 	export MOZ_ENABLE_WAYLAND=1
 	command -v "$TERMCMD" || export TERMCMD="foot"
 	command -v "$BROWSER" || export BROWSER=firefox
