@@ -28,7 +28,7 @@ esac > /dev/null
 
 case "$(sxmo_wm.sh)" in
 	sway)
-		exec bemenu --scrollbar autohide -n -w -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 8 ||  printf 15)" "$@"
+		exec bemenu --scrollbar autohide -s -n -w -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 8 ||  printf 15)" "$@"
 		;;
 	xorg|dwm)
 		if sxmo_keyboard.sh isopen; then
