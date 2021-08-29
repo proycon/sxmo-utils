@@ -441,14 +441,13 @@ programchoicesinit() {
 					;;
 				*foot*)
 					CHOICES="
-						$icon_itm Type complete   ^ 0 ^ sxmo_type -M Shift -M Ctrl u
-						$icon_cpy Copy complete   ^ 0 ^ sxmo_type -M Shift -M Ctrl i
+						$icon_cpy Copy		  ^ 0 ^ sxmo_type -M Shift -M Ctrl c
 						$icon_pst Paste           ^ 0 ^ sxmo_type -M Shift -M Ctrl v
 						$icon_zmi Zoom in         ^ 1 ^ sxmo_type -M Ctrl +
 						$icon_zmo Zoom out        ^ 1 ^ sxmo_type -M Ctrl -k Minus
-						$icon_aru Scroll up       ^ 1 ^ sxmo_type -k Prior
-						$icon_ard Scroll down     ^ 1 ^ sxmo_type -k Next
-						$icon_a2x Invert          ^ 1 ^ sxmo_type -M Shift -M Ctrl x
+						$icon_aru Scroll up       ^ 1 ^ sxmo_type -M Shift -k Prior
+						$icon_ard Scroll down     ^ 1 ^ sxmo_type -M Shift -k Next
+						$icon_lnk URL Mode        ^ 0 ^ sxmo_type -M Shift -M Ctrl -k u
 						$icon_kbd Hotkeys         ^ 0 ^ sxmo_appmenu.sh sthotkeys
 					"
 					WINNAME=Foot
