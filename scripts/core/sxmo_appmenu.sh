@@ -105,6 +105,7 @@ programchoicesinit() {
 				$(command -v lagrange   >/dev/null && echo "$icon_glb Lagrange    ^ 0 ^ lagrange")
 				$(command -v lf         >/dev/null && echo "$icon_dir Lf          ^ 0 ^ sxmo_terminal.sh lf")
 				$(command -v lollypop   >/dev/null && echo "$icon_mus Lollypop    ^ 0 ^ lollypop")
+				$(command -v marble     >/dev/null && echo "$icon_map Marble      ^ 0 ^ marble")
 				$(command -v midori     >/dev/null && echo "$icon_glb Midori      ^ 0 ^ midori")
 				$(command -v mutt       >/dev/null && echo "$icon_eml Mutt        ^ 0 ^ sxmo_terminal.sh mutt")
 				$(command -v nano       >/dev/null && echo "$icon_edt Nano        ^ 0 ^ sxmo_terminal.sh nano")
