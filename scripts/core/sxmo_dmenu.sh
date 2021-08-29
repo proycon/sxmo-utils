@@ -28,7 +28,11 @@ esac > /dev/null
 
 case "$(sxmo_wm.sh)" in
 	sway)
-		exec bemenu --scrollbar autohide -s -n -w -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 8 ||  printf 15)" "$@"
+		swaymsg mode menu -q # disable default button inputs
+		bemenu --scrollbar autohide -s -n -w -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 8 ||  printf 15)" "$@"
+		returned=$?
+		swaymsg mode default -q
+		exit "$returned"
 		;;
 	xorg|dwm)
 		if sxmo_keyboard.sh isopen; then

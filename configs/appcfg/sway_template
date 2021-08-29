@@ -61,11 +61,13 @@ exec sxmo_idle.sh start
 input 0:0:axp20x-pek {
 	repeat_delay 200
 	repeat_rate 15
+	xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
 }
 # Volume buttons
 input 1:1:1c21800.lradc {
 	repeat_delay 200
 	repeat_rate 15
+	xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
 }
 exec sxmo_multikey.sh clear
 
@@ -83,6 +85,10 @@ exec sxmo_multikey.sh clear
 
     # Next workspace
     bindsym --input-device=1:1:1c21800.lradc XF86AudioLowerVolume exec sxmo_multikey.sh voldown "sxmo_inputhandler.sh voldown_one" "sxmo_inputhandler.sh voldown_two" "sxmo_inputhandler.sh voldown_three"
+
+    mode "menu" {
+        bindsym --input-device=1:1:1c21800.lradc XF86AudioMute exec nothing # placeholder for "menu" mode
+    }
 
     # Kill focused window
     bindsym $mod+Shift+q kill
@@ -252,3 +258,4 @@ exec sxmo_modemmonitortoggle.sh restart
 exec sxmo_notificationmonitor.sh
 exec mako
 exec sxmo_hooks.sh lisgdstart
+exec sxmo_menumode_toggler.sh

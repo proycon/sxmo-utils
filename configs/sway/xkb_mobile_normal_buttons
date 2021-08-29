@@ -1,0 +1,22 @@
+xkb_keymap {
+xkb_keycodes "(unnamed)" {
+    minimum = 122;
+    maximum = 124;
+    <VOL-> = 122;
+    <VOL+> = 123;
+    <POWR> = 124;
+    alias <I122> = <VOL->;
+    alias <I123> = <VOL+>;
+    alias <I124> = <POWR>;
+};
+xkb_types "(unnamed)" {
+};
+xkb_compatibility "(unnamed)" {
+};
+xkb_symbols "(unnamed)" {
+    name[group1]="Mobile Convenient Buttons";
+    key <VOL-> { [ XF86AudioLowerVolume ] };
+    key <VOL+> { [ XF86AudioRaiseVolume ] };
+    key <POWR> { [    XF86PowerOff ] };
+};
+};
