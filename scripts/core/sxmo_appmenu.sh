@@ -157,11 +157,6 @@ programchoicesinit() {
 				printf %b "On → Off" ||  printf %b "Off → On";
 				printf %b "^ 1 ^ sudo sxmo_wifitoggle.sh"
 			)
-			$icon_fll Flashlight $(
-				grep -qE '^0$' /sys/class/leds/white:flash/brightness &&
-				printf %b "Off → On" ||  printf %b "On → Off";
-				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
-			)
 			$([ "$wm" = sway ] && echo "$icon_cfg Idle Config                ^ 1 ^ sxmo_idle.sh config")
 			$icon_cfg Invert Colors              ^ 1 ^ xcalib -a -invert
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
@@ -549,6 +544,11 @@ programchoicesinit() {
 			$icon_usr Contacts                                           ^ 0 ^ sxmo_contactmenu.sh
 			$(command -v bluetoothctl >/dev/null && echo "$icon_bth Bluetooth ^ 1 ^ sxmo_bluetoothmenu.sh")
 			$(command -v megapixels >/dev/null && echo "$icon_cam Camera ^ 0 ^ GDK_SCALE=2 megapixels")
+			$icon_fll Flashlight $(
+				grep -qE '^0$' /sys/class/leds/white:flash/brightness &&
+				printf %b "Off → On" ||  printf %b "On → Off";
+				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
+			)
 			$icon_net Networks                                           ^ 0 ^ sxmo_networks.sh
 			$icon_mus Audio                                              ^ 0 ^ sxmo_appmenu.sh audioout
 			$icon_cfg Config                                             ^ 0 ^ sxmo_appmenu.sh config
