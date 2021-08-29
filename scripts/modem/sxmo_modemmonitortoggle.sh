@@ -19,7 +19,7 @@ else
 fi
 
 daemon_start() {
-	case $OS in
+	case "$OS" in
 		"Alpine Linux"|postmarketOS)
 			sudo rc-service "$1" start
 			;;
@@ -31,7 +31,7 @@ daemon_start() {
 }
 
 daemon_stop() {
-	case $OS in
+	case "$OS" in
 		"Alpine Linux"|postmarketOS)
 			sudo rc-service "$1" stop
 			;;
@@ -43,13 +43,25 @@ daemon_stop() {
 }
 
 daemon_isrunning() {
-	case $OS in
+	daemon_exists "$1" || return 0
+	case "$OS" in
 		"Alpine Linux"|postmarketOS)
 			rc-service "$1" status | grep -q started
 			;;
 		"Arch Linux ARM"|alarm)
 			[ "$1" = "modemmanager" ] && set -- ModemManager
 			systemctl status "$1" | grep -q running
+			;;
+	esac
+}
+
+daemon_exists() {
+	case "$OS" in
+		"Alpine Linux"|postmarketOS)
+			[ -f /etc/init.d/"$1" ]
+			;;
+		"Arch Linux ARM"|alarm)
+			systemctl status "$1" >/dev/null
 			;;
 	esac
 }
@@ -69,7 +81,8 @@ ensure_daemon() {
 }
 
 ensure_daemons() {
-	if (daemon_isrunning eg25-manager) && (daemon_isrunning modemmanager); then
+	if (daemon_isrunning eg25-manager) && \
+			(daemon_isrunning modemmanager); then
 		return
 	fi
 
