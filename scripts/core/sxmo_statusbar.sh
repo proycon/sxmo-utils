@@ -54,12 +54,14 @@ update() {
 		fi
 	fi
 
-	# Battery pct
-	BATTERY_DEVICE="${BATTERY_DEVICE:-"/sys/class/power_supply/axp20x-battery"}"
-	PCT="$(cat "$BATTERY_DEVICE"/capacity)"
-	BATSTATUS="$(
-		cut -c1 "$BATTERY_DEVICE"/status
-	)"
+	# Find battery and get percentage + status
+	for power_supply in /sys/class/power_supply/*; do
+		if [ "$(cat "$power_supply"/type)" = "Battery" ]; then
+			PCT="$(cat "$power_supply"/capacity)"
+			BATSTATUS="$(cut -c1 "$power_supply"/status)"
+		fi
+	done
+
 	if [ "$BATSTATUS" = "C" ]; then
 		if [ "$PCT" -lt 20 ]; then
 			BATSTATUS="$PCT% "
