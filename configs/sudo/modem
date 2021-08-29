@@ -1,3 +1,5 @@
+ALL ALL=NOPASSWD: /sbin/rc-service eg25-manager stop
+ALL ALL=NOPASSWD: /sbin/rc-service eg25-manager start
 ALL ALL=NOPASSWD: /sbin/rc-service eg25-manager restart
 ALL ALL=NOPASSWD: /sbin/rc-service modemmanager stop
 ALL ALL=NOPASSWD: /sbin/rc-service modemmanager start
