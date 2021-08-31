@@ -1,0 +1,86 @@
+# repeat_delay how much time in milisec to consider it is hold pressed
+#    should be long enough to trigger simple click easily but
+#    should be short enough to trigger a repeat before the next threshold
+# repeat_rate then how much key per second should be triggered
+#    adapt it accordingly with the delay.
+#    prefer a lower but enough value
+# This is enough for 4 multikeys long presses
+
+### PinePhone (pine64-pinephone) / PineTab (pine64-pinetab)
+# Power button
+input 0:0:axp20x-pek {
+    repeat_delay 200
+    repeat_rate 15
+    xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+}
+# Volume buttons
+input 1:1:1c21800.lradc {
+    repeat_delay 200
+    repeat_rate 15
+    xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+}
+
+### BQ Aquaris X5 (bq-paella)
+# Power button
+input 0:0:pm8941_pwrkey {
+    repeat_delay 200
+    repeat_rate 15
+    xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+}
+# Volume up button
+input 1:1:GPIO_Buttons {
+    repeat_delay 200
+    repeat_rate 15
+    xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+}
+# Volume down button
+input 0:0:pm8941_resin {
+    repeat_delay 200
+    repeat_rate 15
+    xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+}
+
+exec sxmo_multikey.sh clear
+
+### PinePhone (pine64-pinephone) / PineTab (pine64-pinetab)
+# Multikey handling for power button
+bindsym --input-device=0:0:axp20x-pek XF86PowerOff \
+    exec sxmo_multikey.sh powerbutton \
+    "sxmo_inputhandler.sh powerbutton_one" \
+    "sxmo_inputhandler.sh powerbutton_two" \
+    "sxmo_inputhandler.sh powerbutton_three"
+# Multikey handling for volup button
+bindsym --input-device=1:1:1c21800.lradc XF86AudioRaiseVolume \
+    exec sxmo_multikey.sh volup \
+    "sxmo_inputhandler.sh volup_one" \
+    "sxmo_inputhandler.sh volup_two" \
+    "sxmo_inputhandler.sh volup_three"
+# Multikey handling for voldown button
+bindsym --input-device=1:1:1c21800.lradc XF86AudioLowerVolume \
+    exec sxmo_multikey.sh voldown \
+    "sxmo_inputhandler.sh voldown_one" \
+    "sxmo_inputhandler.sh voldown_two" \
+    "sxmo_inputhandler.sh voldown_three"
+
+### BQ Aquaris X5 (bq-paella)
+bindsym --input-device=0:0:pm8941_pwrkey XF86PowerOff \
+    exec sxmo_multikey.sh powerbutton \
+    "sxmo_inputhandler.sh powerbutton_one" \
+    "sxmo_inputhandler.sh powerbutton_two" \
+    "sxmo_inputhandler.sh powerbutton_three"
+# Multikey handling for volup button
+bindsym --input-device=1:1:GPIO_Buttons XF86AudioRaiseVolume \
+    exec sxmo_multikey.sh volup \
+    "sxmo_inputhandler.sh volup_one" \
+    "sxmo_inputhandler.sh volup_two" \
+    "sxmo_inputhandler.sh volup_three"
+# Multikey handling for voldown button
+bindsym --input-device=0:0:pm8941_resin XF86AudioLowerVolume \
+    exec sxmo_multikey.sh voldown \
+    "sxmo_inputhandler.sh voldown_one" \
+    "sxmo_inputhandler.sh voldown_two" \
+    "sxmo_inputhandler.sh voldown_three"
+
+mode "menu" {
+    bindsym --input-device=1:1:1c21800.lradc XF86AudioMute exec nothing # just a placeholder for "menu" mode
+}
