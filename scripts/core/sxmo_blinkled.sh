@@ -12,6 +12,9 @@ done
 
 echo "$PIDS" | grep -E '[^ ]+' | xargs wait
 
+# Make blink noticable
+sleep 0.1
+
 for i in "$@"; do
 	sxmo_setled.sh "$i" 0
 done
