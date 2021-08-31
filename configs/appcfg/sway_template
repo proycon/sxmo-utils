@@ -219,6 +219,7 @@ bar {
 
 default_border pixel 3
 titlebar_border_thickness 3
+hide_edge_borders smart
 
 include /etc/sway/config.d/*
 
