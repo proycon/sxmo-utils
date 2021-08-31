@@ -12,7 +12,7 @@ notify() {
 		awk '{ s += $1; c++ } END { print s/c }'  |
 		xargs printf %.0f
 	)"
-	dunstify -i 0 -u normal -r 998 "♫ $VOL"
+	dunstify -i 0 -u normal -r 998 "♫ Volume" "$VOL"
 	sxmo_statusbarupdate.sh
 }
 

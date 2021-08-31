@@ -5,7 +5,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 notify() {
-	light | xargs notify-send
+	light | xargs notify-send " Brightness"
 }
 
 setvalue() {
