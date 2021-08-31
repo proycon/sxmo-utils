@@ -58,7 +58,6 @@ xorginputevent() {
 }
 
 swayinputevent() {
-	DEVICE=1046:4097:Goodix_Capacitive_TouchScreen
 	STATE=on
 	if swaymsg -t get_inputs \
 		| jq -r '.[] | select(.type == "touch" ) | .libinput.send_events' \
@@ -67,9 +66,9 @@ swayinputevent() {
 	fi
 
 	if [ "$1" = on ] && [ "$STATE" != on ]; then
-		swaymsg -- input "$DEVICE" events enabled
+		swaymsg -- input type:touch events enabled
 	elif [ "$1" = off ] && [ "$STATE" != off ] ; then
-		swaymsg -- input "$DEVICE" events disabled
+		swaymsg -- input type:touch events disabled
 	else
 		printf %s "$STATE"
 	fi
