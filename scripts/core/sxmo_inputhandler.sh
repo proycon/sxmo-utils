@@ -168,11 +168,11 @@ case "$ACTION" in
 			exit 0
 		;;
 	"powerbutton_two")
-		sxmo_blinkled.sh blue && $TERMCMD "$SHELL"
+		sxmo_blinkled.sh blue; $TERMCMD "$SHELL"
 		exit 0
 		;;
 	"powerbutton_three")
-		sxmo_blinkled.sh blue && $BROWSER
+		sxmo_blinkled.sh blue; $BROWSER
 		exit 0
 		;;
 	"voldown_one")
