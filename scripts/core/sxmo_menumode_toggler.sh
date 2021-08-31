@@ -3,6 +3,10 @@
 inputs="
 	1:1:1c21800.lradc
 	0:0:axp20x-pek
+
+	0:0:pm8941_pwrkey
+	1:1:GPIO_Buttons
+	0:0:pm8941_resin
 "
 
 setup_xkb() {
