@@ -40,6 +40,16 @@ programchoicesinit() {
 		# Scripts menu
 		# shellcheck disable=SC2015
 		CHOICES="
+			$(
+				if [ -f "$XDG_CONFIG_HOME/sxmo/userscripts" ]; then
+					cat "$XDG_CONFIG_HOME/sxmo/userscripts"
+				elif [ -d "$XDG_CONFIG_HOME/sxmo/userscripts" ]; then
+					find "$XDG_CONFIG_HOME/sxmo/userscripts" \( -type f -o -type l \) -print0 |
+						xargs -IF basename F |
+						awk "{printf \"$icon_itm %s ^ 0 ^ $XDG_CONFIG_HOME/sxmo/userscripts/%s \\n\", \$0, \$0}" |
+						sort -f
+				fi
+			)
 			$icon_mic Record          ^ 0 ^ sxmo_record.sh
 			$icon_red Reddit          ^ 0 ^ sxmo_reddit.sh
 			$icon_rss RSS             ^ 0 ^ sxmo_rss.sh
@@ -50,19 +60,8 @@ programchoicesinit() {
 			$icon_ytb Youtube (Audio) ^ 0 ^ sxmo_youtube.sh audio
 			$icon_glb Web Search      ^ 0 ^ sxmo_websearch.sh
 			$icon_wtr Weather         ^ 0 ^ sxmo_weather.sh
-		"
-		if [ -x "$XDG_CONFIG_HOME/sxmo/userscripts" ]; then
-			CHOICES="
-				$(
-					find "$XDG_CONFIG_HOME/sxmo/userscripts" \( -type f -o -type l \) -print0 |
-					xargs -IF basename F |
-					awk "{printf \"$icon_itm %s ^ 0 ^ $XDG_CONFIG_HOME/sxmo/userscripts/%s \\n\", \$0, \$0}" |
-					sort -f
-				)
-				$CHOICES
-				$icon_cfg Edit Userscripts ^ 0 ^ sxmo_files.sh $XDG_CONFIG_HOME/sxmo/userscripts
+			$icon_cfg Edit Userscripts ^ 0 ^ sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/userscripts
 			"
-		fi
 		WINNAME=Scripts
 		;;
 	applications )
