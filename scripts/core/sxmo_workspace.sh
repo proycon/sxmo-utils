@@ -49,16 +49,16 @@ sway() {
 dwm() {
 	case "$1" in
 		next)
-			xdotool key Super+Shift+r
+			xdotool key --clearmodifiers Super+Shift+r
 			;;
 		previous)
-			xdotool key Super+Shift+e
+			xdotool key --clearmodifiers Super+Shift+e
 			;;
 		move-next)
-			xdotool key Super+r
+			xdotool key --clearmodifiers Super+r
 			;;
 		move-previous)
-			xdotool key Super+e
+			xdotool key --clearmodifiers Super+e
 			;;
 	esac
 }
