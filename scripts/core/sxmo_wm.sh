@@ -118,6 +118,22 @@ xorgexecwait() {
 	exec "$@"
 }
 
+swaytogglelayout() {
+	swaymsg layout toggle splith splitv tabbed
+}
+
+xorgtogglelayout() {
+	xdotool key --clearmodifiers key Super+space
+}
+
+swayswitchfocus() {
+	swaymsg focus tiling
+}
+
+xorgswitchfocus() {
+	xdotool key --clearmodifiers Super+x
+}
+
 guesswm() {
 	if [ -n "$SWAYSOCK" ]; then
 		printf "sway"

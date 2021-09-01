@@ -176,11 +176,11 @@ case "$ACTION" in
 		exit 0
 		;;
 	"voldown_one")
-		swaymsg layout toggle splith splitv tabbed
+		sxmo_wm.sh togglelayout
 		exit
 		;;
 	"voldown_two")
-		swaymsg focus tiling
+		sxmo_wm.sh switchfocus
 		exit
 		;;
 	"voldown_three")
