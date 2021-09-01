@@ -66,3 +66,6 @@ command -v firefox && export BROWSER=firefox
 
 # Or, enable vibration feedback on keypress
 #export KEYBOARD_ARGS="-o | clickclack -V"
+
+# Auto hide cursor with touchscreen, Show it with a mouse
+unclutter-xfixes --hide-on-touch --start-hidden &
