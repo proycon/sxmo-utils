@@ -127,7 +127,7 @@ xorgtogglelayout() {
 }
 
 swayswitchfocus() {
-	swaymsg focus tiling
+	sxmo_sws.sh
 }
 
 xorgswitchfocus() {
