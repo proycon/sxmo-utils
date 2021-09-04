@@ -9,6 +9,16 @@
 # we disable shellcheck SC2034 (variable not used)
 # for all the variables we define here
 
+# Determine current operating system
+if [ -f /etc/os-release ]; then
+	# freedesktop.org and systemd
+	# shellcheck disable=SC2034
+	. /etc/os-release
+	export OS="$NAME"
+else
+	export OS="Unknown"
+fi
+
 # shellcheck disable=SC2034
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-$HOME/.local/run}"
 # shellcheck disable=SC2034

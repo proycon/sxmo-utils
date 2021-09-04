@@ -10,14 +10,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-if [ -f /etc/os-release ]; then
-	# freedesktop.org and systemd
-	. /etc/os-release
-	OS=$NAME
-else
-	OS="Unknown"
-fi
-
 daemon_start() {
 	case "$OS" in
 		"Alpine Linux"|postmarketOS)
