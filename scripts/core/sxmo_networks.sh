@@ -86,6 +86,20 @@ addnetworkwpamenu() {
 		802-11-wireless-security.psk "$PASSPHRASE"
 }
 
+addhotspotusbmenu() {
+	CONNNAME="$(
+		echo "Close Menu" |
+			sxmo_dmenu_with_kb.sh -p "Add USB Hotspot: Alias"
+	)"
+	[ "$CONNNAME" = "Close Menu" ] && return
+
+	# TODO: restart udhcpd after disconnecting on postmarketOS
+	nmcli c add \
+		type ethernet \
+		ifname usb0 \
+		con-name "$CONNNAME" \
+		ipv4.method shared
+}
 
 networksmenu() {
 	while true; do
@@ -95,6 +109,7 @@ networksmenu() {
 				Add a GSM Network
 				Add a WPA Network
 				Add a Hotspot
+				Add a USB Hotspot
 				Delete a Network
 				Launch Nmtui
 				Launch Ifconfig
@@ -119,6 +134,9 @@ networksmenu() {
 				;;
 			"Add a Hotspot" )
 				sxmo_hotspot.sh
+				;;
+			"Add a USB Hotspot")
+				addhotspotusbmenu
 				;;
 			"Delete a Network" )
 				deletenetworkmenu
