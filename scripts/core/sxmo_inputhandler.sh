@@ -289,7 +289,8 @@ case "$ACTION" in
 		exit 0
 		;;
 	"bottomleftcorner")
-		sxmo_dmenu.sh close && lock_screen
+		sxmo_dmenu.sh close
+		lock_screen
 		exit 0
 		;;
 	"bottomrightcorner")
