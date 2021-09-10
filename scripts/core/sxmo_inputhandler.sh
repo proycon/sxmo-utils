@@ -71,21 +71,21 @@ case "$WMCLASS" in
 		# First we try to handle the app running inside st:
 		case "$WMNAME" in
 			*"tuir"*)
-				if [ "$ACTION" = "rightbottomcorner" ]; then
+				if [ "$ACTION" = "rightbottomedge" ]; then
 					sxmo_type.sh o
 					exit 0
-				elif [ "$ACTION" = "leftbottomcorner" ]; then
+				elif [ "$ACTION" = "leftbottomedge" ]; then
 					sxmo_type.sh s
 					exit 0
 				fi
 				;;
 			*"less"*)
 				case "$ACTION" in
-					"leftbottomcorner")
+					"leftbottomedge")
 						sxmo_type.sh q
 						exit 0
 						;;
-					"leftrightcorner_short")
+					"leftrightedge_short")
 						sxmo_type.sh q
 						exit 0
 						;;
@@ -199,11 +199,11 @@ case "$ACTION" in
 		lock_screen
 		exit
 		;;
-	"rightleftcorner")
+	"rightleftedge")
 		sxmo_workspace.sh previous
 		exit 0
 		;;
-	"leftrightcorner")
+	"leftrightedge")
 		sxmo_workspace.sh next
 		exit 0
 		;;
@@ -215,68 +215,68 @@ case "$ACTION" in
 		sxmo_workspace.sh move-next
 		exit 0
 		;;
-	"righttopcorner")
+	"righttopedge")
 		sxmo_brightness.sh up &
 		exit 0
 		;;
-	"lefttopcorner")
+	"lefttopedge")
 		sxmo_brightness.sh down &
 		exit 0
 		;;
-	"upleftcorner")
+	"upleftedge")
 		sxmo_vol.sh up &
 		exit 0
 		;;
-	"downleftcorner")
+	"downleftedge")
 		sxmo_vol.sh down &
 		exit 0
 		;;
-	"upbottomcorner")
+	"upbottomedge")
 		sxmo_keyboard.sh open
 		exit 0
 		;;
-	"downbottomcorner")
+	"downbottomedge")
 		sxmo_keyboard.sh close
 		exit 0
 		;;
-	"downtopcorner")
+	"downtopedge")
 		sxmo_dmenu.sh isopen || sxmo_appmenu.sh &
 		exit 0
 		;;
-	"twodowntopcorner")
+	"twodowntopedge")
 		sxmo_dmenu.sh isopen || sxmo_appmenu.sh sys &
 		exit 0
 		;;
-	"uptopcorner")
+	"uptopedge")
 		sxmo_dmenu.sh close
 		dunstctl close-all
 		exit 0
 		;;
-	"twodownbottomcorner")
+	"twodownbottomedge")
 		sxmo_killwindow.sh
 		exit 0
 		;;
-	"uprightcorner")
+	"uprightedge")
 		sxmo_type.sh -k Up
 		exit 0
 		;;
-	"downrightcorner")
+	"downrightedge")
 		sxmo_type.sh -k Down
 		exit 0
 		;;
-	"leftrightcorner_short")
+	"leftrightedge_short")
 		sxmo_type.sh -k Left
 		exit 0
 		;;
-	"rightrightcorner_short")
+	"rightrightedge_short")
 		sxmo_type.sh -k Right
 		exit 0
 		;;
-	"rightbottomcorner")
+	"rightbottomedge")
 		sxmo_type.sh -k Return
 		exit 0
 		;;
-	"leftbottomcorner")
+	"leftbottomedge")
 		sxmo_type.sh -k BackSpace
 		exit 0
 		;;
