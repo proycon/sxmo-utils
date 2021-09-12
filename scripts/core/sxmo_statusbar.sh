@@ -4,54 +4,92 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-trap "update" USR1
+percenticon() {
+	if [ "$1" -lt 20 ]; then
+		printf ""
+	elif [ "$1" -lt 40 ]; then
+		printf ""
+	elif [ "$1" -lt 60 ]; then
+		printf ""
+	elif [ "$1" -lt 80 ]; then
+		printf ""
+	else
+		printf ""
+	fi
+}
 
-update() {
+bar() {
+	MMCLI="$(mmcli -m any -J)"
+
 	# In-call.. show length of call
-	CALLINFO=" "
-	if pgrep -f sxmo_modemcall.sh; then
+	if pgrep sxmo_modemcall.sh > /dev/null; then
 		NOWS="$(date +"%s")"
 		CALLSTARTS="$(date +"%s" -d "$(
 			grep -aE 'call_start|call_pickup' "$XDG_DATA_HOME"/sxmo/modem/modemlog.tsv |
 			tail -n1 |
 			cut -f1
 		)")"
-		CALLSECONDS="$(echo "$NOWS" - "$CALLSTARTS" | bc)"
-		CALLINFO="${CALLSECONDS}s"
+		CALLSECONDS="$(printf "%s - %s" "$NOWS" "$CALLSTARTS" | bc)"
+		printf "%ss " "$CALLSECONDS"
+	fi
+
+	MODEMSTATUS=""
+	if [ -z "$MMCLI" ]; then
+		printf ""
+	else
+		MODEMSTATUS="$(printf %s "$MMCLI" | jq -r .modem.generic.state)"
+		case "$MODEMSTATUS" in
+			locked)
+				printf ""
+				;;
+			registered|connected)
+				MODEMSIGNAL="$(printf %s "$MMCLI" | jq -r '.modem.generic."signal-quality".value')"
+				percenticon "$MODEMSIGNAL"
+				;;
+			disconnected)
+				printf "ﲁ"
+				;;
+		esac
+	fi
+
+	if [ "$MODEMSTATUS" = "connected" ]; then
+		printf " "
+		USEDTECHS="$(printf %s "$MMCLI" | jq -r '.modem.generic."access-technologies"[]')"
+		case "$USEDTECHS" in
+			*5gnr*)
+				printf 5g # no icon yet
+				;;
+			*lte*)
+				printf ﰒ
+				;;
+			*umts*|*hsdpa*|*hsupa*|*hspa*|*1xrtt*|*evdo0*|*evdoa*|*evdob*)
+				printf ﰑ
+				;;
+			*edge*)
+				printf E
+				;;
+			*pots*|*gsm*|*gprs*)
+				printf ﰐ
+				;;
+		esac
+	fi
+
+	if pgrep -f sxmo_modemmonitor.sh > /dev/null; then
+		printf " "
+	fi
+
+	WLANSTATE="$(tr -d "\n" < /sys/class/net/wlan0/operstate)"
+	if [ "$WLANSTATE" = "up" ]; then
+		printf " "
 	fi
 
 	# symbol if wireguard/vpn is connected
-	VPN=""
 	VPNDEVICE="$(nmcli con show | grep vpn | awk '{ print $4 }')"
 	WGDEVICE="$(nmcli con show | grep wireguard | awk '{ print $4 }')"
 	if [ -n "$VPNDEVICE" ] && [ "$VPNDEVICE" != "--" ]; then
-		VPN=""
+		printf " "
 	elif [ -n "$WGDEVICE" ] && [ "$WGDEVICE" != "--" ]; then
-		VPN=""
-	fi
-
-	# W symbol if wireless is connect
-	WIRELESS=""
-	WLANSTATE="$(tr -d "\n" < /sys/class/net/wlan0/operstate)"
-	if [ "$WLANSTATE" = "up" ]; then
-		WIRELESS=""
-	fi
-
-	# M symbol if modem monitoring is on & modem present
-	MODEMMON=""
-	if [ -f "$MODEMSTATEFILE" ]; then
-		MODEMSTATE="$(cat "$MODEMSTATEFILE")"
-		if [ locked = "$MODEMSTATE" ]; then
-			MODEMMON=""
-		elif [ registered = "$MODEMSTATE" ]; then
-			MODEMMON=""
-		elif [ connected = "$MODEMSTATE" ]; then
-			MODEMMON=""
-		elif [ failed = "$MODEMSTATE" ] || [ disconnected = "$MODEMSTATE" ]; then
-			MODEMMON=""
-		else
-			MODEMMON=""
-		fi
+		printf " "
 	fi
 
 	# Find battery and get percentage + status
@@ -62,55 +100,60 @@ update() {
 		fi
 	done
 
+	printf " "
 	if [ "$BATSTATUS" = "C" ]; then
 		if [ "$PCT" -lt 20 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 30 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 40 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 60 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 80 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 90 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		else
-			BATSTATUS="$PCT% "
+			printf ""
 		fi
 	else
 		if [ "$PCT" -lt 10 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 20 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 30 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 40 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 50 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 60 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 70 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 80 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		elif [ "$PCT" -lt 90 ]; then
-			BATSTATUS="$PCT% "
+			printf ""
 		else
-			BATSTATUS="$PCT% "
+			printf ""
 		fi
 	fi
 
+	[ -z "$SXMO_BAR_HIDE_BAT_PER" ] && printf " %s%%" "$PCT"
+
+	printf " "
+
 	# Volume
 	AUDIODEV="$(sxmo_audiocurrentdevice.sh)"
-	AUDIOSYMBOL=$(echo "$AUDIODEV" | cut -c1)
+	AUDIOSYMBOL="$(printf %s "$AUDIODEV" | cut -c1)"
 	if [ "$AUDIOSYMBOL" = "L" ] || [ "$AUDIOSYMBOL" = "N" ]; then
-		AUDIOSYMBOL="" #speakers or none, use no special symbol
+		printf "" #speakers or none, use no special symbol
 	elif [ "$AUDIOSYMBOL" = "H" ]; then
-		AUDIOSYMBOL=" "
+		printf " "
 	elif [ "$AUDIOSYMBOL" = "E" ]; then
-		AUDIOSYMBOL=" " #earpiece
+		printf " " #earpiece
 	fi
 	VOL=0
 	[ "$AUDIODEV" = "None" ] || VOL="$(
@@ -121,32 +164,45 @@ update() {
 		xargs printf %.0f
 	)"
 	if [ "$AUDIODEV" != "None" ]; then
-		if [ "$VOL" -eq 0 ]; then
-			VOLUMESYMBOL="ﱝ"
-		elif [ "$VOL" -lt 25 ]; then
-			VOLUMESYMBOL="奄"
-		elif [ "$VOL" -gt 75 ]; then
-			VOLUMESYMBOL="墳"
-		else
-			VOLUMESYMBOL="奔"
+		if [ "$VOL" -gt 66 ]; then
+			printf ""
+		elif [ "$VOL" -gt 33 ]; then
+			printf ""
+		elif [ "$VOL" -gt 0 ]; then
+			printf ""
+		elif [ "$VOL" -eq 0 ]; then
+			printf "ﱝ"
 		fi
 	fi
-	# Time
-	TIME="$(date +%R)"
 
-	BAR="$(echo "${CALLINFO} ${MODEMMON} ${WIRELESS} ${VPN} ${AUDIOSYMBOL}${VOLUMESYMBOL} ${BATSTATUS} ${TIME}" | sed 's| \+| |g')"
+	printf " %s\0" "$(date +%R)"
+}
 
-	case "$(sxmo_wm.sh)" in
-		sway) printf "%s\n" "$BAR";;
-		dwm) xsetroot -name "$BAR";;
+WM="$(sxmo_wm.sh)"
+
+forceupdate() {
+	kill "$SLEEPID"
+}
+trap "forceupdate" USR1
+
+update() {
+	BAR="$(bar)"
+	[ -z "$SLEEPID" ] && return # to prevent mid rendering interuption
+	printf %s "$BAR" | case "$WM" in
+		sway|ssh) xargs -0 printf "%s\n";;
+		dwm) xargs -0 xsetroot -name;;
 	esac
 }
 
-# E.g. on first boot justs to make sure the bar comes in quickly
-update
-
 while :
 do
-	sleep 30 & wait
-	update
+	sleep 10 &
+	SLEEPID=$!
+
+	update &
+	UPDATEID=$!
+
+	wait "$SLEEPID"
+	unset SLEEPID
+	wait "$UPDATEID"
 done

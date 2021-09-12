@@ -99,7 +99,6 @@ on() {
 	while ! printf %s "$(mmcli -L)" 2> /dev/null | grep -qoE 'Modem\/([0-9]+)'; do
 		TRIES=$((TRIES+1))
 		if [ "$TRIES" -eq 10 ]; then
-			printf "failed\n" > "$MODEMSTATEFILE"
 			notify-send --urgency=critical "We failed to start the modem monitor. We may need hard reboot."
 		fi
 		sleep 5
@@ -128,4 +127,5 @@ case "$1" in
 	off) off;;
 esac
 
+sleep 1
 sxmo_statusbarupdate.sh

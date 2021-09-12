@@ -12,8 +12,6 @@ err() {
 }
 
 gracefulexit() {
-	rm "$MODEMSTATEFILE"
-	sxmo_statusbarupdate.sh
 	sleep 1
 	echo "sxmo_modemmonitor: gracefully exiting (on signal or after error)">&2
 	kill -9 0
@@ -223,17 +221,9 @@ checkfornewtexts() {
 }
 
 initialmodemstatus() {
-	touch "$MODEMSTATEFILE"
 	state=$(mmcli -m "$(modem_n)")
-	if echo "$state" | grep -q -E "^.*state:.*connected.*$"; then
-		echo connected > "$MODEMSTATEFILE"
-	elif echo "$state" | grep -q -E "^.*state:.*registered.*$"; then
-		echo registered > "$MODEMSTATEFILE"
-	elif echo "$state" | grep -q -E "^.*state:.*locked.*$"; then
-		echo locked > "$MODEMSTATEFILE"
+	if echo "$state" | grep -q -E "^.*state:.*locked.*$"; then
 		pidof unlocksim || sxmo_hooks.sh unlocksim &
-	else
-		echo unknown > "$MODEMSTATEFILE"
 	fi
 }
 
@@ -243,6 +233,7 @@ mainloop() {
 	checkforincomingcalls
 	checkfornewtexts
 
+	initialmodemstatus
 
 	# Monitor for incoming calls
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Voice',type='signal',member='CallAdded'" | \
@@ -262,11 +253,6 @@ mainloop() {
 			echo "$line" | grep -E "^signal" && checkforfinishedcalls
 		done &
 
-	#Monitor for modem state changes
-	# arg1 holds the new state: MM_MODEM_STATE_FAILED = -1, MM_MODEM_STATE_UNKNOWN = 0, ... MM_MODEM_STATE_REGISTERED=8, MM_MODEM_STATE_CONNECTED = 11
-	initialmodemstatus
-	sxmo_statusbarupdate.sh
-
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem',type='signal',member='StateChanged'" | \
 		while read -r line; do
 			if echo "$line" | grep -E "^signal.*StateChanged"; then
@@ -274,25 +260,14 @@ mainloop() {
 				read -r oldstate #unused but we need to read past it
 				read -r newstate
 				if echo "$newstate" | grep "int32 2"; then
-					echo locked > "$MODEMSTATEFILE"
 					pidof unlocksim || sxmo_hooks.sh unlocksim &
 				elif echo "$newstate" | grep "int32 8"; then
-					echo registered > "$MODEMSTATEFILE"
 					#if there is a PIN entry menu open, kill it:
 					# shellcheck disable=SC2009
 					ps aux | grep dmenu | grep PIN | gawk '{ print $1 }' | xargs kill
 					checkforfinishedcalls
 					checkforincomingcalls
 					checkfornewtexts
-				elif echo "$newstate" | grep "int32 11"; then
-					echo connected > "$MODEMSTATEFILE"
-					#3G/2G/4G available
-				elif echo "$newstate" | grep "int32 -1"; then
-					echo failed > "$MODEMSTATEFILE"
-				elif echo "$newstate" | grep "int32 3"; then
-					echo disabled > "$MODEMSTATEFILE"
-				else
-					echo unknown > "$MODEMSTATEFILE"
 				fi
 				sxmo_statusbarupdate.sh
 			fi
@@ -316,7 +291,6 @@ mainloop() {
 					echo "sxmo_modemmonitor: modem not found, waiting for modem... (try #$TRIES)">&2
 					sleep 3
 					if [ "$TRIES" -eq 10 ]; then
-						echo failed > "$MODEMSTATEFILE"
 						echo "sxmo_modemmonitor: forcing modem restart">&2
 						sxmo_modemmonitortoggle.sh restart #will kill the modemmonitor too
 						break
@@ -331,9 +305,6 @@ mainloop() {
 	wait
 	wait
 	wait
-
-	rm "$MODEMSTATEFILE" 2>/dev/null
-	sxmo_statusbarupdate.sh
 }
 
 
