@@ -119,6 +119,7 @@ programchoicesinit() {
 				$(command -v newsboat   >/dev/null && echo "$icon_rss Newsboat    ^ 0 ^ sxmo_terminal.sh newsboat")
 				$(command -v nnn        >/dev/null && echo "$icon_dir Nnn         ^ 0 ^ sxmo_terminal.sh nnn")
 				$(command -v pidgin     >/dev/null && echo "$icon_msg Pidgin      ^ 0 ^ pidgin")
+				$(command -v pulsemixer >/dev/null && echo "$icon_mus Pulsemixer  ^ 0 ^ sxmo_terminal.sh pulsemixer")
 				$(command -v pure-maps  >/dev/null && echo "$icon_map Pure-Maps   ^ 0 ^ pure-maps")
 				$(command -v profanity  >/dev/null && echo "$icon_msg Profanity   ^ 0 ^ sxmo_terminal.sh profanity")
 				$(command -v qutebrowser>/dev/null && echo "$icon_glb Qutebrowser ^ 0 ^ qutebrowser")
