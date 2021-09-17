@@ -261,9 +261,9 @@ programchoicesinit() {
 			Send Ctrl-D      ^ 0 ^ sxmo_type -M Ctrl -k d
 			Send Ctrl-A      ^ 0 ^ sxmo_type -M Ctrl -k a
 			Send Ctrl-B      ^ 0 ^ sxmo_type -M Ctrl -k b
-			Send ESC:w       ^ 0 ^ sxmo_type -k Escape -M Shift -k semicolon -m Shift -k w -k Return
-			Send ESC:wq      ^ 0 ^ sxmo_type -k Escape -M Shift -k semicolon -m Shift -k w -k q -k Return
-			Send ESC:wq!     ^ 0 ^ sxmo_type -k Escape -M Shift -k semicolon -m Shift -k q -k exclam -k Return
+			Send ESC:w       ^ 0 ^ sxmo_type -k Escape -s 300 -M Shift -k semicolon -m Shift -k w -k Return
+			Send ESC:wq      ^ 0 ^ sxmo_type -k Escape -s 300 -M Shift -k semicolon -m Shift -k w -k q -k Return
+			Send ESC:wq!     ^ 0 ^ sxmo_type -k Escape -s 300 -M Shift -k semicolon -m Shift -k q -k exclam -k Return
 		"
 		WINNAME=St
 		;;
@@ -275,13 +275,13 @@ programchoicesinit() {
 			CHOICES="
 				$icon_aru Scroll up        ^ 1 ^ sxmo_type -M Ctrl u
 				$icon_ard Scroll down      ^ 1 ^ sxmo_type -M Ctrl d
-				$icon_trm Command prompt   ^ 0 ^ sxmo_type -k Escape ':'
-				$icon_cls Save             ^ 0 ^ sxmo_type -k Escape ':w' -k Return
-				$icon_cls Save and Quit    ^ 0 ^ sxmo_type -k Escape ':wq' -k Return
-				$icon_cls Quit without saving  ^ 0 ^ sxmo_type -k Escape ':q!' -k Return
-				$icon_pst Paste Selection  ^ 0 ^ sxmo_type -k Escape -k quotedbl -k asterisk -k p
+				$icon_trm Command prompt   ^ 0 ^ sxmo_type -k Escape -s 300 ':'
+				$icon_cls Save             ^ 0 ^ sxmo_type -k Escape -s 300 ':w' -k Return
+				$icon_cls Save and Quit    ^ 0 ^ sxmo_type -k Escape -s 300 ':wq' -k Return
+				$icon_cls Quit without saving  ^ 0 ^ sxmo_type -k Escape -s 300 ':q!' -k Return
+				$icon_pst Paste Selection  ^ 0 ^ sxmo_type -k Escape -s 300 -k quotedbl -k asterisk -k p
 				$icon_pst Paste Clipboard  ^ 0 ^ wl-paste
-				$icon_fnd Search           ^ 0 ^ sxmo_type -k Escape /
+				$icon_fnd Search           ^ 0 ^ sxmo_type -k Escape -s 300 /
 				$icon_zmi Zoom in          ^ 1 ^ sxmo_type -k Prior
 				$icon_zmo Zoom out         ^ 1 ^ sxmo_type -k Next
 				$icon_mnu Terminal menu    ^ 0 ^ sxmo_appmenu.sh $WMCLASS
