@@ -91,6 +91,7 @@ programchoicesinit() {
 				$(command -v gedit      >/dev/null && echo "$icon_edt Gedit       ^ 0 ^ gedit")
 				$(command -v geeqie     >/dev/null && echo "$icon_img Geeqie      ^ 0 ^ geeqie")
 				$(command -v giara      >/dev/null && echo "$icon_red Giara       ^ 0 ^ giara")
+				$(command -v gnome-chess>/dev/null && echo "$icon_itm Gnome Chess ^ 0 ^ gnome-chess")
 				$(command -v gomuks     >/dev/null && echo "$icon_msg Gomuks      ^ 0 ^ sxmo_terminal.sh gomuks")
 				$(command -v gucharmap  >/dev/null && echo "$icon_inf Gucharmap   ^ 0 ^ gucharmap")
 				$(command -v hexchat    >/dev/null && echo "$icon_msg Hexchat     ^ 0 ^ hexchat")
