@@ -152,6 +152,7 @@ main() {
 
 if [ -n "$1" ]; then
 	cmd="$1"
+	shift
 else
 	cmd=main
 fi
