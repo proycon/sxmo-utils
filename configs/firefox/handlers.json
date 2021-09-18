@@ -1,0 +1,25 @@
+{
+    "defaultHandlersVersion": {
+        "en-US": 4
+    },
+    "mimeTypes": {
+        "application/pdf": {
+            "action": 3,
+            "extensions": [
+                "pdf"
+            ]
+        }
+    },
+    "schemes": {
+        "tel": {
+            "action": 2,
+            "ask": false,
+            "handlers": [
+                {
+                    "name": "sxmo",
+                    "path": "/usr/bin/sxmo_open.sh"
+                }
+            ]
+        }
+    }
+}

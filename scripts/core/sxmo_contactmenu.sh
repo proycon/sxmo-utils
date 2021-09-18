@@ -5,7 +5,12 @@
 
 newcontact() {
 	name="$(echo | sxmo_dmenu_with_kb.sh -p "$icon_usr Name")"
-	number=
+
+	number="$1"
+	if [ -n "$number" ]; then
+		number="$(valid_number "$number")"
+	fi
+
 	while [ -z "$number" ]; do
 		number="$(sxmo_contacts.sh --unknown | sxmo_dmenu_with_kb.sh -p "$icon_phl Number")"
 		number="$(valid_number "$number")"
@@ -132,4 +137,10 @@ main() {
 	done
 }
 
-main
+if [ -n "$1" ]; then
+	cmd="$1"
+else
+	cmd=main
+fi
+
+"$cmd" "$@"

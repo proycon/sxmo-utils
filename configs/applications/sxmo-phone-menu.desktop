@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Sxmo Phone Menu
+Exec=sxmo_phonemenu.sh
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/tel
