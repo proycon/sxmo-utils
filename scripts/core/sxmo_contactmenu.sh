@@ -3,34 +3,36 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+set -e
+
 newcontact() {
-	name="$(echo | sxmo_dmenu_with_kb.sh -p "$icon_usr Name")"
+	name="$(printf "" | sxmo_dmenu_with_kb.sh -p "$icon_usr Name")"
 
 	number="$1"
 	if [ -n "$number" ]; then
-		number="$(valid_number "$number")"
+		number="$(sxmo_validnumber.sh "$number")"
 	fi
 
 	while [ -z "$number" ]; do
 		number="$(sxmo_contacts.sh --unknown | sxmo_dmenu_with_kb.sh -p "$icon_phl Number")"
-		number="$(valid_number "$number")"
+		number="$(sxmo_validnumber.sh "$number")"
 	done
 
 	PICKED="$number	$name" # now act like if we picked this new contact
-	echo "$PICKED" >> "$CONTACTFILE"
+	printf %s "$PICKED" >> "$CONTACTFILE"
 }
 
 editcontactname() {
-	oldnumber="$(echo "$1" | cut -d"	" -f1)"
-	oldname="$(echo "$1" | cut -d"	" -f2)"
+	oldnumber="$(printf %s "$1" | cut -d"	" -f1)"
+	oldname="$(printf %s "$1" | cut -d"	" -f2)"
 
 	ENTRIES="$(printf %b "Old name: $oldname")"
 	PICKED="$(
-		echo "$ENTRIES" |
+		printf %b "$ENTRIES" |
 		sxmo_dmenu_with_kb.sh -p "$icon_edt Edit Contact"
 	)"
 
-	if ! echo "$PICKED" | grep -q "^Old name: "; then
+	if ! printf %s "$PICKED" | grep -q "^Old name: "; then
 		newcontact="$oldnumber	$PICKED"
 		sed -i "s/^$1$/$newcontact/" "$CONTACTFILE"
 		set -- "$newcontact"
@@ -40,17 +42,17 @@ editcontactname() {
 }
 
 editcontactnumber() {
-	oldnumber="$(echo "$1" | cut -d"	" -f1)"
-	oldname="$(echo "$1" | cut -d"	" -f2)"
+	oldnumber="$(printf %s "$1" | cut -d"	" -f1)"
+	oldname="$(printf %s "$1" | cut -d"	" -f2)"
 
 	ENTRIES="$(sxmo_contacts.sh --unknown | xargs -0 printf "%b (Old number)\n%b" "$oldnumber")"
 	PICKED= # already used var name
 	while [ -z "$PICKED" ]; do
 		PICKED="$(
-			echo "$ENTRIES" |
+			printf %b "$ENTRIES" |
 			sxmo_dmenu_with_kb.sh -p "$icon_edt Edit Contact"
 		)"
-		if echo "$PICKED" | grep -q "(Old number)$"; then
+		if printf %s "$PICKED" | grep -q "(Old number)$"; then
 			editcontact "$1"
 			return
 		fi
@@ -63,77 +65,88 @@ editcontactnumber() {
 }
 
 deletecontact() {
-	name="$(echo "$1" | cut -d"	" -f2)"
+	name="$(printf %s "$1" | cut -d"	" -f2)"
 
 	# shellcheck disable=SC2059
 	ENTRIES="$(printf "$icon_cls No\n$icon_chk Yes")"
 	PICKED="$(
-		echo "$ENTRIES" |
+		printf %b "$ENTRIES" |
 		dmenu -p "$icon_del Delete $name ?"
 	)"
 
-	echo "$PICKED" | grep -q "Yes" && sed -i "/^$1$/d" "$CONTACTFILE"
+	printf %s "$PICKED" | grep -q "Yes" && sed -i "/^$1$/d" "$CONTACTFILE"
 }
 
 editcontact() {
-	number="$(echo "$1" | cut -d"	" -f1)"
-	name="$(echo "$1" | cut -d"	" -f2)"
+	number="$(printf %s "$1" | cut -d"	" -f1)"
+	name="$(printf %s "$1" | cut -d"	" -f2)"
 	ENTRIES="$(printf %b "$icon_ret Cancel\n$icon_usr Name: $name\n$icon_phl Number: $number")"
 
 	PICKED="$(
-		echo "$ENTRIES" |
+		printf %b "$ENTRIES" |
 		dmenu -p "$icon_edt Edit Contact"
 	)"
 
-	if echo "$PICKED" | grep -q "Name: "; then
-		editcontactname "$1"
-	elif echo "$PICKED" | grep -q "Number: "; then
-		editcontactnumber "$1"
-	else
-		showcontact "$1"
-	fi
+	case "$PICKED" in
+		*"Name: "*)
+			editcontactname "$1"
+			;;
+		*"Number: "*)
+			editcontactnumber "$1"
+			;;
+		*)
+			showcontact "$1"
+			;;
+	esac
+
 }
 
 showcontact() {
-	number="$(echo "$1" | cut -d"	" -f1)"
-	name="$(echo "$1" | cut -d"	" -f2)"
+	number="$(printf %s "$1" | cut -d"	" -f1)"
+	name="$(printf %s "$1" | cut -d"	" -f2)"
 	ENTRIES="$(printf %b "$icon_ret Cancel\n$icon_lst List Messages\n$icon_msg Send a Message\n$icon_phn Call\n$icon_edt Edit\n$icon_del Delete")"
 
 	PICKED="$(
-		echo "$ENTRIES" |
+		printf %b "$ENTRIES" |
 		dmenu -p "$icon_usr $name"
 	)"
 
-	if echo "$PICKED" | grep -q "List Messages"; then
-		sxmo_modemtext.sh tailtextlog  "$number"
-		exit
-	elif echo "$PICKED" | grep -q "Send a Message"; then
-		sxmo_modemtext.sh sendtextmenu  "$number"
-		exit
-	elif echo "$PICKED" | grep -q "Call"; then
-		sxmo_modemdial.sh "$number"
-		exit
-	elif echo "$PICKED" | grep -q "Edit"; then
-		editcontact "$1"
-	elif echo "$PICKED" | grep -q "Delete"; then
-		deletecontact "$1" || showcontact "$1"
-	fi
+	case "$PICKED" in
+		 *"List Messages")
+			sxmo_modemtext.sh tailtextlog  "$number"
+			exit
+			;;
+		 *"Send a Message")
+			sxmo_modemtext.sh sendtextmenu  "$number"
+			exit
+			;;
+		 *"Call")
+			sxmo_modemdial.sh "$number"
+			exit
+			;;
+		 *"Edit")
+			editcontact "$1"
+			;;
+		 *"Delete")
+			deletecontact "$1" || showcontact "$1"
+			;;
+	esac
 }
 
 main() {
 	while true; do
 		CONTACTS="$(sxmo_contacts.sh --all)"
-		ENTRIES="$(echo "$CONTACTS" | xargs -0 printf "$icon_ret Close Menu\n$icon_pls New Contact\n%s")"
+		ENTRIES="$(printf %b "$CONTACTS" | xargs -0 printf "$icon_ret Close Menu\n$icon_pls New Contact\n%s")"
 
 		PICKED="$(
-			echo "$ENTRIES" |
+			printf %b "$ENTRIES" |
 			sxmo_dmenu_with_kb.sh -i -p "$icon_lst Contacts"
 		)"
 
-		echo "$PICKED" | grep -q "Close Menu" && exit
-		echo "$PICKED" | grep -q "New Contact" && newcontact
+		printf %s "$PICKED" | grep -q "Close Menu" && exit
+		printf %s "$PICKED" | grep -q "New Contact" && newcontact
 
-		showcontact "$(echo "$PICKED" | sed 's/: /\t/g')"
+		showcontact "$(printf %s "$PICKED" | sed 's/: /\t/g')"
 	done
 }
 
