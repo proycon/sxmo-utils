@@ -3,29 +3,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-valid_number() {
-	if pn valid "$1"; then
-		echo "$1"
-		return
-	fi
-
-	REFORMATTED="$(pn find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
-	if pn valid "$REFORMATTED"; then
-		echo "$REFORMATTED"
-		return
-	fi
-
-	notify-send "\"$1\" is not a valid phone number"
-
-	PICKED="$(printf "Ok\nUse as it is\n" | dmenu -p "Invalid Number")"
-	if [ "$PICKED" = "Use as it is" ]; then
-		echo "$1"
-		return
-	fi
-
-	exit
-}
-
 newcontact() {
 	name="$(echo | sxmo_dmenu_with_kb.sh -p "$icon_usr Name")"
 	number=
@@ -72,7 +49,7 @@ editcontactnumber() {
 			editcontact "$1"
 			return
 		fi
-		PICKED="$(valid_number "$PICKED")"
+		PICKED="$(sxmo_validnumber.sh "$PICKED")"
 	done
 
 	newcontact="$PICKED	$oldname"

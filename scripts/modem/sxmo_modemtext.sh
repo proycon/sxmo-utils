@@ -29,12 +29,12 @@ choosenumbermenu() {
 		)"
 	fi
 
-	if echo "$NUMBER" | grep -q "Cancel"; then
+	if printf %s "$NUMBER" | grep -q "Cancel"; then
 		exit 1
-	elif ! echo "$NUMBER" | grep -qE '^[+0-9]+$'; then
-		notify-send "That doesn't seem like a valid number"
+	elif NUMBER="$(sxmo_validnumber.sh "$NUMBER")"; then
+		printf %s "$NUMBER"
 	else
-		echo "$NUMBER"
+		notify-send "That doesn't seem like a valid number"
 	fi
 }
 
