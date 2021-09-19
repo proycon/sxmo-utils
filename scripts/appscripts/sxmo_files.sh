@@ -49,6 +49,6 @@ while true; do
 	[ -d "$PICKED" ] && cd "$PICKED" && continue
 	echo "$PICKED" | grep -E '^[*]$' && sxmo_open.sh -a ./*
 	if [ -f "$PICKED" ] || [ "$PICKED" =  "Open in terminal" ]; then
-		echo "$FILES" | sed -n -e "/$PICKED/,\$p" | tr '\n' '\0' | xargs -0 sxmo_open.sh -a
+		sxmo_open.sh -a "$PICKED"
 	fi
 done
