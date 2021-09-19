@@ -4,6 +4,8 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+set -e
+
 DIR="$1"
 [ -z "$DIR" ] && DIR="$HOME"
 cd "$DIR" || exit 1
@@ -12,17 +14,27 @@ SORT=
 REVERSE=
 
 sort_loop() {
-	CHOICES="$([ -z "$SORT" ] && echo "date" || echo "name")\n$([ -z "$REVERSE" ] && echo "desc" || echo "asc")"
+	CHOICES="$([ -z "$SORT" ] && printf "date" || printf "name")\n$([ -z "$REVERSE" ] && printf "desc" || printf "asc")\n"
 
 	PICKED="$(
 		printf %b "$CHOICES" |
 		sxmo_dmenu.sh -p "Sort" -i
 	)"
 
-	echo "$PICKED" | grep -q "date" && SORT="--sort=t"
-	echo "$PICKED" | grep -q "name" && SORT=
-	echo "$PICKED" | grep -q "desc" && REVERSE="-r"
-	echo "$PICKED" | grep -q "asc" && REVERSE=
+	case "$PICKED" in
+		"date")
+			SORT="--sort=t"
+			;;
+		"name")
+			SORT=
+			;;
+		"desc")
+			REVERSE="-r"
+			;;
+		"asc")
+			REVERSE=
+			;;
+	esac
 }
 
 
@@ -36,19 +48,30 @@ while true; do
 		DIR="$TRUNCATED..."
 	fi
 
-
 	PICKED="$(
-		echo "$CHOICES" |
+		printf %b "$CHOICES" |
 		sxmo_dmenu.sh -p "$DIR" -i
-	)" || exit
+	)"
 
-	echo "$PICKED" | grep "Sort By" && sort_loop
-	echo "$PICKED" | grep "Open in terminal" && cd "$(pwd)" && sxmo_terminal.sh
-	echo "$PICKED" | grep "Close Menu" && exit 0
-	echo "$PICKED" | grep "Reload" && continue
-	[ -d "$PICKED" ] && cd "$PICKED" && continue
-	echo "$PICKED" | grep -E '^[*]$' && sxmo_open.sh -a ./*
-	if [ -f "$PICKED" ] || [ "$PICKED" =  "Open in terminal" ]; then
-		sxmo_open.sh -a "$PICKED"
-	fi
+	case "$PICKED" in
+		"Sort By")
+			sort_loop
+			;;
+		"Open in terminal")
+			cd "$(pwd)" && sxmo_terminal.sh && continue
+			;;
+		"Close Menu")
+			exit 0
+			;;
+		"Reload")
+			continue
+			;;
+		\*)
+			sxmo_open.sh -a ./*
+			;;
+		*)
+			[ -d "$PICKED" ] && cd "$PICKED" && continue
+			[ -f "$PICKED" ] && sxmo_open.sh -a "$PICKED"
+			;;
+	esac
 done
