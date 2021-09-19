@@ -5,6 +5,7 @@
 
 set -e
 
+# shellcheck disable=SC2120
 newcontact() {
 	name="$(printf "" | sxmo_dmenu_with_kb.sh -p "$icon_usr Name")"
 
