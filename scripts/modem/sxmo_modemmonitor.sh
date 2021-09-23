@@ -196,6 +196,15 @@ checkfornewtexts() {
 		NUM="$(cleanupnumber "$NUM")"
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 
+		if cut -f1 "$BLOCKFILE" | grep -q "^$NUM$"; then
+			mkdir -p "$BLOCKDIR/$NUM"
+			echo "sxmo_modemmonitor: BLOCKED text from number: $NUM (TEXTID: $TEXTID)">&2
+			printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$BLOCKDIR/$NUM/sms.txt"
+			printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$BLOCKDIR/modemlog.tsv"
+			mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
+			continue
+		fi
+
 		mkdir -p "$LOGDIR/$NUM"
 		echo "sxmo_modemmonitor: Text from number: $NUM (TEXTID: $TEXTID)">&2
 		printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
