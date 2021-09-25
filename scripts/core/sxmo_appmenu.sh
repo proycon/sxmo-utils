@@ -392,6 +392,7 @@ programchoicesinit() {
 			number="$(printf %s "$WMNAME" | sed -e 's|^\"||' -e 's|\"$||' | cut -f1 -d' ')"
 			#sms
 			CHOICES="
+				$icon_msg Conversation   ^ 0 ^ sxmo_terminal.sh sxmo_modemtext.sh conversationloop $number
 				$icon_msg Reply          ^ 0 ^ sxmo_modemtext.sh sendtextmenu $number
 				$icon_phn Call           ^ 0 ^ sxmo_modemdial.sh $number
 				$icon_aru Scroll up       ^ 1 ^ sxmo_type -M Shift -M Ctrl b

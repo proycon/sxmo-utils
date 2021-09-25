@@ -71,6 +71,30 @@ sendtextmenu() {
 	done
 }
 
+conversationloop() {
+	if [ -n "$1" ]; then
+		NUMBER="$1"
+	else
+		NUMBER="$(choosenumbermenu)"
+	fi
+
+	set -e
+
+	sxmo_keyboard.sh open
+
+	while true; do
+		DRAFT="$LOGDIR/$NUMBER/draft.txt"
+		if [ ! -f "$DRAFT" ]; then
+			mkdir -p "$(dirname "$DRAFT")"
+			touch "$DRAFT"
+		fi
+
+		"$EDITOR" "$DRAFT"
+		sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT" || continue
+		rm "$DRAFT"
+	done
+}
+
 tailtextlog() {
 	NUMBER="$1"
 	CONTACTNAME="$(sxmo_contacts.sh | grep "^$NUMBER" | cut -d' ' -f2-)"
