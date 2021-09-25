@@ -61,7 +61,7 @@ defaultconfigs() {
 }
 
 startsway() {
-	exec dbus-run-session sh -c "
+	dbus-run-session sh -c "
 		/usr/bin/sway -c "$XDG_CONFIG_HOME/sxmo/sway" 2> "$XDG_CACHE_HOME/sxmo/sway.log"
 	"
 }
@@ -78,6 +78,7 @@ init() {
 	defaults
 	defaultconfigs
 	startsway
+	sxmo_hooks.sh wm_shutdown
 }
 
 if [ -z "$1" ]; then

@@ -102,8 +102,7 @@ customxinit() {
 }
 
 startdwm() {
-
-	exec dbus-run-session sh -c "
+	dbus-run-session sh -c "
 		set -- customxinit
 		. $0
 		$0 daemonsneedingdbus
@@ -123,6 +122,7 @@ xinit() {
 	xdefaults
 	daemons
 	startdwm
+	sxmo_hooks.sh wm_shutdown
 }
 
 if [ -z "$1" ]; then
