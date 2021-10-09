@@ -18,7 +18,7 @@ conky -c /usr/share/sxmo/appcfg/conky.conf -d #12 hour clock (am/pm)
 # Run actions on start
 # By default, setup audio over the main speaker
 # and set a sane default volume
-sxmo_hooks.sh wm_start
+sxmo_hooks.sh start
 
 # You will sometime get SMS or calls from not
 #  country code prefixed phone numbers. To make

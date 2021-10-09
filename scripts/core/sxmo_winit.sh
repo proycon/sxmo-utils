@@ -78,7 +78,7 @@ init() {
 	defaults
 	defaultconfigs
 	startsway
-	sxmo_hooks.sh wm_shutdown
+	sxmo_hooks.sh stop
 }
 
 if [ -z "$1" ]; then
