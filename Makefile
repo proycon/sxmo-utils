@@ -2,6 +2,10 @@ PREFIX:=/usr
 
 .PHONY: install shellcheck
 
+VERSION:=1.5.3
+
+GITVERSION:=$(shell git describe --tags)
+
 PROGRAMS = \
 	programs/sxmo_megiaudioroute \
 	programs/sxmo_vibratepine
@@ -25,6 +29,8 @@ clean:
 install: $(PROGRAMS)
 	cd configs && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 	cd configs && find default_hooks -type f -exec install -D -m 0655 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
+
+	[ -n "$(GITVERSION)" ] && echo "$(GITVERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version" || echo "$(VERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version"
 
 	cd resources && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
