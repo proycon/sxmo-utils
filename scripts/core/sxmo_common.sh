@@ -22,6 +22,8 @@ fi
 # shellcheck disable=SC2034
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-$HOME/.local/run}"
 # shellcheck disable=SC2034
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+# shellcheck disable=SC2034
 export NOTIFDIR="${XDG_DATA_HOME:-$HOME/.local/share}"/sxmo/notifications
 # shellcheck disable=SC2034
 export CACHEDIR="${XDG_CACHE_HOME:-$HOME/.cache}"/sxmo
