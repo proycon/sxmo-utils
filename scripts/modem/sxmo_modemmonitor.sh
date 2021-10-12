@@ -119,10 +119,10 @@ checkforfinishedcalls() {
 			echo "sxmo_modemmonitor: Missed call from $FINISHEDNUMBER">&2
 			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
-			echo "sxmo_modemmonitor: Invoking missed call hook (async)">&2
-			sxmo_hooks.sh missed_call "$CONTACTNAME" &
-
 			CONTACT="$(lookupcontactname "$FINISHEDNUMBER")"
+			echo "sxmo_modemmonitor: Invoking missed call hook (async)">&2
+			sxmo_hooks.sh missed_call "$CONTACT" &
+
 			sxmo_notificationwrite.sh \
 				random \
 				"sxmo_terminal.sh -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \
