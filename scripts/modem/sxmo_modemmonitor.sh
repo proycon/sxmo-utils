@@ -125,7 +125,7 @@ checkforfinishedcalls() {
 			CONTACT="$(lookupcontactname "$FINISHEDNUMBER")"
 			sxmo_notificationwrite.sh \
 				random \
-				"st -f Terminus-20 -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \
+				"sxmo_terminal.sh -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \
 				none \
 				"Missed call - $CONTACT"
 
