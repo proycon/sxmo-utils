@@ -41,23 +41,6 @@ if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler ]; then
 	"$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler "$WMCLASS" "$WMNAME" "$@" && exit
 fi
 
-if sxmo_dmenu.sh isopen; then
-	case "$ACTION" in
-		"volup_one")
-			sxmo_type.sh -k Up
-			exit
-			;;
-		"voldown_one")
-			sxmo_type.sh -k Down
-			exit
-			;;
-		"powerbutton_one")
-			sxmo_type.sh -k Return
-			exit
-			;;
-	esac
-fi
-
 #special context-sensitive handling
 case "$WMCLASS" in
 	*"foot"*)
