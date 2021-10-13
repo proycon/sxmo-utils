@@ -21,8 +21,12 @@ prepare_contacts_list() {
 	tac |
 	awk '!($0 in a){a[$0]; print}' |
 	sed '/^[[:space:]]*$/d' |
-	awk -F'\t' '
-		FNR==NR{a[$1]=$2; next}
+	awk -F '\t' -v CONTACTSFILE="$CONTACTSFILE" '
+		FILENAME == CONTACTSFILE {
+			if (!length) next;
+			a[$1] = $2;
+			next
+		}
 		{
 			if (!a[$1]) a[$1] = "Unknown Number";
 			print $0 ": " a[$1]
