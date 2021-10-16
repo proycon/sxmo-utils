@@ -174,6 +174,7 @@ programchoicesinit() {
 			$icon_upc Upgrade Pkgs               ^ 0 ^ sxmo_terminal.sh sxmo_upgrade.sh
 			$icon_cfg Edit configuration         ^ 0 ^ sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/xinit
 			$(command -v pmos-tweaks >/dev/null && echo "$icon_cfg PostmarketOS Tweaks	     ^ 0 ^ GDK_SCALE=1 pmos-tweaks")
+			$icon_inf Version                    ^ 0 ^ sxmo_terminal.sh sxmo_version.sh --block
 		"
 		WINNAME=Config
 		;;
