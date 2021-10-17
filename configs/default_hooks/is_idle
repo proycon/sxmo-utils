@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# This hook goal is to return a non zero exit code if the device
+# must be considered not idle (ongoing call, playing mpd, etc)
+
+proximity_lock_on() {
+	pgrep -f sxmo_proximitylock.sh > /dev/null && exit 1
+}
+
+playing_mpc() {
+	command -v mpc > /dev/null || return # no mpc installed
+
+	(mpc status | grep -q '\[playing\]') && exit 1
+}
+
+active_ssh() {
+	(netstat | grep ESTABLISHED | grep -q ssh) && exit 1
+}
+
+proximity_lock_on
+playing_mpc
+active_ssh
+
+exit 0

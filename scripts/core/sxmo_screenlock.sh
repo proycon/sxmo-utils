@@ -156,8 +156,11 @@ elif [ "$1" = "crust" ] ; then
 	if [ "$UNSUSPENDREASON" != "modem" ]; then
 		echo 1200 > "$NETWORKRTCSCAN"
 	fi
-	#this will in turn invoke the postwake hook
-	sxmo_postwake.sh "$UNSUSPENDREASON"
+
+	if [ "$UNSUSPENDREASON" != "rtc" ]; then
+		pkill -10 -f sxmo_lock_idle.sh
+	fi
+
 	exit 0
 elif [ "$1" = "getCurState" ] ; then
 	getCurState

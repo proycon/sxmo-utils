@@ -158,7 +158,7 @@ programchoicesinit() {
 				printf %b "On → Off" ||  printf %b "Off → On";
 				printf %b "^ 1 ^ sudo sxmo_wifitoggle.sh"
 			)
-			$([ "$wm" = sway ] && echo "$icon_cfg Idle Config                ^ 1 ^ sxmo_idle.sh config")
+			$(pgrep -f sxmo_lock_idle.sh > /dev/null && echo "$icon_cfg Stop lock idle ^ 1 ^ pkill -f sxmo_lock_idle.sh" || echo "$icon_cfg Start lock idle ^ 1 ^ setsid -f sxmo_lock_idle.sh")
 			$icon_cfg Invert Colors              ^ 1 ^ xcalib -a -invert
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			$icon_ror Autorotate $(

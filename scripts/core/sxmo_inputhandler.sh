@@ -9,15 +9,27 @@ ACTION="$1"
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-lock_screen() {
-	if [ "$SXMO_LOCK_SCREEN_OFF" = "1" ]; then
-		sxmo_screenlock.sh off
-	else
-		sxmo_screenlock.sh lock
-	fi
-	if [ "$SXMO_LOCK_SUSPEND" = "1" ]; then
-		sxmo_screenlock.sh crust
-	fi
+# this action will move the lock state $1 levels higher
+lock_screen_action() {
+	count="${1:-1}"
+
+	state="$(sxmo_screenlock.sh getCurState)"
+	while [ "$count" -gt 0 ]; do
+		case "$state" in
+			unlock)
+				state=off
+				;;
+			off)
+				state=lock
+				;;
+			lock)
+				state=unlock
+				;;
+		esac
+		count=$((count-1))
+	done
+
+	sxmo_screenlock.sh "$state"
 }
 
 XPROPOUT="$(sxmo_wm.sh focusedwindow)"
@@ -27,25 +39,6 @@ WMNAME="$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' 
 if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler ]; then
 	#hook script must exit with a zero exit code ONLY if it has handled the gesture!
 	"$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler "$WMCLASS" "$WMNAME" "$@" && exit
-fi
-
-if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
-	case "$ACTION" in
-		"volup_three")
-			sxmo_screenlock.sh crust
-			;;
-		"voldown_three")
-			if [ "$(sxmo_screenlock.sh getCurState)" = "lock" ]; then
-				sxmo_screenlock.sh off
-			else
-				lock_screen
-			fi
-			;;
-		"powerbutton_three")
-			sxmo_screenlock.sh unlock
-			;;
-	esac
-	exit
 fi
 
 if sxmo_dmenu.sh isopen; then
@@ -163,24 +156,24 @@ case "$ACTION" in
 		if echo "$WMCLASS" | grep -i "megapixels"; then
 			sxmo_type.sh -k space
 		else
-			sxmo_keyboard.sh toggle
+			lock_screen_action
 		fi
-			exit 0
+		exit 0
 		;;
 	"powerbutton_two")
-		sxmo_blinkled.sh blue; $TERMCMD "$SHELL"
+		lock_screen_action 2
 		exit 0
 		;;
 	"powerbutton_three")
-		sxmo_blinkled.sh blue; $BROWSER
+		sxmo_terminal.sh
 		exit 0
 		;;
 	"voldown_one")
-		sxmo_wm.sh togglelayout
+		sxmo_keyboard.sh toggle
 		exit
 		;;
 	"voldown_two")
-		sxmo_wm.sh switchfocus
+		sxmo_wm.sh togglelayout
 		exit
 		;;
 	"voldown_three")
@@ -196,7 +189,7 @@ case "$ACTION" in
 		exit
 		;;
 	"volup_three")
-		lock_screen
+		sxmo_wm.sh switchfocus
 		exit
 		;;
 	"rightleftedge")

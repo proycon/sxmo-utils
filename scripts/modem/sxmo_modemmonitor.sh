@@ -128,13 +128,6 @@ checkforfinishedcalls() {
 				"sxmo_terminal.sh -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \
 				none \
 				"Missed call - $CONTACT"
-
-			if grep -q modem "$UNSUSPENDREASONFILE" && grep -q crust "$CACHEDIR/${FINISHEDCALLID}.laststate"; then
-				sleep 5 # maybe user just is too late
-				if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
-					sxmo_screenlock.sh crust
-				fi
-			fi
 		fi
 	done
 }
@@ -220,13 +213,6 @@ checkfornewtexts() {
 
 		sxmo_hooks.sh sms "$CONTACTNAME" "$TEXT"
 	done
-
-	if grep -q modem "$UNSUSPENDREASONFILE" && grep -q crust "$LASTSTATE"; then
-		sleep 5 # maybe user just is too late
-		if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
-			sxmo_screenlock.sh crust
-		fi
-	fi
 }
 
 initialmodemstatus() {

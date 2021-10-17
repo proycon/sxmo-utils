@@ -65,3 +65,5 @@ command -v firefox && export BROWSER=firefox
 
 # Auto hide cursor with touchscreen, Show it with a mouse
 unclutter-xfixes --hide-on-touch --start-hidden &
+
+sxmo_lock_idle.sh &
