@@ -2,7 +2,7 @@
 
 change() {
 	echo "Changing timezone to $1"
-	sudo setup-timezone -z "$1"
+	doas setup-timezone -z "$1"
 	sxmo_statusbarupdate.sh
 	echo Timezone changed ok
 	read -r

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-# Note: this script should be run as root via sudo
+# Note: this script should be run as root via doas
 
 [ -n "$WLAN_MODULE" ] || WLAN_MODULE="8723cs"
 

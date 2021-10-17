@@ -41,13 +41,11 @@ install: $(PROGRAMS)
 
 	install -D -m 0644 -t $(DESTDIR)/etc/udev/rules.d/ configs/udev/*.rules
 
-	install -D -m 0700 -t $(DESTDIR)/etc/sudoers.d/ configs/sudo/*
-
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ configs/xdg/mimeapps.list
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/xsessions/ configs/applications/sxmo.desktop
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/wayland-sessions/ configs/applications/swmo.desktop
 
-	install -D -m 0644 -t $(DESTDIR)/etc/sudoers.d/ configs/sudo/poweroff
+	install -D -m 0640 -t $(DESTDIR)/etc/doas.d/ configs/doas/doas-sxmo.conf
 
 	install -D -m 0644 -T configs/xorg/monitor.conf $(DESTDIR)$(PREFIX)/share/X11/xorg.conf.d/90-monitor.conf
 

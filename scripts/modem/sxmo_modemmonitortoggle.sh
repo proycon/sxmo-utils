@@ -13,11 +13,11 @@
 daemon_start() {
 	case "$OS" in
 		"Alpine Linux"|postmarketOS)
-			sudo rc-service "$1" start
+			doas rc-service "$1" start
 			;;
 		"Arch Linux ARM"|alarm)
 			[ "$1" = "modemmanager" ] && set -- ModemManager
-			sudo systemctl start "$1"
+			doas systemctl start "$1"
 			;;
 	esac
 }
@@ -25,11 +25,11 @@ daemon_start() {
 daemon_stop() {
 	case "$OS" in
 		"Alpine Linux"|postmarketOS)
-			sudo rc-service "$1" stop
+			doas rc-service "$1" stop
 			;;
 		"Arch Linux ARM"|alarm)
 			[ "$1" = "modemmanager" ] && set -- ModemManager
-			sudo systemctl stop "$1"
+			doas systemctl stop "$1"
 			;;
 	esac
 }

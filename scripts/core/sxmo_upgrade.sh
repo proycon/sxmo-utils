@@ -4,10 +4,10 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 echo "Updating all packages from repositories"
-sudo apk update
+doas apk update
 
 echo "Upgrading all packages"
-sudo apk upgrade
+doas apk upgrade
 
 echo "Upgrade complete - reboot for all changes to take effect"
 read -r

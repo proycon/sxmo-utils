@@ -156,7 +156,7 @@ programchoicesinit() {
 			$icon_wif Wifi $(
 				rfkill -rn | grep wlan | grep -qE "unblocked unblocked" &&
 				printf %b "On → Off" ||  printf %b "Off → On";
-				printf %b "^ 1 ^ sudo sxmo_wifitoggle.sh"
+				printf %b "^ 1 ^ doas sxmo_wifitoggle.sh"
 			)
 			$(pgrep -f sxmo_lock_idle.sh > /dev/null && echo "$icon_cfg Stop lock idle ^ 1 ^ pkill -f sxmo_lock_idle.sh" || echo "$icon_cfg Start lock idle ^ 1 ^ setsid -f sxmo_lock_idle.sh")
 			$icon_cfg Invert Colors              ^ 1 ^ xcalib -a -invert
@@ -198,8 +198,8 @@ programchoicesinit() {
 			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_screenlock.sh off
 			$icon_zzz Suspend            ^ 0 ^ sxmo_screenlock.sh lock && sxmo_screenlock.sh crust
 			$icon_out Logout             ^ 0 ^ confirm Logout && pkill -9 dwm || pkill -9 sway
-			$icon_rld Reboot             ^ 0 ^ confirm Reboot && sxmo_terminal.sh sudo reboot
-			$icon_pwr Poweroff           ^ 0 ^ confirm Poweroff && sxmo_terminal.sh sudo poweroff
+			$icon_rld Reboot             ^ 0 ^ confirm Reboot && sxmo_terminal.sh doas reboot
+			$icon_pwr Poweroff           ^ 0 ^ confirm Poweroff && sxmo_terminal.sh doas poweroff
 		"
 		WINNAME=Power
 		;;

@@ -8,12 +8,12 @@ not_ready_yet() {
 case "$(realpath /var/lib/tinydm/default-session.desktop)" in
 	/usr/share/wayland-sessions/swmo.desktop)
 		command -v dwm || not_ready_yet
-		sudo tinydm-set-session -f -s /usr/share/xsessions/sxmo.desktop
+		doas tinydm-set-session -f -s /usr/share/xsessions/sxmo.desktop
 		pkill sway
 		;;
 	/usr/share/xsessions/sxmo.desktop)
 		command -v sway || not_ready_yet
-		sudo tinydm-set-session -f -s /usr/share/wayland-sessions/swmo.desktop
+		doas tinydm-set-session -f -s /usr/share/wayland-sessions/swmo.desktop
 		pkill dwm
 		;;
 esac

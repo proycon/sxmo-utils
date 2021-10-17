@@ -1,4 +1,0 @@
-ALL ALL=NOPASSWD: /bin/busybox poweroff
-ALL ALL=NOPASSWD: /bin/busybox reboot
-ALL ALL=NOPASSWD: /sbin/poweroff
-ALL ALL=NOPASSWD: /sbin/reboot
