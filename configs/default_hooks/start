@@ -1,3 +1,9 @@
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
+echo "$DBUS_SESSION_BUS_ADDRESS" > "$CACHEDIR"/dbus.bus
+
 # Force audio over the main speaker
 # and set a sane default volume
 

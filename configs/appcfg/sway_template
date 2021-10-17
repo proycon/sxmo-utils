@@ -224,7 +224,6 @@ hide_edge_borders smart
 include /etc/sway/config.d/*
 
 exec 'printf %s "$SWAYSOCK" > "$CACHEDIR"/sxmo.swaysock'
-exec 'printf %s "$DBUS_SESSION_BUS_ADDRESS" > "$CACHEDIR"/dbus.bus'
 exec pkill sxmo_statusbar.sh
 
 exec sxmo_networkmonitor.sh
