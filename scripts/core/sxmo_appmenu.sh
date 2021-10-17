@@ -622,7 +622,7 @@ mainloop() {
 
 	if printf %s "$LOOP" | grep -q 1; then
 		eval "$CMD"
-		mainloop
+		mainloop "$@"
 	else
 		eval "$CMD" &
 		wait
