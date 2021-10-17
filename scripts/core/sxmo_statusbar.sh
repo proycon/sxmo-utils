@@ -148,8 +148,8 @@ bar() {
 	# Volume
 	AUDIODEV="$(sxmo_audiocurrentdevice.sh)"
 	AUDIOSYMBOL="$(printf %s "$AUDIODEV" | cut -c1)"
-	if [ "$AUDIOSYMBOL" = "L" ] || [ "$AUDIOSYMBOL" = "N" ]; then
-		printf "" #speakers or none, use no special symbol
+	if [ "$AUDIOSYMBOL" = "L" ] || [ "$AUDIOSYMBOL" = "N" ] || [ "$AUDIOSYMBOL" = "M" ]; then
+		printf "" #pipewire or speakers or none, use no special symbol
 	elif [ "$AUDIOSYMBOL" = "H" ]; then
 		printf " "
 	elif [ "$AUDIOSYMBOL" = "E" ]; then

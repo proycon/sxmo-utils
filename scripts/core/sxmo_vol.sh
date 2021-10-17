@@ -17,15 +17,15 @@ notify() {
 }
 
 up() {
-	amixer set "$(sxmo_audiocurrentdevice.sh)" 1+
+	amixer set "$(sxmo_audiocurrentdevice.sh)" 1%+
 	notify
 }
 down() {
-	amixer set "$(sxmo_audiocurrentdevice.sh)" 1-
+	amixer set "$(sxmo_audiocurrentdevice.sh)" 1%-
 	notify
 }
 setvol() {
-	amixer set "$(sxmo_audiocurrentdevice.sh)" "$1"
+	amixer set "$(sxmo_audiocurrentdevice.sh)" "$1"%
 	notify
 }
 mute() {
