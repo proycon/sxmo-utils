@@ -53,8 +53,8 @@ programchoicesinit() {
 			$icon_mic Record          ^ 0 ^ sxmo_record.sh
 			$icon_red Reddit          ^ 0 ^ sxmo_reddit.sh
 			$icon_rss RSS             ^ 0 ^ sxmo_rss.sh
-			$(command -v scrot	>/dev/null && echo $icon_cam Screenshot			^ 0 ^ sxmo_screenshot.sh || notify-send failed to take a screenshot)
-			$(command -v scrot	>/dev/null && echo $icon_cam Screenshot \(selection\)	^ 0 ^ sxmo_screenshot.sh selection || notify-send failed to take a screenshot)
+			$icon_cam Screenshot      ^ 0 ^ sxmo_screenshot.sh
+			$icon_cam Screenshot (selection)	^ 0 ^ sxmo_screenshot.sh selection
 			$icon_tmr Timer           ^ 0 ^ sxmo_timer.sh
 			$icon_ytb Youtube         ^ 0 ^ sxmo_youtube.sh video
 			$icon_ytb Youtube (Audio) ^ 0 ^ sxmo_youtube.sh audio
