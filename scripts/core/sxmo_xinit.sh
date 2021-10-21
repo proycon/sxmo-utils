@@ -11,7 +11,6 @@ envvars() {
 	command -v "$KEYBOARD" || defaultkeyboard
 	# shellcheck source=/dev/null
 	[ -f "$HOME"/.profile ] && . "$HOME"/.profile
-	[ -z "$MPV_HOME" ] && export MPV_HOME=/usr/share/sxmo/mpv
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 	[ -z "$XDG_CONFIG_HOME" ] && export XDG_CONFIG_HOME=~/.config
 	[ -z "$XDG_CACHE_HOME" ] && export XDG_CACHE_HOME=~/.cache
