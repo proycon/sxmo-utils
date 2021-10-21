@@ -62,7 +62,6 @@ filepathoutput() {
 			;;
 		xorg|dwm)
 			printf %s "$FILENAME" | xsel -b -i
-
 			;;
 	esac
 }
