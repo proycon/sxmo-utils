@@ -152,21 +152,28 @@ checkforincomingcalls() {
 	INCOMINGNUMBER="$(cleanupnumber "$INCOMINGNUMBER")"
 	CONTACTNAME=$(lookupcontactname "$INCOMINGNUMBER")
 
-	echo "sxmo_modemmonitor: Invoking ring hook (async)">&2
-	sxmo_hooks.sh ring "$CONTACTNAME" &
+	if cut -f1 "$BLOCKFILE" | grep -q "^$INCOMINGNUMBER$"; then
+		echo "sxmo_modemmonitor: BLOCKED call from number: $VOICECALLID">&2
+		sxmo_modemcall.sh mute "$VOICECALLID"
+		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$BLOCKDIR/modemlog.tsv"
+		rm -f "$NOTIFDIR/incomingcall_${VOICECALLID}_notification"*
+	else
+		echo "sxmo_modemmonitor: Invoking ring hook (async)">&2
+		sxmo_hooks.sh ring "$CONTACTNAME" &
 
-	TIME="$(date --iso-8601=seconds)"
-	mkdir -p "$LOGDIR"
-	printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+		TIME="$(date --iso-8601=seconds)"
+		mkdir -p "$LOGDIR"
+		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
-	sxmo_notificationwrite.sh \
-		"$NOTIFDIR/incomingcall_${VOICECALLID}_notification" \
-		"sxmo_modemcall.sh incomingcallmenu '$VOICECALLID'" \
-		none \
-		"Incoming Call - $CONTACTNAME" &
-	sxmo_modemcall.sh incomingcallmenu "$VOICECALLID" &
+		sxmo_notificationwrite.sh \
+			"$NOTIFDIR/incomingcall_${VOICECALLID}_notification" \
+			"sxmo_modemcall.sh incomingcallmenu '$VOICECALLID'" \
+			none \
+			"Incoming Call - $CONTACTNAME" &
+		sxmo_modemcall.sh incomingcallmenu "$VOICECALLID" &
 
-	echo "sxmo_modemmonitor: Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)">&2
+		echo "sxmo_modemmonitor: Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)">&2
+	fi
 }
 
 checkfornewtexts() {
