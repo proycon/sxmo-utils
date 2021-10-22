@@ -210,7 +210,8 @@ pickup() {
 }
 
 mute() {
-	touch "$CACHEDIR/$1.mutedring" #this signals that we muted this ring
+	CALLID="$1"
+	touch "$CACHEDIR/${CALLID}.mutedring" #this signals that we muted this ring
 	echo "sxmo_modemmonitor: Invoking mute_ring hook (async)">&2
 	sxmo_hooks.sh mute_ring "$CONTACTNAME" &
 	log_event "ring_mute" "$1"
