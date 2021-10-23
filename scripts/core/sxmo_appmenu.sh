@@ -389,13 +389,14 @@ programchoicesinit() {
 			"
 			WINNAME=weechat
 		elif printf %s "$WMNAME" | grep -qi -w "sms"; then
+			# TODO: Ensure $number is valid.
 			number="$(printf %s "$WMNAME" | sed -e 's|^\"||' -e 's|\"$||' | cut -f1 -d' ')"
 			#sms
 			CHOICES="
 				$icon_msg Conversation   ^ 0 ^ sxmo_terminal.sh sxmo_modemtext.sh conversationloop $number
 				$icon_msg Reply          ^ 0 ^ sxmo_modemtext.sh sendtextmenu $number
 				$icon_phn Call           ^ 0 ^ sxmo_modemdial.sh $number
-				$(sxmo_contacts.sh --all | grep -q $number || echo "$icon_usr Add to contacts ^ 0 ^ sxmo_contactmenu.sh newcontact $number")
+				$(sxmo_contacts.sh --all | grep -q -e "$number" || echo "$icon_usr Add to contacts ^ 0 ^ sxmo_contactmenu.sh newcontact $number")
 				$icon_aru Scroll up       ^ 1 ^ sxmo_type -M Shift -M Ctrl b
 				$icon_ard Scroll down     ^ 1 ^ sxmo_type -M Shift -M Ctrl f
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
