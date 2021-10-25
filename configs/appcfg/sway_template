@@ -233,4 +233,3 @@ exec mako
 exec sxmo_hooks.sh lisgdstart
 exec sxmo_hooks.sh start
 exec sxmo_menumode_toggler.sh
-exec sxmo_lock_idle.sh

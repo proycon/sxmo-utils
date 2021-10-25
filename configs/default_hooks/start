@@ -15,3 +15,5 @@ amixer set "Line Out" 75%
 
 # Play a funky startup tune if you want (disabled by default)
 #mpv --quiet --no-video ~/welcome.ogg &
+
+sxmo_lock_idle.sh &
