@@ -75,7 +75,7 @@ if [ "$1" != "getCurState" ] && [ "$1" != "updateLed" ]; then
 	echo "sxmo_screenlock: transitioning to stage $1 ($d)" >&2
 fi
 
-if [ "$1" = "lock" ] ; then
+lock() {
 	#locked state with screen on
 
 	# always echo last state first so that user can use it in their hooks
@@ -90,8 +90,9 @@ if [ "$1" = "lock" ] ; then
 
 	# Do we want this hook after disabling all the input devices so users can enable certain devices?
 	sxmo_hooks.sh lock
-	exit 0
-elif [ "$1" = "unlock" ] ; then
+}
+
+unlock() {
 	#normal unlocked state, screen on
 
 	getCurState > "$LASTSTATE"
@@ -105,8 +106,9 @@ elif [ "$1" = "unlock" ] ; then
 	updateLed
 
 	sxmo_hooks.sh unlock
-	exit 0
-elif [ "$1" = "off" ] ; then
+}
+
+off() {
 	#locked state with screen off
 
 	getCurState > "$LASTSTATE"
@@ -119,7 +121,9 @@ elif [ "$1" = "off" ] ; then
 
 	sxmo_hooks.sh screenoff
 	exit 0
-elif [ "$1" = "crust" ] ; then
+}
+
+crust() {
 	getCurState > "$LASTSTATE"
 	# USER MUST USE sxmo_screenlock.sh rtc rather than using rtcwake directly.
 	echo 1 > "$REDLED_PATH"
@@ -160,15 +164,16 @@ elif [ "$1" = "crust" ] ; then
 	if [ "$UNSUSPENDREASON" != "rtc" ]; then
 		pkill -10 -f sxmo_lock_idle.sh
 	fi
+}
 
-	exit 0
-elif [ "$1" = "getCurState" ] ; then
-	getCurState
-	exit 0
-elif [ "$1" = "updateLed" ] ; then
-	updateLed
-	exit 0
-fi
+case "$1" in
+	unlock|lock|off|crust|getCurState|updateLed)
+		"$@"
+		exit 0
+		;;
+	*)
+		echo "usage: sxmo_screenlock.sh [lock|unlock|off|crust|rtc|getCurState|updateLed]">&2
+		exit 1
+		;;
+esac
 
-
-echo "usage: sxmo_screenlock.sh [lock|unlock|off|crust|rtc|getCurState|updateLed]">&2
