@@ -164,6 +164,8 @@ crust() {
 	if [ "$UNSUSPENDREASON" != "rtc" ]; then
 		pkill -10 -f sxmo_lock_idle.sh
 	fi
+
+	sxmo_hooks.sh postwake "$UNSUSPENDREASON"
 }
 
 case "$1" in
