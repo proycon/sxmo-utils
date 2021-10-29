@@ -55,7 +55,7 @@ vid_to_number() {
 number_to_contactname() {
 	NUMBER="$1"
 	CONTACT=$(sxmo_contacts.sh --all |
-		grep "^$NUMBER:" |
+		grep ": $NUMBER$" |
 		cut -d':' -f 2 |
 		sed 's/^[ \t]*//;s/[ \t]*$//' #strip leading/trailing whitespace
 	)

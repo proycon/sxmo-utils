@@ -19,13 +19,14 @@ newcontact() {
 		number="$(sxmo_validnumber.sh "$number")"
 	done
 
-	PICKED="$number	$name" # now act like if we picked this new contact
-	printf %s "$PICKED" >> "$CONTACTFILE"
+	# we store as NUMBER\tNAME but display as NAME\tNUMBER
+	printf "%s\n" "$number	$name" >> "$CONTACTFILE"
+	PICKED="$name	$number"
 }
 
 editcontactname() {
-	oldnumber="$(printf %s "$1" | cut -d"	" -f1)"
-	oldname="$(printf %s "$1" | cut -d"	" -f2)"
+	oldnumber="$(printf %s "$1" | cut -d"	" -f2)"
+	oldname="$(printf %s "$1" | cut -d"	" -f1)"
 
 	ENTRIES="$(printf %b "Old name: $oldname")"
 	PICKED="$(
@@ -35,16 +36,16 @@ editcontactname() {
 
 	if ! printf %s "$PICKED" | grep -q "^Old name: "; then
 		newcontact="$oldnumber	$PICKED"
-		sed -i "s/^$1$/$newcontact/" "$CONTACTFILE"
+		sed -i "s/^$oldnumber	$oldname$/$newcontact/" "$CONTACTFILE"
 		set -- "$newcontact"
 	fi
 
-	editcontact "$1"
+	editcontact "$PICKED	$oldnumber"
 }
 
 editcontactnumber() {
-	oldnumber="$(printf %s "$1" | cut -d"	" -f1)"
-	oldname="$(printf %s "$1" | cut -d"	" -f2)"
+	oldnumber="$(printf %s "$1" | cut -d"	" -f2)"
+	oldname="$(printf %s "$1" | cut -d"	" -f1)"
 
 	ENTRIES="$(sxmo_contacts.sh --unknown | xargs -0 printf "%b (Old number)\n%b" "$oldnumber")"
 	PICKED= # already used var name
@@ -61,12 +62,15 @@ editcontactnumber() {
 	done
 
 	newcontact="$PICKED	$oldname"
-	sed -i "s/^$1$/$newcontact/" "$CONTACTFILE"
-	editcontact "$newcontact"
+
+	# reverse them
+	sed -i "s/^$number	$name$/$newcontact/" "$CONTACTFILE"
+	editcontact "$oldname	$PICKED"
 }
 
 deletecontact() {
-	name="$(printf %s "$1" | cut -d"	" -f2)"
+	number="$(printf %s "$1" | cut -d"	" -f2)"
+	name="$(printf %s "$1" | cut -d"	" -f1)"
 
 	# shellcheck disable=SC2059
 	ENTRIES="$(printf "$icon_cls No\n$icon_chk Yes")"
@@ -75,12 +79,13 @@ deletecontact() {
 		dmenu -p "$icon_del Delete $name ?"
 	)"
 
-	printf %s "$PICKED" | grep -q "Yes" && sed -i "/^$1$/d" "$CONTACTFILE"
+	# reverse them
+	printf %s "$PICKED" | grep -q "Yes" && sed -i "/^$number	$name$/d" "$CONTACTFILE"
 }
 
 editcontact() {
-	number="$(printf %s "$1" | cut -d"	" -f1)"
-	name="$(printf %s "$1" | cut -d"	" -f2)"
+	number="$(printf %s "$1" | cut -d"	" -f2)"
+	name="$(printf %s "$1" | cut -d"	" -f1)"
 	ENTRIES="$(printf %b "$icon_ret Cancel\n$icon_usr Name: $name\n$icon_phl Number: $number")"
 
 	PICKED="$(
@@ -103,8 +108,8 @@ editcontact() {
 }
 
 showcontact() {
-	number="$(printf %s "$1" | cut -d"	" -f1)"
-	name="$(printf %s "$1" | cut -d"	" -f2)"
+	number="$(printf %s "$1" | cut -d"	" -f2)"
+	name="$(printf %s "$1" | cut -d"	" -f1)"
 	ENTRIES="$(printf %b "$icon_ret Cancel\n$icon_lst List Messages\n$icon_msg Send a Message\n$icon_phn Call\n$icon_edt Edit\n$icon_del Delete")"
 
 	PICKED="$(

@@ -15,18 +15,19 @@ err() {
 choosenumbermenu() {
 	# Prompt for number
 	NUMBER="$(
-		printf %b "\n$icon_cls Cancel\n$icon_grp More contacts\n$(sxmo_contacts.sh | grep -E "^\+?[0-9]+:")" |
+		printf %b "\n$icon_cls Cancel\n$icon_grp More contacts\n$(sxmo_contacts.sh | grep -E "\+?[0-9]+$")" |
 		awk NF |
 		sxmo_dmenu_with_kb.sh -p "Number" -i |
-		cut -d: -f1 |
+		cut -d: -f2 |
 		tr -d -- '- '
 	)"
+
 	if echo "$NUMBER" | grep -q "Morecontacts"; then
 		NUMBER="$( #joined words without space is not a bug
 			printf %b "\nCancel\n$(sxmo_contacts.sh --all)" |
 				grep . |
 				sxmo_dmenu_with_kb.sh -p "Number" -i |
-				cut -d: -f1 |
+				cut -d: -f2 |
 				tr -d -- '- '
 		)"
 	fi
@@ -172,7 +173,7 @@ conversationloop() {
 
 tailtextlog() {
 	NUMBER="$1"
-	CONTACTNAME="$(sxmo_contacts.sh | grep "^$NUMBER" | cut -d' ' -f2-)"
+	CONTACTNAME="$(sxmo_contacts.sh | grep ": ${NUMBER}$" | cut -d: -f1)"
 	[ "Unknown Number" = "$CONTACTNAME" ] && CONTACTNAME="$CONTACTNAME ($NUMBER)"
 
 	TERMNAME="$NUMBER SMS" sxmo_terminal.sh sh -c "tail -n9999 -f \"$LOGDIR/$NUMBER/sms.txt\" | sed \"s|$NUMBER|$CONTACTNAME|g\""
@@ -191,7 +192,7 @@ readtextmenu() {
 	elif echo "$PICKED" | grep "Send a Text"; then
 		sendtextmenu
 	else
-		tailtextlog "$(echo "$PICKED" | cut -d: -f1)"
+		tailtextlog "$(echo "$PICKED" | cut -d: -f2 | sed 's/^ //' | cut -d' ' -f1 )"
 	fi
 }
 

@@ -24,7 +24,7 @@ dialmenu() {
 	if [ -n "$1" ]; then
 		NUMBER="$1"
 	else
-		CONTACTS="$(sxmo_contacts.sh | grep -E "^\+?[0-9]+:")"
+		CONTACTS="$(sxmo_contacts.sh | grep -E ": \+?[0-9]+$")"
 		NUMBER="$(
 			printf %b "Close Menu\nMore contacts\n$CONTACTS" |
 			grep . |

@@ -12,7 +12,7 @@ notificationmenu() {
 		NOTIFHRANDMIN="$(stat --printf %y "$NOTIFDIR/$NOTIFFILE" | grep -oE '[0-9]{2}:[0-9]{2}')"
 		CHOICES="
 			$CHOICES
-			$NOTIFHRANDMIN - $NOTIFMSG ^ $NOTIFDIR/$NOTIFFILE
+			$NOTIFHRANDMIN $NOTIFMSG ^ $NOTIFDIR/$NOTIFFILE
 		"
 	done
 

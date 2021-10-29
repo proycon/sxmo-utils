@@ -29,7 +29,7 @@ prepare_contacts_list() {
 		}
 		{
 			if (!a[$1]) a[$1] = "Unknown Number";
-			print $0 ": " a[$1]
+			print a[$1] ": " $0
 		}
 	' "$CONTACTSFILE" -
 }
@@ -48,15 +48,16 @@ called_contacts() {
 
 all_contacts() {
 	awk -F'\t' '{
-		print $1 ": " $2
-	}' "$CONTACTSFILE" | sort -f -k 2
+		print $2 ": " $1
+	}' "$CONTACTSFILE" | sort -f -k 1
 }
 
 unknown_contacts() {
 	contacts \
-		| grep "Unknown Number$" \
-		| cut -d: -f1 \
-		| grep "^+[0-9]\{9,14\}$"
+		| grep "^Unknown Number" \
+		| cut -d: -f2 \
+		| grep "^ +[0-9]\{9,14\}" \
+		| sed 's/^ //'
 }
 
 [ -f "$CONTACTSFILE" ] || touch "$CONTACTSFILE"
@@ -74,10 +75,10 @@ elif [ "$1" = "--name" ]; then
 		printf "Unknown Number\n"
 	else
 		contacts \
-			| xargs -0 printf "%s: Unknown Number\n%b" "$2" \
+			| xargs -0 printf "Unknown Number: %s\n%b" "$2" \
 			| tac \
-			| grep -m1 "^$2" \
-			| cut -d':' -f2- \
+			| grep -m1 ": $2$" \
+			| cut -d':' -f1 \
 			| sed 's/^[ \t]*//;s/[ \t]*$//'
 	fi
 elif [ -n "$*" ]; then
