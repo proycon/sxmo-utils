@@ -17,3 +17,7 @@ amixer set "Line Out" 75%
 #mpv --quiet --no-video ~/welcome.ogg &
 
 sxmo_lock_idle.sh &
+
+if [ -f "$HOME"/.mms/modemmanager/mms ]; then
+	mmsdtng --nodaemon &
+fi

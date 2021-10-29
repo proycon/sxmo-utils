@@ -41,6 +41,8 @@ export BLOCKFILE="$XDG_CONFIG_HOME/sxmo/block.tsv"
 export UNSUSPENDREASONFILE="$XDG_RUNTIME_DIR/sxmo.suspend.reason"
 # shellcheck disable=SC2034
 export LASTSTATE="$XDG_RUNTIME_DIR/sxmo.suspend.laststate"
+# shellcheck disable=SC2034
+export MMS_RECEIVED_DIR="$HOME/.mms/modemmanager"
 
 command -v "$KEYBOARD" > /dev/null || export KEYBOARD=svkbd-mobile-intl
 command -v "$EDITOR" > /dev/null || export EDITOR=vis
@@ -270,6 +272,8 @@ icon_key=""
 icon_bok=""
 # shellcheck disable=SC2034
 icon_map=""
+# shellcheck disable=SC2034
+icon_att="📎"
 
 #allow the user to override icons
 # shellcheck disable=SC1091

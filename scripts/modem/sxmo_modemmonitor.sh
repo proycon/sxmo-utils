@@ -110,7 +110,7 @@ checkforfinishedcalls() {
 				random \
 				"sxmo_terminal.sh -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \
 				none \
-				"Missed call - $CONTACT"
+				"Missed $icon_phn $CONTACT"
 		fi
 	done
 }
@@ -152,7 +152,7 @@ checkforincomingcalls() {
 			"$NOTIFDIR/incomingcall_${VOICECALLID}_notification" \
 			"sxmo_modemcall.sh incomingcallmenu '$VOICECALLID'" \
 			none \
-			"Incoming Call - $CONTACTNAME" &
+			"Incoming $icon_phn $CONTACTNAME" &
 		sxmo_modemcall.sh incomingcallmenu "$VOICECALLID" &
 
 		echo "sxmo_modemmonitor: Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)">&2
@@ -170,6 +170,11 @@ checkfornewtexts() {
 	# Loop each textid received and read out the data into appropriate logfile
 	for TEXTID in $TEXTIDS; do
 		TEXTDATA="$(mmcli -m "$(modem_n)" -s "$TEXTID" -K)"
+		# SMS with no TEXTID is an SMS WAP (I think). So skip.
+		if [ -z "$TEXTDATA" ]; then
+			echo "sxmo_modemmonitor: no TEXTDATA, probably MMS.">&2
+			continue
+		fi
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
 		NUM="$(
 			echo "$TEXTDATA" |
@@ -188,9 +193,18 @@ checkfornewtexts() {
 			continue
 		fi
 
+		# mmsd-tng devs think that if there's no data, then not an mms,
+		# but I've found that sometimes sms can have '--' in DATA
+		# so I think safer bet is to just check for TEXT = "--" and ghost sms's above..
+		if [ "$TEXT" = "--" ]; then
+			echo "sxmo_modemmonitor: TEXT = '--'. Probably an MMS...">&2
+			continue
+		fi
+		echo "sxmo_modemmonitor: Probably not an MMS.">&2
+
 		mkdir -p "$LOGDIR/$NUM"
 		echo "sxmo_modemmonitor: Text from number: $NUM (TEXTID: $TEXTID)">&2
-		printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
+		printf %b "Received SMS from $NUM at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
 		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
 		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
 		CONTACTNAME=$(sxmo_contacts.sh --name "$NUM")
@@ -199,7 +213,7 @@ checkfornewtexts() {
 			random \
 			"sxmo_modemtext.sh tailtextlog '$NUM'" \
 			"$LOGDIR/$NUM/sms.txt" \
-			"Message - $CONTACTNAME: $TEXT"
+			"$CONTACTNAME: $TEXT"
 
 		sxmo_hooks.sh sms "$CONTACTNAME" "$TEXT"
 	done
@@ -285,6 +299,22 @@ mainloop() {
 		done
 	) &
 
+	# monitor for mms
+	dbus-monitor "interface='org.ofono.mms.Service',type='signal',member='MessageAdded'" | \
+		while read -r line; do
+			echo "MMS DEBUG: $line">&2
+			if echo "$line" | grep -q '^object path'; then
+				MESSAGE_PATH="$(echo "$line" | cut -d'"' -f2)"
+			fi
+			if echo "$line" | grep -q 'string "received"'; then
+				sxmo_mms.sh processmms "$MESSAGE_PATH" "Received"
+			fi
+			if echo "$line" | grep -q 'string "draft"'; then
+				sxmo_mms.sh processmms "$MESSAGE_PATH" "Sent"
+			fi
+	done &
+
+	wait
 	wait
 	wait
 	wait

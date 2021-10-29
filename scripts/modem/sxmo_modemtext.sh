@@ -4,6 +4,8 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+set -e
+
 err() {
 	echo "$1">&2
 	echo "$1" | dmenu
@@ -45,6 +47,8 @@ sendtextmenu() {
 		NUMBER="$(choosenumbermenu)"
 	fi
 
+	[ -z "$NUMBER" ] && exit 1
+
 	DRAFT="$LOGDIR/$NUMBER/draft.txt"
 	if [ ! -f "$DRAFT" ]; then
 		mkdir -p "$(dirname "$DRAFT")"
@@ -55,19 +59,90 @@ sendtextmenu() {
 
 	while true
 	do
-		CONFIRM="$(
-			printf %b "$icon_edt Edit\n$icon_snd Send\n$icon_cls Cancel" |
-			dmenu -i -p "Confirm"
-		)" || exit
-		if echo "$CONFIRM" | grep -q "Send"; then
-			(sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT") && \
-			rm "$DRAFT" && \
-			echo "Sent text to $NUMBER">&2 && exit 0
-		elif echo "$CONFIRM" | grep -q "Edit"; then
-			sendtextmenu "$NUMBER"
-		elif echo "$CONFIRM" | grep -q "Cancel"; then
-			exit 1
+		ATTACHMENTS=
+		if [ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ]; then
+			ATTACHMENTS="$(tr '\n' '\0' < "$LOGDIR/$NUMBER/draft.attachments.txt" | xargs -0 printf "Remove file %s\n")"
 		fi
+
+		RECIPIENTS=
+		if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ]; then
+			RECIPIENTS="$(printf %s "$NUMBER" | xargs pn find | xargs printf "Remove recipient %s\n")"
+		fi
+
+		CHOICES="$(
+			printf "%b\n%s Add Attachment\n%b\n%s Add Recipient\n%s Edit '%s'\n%s Send (%s)\n%s Cancel\n" \
+				"$ATTACHMENTS" "$icon_att" "$RECIPIENTS" "$icon_usr" "$icon_edt" \
+				"$(cat "$LOGDIR/$NUMBER/draft.txt")" "$icon_snd" "$NUMBER" "$icon_cls" \
+				| awk NF
+		)"
+
+		CONFIRM="$(printf %b "$CHOICES" | dmenu -i -p "Confirm")"
+		case "$CONFIRM" in
+			*"Send"*)
+				sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT"
+				# TODO: I think we want to check if modemsendsms.sh is success before rm DRAFT...
+				rm "$DRAFT"
+				echo "Sent text to $NUMBER">&2
+				exit 0
+				;;
+			"Remove file"*)
+				FILE="$(printf %s "$CONFIRM" | cut -d' ' -f3-)"
+				sed -i "\|$FILE|d" "$LOGDIR/$NUMBER/draft.attachments.txt"
+				echo "DEBUG: removing $FILE from $LOGDIR/$NUMBER/draft.attachments.txt">&2
+				if [ ! -s "$LOGDIR/$NUMBER/draft.attachments.txt" ] ; then
+					rm "$LOGDIR/$NUMBER/draft.attachments.txt"
+					echo "DEBUG: draft.attahcments now empty so delete it.">&2
+				fi
+				;;
+			"Remove recipient"*)
+				if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ]; then 
+					OLDNUMBER="$NUMBER"
+					RECIPIENT="$(printf %s "$CONFIRM" | cut -d' ' -f3-)"
+					NUMBER="$(printf %s "$OLDNUMBER" | sed "s/$RECIPIENT//")"
+					mkdir -p "$LOGDIR/$NUMBER"
+					DRAFT="$LOGDIR/$NUMBER/draft.txt"
+					echo "REMOVE: mv $OLDNUMBER/draft.txt to $DRAFT" >&2
+					if [ -f "$LOGDIR/$OLDNUMBER/draft.txt" ]; then
+						# TODO: if there is already a DRAFT warn the user?
+						mv "$LOGDIR/$OLDNUMBER/draft.txt" "$DRAFT"
+					fi
+					if [ -f "$LOGDIR/$OLDNUMBER/draft.attachments.txt" ]; then
+						mv "$LOGDIR/$OLDNUMBER/draft.attachments.txt" \
+							"$LOGDIR/$NUMBER/draft.attachments.txt"
+					fi
+				fi
+				;;
+			*"Edit"*)
+				sendtextmenu "$NUMBER"
+				;;
+			*"Add Attachment")
+				ATTACHMENT="$(sxmo_files.sh "$HOME" selectonly)"
+				if [ -f "$ATTACHMENT" ]; then
+					printf "%s\n" "$ATTACHMENT" >> "$LOGDIR/$NUMBER/draft.attachments.txt"
+				fi
+				;;
+			*"Add Recipient")
+				OLDNUMBER="$NUMBER"
+				ADDEDNUMBER="$(choosenumbermenu)"
+
+				NUMBER="$(printf %s%s "$NUMBER" "$ADDEDNUMBER" | xargs pn find | sort -u | tr -d '\n')"
+				echo "NUMBER: $OLDNUMBER ADDEDNUMBER: $ADDEDNUMBER"
+				mkdir -p "$LOGDIR/$NUMBER"
+				DRAFT="$LOGDIR/$NUMBER/draft.txt"
+				echo "ADD: mv $LOGDIR/$NUMBER/draft.txt to $DRAFT"
+				if [ -f "$LOGDIR/$OLDNUMBER/draft.txt" ]; then
+					# TODO: if there is already a DRAFT warn the user?
+					mv "$LOGDIR/$OLDNUMBER/draft.txt" "$DRAFT"
+				fi
+				if [ -f "$LOGDIR/$OLDNUMBER/draft.attachments.txt" ]; then
+					mv "$LOGDIR/$OLDNUMBER/draft.attachments.txt" \
+					"$LOGDIR/$NUMBER/draft.attachments.txt"
+				fi
+				;;
+			*"Cancel")
+				exit 1
+				;;
+		esac
 	done
 }
 

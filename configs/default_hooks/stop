@@ -1,3 +1,4 @@
 #!/bin/sh
 
 pkill -f sxmo_lock_idle.sh
+pkill mmsdtng

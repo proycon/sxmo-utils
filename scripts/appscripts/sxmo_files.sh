@@ -10,6 +10,8 @@ DIR="$1"
 [ -z "$DIR" ] && DIR="$HOME"
 cd "$DIR" || exit 1
 
+[ -n "$2" ] && SELECTONLY=1
+
 SORT=
 REVERSE=
 
@@ -67,11 +69,21 @@ while true; do
 			continue
 			;;
 		\*)
-			sxmo_open.sh -a ./*
+			if [ -n "$SELECTONLY" ]; then
+				printf %s "Can't do this"
+			else
+				sxmo_open.sh -a ./*
+			fi
 			;;
 		*)
 			[ -d "$PICKED" ] && cd "$PICKED" && continue
-			[ -f "$PICKED" ] && sxmo_open.sh -a "$PICKED"
+			if [ -f "$PICKED" ]; then
+				if [ "$SELECTONLY" -eq 1 ]; then
+					printf "%s" "$(pwd)/$PICKED" && exit
+				else
+					sxmo_open.sh -a "$PICKED"
+				fi
+			fi
 			;;
 	esac
 done
