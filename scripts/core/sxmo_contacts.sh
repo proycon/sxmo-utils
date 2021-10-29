@@ -69,6 +69,17 @@ elif [ "$1" = "--texted" ]; then
 	texted_contacts
 elif [ "$1" = "--called" ]; then
 	called_contacts
+elif [ "$1" = "--name" ]; then
+	if [ -z "$2" ]; then
+		printf "Unknown Number\n"
+	else
+		contacts \
+			| xargs -0 printf "%s: Unknown Number\n%b" "$2" \
+			| tac \
+			| grep -m1 "^$2" \
+			| cut -d':' -f2- \
+			| sed 's/^[ \t]*//;s/[ \t]*$//'
+	fi
 elif [ -n "$*" ]; then
 	all_contacts | grep -i "$*"
 else

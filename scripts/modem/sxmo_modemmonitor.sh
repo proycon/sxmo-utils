@@ -56,23 +56,6 @@ lookupnumberfromcallid() {
 		tr -d ' '
 }
 
-lookupcontactname() {
-	if [ "$1" = "--" ]; then
-		echo "Unknown number"
-	else
-		CONTACT=$(sxmo_contacts.sh --all |
-			grep "^$1:" |
-			cut -d':' -f 2 |
-			sed 's/^[ \t]*//;s/[ \t]*$//' #strip leading/trailing whitespace
-		)
-		if [ -n "$CONTACT" ]; then
-			echo "$CONTACT"
-		else
-			echo "Unknown ($1)"
-		fi
-	fi
-}
-
 checkforfinishedcalls() {
 	#find all finished calls
 	for FINISHEDCALLID in $(
@@ -119,7 +102,7 @@ checkforfinishedcalls() {
 			echo "sxmo_modemmonitor: Missed call from $FINISHEDNUMBER">&2
 			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
-			CONTACT="$(lookupcontactname "$FINISHEDNUMBER")"
+			CONTACT="$(sxmo_contacts.sh --name "$FINISHEDNUMBER")"
 			echo "sxmo_modemmonitor: Invoking missed call hook (async)">&2
 			sxmo_hooks.sh missed_call "$CONTACT" &
 
@@ -150,7 +133,7 @@ checkforincomingcalls() {
 	echo "sxmo_modemmonitor: Incoming Call:">&2
 	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
 	INCOMINGNUMBER="$(cleanupnumber "$INCOMINGNUMBER")"
-	CONTACTNAME=$(lookupcontactname "$INCOMINGNUMBER")
+	CONTACTNAME=$(sxmo_contacts.sh --name "$INCOMINGNUMBER")
 
 	TIME="$(date --iso-8601=seconds)"
 	if cut -f1 "$BLOCKFILE" | grep -q "^$INCOMINGNUMBER$"; then
@@ -210,7 +193,7 @@ checkfornewtexts() {
 		printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
 		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
 		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
-		CONTACTNAME=$(lookupcontactname "$NUM")
+		CONTACTNAME=$(sxmo_contacts.sh --name "$NUM")
 
 		sxmo_notificationwrite.sh \
 			random \
