@@ -117,7 +117,7 @@ networksmenu() {
 				System Menu
 				Close Menu
 			" |
-			awk '{$1=$1};1' | grep '\w' | dmenu -p 'Networks'
+			awk '{$1=$1};1' | grep '\w' | dmenu -p 'Networks' | sed "s/^$icon_chk //"
 		)"
 		case "$CHOICE" in
 			"System Menu" )
