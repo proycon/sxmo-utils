@@ -549,7 +549,7 @@ programchoicesinit() {
 			$icon_phn Dialer                                             ^ 0 ^ sxmo_modemdial.sh
 			$icon_msg Texts                                              ^ 0 ^ sxmo_modemtext.sh
 			$icon_usr Contacts                                           ^ 0 ^ sxmo_contactmenu.sh
-			$(command -v bluetoothctl >/dev/null && echo "$icon_bth Bluetooth ^ 1 ^ sxmo_bluetoothmenu.sh")
+			$icon_bth Bluetooth 										 ^ 1 ^ sxmo_bluetoothmenu.sh
 			$(command -v megapixels >/dev/null && echo "$icon_cam Camera ^ 0 ^ GDK_SCALE=2 megapixels")
 			$icon_fll Flashlight $(
 				grep -qE '^0$' /sys/class/leds/white:flash/brightness &&

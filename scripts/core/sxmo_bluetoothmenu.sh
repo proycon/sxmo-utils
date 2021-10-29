@@ -69,6 +69,13 @@ devicemenu() {
 	done
 }
 
+if command -v bluetoothctl >/dev/null; then
+	echo 'Found bluetoothctl. Assuming rest of bluetooth dependencies are installed.';
+else
+	sxmo_terminal.sh sh -c "printf '%s' 'Bluetooth on Sxmo is NOT fully supported - proceed with caution. After bluetooth is enabled, audio routing in calls will only work via the phone's headpiece and microphone. You will be able to route all other media to your bluetooth device using something like pulsemixer. To install sxmo's bluetooth dependencies on postmarketOS, run doas apk add postmarketos-ui-sxmo-bluetooth and rerun this script' && read -r"
+	exit 1
+fi
+
 if [ -n "$1" ]; then
 	"$@"
 else
