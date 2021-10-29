@@ -5,9 +5,9 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 connections() {
-	ACTIVE="$(nmcli -c no -t c show --active | cut -d: -f1,3 | sed "s/$/ $icon_chk/")"
-	INACTIVE="$(nmcli -c no -t c show | cut -d: -f1,3)"
-	printf %b "$ACTIVE\n$INACTIVE" | sort -u -t: -k1,1
+	ACTIVE="$(nmcli -c no -t c show --active | cut -d: -f1,3 | sed "s/^/$icon_chk:/")"
+	INACTIVE="$(nmcli -c no -t c show | cut -d: -f1,3 | sed "s/^/ :/")"
+	printf %b "$ACTIVE\n$INACTIVE" | sort -u -t: -k2,2 | sed "s/^ ://" | sed "s/^$icon_chk:/$icon_chk /"
 }
 
 toggleconnection() {
