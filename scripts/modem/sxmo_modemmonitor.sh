@@ -152,6 +152,7 @@ checkforincomingcalls() {
 	INCOMINGNUMBER="$(cleanupnumber "$INCOMINGNUMBER")"
 	CONTACTNAME=$(lookupcontactname "$INCOMINGNUMBER")
 
+	TIME="$(date --iso-8601=seconds)"
 	if cut -f1 "$BLOCKFILE" | grep -q "^$INCOMINGNUMBER$"; then
 		echo "sxmo_modemmonitor: BLOCKED call from number: $VOICECALLID">&2
 		sxmo_modemcall.sh mute "$VOICECALLID"
@@ -161,7 +162,6 @@ checkforincomingcalls() {
 		echo "sxmo_modemmonitor: Invoking ring hook (async)">&2
 		sxmo_hooks.sh ring "$CONTACTNAME" &
 
-		TIME="$(date --iso-8601=seconds)"
 		mkdir -p "$LOGDIR"
 		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
