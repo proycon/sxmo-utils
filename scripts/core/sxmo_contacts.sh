@@ -28,7 +28,7 @@ prepare_contacts_list() {
 			next
 		}
 		{
-			if (!a[$1]) a[$1] = "Unknown Number";
+			if (!a[$1]) a[$1] = "???";
 			print a[$1] ": " $0
 		}
 	' "$CONTACTSFILE" -
@@ -54,7 +54,7 @@ all_contacts() {
 
 unknown_contacts() {
 	contacts \
-		| grep "^Unknown Number" \
+		| grep "^???" \
 		| cut -d: -f2 \
 		| grep "^ +[0-9]\{9,14\}" \
 		| sed 's/^ //'
@@ -72,10 +72,10 @@ elif [ "$1" = "--called" ]; then
 	called_contacts
 elif [ "$1" = "--name" ]; then
 	if [ -z "$2" ]; then
-		printf "Unknown Number\n"
+		printf "???\n"
 	else
 		contacts \
-			| xargs -0 printf "Unknown Number: %s\n%b" "$2" \
+			| xargs -0 printf "???: %s\n%b" "$2" \
 			| tac \
 			| grep -m1 ": $2$" \
 			| cut -d':' -f1 \

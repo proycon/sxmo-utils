@@ -174,7 +174,7 @@ conversationloop() {
 tailtextlog() {
 	NUMBER="$1"
 	CONTACTNAME="$(sxmo_contacts.sh | grep ": ${NUMBER}$" | cut -d: -f1)"
-	[ "Unknown Number" = "$CONTACTNAME" ] && CONTACTNAME="$CONTACTNAME ($NUMBER)"
+	[ "???" = "$CONTACTNAME" ] && CONTACTNAME="$CONTACTNAME ($NUMBER)"
 
 	TERMNAME="$NUMBER SMS" sxmo_terminal.sh sh -c "tail -n9999 -f \"$LOGDIR/$NUMBER/sms.txt\" | sed \"s|$NUMBER|$CONTACTNAME|g\""
 }
