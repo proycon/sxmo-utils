@@ -12,9 +12,9 @@ connections() {
 
 toggleconnection() {
 	CONNLINE="$1"
-	CONNNAME="$(echo "$CHOICE" | cut -d: -f1)"
-	if echo "$CONNLINE" | grep "$icon_chk"; then
-		RES="$(nmcli c down "$CONNNAME" 2>&1)"
+	CONNNAME="$(echo "$CONNLINE" | cut -d: -f1)"
+	if echo "$CONNLINE" | grep -q "^$icon_chk "; then
+		RES="$(printf %s "$CONNNAME" | sed "s|^$icon_chk ||" | xargs nmcli c down 2>&1)"
 	else
 		RES="$(nmcli c up "$CONNNAME" 2>&1)"
 	fi
@@ -117,7 +117,7 @@ networksmenu() {
 				System Menu
 				Close Menu
 			" |
-			awk '{$1=$1};1' | grep '\w' | dmenu -p 'Networks' | sed "s/^$icon_chk //"
+			awk '{$1=$1};1' | grep '\w' | dmenu -p 'Networks'
 		)"
 		case "$CHOICE" in
 			"System Menu" )
