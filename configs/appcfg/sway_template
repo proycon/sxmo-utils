@@ -26,9 +26,6 @@ output * bg /usr/share/sxmo/background.jpg fill
 # Set 2x scale for DSI-1 (usually a display panel)
 output "DSI-1" scale 2
 
-### Idle
-
-exec sxmo_idle.sh start
 
 #
 # This will lock your screen after 300 seconds of inactivity, then turn off
