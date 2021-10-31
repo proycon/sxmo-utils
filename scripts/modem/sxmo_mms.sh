@@ -165,17 +165,17 @@ processmms() {
 	if [ "$MESSAGE_TYPE" = "Received" ]; then
 		[ -n "$OPEN_ATTACHMENTS_CMD" ] && TEXT="$icon_att $TEXT"
 
-		if [ "$count" -gt 0 ]; then
-			sxmo_hooks.sh sms "$FROM_NAME <$(sxmo_contacts.sh --name "$LOGDIRNUM")>" "$TEXT ($MMS_FILE)"
-		else
-			sxmo_hooks.sh sms "$FROM_NAME" "$TEXT ($MMS_FILE)"
-		fi
-
 		sxmo_notificationwrite.sh \
 			random \
 			"TERMNAME=\"$LOGDIRNUM SMS\" sxmo_terminal.sh sh -c \"""${OPEN_ATTACHMENTS_CMD}""tail -n9999 -f \"$LOGDIR/$LOGDIRNUM/sms.txt\"\"" \
 			"$LOGDIR/$LOGDIRNUM/sms.txt" \
 			"$FROM_NAME: $TEXT ($MMS_FILE)"
+
+		if [ "$count" -gt 0 ]; then
+			sxmo_hooks.sh sms "$FROM_NAME <$(sxmo_contacts.sh --name "$LOGDIRNUM")>" "$TEXT ($MMS_FILE)"
+		else
+			sxmo_hooks.sh sms "$FROM_NAME" "$TEXT ($MMS_FILE)"
+		fi
 	fi
 }
 
