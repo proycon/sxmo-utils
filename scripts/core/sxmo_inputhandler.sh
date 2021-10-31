@@ -36,6 +36,19 @@ XPROPOUT="$(sxmo_wm.sh focusedwindow)"
 WMCLASS="$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
 WMNAME="$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
 
+if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
+	case "$ACTION" in
+		"powerbutton_one")
+			lock_screen_action
+			;;
+		"powerbutton_two"|"powerbutton_three")
+			lock_screen_action 2
+			;;
+	esac
+	#we're locked, don't process the rest of the script
+	exit 0
+fi
+
 if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler ]; then
 	#hook script must exit with a zero exit code ONLY if it has handled the gesture!
 	"$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler "$WMCLASS" "$WMNAME" "$@" && exit
