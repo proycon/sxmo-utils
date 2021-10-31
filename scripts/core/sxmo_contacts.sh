@@ -74,7 +74,7 @@ elif [ "$1" = "--name" ]; then
 	if [ -z "$2" ]; then
 		printf "???\n"
 	else
-		contacts \
+		all_contacts \
 			| xargs -0 printf "???: %s\n%b" "$2" \
 			| tac \
 			| grep -m1 ": $2$" \
