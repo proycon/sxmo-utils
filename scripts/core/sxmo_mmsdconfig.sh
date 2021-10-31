@@ -68,6 +68,8 @@ newfile() {
 	mv "$tmp" "$MMSCONFIG"
 }
 
+mkdir -p "$HOME"/.mms/modemmanager/
+
 if pgrep mmsdtng > /dev/null; then
 	pkill mmsdtng
 fi
