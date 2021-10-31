@@ -153,6 +153,7 @@ programchoicesinit() {
 			$icon_phn Modem Restart              ^ 1 ^ sxmo_modemmonitortoggle.sh restart
 			$icon_inf Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
 			$icon_phl Modem Log                  ^ 0 ^ sxmo_modemlog.sh
+			$icon_img Config MMS                 ^ 1 ^ sxmo_mmsdconfig.sh
 			$icon_wif Wifi $(
 				rfkill -rn | grep wlan | grep -qE "unblocked unblocked" &&
 				printf %b "On → Off" ||  printf %b "Off → On";
