@@ -279,7 +279,11 @@ case "$ACTION" in
 		;;
 	"bottomleftcorner")
 		sxmo_dmenu.sh close
-		lock_screen
+		if [ -n "$WMCLASS" ]; then
+			sxmo_screenlock.sh lock
+		else
+			sxmo_screenlock.sh off
+		fi
 		exit 0
 		;;
 	"bottomrightcorner")
