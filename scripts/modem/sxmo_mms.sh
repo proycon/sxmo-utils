@@ -13,15 +13,15 @@ downloadmissedmms() {
 	SERVER_MMS_TEMP="$(mktemp)"
 	echo "Making list of all MMS messages on server."
 	mmsctl -M | jq -r '.message_path' | rev | cut -d'/' -f1 | rev | sort -u > "$ALL_MMS_TEMP"
-	echo "Got $(cat "$ALL_MMS_TEMP" | wc -l) messages."
+	echo "Got $(wc -l < "$ALL_MMS_TEMP") messages."
 	echo "Making list of local MMS messages."
 	cut -f 4 < "$LOGDIR/modemlog.tsv" | grep -v 'chars' | sort -u > "$LOCAL_MMS_TEMP"
-	echo "Got $(cat "$LOCAL_MMS_TEMP" | wc -l) messages."
+	echo "Got $(wc -l < "$LOCAL_MMS_TEMP") messages."
 
 	echo "Comparing them and making list of MMS messages ONLY on server."
 	# see comm manpage: prints only unique files in ALL_MMS_TMP, i.e., files only on server
 	comm -23 "$ALL_MMS_TEMP" "$LOCAL_MMS_TEMP" > "$SERVER_MMS_TEMP"
-	count="$(cat "$SERVER_MMS_TEMP" | wc -l)"
+	count="$(wc -l < "$SERVER_MMS_TEMP")"
 	echo "Got $count messages."
 	if [ "$count" -gt 0 ]; then
 		read -r "Warning. This will download all the undownloaded MMS messages still on server and process them. Continue?  Any key to continue."
