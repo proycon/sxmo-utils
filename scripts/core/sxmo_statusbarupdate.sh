@@ -1,2 +1,4 @@
 #!/usr/bin/env sh
-pgrep -f "$(command -v sxmo_statusbar.sh)" | xargs -r kill -USR1 &
+
+pkill -10 -f sxmo_statusbar.sh
+sxmo_hooks.sh statusupdate
