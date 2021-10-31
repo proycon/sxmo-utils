@@ -11,12 +11,12 @@ newcontact() {
 
 	number="$1"
 	if [ -n "$number" ]; then
-		number="$(sxmo_validnumber.sh "$number")"
+		number="$(sxmo_validnumber.sh "$number")" || return
 	fi
 
 	while [ -z "$number" ]; do
 		number="$(sxmo_contacts.sh --unknown | sxmo_dmenu_with_kb.sh -p "$icon_phl Number")"
-		number="$(sxmo_validnumber.sh "$number")"
+		number="$(sxmo_validnumber.sh "$number")" || continue
 	done
 
 	# we store as NUMBER\tNAME but display as NAME\tNUMBER
@@ -58,7 +58,7 @@ editcontactnumber() {
 			editcontact "$1"
 			return
 		fi
-		PICKED="$(sxmo_validnumber.sh "$PICKED")"
+		PICKED="$(sxmo_validnumber.sh "$PICKED")" || continue
 	done
 
 	newcontact="$PICKED	$oldname"
@@ -149,8 +149,15 @@ main() {
 			sxmo_dmenu_with_kb.sh -i -p "$icon_lst Contacts"
 		)"
 
-		printf %s "$PICKED" | grep -q "Close Menu" && exit
-		printf %s "$PICKED" | grep -q "New Contact" && newcontact
+		case "$PICKED" in
+			"$icon_ret Close Menu")
+				exit
+				;;
+			"$icon_pls New Contact")
+				newcontact || continue
+				;;
+			*)
+		esac
 
 		showcontact "$(printf %s "$PICKED" | sed 's/: /\t/g')"
 	done
