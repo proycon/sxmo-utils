@@ -120,4 +120,5 @@ else
 	printf %b "Sent SMS to $NUMBER at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUMBER/sms.txt"
 	printf "%s\tsent_txt\t%s\t%s chars\n" "$TIME" "$NUMBER" "$TEXTSIZE" >> "$LOGDIR/modemlog.tsv"
 	sxmo_hooks.sh sendsms "$NUMBER" "$TEXT"
+	info "Sent SMS to $NUMBER message ok"
 fi
