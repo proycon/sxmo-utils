@@ -103,6 +103,7 @@ if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$
 	[ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ] && rm "$LOGDIR/$NUMBER/draft.attachments.txt"
 
 	# Note that sxmo_modemmonitor.sh dbus-monitor subprocess should now detect 'draft' and process the sent mms accordingly
+	sxmo_hooks.sh sendsms "$NUMBER" "$TEXT"
 	info "Sent MMS to $NUMBER message ok"
 else
 	SMSNO="$(
@@ -118,4 +119,5 @@ else
 	mkdir -p "$LOGDIR/$NUMBER"
 	printf %b "Sent SMS to $NUMBER at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUMBER/sms.txt"
 	printf "%s\tsent_txt\t%s\t%s chars\n" "$TIME" "$NUMBER" "$TEXTSIZE" >> "$LOGDIR/modemlog.tsv"
+	sxmo_hooks.sh sendsms "$NUMBER" "$TEXT"
 fi
