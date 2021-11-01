@@ -61,18 +61,24 @@ extractmmsattachement() {
 		esac
 
 		if [ -f "$MMS_RECEIVED_DIR/$MMS_FILE" ]; then
+			OUTFILE="$MMS_FILE.$DATA_EXT"
+			count=0
+			while [ -f "$LOGDIR/$LOGDIRNUM/attachments/$OUTFILE" ]; do
+				OUTFILE="$MMS_FILE-$count.$DATA_EXT"
+				count="$((count+1))"
+			done
 			dd skip="$AOFFSET" count="$ASIZE" \
 				if="$MMS_RECEIVED_DIR/$MMS_FILE" \
-				of="$LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.$DATA_EXT" \
+				of="$LOGDIR/$LOGDIRNUM/attachments/$OUTFILE" \
 				bs=1 >/dev/null 2>&1
 		fi
 
 		if [ "$ACTYPE" != "text/plain" ]; then
 			printf "$icon_att %s\n" \
-				"$(basename "$LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.$DATA_EXT")" \
+				"$(basename "$LOGDIR/$LOGDIRNUM/attachments/$OUTFILE")" \
 				>> "$LOGDIR/$LOGDIRNUM/sms.txt"
 
-			printf "%s\0" "$LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.$DATA_EXT"
+			printf "%s\0" "$LOGDIR/$LOGDIRNUM/attachments/$OUTFILE"
 		fi
 	done
 }
