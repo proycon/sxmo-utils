@@ -70,10 +70,9 @@ sendtextmenu() {
 			RECIPIENTS="$(printf %s "$NUMBER" | xargs pn find | xargs printf "Remove recipient %s\n")"
 		fi
 
-		CHOICES="$(
-			printf "%b\n%s Add Attachment\n%b\n%s Add Recipient\n%s Edit '%s'\n%s Send (%s)\n%s Cancel\n" \
-				"$ATTACHMENTS" "$icon_att" "$RECIPIENTS" "$icon_usr" "$icon_edt" \
-				"$(cat "$LOGDIR/$NUMBER/draft.txt")" "$icon_snd" "$NUMBER" "$icon_cls" \
+		CHOICES="$(printf "%s Send (%s)\n%b\n%s Add Attachment\n%b\n%s Add Recipient\n%s Edit '%s'\n%s Cancel\n" \
+				"$icon_snd" "$NUMBER" "$ATTACHMENTS" "$icon_att" "$RECIPIENTS" "$icon_usr" "$icon_edt" \
+				"$(cat "$LOGDIR/$NUMBER/draft.txt")" "$icon_cls" \
 				| awk NF
 		)"
 
