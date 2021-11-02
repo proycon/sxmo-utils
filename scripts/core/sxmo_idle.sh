@@ -31,23 +31,18 @@ xorgidle() {
 		sleep 1
 		tick=$((tick + 1))
 	done &
-	LOOPID=$!
-
-	finish() {
-		kill "$LOOPID"
-		rm "$tmp"
-	}
-	trap 'finish' TERM INT
-
-	wait "$LOOPID"
-}
-
-swayidle() {
-	exec swayidle "$@"
 }
 
 wm="$(sxmo_wm.sh)"
 case "$wm" in
-	dwm|xorg) "xorgidle" "$@";;
-	*) "${wm}idle" "$@";;
+	dwm|xorg) xorgidle "$@" & ;;
+	*) "${wm}idle" "$@" & ;;
 esac
+IDLEPID=$!
+
+finish() {
+	kill "$IDLEPID"
+}
+trap 'finish' TERM INT
+
+wait "$IDLEPID"
