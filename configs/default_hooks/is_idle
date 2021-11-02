@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(which sxmo_common.sh)"
+
 # This hook goal is to return a non zero exit code if the device
 # must be considered not idle (ongoing call, playing mpd, etc)
 
@@ -21,9 +25,17 @@ active_ssh() {
 	(netstat | grep ESTABLISHED | grep -q ssh) && exit 1
 }
 
+waiting_rtcwake() {
+	if grep -q crust "$LASTSTATE" && \
+		grep -q rtc "$UNSUSPENDREASONFILE"; then
+			exit 1
+	fi
+}
+
 ongoing_call
 proximity_lock_on
 playing_mpc
 active_ssh
+waiting_rtcwake
 
 exit 0
