@@ -161,6 +161,9 @@ crust() {
 		echo 1200 > "$NETWORKRTCSCAN"
 	fi
 
+	if [ "$UNSUSPENDREASON" = "usb power" ]; then
+		lock
+	fi
 	if [ "$UNSUSPENDREASON" != "rtc" ]; then
 		pkill -10 -f sxmo_lock_idle.sh
 	fi
