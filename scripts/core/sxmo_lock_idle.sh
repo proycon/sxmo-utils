@@ -7,8 +7,8 @@ stop_idle() {
 
 start_idle() {
 	sxmo_idle.sh \
-		timeout 8 sxmo_screenlock_deeper.sh \
-		timeout 16 sxmo_screenlock_deeper.sh &
+		timeout 8 'sxmo_screenlock_deeper.sh --idle' \
+		timeout 16 'sxmo_screenlock_deeper.sh --idle' &
 	IDLEPID=$!
 }
 
@@ -35,5 +35,5 @@ while : ; do
 			stop_idle
 		fi
 	fi
-	sleep 4 & wait $! # We dont want to delay signal catches
+	sleep 30 & wait $! # We dont want to delay signal catches
 done
