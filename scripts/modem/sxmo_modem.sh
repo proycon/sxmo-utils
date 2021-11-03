@@ -5,7 +5,7 @@
 
 checkmodem() {
 	TRIES=0
-	while [ "TRIES" -lt 10 ]; do
+	while [ "$TRIES" -lt 10 ]; do
 		MODEMS="$(mmcli -L)"
 		if echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' > /dev/null; then
 			break
