@@ -15,7 +15,6 @@ WATCHFILE="$3"
 NOTIFMSG="$4"
 
 writenotification() {
-	lsof | grep "$WATCHFILE" && exit 0 # Already viewing watchfile, nops
 	mkdir -p "$NOTIFDIR"
 	if [ "$NOTIFFILEPATHTOWRITE" = "random" ]; then
 		NOTIFFILEPATHTOWRITE="$NOTIFDIR/$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 10)"

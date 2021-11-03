@@ -29,6 +29,11 @@ handlenewnotiffile(){
 			)
 		) &
 
+		if lsof | grep -q "$WATCHFILE"; then # Already viewing watchfile
+			rm -f "$NOTIFFILE"
+			return
+		fi
+
 		[ -e "$NOTIFWATCHFILE" ] && (
 			inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE"
 		) &
