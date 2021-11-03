@@ -48,10 +48,11 @@ recreateexistingnotifs() {
 }
 
 syncled() {
-	sxmo_setled.sh green 0
 	if [ "$(find "$NOTIFDIR"/ -type f | wc -l)" -gt 0 ]; then
 		sleep 0.1
 		sxmo_setled.sh green 1
+	else
+		sxmo_setled.sh green 0
 	fi
 }
 
@@ -63,11 +64,11 @@ monitorforaddordelnotifs() {
 		inotifywait -e create,attrib,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
 			INOTIFYOUTPUT="$(cat)"
 			INOTIFYEVENTTYPE="$(echo "$INOTIFYOUTPUT" | cut -d" " -f2)"
-			syncled
 			if echo "$INOTIFYEVENTTYPE" | grep -E "CREATE|MOVED_TO|ATTRIB"; then
 				NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
 				handlenewnotiffile "$NOTIFFILE"
 			fi
+			syncled
 		) & wait
 	done
 }
