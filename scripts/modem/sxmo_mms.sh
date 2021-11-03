@@ -173,7 +173,7 @@ processmms() {
 
 		sxmo_notificationwrite.sh \
 			random \
-			"TERMNAME=\"$LOGDIRNUM SMS\" sxmo_terminal.sh sh -c \"""${OPEN_ATTACHMENTS_CMD}""tail -n9999 -f \"$LOGDIR/$LOGDIRNUM/sms.txt\"\"" \
+			"TERMNAME=\"$LOGDIRNUM SMS\" sxmo_terminal.sh sh -c \"""${OPEN_ATTACHMENTS_CMD}""sxmo_modemtext.sh tailtextlog \"$LOGDIRNUM\"\"" \
 			"$LOGDIR/$LOGDIRNUM/sms.txt" \
 			"$FROM_NAME: $TEXT ($MMS_FILE)"
 
