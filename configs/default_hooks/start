@@ -4,6 +4,7 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(which sxmo_common.sh)"
 
+#Make dbus session available
 echo "$DBUS_SESSION_BUS_ADDRESS" > "$CACHEDIR"/dbus.bus
 
 # Force audio over the main speaker
@@ -14,6 +15,9 @@ amixer set "Line Out" 75%
 
 # Play a funky startup tune if you want (disabled by default)
 #mpv --quiet --no-video ~/welcome.ogg &
+
+# Start the desktop widget (e.g. clock)
+sxmo_hooks.sh desktop_widget &
 
 # Enable automatic screen off and crust when phone is locked and idle
 sxmo_lock_idle.sh &

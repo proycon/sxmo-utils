@@ -5,3 +5,5 @@ pkill mmsdtng
 pkill lisgd
 pkill bemenu
 pkill wvkbd
+pkill conky
+pkill wayout

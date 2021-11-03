@@ -1,0 +1,30 @@
+#!/usr/bin/env sh
+
+# This hook launches a desktop widget (e.g. a clock) (blocking)
+
+pangodraw() {
+	date +"<b>%H</b>:%M" #date with some pango markup syntax (https://docs.gtk.org/Pango/pango_markup.html)
+	date +"<small><small><small><small>%a %d %b %Y</small></small></small></small>"
+	# here you can output whatever you want to end up in the widget
+	# make sure to use pango markup syntax if you want colours etc, ANSI is not supported by wayout
+	# for instance, you can show details about the activated network connections:
+	#nmcli -w 3 -c no -p -f DEVICE,STATE,NAME,TYPE con show | grep activated | sed 's/activated/   /' | sed '/^\s*$/d' 2> /dev/null
+	# make sure to end with an empty line, to denote the end of data for wayout
+	echo
+}
+
+if [ -n "$WAYLAND_DISPLAY" ] && command -v wayout > /dev/null; then
+	# For wayland we use wayout:
+	(
+		pangodraw
+		pangodraw
+		while : ; do
+			sleep 60
+			pangodraw
+		done
+	) | wayout --font "FiraMono Nerd Font 80" --height 200 --center --feed-par
+elif [ -n "$DISPLAY" ] && command -v conky > /dev/null; then
+	# For X we use conky (if not already running):
+	pidof conky || conky -c /usr/share/sxmo/appcfg/conky24h.conf -d  #24 hour clock
+	#pidof conky || conky -c /usr/share/sxmo/appcfg/conky.conf -d #12 hour clock (am/pm)
+fi
