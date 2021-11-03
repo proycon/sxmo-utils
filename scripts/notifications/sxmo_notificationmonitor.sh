@@ -29,7 +29,7 @@ handlenewnotiffile(){
 			)
 		) &
 
-		if lsof | grep -q "$WATCHFILE"; then # Already viewing watchfile
+		if lsof | grep -q "$NOTIFWATCHFILE"; then # Already viewing watchfile
 			rm -f "$NOTIFFILE"
 			return
 		fi
