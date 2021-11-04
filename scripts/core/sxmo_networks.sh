@@ -14,7 +14,7 @@ toggleconnection() {
 	CONNLINE="$1"
 	CONNNAME="$(echo "$CONNLINE" | cut -d: -f1)"
 	if echo "$CONNLINE" | grep -q "^$icon_chk "; then
-		RES="$(printf %s "$CONNNAME" | sed "s|^$icon_chk ||" | xargs nmcli c down 2>&1)"
+		RES="$(printf %s "$CONNNAME" | sed "s|^$icon_chk ||" | xargs -0 nmcli c down 2>&1)"
 	else
 		RES="$(nmcli c up "$CONNNAME" 2>&1)"
 	fi
