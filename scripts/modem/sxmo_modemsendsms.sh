@@ -82,17 +82,21 @@ if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$
 		done < "$LOGDIR/$NUMBER/draft.attachments.txt"
 	fi
 
-	MAX_ATTACHMENTS="25" # TODO: Query dbus for this config.get('MaxAttachments', 25)
-	TOT_MAX_ATTACHMENT_SIZE="100000000" # TODO: Query dbus: config.get('TotalMaxAttachmentSize', 1100000)
+	MAX_ATTACHMENTS="$(grep "^TotalMaxAttachmentSize" "$MMS_RECEIVED_DIR/mms" | cut -d'=' -f2)"
+	TOT_MAX_ATTACHMENT_SIZE="$(grep "^MaxAttachments" "$MMS_RECEIVED_DIR/mms" | cut -d'=' -f 2)"
+	[ -z $MAX_ATTACHMENTS ] && MAX_ATTACHMENTS="25"
+	[ -z $TOT_MAX_ATTACHMENT_SIZE ] && TOT_MAX_ATTACHMENT_SIZE="1100000"
+
 	if [ "$count" -gt "$MAX_ATTACHMENTS" ]; then
 		err "Too many attachments!"
 	fi
+
 	if [ "$count" -ge 1 ] && [ "$total_size" -gt "$TOT_MAX_ATTACHMENT_SIZE" ]; then
 		err "Total size of attachments too big!"
 	fi
 
 	if [ -z "$RECIPIENTS" ]; then
-		err "No recipients provided"
+		err "No recipients provided."
 	fi
 	info "Launching mmsctl -S $RECIPIENTS $ATTACHMENTS..."
 	# TODO: I forget why I need the sh -c, but I do in order to have files with spaces in them processed correctly...
