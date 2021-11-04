@@ -70,6 +70,10 @@ elif [ "$1" = "--texted" ]; then
 	texted_contacts
 elif [ "$1" = "--called" ]; then
 	called_contacts
+elif [ "$1" = "--me" ]; then
+	all_contacts \
+		| grep "^Me: " \
+		| sed 's|^Me: ||'
 elif [ "$1" = "--name" ]; then
 	if [ -z "$2" ]; then
 		printf "???\n"

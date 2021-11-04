@@ -119,7 +119,14 @@ processmms() {
 
 	MMS_FILE="$(printf %s "$MESSAGE_PATH" | rev | cut -d'/' -f1 | rev)"
 	DATE="$(printf %s "$MESSAGE" | jq -r '.attrs.Date')"
+
 	MYNUM="$(printf %s "$MESSAGE" | jq -r '.attrs."Modem Number"')"
+	if [ -z "$MYNUM" ]; then
+		MYNUM="$(sxmo_contacts.sh --me)"
+		if [ -z "$MYNUM" ]; then
+			stderr "We cannot determine the modem number. Configure the Me contact.\n"
+		fi
+	fi
 
 	if [ "$MESSAGE_TYPE" = "Sent" ]; then
 		FROM_NUM="$MYNUM"
