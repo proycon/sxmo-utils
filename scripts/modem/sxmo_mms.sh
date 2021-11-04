@@ -3,37 +3,34 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-# if mmsdtng is running but sxmo_modemmonitor.sh wasn't running (or in other odd cases) we might
-# have mms in mmsdtng that aren't downloaded.  this quick function will grab them and populate
-# sxmo with them.
-# run from commandline, e.g., sxmo_mms.sh downloadmissedmms
-downloadmissedmms() {
+# check for lost mms (in rare cases)
+checkforlostmms() {
 	ALL_MMS_TEMP="$(mktemp)"
 	LOCAL_MMS_TEMP="$(mktemp)"
 	SERVER_MMS_TEMP="$(mktemp)"
-	echo "Making list of all MMS messages on server."
+	echo "Making list of all MMS messages on server.">&2
 	mmsctl -M | jq -r '.message_path' | rev | cut -d'/' -f1 | rev | sort -u > "$ALL_MMS_TEMP"
-	echo "Got $(wc -l < "$ALL_MMS_TEMP") messages."
-	echo "Making list of local MMS messages."
+	echo "Got $(wc -l < "$ALL_MMS_TEMP") messages.">&2
+	echo "Making list of local MMS messages.">&2
 	cut -f 4 < "$LOGDIR/modemlog.tsv" | grep -v 'chars' | sort -u > "$LOCAL_MMS_TEMP"
-	echo "Got $(wc -l < "$LOCAL_MMS_TEMP") messages."
+	echo "Got $(wc -l < "$LOCAL_MMS_TEMP") messages.">&2
 
-	echo "Comparing them and making list of MMS messages ONLY on server."
+	echo "Comparing them and making list of MMS messages ONLY on server.">&2
 	# see comm manpage: prints only unique files in ALL_MMS_TMP, i.e., files only on server
 	comm -23 "$ALL_MMS_TEMP" "$LOCAL_MMS_TEMP" > "$SERVER_MMS_TEMP"
 	count="$(wc -l < "$SERVER_MMS_TEMP")"
-	echo "Got $count messages."
+	echo "Got $count messages.">&2
 	if [ "$count" -gt 0 ]; then
-		read -r "Warning. This will download all the undownloaded MMS messages still on server and process them. Continue?  Any key to continue."
+		#read -r "Warning. This will download all the undownloaded MMS messages still on server and process them. Continue?  Any key to continue."
 
 		while read -r line; do
 			processmms "/org/ofono/mms/modemmanager/$line" "Unknown"
 		done < "$SERVER_MMS_TEMP"
-		echo "Done!"
+		echo "Done!">&2
 	else
-		echo "No outstanding messages. Done!"
+		echo "No outstanding messages. Done!">&2
 	fi
-	echo "Cleaning up temp files."
+	echo "Cleaning up temp files.">&2
 	rm "$ALL_MMS_TEMP"
 	rm "$LOCAL_MMS_TEMP"
 	rm "$SERVER_MMS_TEMP"

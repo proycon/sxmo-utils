@@ -16,6 +16,7 @@ mainloop() {
 	sxmo_modem.sh checkforfinishedcalls
 	sxmo_modem.sh checkforincomingcalls
 	sxmo_modem.sh checkfornewtexts
+	sxmo_mms.sh checkforlostmms
 
 	sxmo_modem.sh initialmodemstatus
 
@@ -52,6 +53,7 @@ mainloop() {
 					sxmo_modem.sh checkforfinishedcalls
 					sxmo_modem.sh checkforincomingcalls
 					sxmo_modem.sh checkfornewtexts
+					sxmo_mms.sh checkforlostmms
 				fi
 				sxmo_statusbarupdate.sh
 			fi
