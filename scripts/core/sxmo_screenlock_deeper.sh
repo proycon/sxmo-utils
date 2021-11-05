@@ -6,17 +6,27 @@ if [ "$1" = "--idle" ]; then
 	sxmo_hooks.sh is_idle || exit
 fi
 
-state="$(sxmo_screenlock.sh getCurState)"
-case "$state" in
+initial_state="$(sxmo_screenlock.sh getCurState)"
+case "$initial_state" in
 	unlock)
-		exit # We only manage locked state
+		exit # We only manage locked target_state
 		;;
 	lock)
-		state=off
+		target_state=off
 		;;
 	off)
-		state=crust
+		target_state=crust
 		;;
 esac
 
-sxmo_screenlock.sh "$state"
+if [ "crust" = "$target_state" ]; then
+	while ! sxmo_hooks.sh can_suspend; do
+		sleep 5
+		if [ "$(sxmo_screenlock.sh getCurState)" != "$initial_state" ]; then
+			# something happen, do not suspend !
+			exit
+		fi
+	done
+fi
+
+sxmo_screenlock.sh "$target_state"

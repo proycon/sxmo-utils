@@ -12,10 +12,6 @@ exit_not_idle() {
 	exit 1
 }
 
-modem_use() {
-	(pgrep -f sxmo_modem.sh > /dev/null || \
-		pgrep -f sxmo_mms.sh > /dev/null) && exit_not_idle "modem"
-}
 
 ongoing_call() {
 	pgrep -f sxmo_modemcall.sh > /dev/null && exit_not_idle "call"
@@ -42,7 +38,6 @@ waiting_rtcwake() {
 	fi
 }
 
-modem_use
 ongoing_call
 proximity_lock_on
 playing_mpc
