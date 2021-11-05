@@ -30,7 +30,7 @@ xorgidle() {
 
 		sleep 1
 		tick=$((tick + 1))
-	done &
+	done
 }
 
 wm="$(sxmo_wm.sh)"
