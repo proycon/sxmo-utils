@@ -25,11 +25,10 @@ xorgidle() {
 			tick=0
 		fi
 
-		printf "%b\n" "$idles" | while IFS='|' read -r second command; do
-			if [ "$tick" -eq "$second" ]; then
-				eval "$command"
-			fi
-		done
+		printf "%b\n" "$idles" | \
+			grep "^$tick|" | \
+			cut -d'|' -f2- | \
+			xargs -I{} -0 sh -c "{}"
 
 		sleep 1
 		tick=$((tick + 1))
