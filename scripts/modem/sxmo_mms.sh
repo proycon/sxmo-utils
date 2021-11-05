@@ -3,34 +3,36 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+stderr() {
+	printf "$@" >&2
+}
+
 # check for lost mms (in rare cases)
 checkforlostmms() {
 	ALL_MMS_TEMP="$(mktemp)"
 	LOCAL_MMS_TEMP="$(mktemp)"
 	SERVER_MMS_TEMP="$(mktemp)"
-	echo "Making list of all MMS messages on server.">&2
+	stderr "Making list of all MMS messages on server.\n"
 	mmsctl -M | jq -r '.message_path' | rev | cut -d'/' -f1 | rev | sort -u > "$ALL_MMS_TEMP"
-	echo "Got $(wc -l < "$ALL_MMS_TEMP") messages.">&2
-	echo "Making list of local MMS messages.">&2
+	stderr "Got %s messages.\n" "$(wc -l < "$ALL_MMS_TEMP")"
+	stderr "Making list of local MMS messages.\n"
 	cut -f 4 < "$LOGDIR/modemlog.tsv" | grep -v 'chars' | sort -u > "$LOCAL_MMS_TEMP"
-	echo "Got $(wc -l < "$LOCAL_MMS_TEMP") messages.">&2
+	stderr "Got %s messages.\n" "$(wc -l < "$LOCAL_MMS_TEMP")"
 
-	echo "Comparing them and making list of MMS messages ONLY on server.">&2
+	stderr "Comparing them and making list of MMS messages ONLY on server.\n"
 	# see comm manpage: prints only unique files in ALL_MMS_TMP, i.e., files only on server
 	comm -23 "$ALL_MMS_TEMP" "$LOCAL_MMS_TEMP" > "$SERVER_MMS_TEMP"
 	count="$(wc -l < "$SERVER_MMS_TEMP")"
-	echo "Got $count messages.">&2
+	stderr "Got %s messagess.\n" "$count"
 	if [ "$count" -gt 0 ]; then
-		#read -r "Warning. This will download all the undownloaded MMS messages still on server and process them. Continue?  Any key to continue."
-
 		while read -r line; do
 			processmms "/org/ofono/mms/modemmanager/$line" "Unknown"
 		done < "$SERVER_MMS_TEMP"
-		echo "Done!">&2
+		stderr "Done!\n"
 	else
-		echo "No outstanding messages. Done!">&2
+		stderr "No outstanding messages. Done!\n"
 	fi
-	echo "Cleaning up temp files.">&2
+	stderr "Cleaning up temp files.\n"
 	rm "$ALL_MMS_TEMP"
 	rm "$LOCAL_MMS_TEMP"
 	rm "$SERVER_MMS_TEMP"
@@ -84,11 +86,11 @@ processmms() {
 	MESSAGE_PATH="$1"
 	MESSAGE_TYPE="$2" # Sent or Received or Unknown
 	MESSAGE="$(mmsctl -M -o "$MESSAGE_PATH")"
-	echo "sxmo_mms.sh processmms $MESSAGE_PATH $MESSAGE_TYPE">&2
+	stderr "sxmo_mms.sh processmms %s %s\n" "$MESSAGE_PATH" "$MESSAGE_TYPE"
 
 	# If a message expires on the server-side, just chuck it
 	if printf %s "$MESSAGE" | grep -q "Accept-Charset (deprecated): Message not found"; then
-		echo "sxmo_modemmonitor: $MESSAGE_PATH not found! Deleting.">&2
+		stderr "sxmo_modemmonitor: %s not found! Deleting.\n" "$MESSAGE_PATH"
 		mmsctl -D -o "$MESSAGE_PATH"
 		return
 	fi
@@ -102,13 +104,13 @@ processmms() {
 				;;
 			draft)
 				MESSAGE_TYPE="Sent"
-				echo "WARNING: Draft">&2
+				stderr "WARNING: Draft\n"
 				;;
 			received)
 				MESSAGE_TYPE="Received"
 				;;
 			*)
-				echo "Bad message type: $MESSAGE_TYPE">&2
+				stderr "Bad message type: %s\n" "$MESSAGE_TYPE"
 				return
 				;;
 		esac
@@ -144,7 +146,8 @@ processmms() {
 		mkdir -p "$LOGDIR/$LOGDIRNUM"
 		printf "%s MMS from %s at %s:\n" "$MESSAGE_TYPE" "$FROM_NAME" "$DATE" >> "$LOGDIR/$LOGDIRNUM/sms.txt"
 	fi
-	echo "sxmo_modemmonitor: $MESSAGE_TYPE MMS ($MMS_FILE) from number: $FROM_NUM to number: $TO_NUMS">&2
+	stderr "sxmo_modemmonitor: %s MMS (%s) from number: %s to number: %s\n" \
+		"$MESSAGE_TYPE" "$MMS_FILE" "$FROM_NUM" "$TO_NUMS"
 
 	mkdir -p "$LOGDIR/$LOGDIRNUM/attachments"
 
