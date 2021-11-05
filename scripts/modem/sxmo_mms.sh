@@ -4,6 +4,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 stderr() {
+	# shellcheck disable=SC2059
 	printf "$@" >&2
 }
 

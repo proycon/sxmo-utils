@@ -84,8 +84,8 @@ if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$
 
 	MAX_ATTACHMENTS="$(grep "^TotalMaxAttachmentSize" "$MMS_RECEIVED_DIR/mms" | cut -d'=' -f2)"
 	TOT_MAX_ATTACHMENT_SIZE="$(grep "^MaxAttachments" "$MMS_RECEIVED_DIR/mms" | cut -d'=' -f 2)"
-	[ -z $MAX_ATTACHMENTS ] && MAX_ATTACHMENTS="25"
-	[ -z $TOT_MAX_ATTACHMENT_SIZE ] && TOT_MAX_ATTACHMENT_SIZE="1100000"
+	[ -z "$MAX_ATTACHMENTS" ] && MAX_ATTACHMENTS="25"
+	[ -z "$TOT_MAX_ATTACHMENT_SIZE" ] && TOT_MAX_ATTACHMENT_SIZE="1100000"
 
 	if [ "$count" -gt "$MAX_ATTACHMENTS" ]; then
 		err "Too many attachments!"
