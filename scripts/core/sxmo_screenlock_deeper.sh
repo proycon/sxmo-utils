@@ -19,14 +19,8 @@ case "$initial_state" in
 		;;
 esac
 
-if [ "crust" = "$target_state" ]; then
-	while ! sxmo_hooks.sh can_suspend; do
-		sleep 5
-		if [ "$(sxmo_screenlock.sh getCurState)" != "$initial_state" ]; then
-			# something happen, do not suspend !
-			exit
-		fi
-	done
+if [ "crust" = "$target_state" ] && ! sxmo_hooks.sh can_suspend; then
+	exit
 fi
 
 sxmo_screenlock.sh "$target_state"
