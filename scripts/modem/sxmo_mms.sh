@@ -171,10 +171,9 @@ processmms() {
 
 	if [ "$MESSAGE_TYPE" = "Received" ]; then
 		[ -n "$OPEN_ATTACHMENTS_CMD" ] && TEXT="$icon_att $TEXT"
-
 		sxmo_notificationwrite.sh \
 			random \
-			"TERMNAME=\"$LOGDIRNUM SMS\" sxmo_terminal.sh sh -c \"""${OPEN_ATTACHMENTS_CMD}""sxmo_modemtext.sh tailtextlog \"$LOGDIRNUM\"\"" \
+			"${OPEN_ATTACHMENTS_CMD}sxmo_modemtext.sh tailtextlog \"$LOGDIRNUM\"" \
 			"$LOGDIR/$LOGDIRNUM/sms.txt" \
 			"$FROM_NAME: $TEXT ($MMS_FILE)"
 
