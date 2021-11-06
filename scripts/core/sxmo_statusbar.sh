@@ -11,14 +11,20 @@ forceupdate() {
 }
 trap "forceupdate" USR1
 
+setbar() {
+	case "$WM" in
+		sway|ssh) printf "%s\n" "$*";;
+		dwm) xsetroot -name "$*";;
+	esac
+}
+
 update() {
 	BAR="$(sxmo_hooks.sh statusbar)"
 	[ -z "$SLEEPID" ] && return # to prevent mid rendering interuption
-	printf %s "$BAR" | case "$WM" in
-		sway|ssh) xargs -0 printf "%s\n";;
-		dwm) xargs -0 xsetroot -name;;
-	esac
+	setbar "$BAR"
 }
+
+setbar "SXMO : Simple Mobile"
 
 while :
 do
