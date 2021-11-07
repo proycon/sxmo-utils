@@ -23,7 +23,7 @@ finish() {
 	setsid -f sh -c 'sleep 2; sxmo_statusbarupdate.sh'
 	if [ -n "$1" ]; then
 		echo "sxmo_modemcall: $1">&2
-		notify-send "$1"
+		notify-send Call "$1"
 	fi
 	[ -n "$LOCKPID" ] && kill "$LOCKPID"
 	sxmo_dmenu.sh close
