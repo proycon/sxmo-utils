@@ -29,7 +29,7 @@ esac > /dev/null
 case "$(sxmo_wm.sh)" in
 	sway)
 		swaymsg mode menu -q # disable default button inputs
-		bemenu --scrollbar autohide -s -n -w -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 8 ||  printf 15)" "$@"
+		bemenu -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 8 ||  printf 15)" "$@"
 		returned=$?
 		swaymsg mode default -q
 		exit "$returned"
