@@ -10,6 +10,8 @@ finish() {
 	exit 0
 }
 
+
+INITIALSTATE="$(sxmo_screenlock.sh getCurState)"
 trap 'finish' TERM INT
 
 proximity_raw_bus="$(find /sys/ -name 'in_proximity_raw')"
@@ -30,7 +32,5 @@ mainloop() {
 		sleep 0.5
 	done
 }
-
-INITIALSTATE="$(sxmo_screenlock.sh getCurState)"
 
 mainloop
