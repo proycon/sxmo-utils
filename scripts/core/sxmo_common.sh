@@ -68,6 +68,7 @@ alias xargs="busybox xargs"
 alias less="busybox less"
 alias tail="busybox tail"
 alias grep="busybox grep"
+alias netstat="busybox netstat" # for is_idle
 
 SXMO_COMMON_INCLUDED=1
 
