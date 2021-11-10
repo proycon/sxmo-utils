@@ -17,7 +17,8 @@ NOTIFMSG="$4"
 writenotification() {
 	mkdir -p "$NOTIFDIR"
 	if [ "$NOTIFFILEPATHTOWRITE" = "random" ]; then
-		NOTIFFILEPATHTOWRITE="$NOTIFDIR/$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 10)"
+		NOTIFRANDOM="$(tr -dc 'a-zA-Z0-9' < /dev/urandom 2>/dev/null | head -c 10)"
+		NOTIFFILEPATHTOWRITE="$NOTIFDIR/$NOTIFRANDOM"
 	fi
 	touch "$NOTIFFILEPATHTOWRITE"
 	printf %b "rm -f $NOTIFFILEPATHTOWRITE; $ACTION\n$WATCHFILE\n$NOTIFMSG\n" > "$NOTIFFILEPATHTOWRITE"
