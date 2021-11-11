@@ -8,6 +8,14 @@ stderr() {
 	printf "$@" >&2
 }
 
+checkmmsd() {
+	if [ -f "$HOME/.mms/modemmanager/mms" ]; then
+		pgrep mmsdtng > /dev/null && return
+		printf "sxmo_mms: mmsdtng not found, attempting to start it.\n" >&2
+		setsid -f mmsdtng
+	fi
+}
+
 # check for lost mms (in rare cases)
 checkforlostmms() {
 	ALL_MMS_TEMP="$(mktemp)"

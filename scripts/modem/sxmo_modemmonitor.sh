@@ -64,6 +64,7 @@ mainloop() {
 		do
 			sleep 60
 			sxmo_modem.sh checkmodem
+			sxmo_mms.sh checkmmsd
 		done
 	) &
 
