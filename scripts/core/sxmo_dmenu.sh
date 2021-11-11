@@ -29,9 +29,15 @@ esac > /dev/null
 case "$(sxmo_wm.sh)" in
 	sway)
 		swaymsg mode menu -q # disable default button inputs
+		cleanmode() {
+			swaymsg mode default -q
+		}
+		trap 'cleanmode' TERM INT
+
 		bemenu -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 8 ||  printf 15)" "$@"
 		returned=$?
-		swaymsg mode default -q
+
+		cleanmode
 		exit "$returned"
 		;;
 	xorg|dwm)
