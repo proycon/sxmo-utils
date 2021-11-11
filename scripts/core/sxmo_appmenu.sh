@@ -67,7 +67,7 @@ programchoicesinit() {
 	applications )
 		# Apps menu
 		if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/apps" ]; then
-			CHOICES=$("$XDG_CONFIG_HOME/sxmo/hooks/apps")
+			CHOICES="$("$XDG_CONFIG_HOME/sxmo/hooks/apps")"
 		else
 			CHOICES="
 				$(command -v aerc       >/dev/null && echo "$icon_eml Aerc    	^ 0 ^ sxmo_terminal.sh aerc")
