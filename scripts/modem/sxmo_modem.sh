@@ -18,8 +18,8 @@ checkmodem() {
 			echo "sxmo_modem: modem not found, waiting for modem... (try #$TRIES)">&2
 			sleep 3
 			if [ "$TRIES" -eq 10 ]; then
-				echo "sxmo_modem: forcing modem restart">&2
-				sxmo_modemmonitortoggle.sh restart #will kill the modemmonitor too
+				echo "sxmo_modem: ERROR! calling sxmo_modemonitortoggle.sh ensure">&2
+				sxmo_modemmonitortoggle.sh ensure
 				break
 			fi
 		fi

@@ -125,6 +125,7 @@ case "$1" in
 	restart) off; ensure_daemons && on;;
 	on) ensure_daemons && on;;
 	off) off;;
+	ensure) ensure_daemons;;
 esac
 
 sleep 1
