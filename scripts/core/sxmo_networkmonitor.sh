@@ -4,10 +4,14 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+stderr() {
+	printf "sxmo_networkmonitor %s: %s" "$(date)" "$*" >&2
+}
+
 gracefulexit() {
 	sxmo_statusbarupdate.sh
 	sleep 1
-	echo "sxmo_networkmonitor: gracefully exiting (on signal or after error)">&2
+	stderr "gracefully exiting (on signal or after error)"
 	kill -9 0
 }
 
@@ -20,12 +24,12 @@ dbus-monitor --system "interface='org.freedesktop.NetworkManager',type='signal',
 			read -r newstate
 			if echo "$newstate" | grep "int32 70"; then
 				#network just connected (70=NM_STATE_CONNECTED_GLOBAL)
-				echo "network up">&2
+				stderr "network up."
 				sxmo_hooks.sh network-up &
 				sxmo_statusbarupdate.sh
 			elif echo "$newstate" | grep "int32 20"; then
 				#network just disconnected (20=NM_STATE_DISCONNECTED)
-				echo "network down">&2
+				stderr "network down."
 				sxmo_hooks.sh network-down &
 				sxmo_statusbarupdate.sh
 			elif echo "$newstate" | grep "int32 30"; then

@@ -3,6 +3,10 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+stderr() {
+	printf "sxmo_modem %s: %s\n" "$(date)" "$*" >&2
+}
+
 checkmodem() {
 	TRIES=0
 	while [ "$TRIES" -lt 10 ]; do
@@ -15,10 +19,10 @@ checkmodem() {
 			break
 		else
 			TRIES=$((TRIES+1))
-			echo "sxmo_modem: modem not found, waiting for modem... (try #$TRIES)">&2
+			stderr "modem not found, waiting for modem... (try #$TRIES)"
 			sleep 3
 			if [ "$TRIES" -eq 10 ]; then
-				echo "sxmo_modem: ERROR! calling sxmo_modemonitortoggle.sh ensure">&2
+				stderr "ERROR! checkmodem couldn't find modem. Calling sxmo_modemonitortoggle.sh ensure"
 				sxmo_modemmonitortoggle.sh ensure
 				break
 			fi
@@ -32,14 +36,14 @@ modem_n() {
 		MODEMS="$(mmcli -L)"
 		if ! echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' > /dev/null; then
 			TRIES=$((TRIES+1))
-			echo "sxmo_modem: modem not found, waiting for modem... (try #$TRIES)">&2
+			stderr "modem not found, waiting for modem... (try #$TRIES)"
 			sleep 1
 		else
 			echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
 			return
 		fi
 	done
-	echo "sxmo_modem: Error Couldn't find modem - is your modem enabled? Disabling modem monitor.">&2
+	stderr "ERROR! modem_n couldn't find modem. Calling sxmo_modemmonitortoggle.sh off"
 	notify-send "Couldn't find modem - is your modem enabled? Disabling modem monitor."
 	sleep 1
 	sxmo_modemmonitortoggle.sh off
@@ -87,35 +91,35 @@ checkforfinishedcalls() {
 		mkdir -p "$LOGDIR"
 		if [ -f "$CACHEDIR/${FINISHEDCALLID}.discardedcall" ]; then
 			#this call was discarded
-			echo "sxmo_modem: Discarded call from $FINISHEDNUMBER">&2
+			stderr "Discarded call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_discarded\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
 			pkill -f sxmo_modemcall.sh
-			echo "sxmo_modem: Finished call from $FINISHEDNUMBER">&2
+			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.hangedupcall" ]; then
 			#this call was hung up by the user
-			echo "sxmo_modem: Finished call from $FINISHEDNUMBER">&2
+			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.initiatedcall" ]; then
 			#this call was hung up by the contact
 			pkill -f sxmo_modemcall.sh
-			echo "sxmo_modem: Finished call from $FINISHEDNUMBER">&2
+			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.mutedring" ]; then
 			#this ring was muted up
-			echo "sxmo_modem: Muted ring from $FINISHEDNUMBER">&2
+			stderr "Muted ring from $FINISHEDNUMBER"
 			printf %b "$TIME\tring_muted\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		else
 			#this is a missed call
 			# Add a notification for every missed call
 			pkill -f sxmo_modemcall.sh
-			echo "sxmo_modem: Missed call from $FINISHEDNUMBER">&2
+			stderr "Missed call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
 			CONTACT="$(sxmo_contacts.sh --name "$FINISHEDNUMBER")"
-			echo "sxmo_modem: Invoking missed call hook (async)">&2
+			stderr "Invoking missed call hook (async)"
 			sxmo_hooks.sh missed_call "$CONTACT" &
 
 			sxmo_notificationwrite.sh \
@@ -142,19 +146,19 @@ checkforincomingcalls() {
 	cat "$LASTSTATE" > "$CACHEDIR/${VOICECALLID}.laststate"
 
 	# Determine the incoming phone number
-	echo "sxmo_modem: Incoming Call:">&2
+	stderr "Incoming Call:"
 	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
 	INCOMINGNUMBER="$(cleanupnumber "$INCOMINGNUMBER")"
 	CONTACTNAME=$(sxmo_contacts.sh --name "$INCOMINGNUMBER")
 
 	TIME="$(date --iso-8601=seconds)"
 	if cut -f1 "$BLOCKFILE" | grep -q "^$INCOMINGNUMBER$"; then
-		echo "sxmo_modem: BLOCKED call from number: $VOICECALLID">&2
+		stderr "BLOCKED call from number: $VOICECALLID"
 		sxmo_modemcall.sh mute "$VOICECALLID"
 		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$BLOCKDIR/modemlog.tsv"
 		rm -f "$NOTIFDIR/incomingcall_${VOICECALLID}_notification"*
 	else
-		echo "sxmo_modem: Invoking ring hook (async)">&2
+		stderr "Invoking ring hook (async)"
 		sxmo_hooks.sh ring "$CONTACTNAME" &
 
 		mkdir -p "$LOGDIR"
@@ -167,7 +171,7 @@ checkforincomingcalls() {
 			"Incoming $icon_phn $CONTACTNAME" &
 		sxmo_modemcall.sh incomingcallmenu "$VOICECALLID" &
 
-		echo "sxmo_modem: Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)">&2
+		stderr "Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)"
 	fi
 }
 
@@ -184,7 +188,7 @@ checkfornewtexts() {
 		TEXTDATA="$(mmcli -m "$(modem_n)" -s "$TEXTID" -K)"
 		# SMS with no TEXTID is an SMS WAP (I think). So skip.
 		if [ -z "$TEXTDATA" ]; then
-			echo "sxmo_modem: no TEXTDATA, probably MMS.">&2
+			stderr "no TEXTDATA, probably MMS."
 			continue
 		fi
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
@@ -198,7 +202,7 @@ checkfornewtexts() {
 
 		if cut -f1 "$BLOCKFILE" | grep -q "^$NUM$"; then
 			mkdir -p "$BLOCKDIR/$NUM"
-			echo "sxmo_modem: BLOCKED text from number: $NUM (TEXTID: $TEXTID)">&2
+			stderr "BLOCKED text from number: $NUM (TEXTID: $TEXTID)"
 			printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$BLOCKDIR/$NUM/sms.txt"
 			printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$BLOCKDIR/modemlog.tsv"
 			mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
@@ -209,13 +213,13 @@ checkfornewtexts() {
 		# but I've found that sometimes sms can have '--' in DATA
 		# so I think safer bet is to just check for TEXT = "--" and ghost sms's above..
 		if [ "$TEXT" = "--" ]; then
-			echo "sxmo_modem: TEXT = '--'. Probably an MMS...">&2
+			stderr "TEXT = '--'. Probably an MMS..."
 			continue
 		fi
-		echo "sxmo_modem: Probably not an MMS.">&2
+		stderr "Probably not an MMS."
 
 		mkdir -p "$LOGDIR/$NUM"
-		echo "sxmo_modem: Text from number: $NUM (TEXTID: $TEXTID)">&2
+		stderr "Text from number: $NUM (TEXTID: $TEXTID)"
 		printf %b "Received SMS from $NUM at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
 		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
 		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"

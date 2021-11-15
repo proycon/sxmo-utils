@@ -4,8 +4,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 stderr() {
-	# shellcheck disable=SC2059
-	printf "$@" >&2
+	printf "sxmo_mms %s: %s\n" "$(date)" "$*" >&2
 }
 
 checkmmsd() {
@@ -21,27 +20,27 @@ checkforlostmms() {
 	ALL_MMS_TEMP="$(mktemp)"
 	LOCAL_MMS_TEMP="$(mktemp)"
 	SERVER_MMS_TEMP="$(mktemp)"
-	stderr "Making list of all MMS messages on server.\n"
+	stderr "Making list of all MMS messages on server."
 	mmsctl -M | jq -r '.message_path' | rev | cut -d'/' -f1 | rev | sort -u > "$ALL_MMS_TEMP"
-	stderr "Got %s messages.\n" "$(wc -l < "$ALL_MMS_TEMP")"
-	stderr "Making list of local MMS messages.\n"
+	stderr "Got $(wc -l < "$ALL_MMS_TEMP") messages."
+	stderr "Making list of local MMS messages."
 	cut -f 4 < "$LOGDIR/modemlog.tsv" | grep -v 'chars' | sort -u > "$LOCAL_MMS_TEMP"
-	stderr "Got %s messages.\n" "$(wc -l < "$LOCAL_MMS_TEMP")"
+	stderr "Got $(wc -l < "$LOCAL_MMS_TEMP") messages."
 
-	stderr "Comparing them and making list of MMS messages ONLY on server.\n"
+	stderr "Comparing them and making list of MMS messages ONLY on server."
 	# see comm manpage: prints only unique files in ALL_MMS_TMP, i.e., files only on server
 	comm -23 "$ALL_MMS_TEMP" "$LOCAL_MMS_TEMP" > "$SERVER_MMS_TEMP"
 	count="$(wc -l < "$SERVER_MMS_TEMP")"
-	stderr "Got %s messagess.\n" "$count"
+	stderr "Got $count messagess."
 	if [ "$count" -gt 0 ]; then
 		while read -r line; do
 			processmms "/org/ofono/mms/modemmanager/$line" "Unknown"
 		done < "$SERVER_MMS_TEMP"
-		stderr "Done!\n"
+		stderr "Done!"
 	else
-		stderr "No outstanding messages. Done!\n"
+		stderr "No outstanding messages. Done!"
 	fi
-	stderr "Cleaning up temp files.\n"
+	stderr "Cleaning up temp files."
 	rm "$ALL_MMS_TEMP"
 	rm "$LOCAL_MMS_TEMP"
 	rm "$SERVER_MMS_TEMP"
@@ -95,11 +94,11 @@ processmms() {
 	MESSAGE_PATH="$1"
 	MESSAGE_TYPE="$2" # Sent or Received or Unknown
 	MESSAGE="$(mmsctl -M -o "$MESSAGE_PATH")"
-	stderr "sxmo_mms.sh processmms %s %s\n" "$MESSAGE_PATH" "$MESSAGE_TYPE"
+	stderr "processmms $MESSAGE_PATH $MESSAGE_TYPE"
 
 	# If a message expires on the server-side, just chuck it
 	if printf %s "$MESSAGE" | grep -q "Accept-Charset (deprecated): Message not found"; then
-		stderr "sxmo_modemmonitor: %s not found! Deleting.\n" "$MESSAGE_PATH"
+		stderr "$MESSAGE_PATH not found! Deleting."
 		mmsctl -D -o "$MESSAGE_PATH"
 		return
 	fi
@@ -113,13 +112,13 @@ processmms() {
 				;;
 			draft)
 				MESSAGE_TYPE="Sent"
-				stderr "WARNING: Draft\n"
+				stderr "WARNING: Draft"
 				;;
 			received)
 				MESSAGE_TYPE="Received"
 				;;
 			*)
-				stderr "Bad message type: %s\n" "$MESSAGE_TYPE"
+				stderr "Bad message type: $MESSAGE_TYPE"
 				return
 				;;
 		esac
@@ -132,7 +131,7 @@ processmms() {
 	if [ -z "$MYNUM" ]; then
 		MYNUM="$(sxmo_contacts.sh --me)"
 		if [ -z "$MYNUM" ]; then
-			stderr "We cannot determine the modem number. Configure the Me contact.\n"
+			stderr "We cannot determine the modem number. Configure the Me contact."
 		fi
 	fi
 
@@ -162,8 +161,7 @@ processmms() {
 		mkdir -p "$LOGDIR/$LOGDIRNUM"
 		printf "%s MMS from %s at %s:\n" "$MESSAGE_TYPE" "$FROM_NAME" "$DATE" >> "$LOGDIR/$LOGDIRNUM/sms.txt"
 	fi
-	stderr "sxmo_modemmonitor: %s MMS (%s) from number: %s to number: %s\n" \
-		"$MESSAGE_TYPE" "$MMS_FILE" "$FROM_NUM" "$TO_NUMS"
+	stderr "$MESSAGE_TYPE MMS ($MMS_FILE) from number $FROM_NUM to number $TO_NUMS"
 
 	mkdir -p "$LOGDIR/$LOGDIRNUM/attachments"
 

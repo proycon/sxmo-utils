@@ -5,9 +5,13 @@ trap "gracefulexit" INT TERM
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+stderr() {
+	printf "sxmo_modemmonitor %s: %s\n" "$(date)" "$*" >&2
+}
+
 gracefulexit() {
 	sleep 1
-	echo "sxmo_modemmonitor: gracefully exiting (on signal or after error)">&2
+	stderr "gracefully exiting (on signal or after error)">&2
 	kill -9 0
 }
 
@@ -71,7 +75,6 @@ mainloop() {
 	# monitor for mms
 	dbus-monitor "interface='org.ofono.mms.Service',type='signal',member='MessageAdded'" | \
 		while read -r line; do
-			echo "MMS DEBUG: $line">&2
 			if echo "$line" | grep -q '^object path'; then
 				MESSAGE_PATH="$(echo "$line" | cut -d'"' -f2)"
 			fi
@@ -92,7 +95,7 @@ mainloop() {
 }
 
 
-echo "sxmo_modemmonitor: starting -- $(date)" >&2
+stderr "starting"
 rm -f "$CACHEDIR"/*.pickedupcall 2>/dev/null #new session, forget all calls we picked up previously
 mainloop
-echo "sxmo_modemmonitor: exiting -- $(date)" >&2
+stderr "exiting"
