@@ -25,6 +25,7 @@ notificationmenu() {
 		dmenu -i -p "Notifs"
 	)"
 
+	[ -z "$PICKEDCONTENT" ] && exit 1
 	echo "$PICKEDCONTENT" | grep -q "Close Menu" && exit 1
 	echo "$PICKEDCONTENT" | grep -q "Clear Notifications" && rm "$NOTIFDIR"/* && exit 1
 
