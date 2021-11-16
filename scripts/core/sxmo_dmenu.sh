@@ -5,28 +5,28 @@
 
 case "$1" in
 	isopen)
-		case "$(sxmo_wm.sh)" in
-			sway|ssh)
+		case "$SXMO_WM" in
+			sway)
 				exec pgrep bemenu
 				;;
-			xorg|dwm)
+			dwm)
 				exec pgrep dmenu
 				;;
 		esac
 		;;
 	close)
-		case "$(sxmo_wm.sh)" in
-			sway|ssh)
+		case "$SXMO_WM" in
+			sway)
 				exec pkill bemenu
 				;;
-			xorg|dwm)
+			dwm)
 				exec pkill dmenu
 				;;
 		esac
 		;;
 esac > /dev/null
 
-case "$(sxmo_wm.sh)" in
+case "$SXMO_WM" in
 	sway)
 		swaymsg mode menu -q # disable default button inputs
 		cleanmode() {
@@ -40,14 +40,14 @@ case "$(sxmo_wm.sh)" in
 		cleanmode
 		exit "$returned"
 		;;
-	xorg|dwm)
+	dwm)
 		if sxmo_keyboard.sh isopen; then
 			exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 5 || printf 12)" "$@"
 		else
 			exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 7 || printf 15)" "$@"
 		fi
 		;;
-	ssh)
+	*)
 		export BEMENU_BACKEND=curses
 		exec bemenu -w "$@"
 		;;

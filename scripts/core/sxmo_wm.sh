@@ -135,27 +135,25 @@ xorgswitchfocus() {
 }
 
 guesswm() {
-	if [ -n "$SWAYSOCK" ]; then
-		printf "sway"
-	elif [ -n "$DISPLAY" ]; then
-		printf "dwm"
-	elif [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-		printf "ssh"
+	SWAYSOCK="$(cat "$CACHEDIR"/sxmo.swaysock)"
+	export SWAYSOCK
+	if swaymsg; then
+		export SXMO_WM=sway
+		export WAYLAND_DISPLAY=wayland-1
 	else
-		printf "none"
+		unset SWAYSOCK
+		export DISPLAY=":0"
+		export SXMO_WM=dwm
 	fi
 }
 
-wm="$(guesswm)"
-
-if [ -z "$1" ]; then
-	printf %s "$wm"
-	exit
+if [ -z "$SXMO_WM" ]; then
+	guesswm
 fi
 
 action="$1"
 shift
-case "$wm" in
-	dwm|xorg) "xorg$action" "$@";;
-	*) "$wm$action" "$@";;
+case "$SXMO_WM" in
+	dwm) "xorg$action" "$@";;
+	*) "$SXMO_WM$action" "$@";;
 esac

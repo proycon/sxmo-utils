@@ -35,10 +35,9 @@ xorgidle() {
 	done
 }
 
-wm="$(sxmo_wm.sh)"
-case "$wm" in
-	dwm|xorg) xorgidle "$@" & ;;
-	*) "${wm}idle" "$@" & ;;
+case "$SXMO_WM" in
+	dwm) xorgidle "$@" & ;;
+	*) "${SXMO_WM}idle" "$@" & ;;
 esac
 IDLEPID=$!
 

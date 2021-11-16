@@ -9,7 +9,7 @@ wtype_to_xdotool() {
 		key="$2"
 		shift 2
 		xdotool keydown "$key"
-		sxmo_type.sh -f xorg "$@"
+		sxmo_type.sh "$@"
 		xdotool keyup "$key"
 		exit
 	elif [ "-m" = "$1" ] || [ "-p" = "$1" ]; then
@@ -29,20 +29,11 @@ wtype_to_xdotool() {
 	wtype_to_xdotool "$@"
 }
 
-# enforce wm
-# usefull to recurse without reprobing the wm
-if [ "$1" = "-f" ]; then
-	wm="$2"
-	shift 2
-else
-	wm="$(sxmo_wm.sh)"
-fi
-
-case "$wm" in
+case "$SXMO_WM" in
 	sway)
 		wtype "$@"
 		;;
-	dwm|xorg)
+	dwm)
 		wtype_to_xdotool "$@"
 		;;
 esac

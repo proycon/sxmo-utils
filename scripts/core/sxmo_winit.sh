@@ -4,6 +4,7 @@
 envvars() {
 	# shellcheck disable=SC1091
 	[ -f /etc/profile ] && . /etc/profile
+	export SXMO_WM=sway
 	export BEMENU_OPTS='--fn "Monospace 14" --scrollbar autohide -s -n -w -c -l8 -M 40 -H 20'
 	export MOZ_ENABLE_WAYLAND=1
 	export SDL_VIDEODRIVER=wayland

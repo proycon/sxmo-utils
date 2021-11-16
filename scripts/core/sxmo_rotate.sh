@@ -83,17 +83,15 @@ swayrotleft() {
 }
 
 isrotated() {
-	case "$wm" in
+	case "$SXMO_WM" in
 		sway)
 			"swayisrotated"
 			;;
-		dwm|xorg)
+		dwm)
 			"xorgisrotated"
 			;;
 	esac
 }
-
-wm="$(sxmo_wm.sh)"
 
 if [ -z "$1" ] || [ "rotate" = "$1" ]; then
 	shift
@@ -104,11 +102,11 @@ if [ -z "$1" ] || [ "rotate" = "$1" ]; then
 	fi
 fi
 
-case "$wm" in
+case "$SXMO_WM" in
 	sway)
 		"sway$1" "$@"
 		;;
-	dwm|xorg)
+	dwm)
 		"xorg$1" "$@"
 		;;
 esac

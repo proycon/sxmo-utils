@@ -63,4 +63,4 @@ dwm() {
 	esac
 }
 
-"$(sxmo_wm.sh)" "$@"
+"$SXMO_WM" "$@"

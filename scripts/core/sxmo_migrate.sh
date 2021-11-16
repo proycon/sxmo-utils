@@ -71,14 +71,14 @@ xorg() {
 	defaultconfig /usr/share/sxmo/appcfg/dunst.conf "$XDG_CONFIG_HOME/dunst/dunstrc" 744
 }
 
-case "$(sxmo_wm.sh)" in
+case "$SXMO_WM" in
 	sway)
 		sway
 		;;
-	xorg|dwm)
+	dwm)
 		xorg
 		;;
-	ssh|none)
+	*)
 		sway
 		xorg
 		;;

@@ -6,7 +6,7 @@
 
 printf "Sxmo "
 cat /usr/share/sxmo/version
-case "$(sxmo_wm.sh)" in
+case "$SXMO_WM" in
 	dwm)
 		/usr/bin/dwm -v
 		/usr/bin/dmenu -v

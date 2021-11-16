@@ -4,7 +4,7 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-WM="$(sxmo_wm.sh)"
+WM="$SXMO_WM"
 
 forceupdate() {
 	kill "$SLEEPID"
@@ -13,8 +13,8 @@ trap "forceupdate" USR1
 
 setbar() {
 	case "$WM" in
-		sway|ssh) printf "%s\n" "$*";;
 		dwm) xsetroot -name "$*";;
+		*) printf "%s\n" "$*";;
 	esac
 }
 

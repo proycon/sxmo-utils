@@ -41,34 +41,32 @@ xorgscreenshot() {
 }
 
 screenshot() {
-	case "$WM" in
+	case "$SXMO_WM" in
 		sway)
 			swayscreenshot "$@"
 			;;
-		xorg|dwm)
+		dwm)
 			xorgscreenshot "$@"
 			;;
-		ssh)
-			exitMsg "cannot screenshot ssh"
+		*)
+			exitMsg "We dont know the WM, cannot screenshot."
 			;;
 	esac
 }
 
 filepathoutput() {
 	printf %s "$FILENAME"
-	case "$WM" in
+	case "$SXMO_WM" in
 		sway)
 			wl-copy "$FILENAME"
 			;;
-		xorg|dwm)
+		dwm)
 			printf %s "$FILENAME" | xsel -b -i
 			;;
 	esac
 }
 
 FILENAME="${SXMO_SCREENSHOT_DIR:-$HOME/$(date +%Y-%m-%d-%T).png}"
-
-WM="$(sxmo_wm.sh)"
 
 screenshot "$@"
 filepathoutput

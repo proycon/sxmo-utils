@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-if [ "$(sxmo_wm.sh)" != "ssh" ]; then
+if [ -n "$SXMO_WM" ]; then
 	if sxmo_keyboard.sh isopen; then
 		wasopen="1"
 	fi
