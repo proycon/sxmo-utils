@@ -23,6 +23,9 @@ programs/sxmo_megiaudioroute: programs/sxmo_megiaudioroute.c
 programs/sxmo_vibratepine: programs/sxmo_vibratepine.c
 	gcc -o programs/sxmo_vibratepine programs/sxmo_vibratepine.c
 
+programs/sxmo_splitchar: programs/sxmo_splitchar.c
+	gcc -o programs/sxmo_splitchar programs/sxmo_splitchar.c
+
 clean:
 	rm -f programs/sxmo_megiaudioroute programs/sxmo_vibratepine
 
@@ -60,6 +63,7 @@ install: $(PROGRAMS)
 
 	install -D programs/sxmo_megiaudioroute $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_vibratepine $(DESTDIR)$(PREFIX)/bin/
+	install -D programs/sxmo_splitchar $(DESTDIR)$(PREFIX)/bin/
 	@echo "-------------------------------------------------------------------">&2
 	@echo "NOTICE 1: Do not forget to add sxmo-setpermissions to your init system, e.g. for openrc: rc-update add sxmo-setpermissions default && rc-service sxmo-setpermissions start" >&2
 	@echo "-------------------------------------------------------------------">&2

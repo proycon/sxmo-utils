@@ -180,16 +180,15 @@ incallmenuloop() {
 
 dtmfmenu() {
 	CALLID="$1"
-	NUMS="0123456789*#ABCD"
 
-	while true; do
-		PICKED="$(
-			echo "$NUMS" | grep -o . | sed '1 iReturn to Call Menu' |
-			dmenu -p "DTMF Tone"
-		)" || return
-		echo "$PICKED" | grep -q "Return to Call Menu" && return
-		modem_cmd_errcheck -m any -o "$CALLID" --send-dtmf="$PICKED"
-	done
+	sxmo_keyboard.sh close
+	KEYBOARD_ARGS="-o -l dialer" sxmo_keyboard.sh open | \
+		sxmo_splitchar | xargs -n1 printf "%s\n" | stdbuf -o0 grep '[0-9A-D*#]' | \
+		xargs -r -I{} -n1 mmcli -m any -o "$CALLID" --send-dtmf="{}" &
+
+	printf "Close Menu\n" | sxmo_dmenu.sh -p "DTMF Tone"
+
+	sxmo_keyboard.sh close
 }
 
 pickup() {
