@@ -14,6 +14,7 @@ WAKEUPRTC="/sys/class/wakeup/wakeup1/active_count"
 MODEMUPRTC="/sys/class/wakeup/wakeup10/active_count"
 NETWORKRTCSCAN="/sys/module/8723cs/parameters/rtw_scan_interval_thr"
 POWERRTC="/sys/class/wakeup/wakeup5/active_count"
+WOWLAN_LAST_WAKE_REASON="/proc/net/rtl8723cs/wlan0/wowlan_last_wake_reason"
 
 OLD_RTC_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.rtc.count"
 OLD_MODEM_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.modem.count"
@@ -35,8 +36,9 @@ whichWake() {
 		echo "modem"
 	elif [ "$(cat "$WAKEUPRTC")" -gt "$(cat "$OLD_RTC_WAKECOUNT")" ] ; then
 		echo "rtc"
+	elif [ "$(cat "$WOWLAN_LAST_WAKE_REASON")" = "last wake reason: 0x23" ]; then
+		echo "wowlan"
 	else
-		# button does not have a active count so if it's none of the above, it has to be the button
 		echo "button"
 	fi
 }
