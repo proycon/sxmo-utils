@@ -27,10 +27,6 @@ playing_mpc() {
 	(mpc status | grep -q '\[playing\]') && exit_not_idle "mpc"
 }
 
-active_ssh() {
-	(netstat | grep ESTABLISHED | grep -q ssh) && exit_not_idle "ssh"
-}
-
 waiting_rtcwake() {
 	if grep -q crust "$LASTSTATE" && \
 		grep -q rtc "$UNSUSPENDREASONFILE"; then
@@ -41,7 +37,6 @@ waiting_rtcwake() {
 ongoing_call
 proximity_lock_on
 playing_mpc
-active_ssh
 waiting_rtcwake
 
 exit 0

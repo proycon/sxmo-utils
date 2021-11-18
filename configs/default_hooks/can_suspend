@@ -13,6 +13,11 @@ modem_use() {
 		pgrep -f sxmo_mms.sh > /dev/null) && exit_should_wait "modem"
 }
 
+active_ssh() {
+	(netstat | grep ESTABLISHED | grep -q ssh) && exit_should_wait "ssh"
+}
+
 modem_use
+active_ssh
 
 exit 0
