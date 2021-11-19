@@ -238,7 +238,7 @@ case "$ACTION" in
 		;;
 	"uptopedge")
 		sxmo_dmenu.sh close
-		dunstctl close-all
+		sxmo_notifctl.sh closeall
 		exit 0
 		;;
 	"twodownbottomedge")
