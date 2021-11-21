@@ -56,7 +56,7 @@ fi
 
 #special context-sensitive handling
 case "$WMCLASS" in
-	*"foot"*)
+	*"foot"*|*"st"*)
 		# First we try to handle the app running inside st:
 		case "$WMNAME" in
 			*"tuir"*)
@@ -133,15 +133,31 @@ case "$WMCLASS" in
 				esac
 				;;
 		esac
-		# Now we try generic st actions
+		# Now we try generic actions for terminal
 		case "$ACTION" in
 			*"onedown")
-				sxmo_type.sh -M Shift -k Page_Up
-				exit 0
+				case "$WMCLASS" in
+					*"foot"*)
+						sxmo_type.sh -M Shift -k Page_Up
+						exit 0
+						;;
+					*"st"*)
+						sxmo_type.sh -M Ctrl -M Shift -k b
+						exit 0
+						;;
+				esac
 				;;
 			*"oneup")
-				sxmo_type.sh -M Shift -k Page_Down
-				exit 0
+				case "$WMCLASS" in
+					*"foot"*)
+						sxmo_type.sh -M Shift -k Page_Down
+						exit 0
+						;;
+					*"st"*)
+						sxmo_type.sh -M Ctrl -M Shift -k f
+						exit 0
+						;;
+				esac
 				;;
 		esac
 esac
