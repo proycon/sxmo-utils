@@ -42,9 +42,9 @@ case "$(sxmo_wm.sh)" in
 		;;
 	xorg|dwm)
 		if sxmo_keyboard.sh isopen; then
-			exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 6 || printf 15)" "$@"
+			exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 5 || printf 12)" "$@"
 		else
-			exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 8 || printf 20)" "$@"
+			exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 7 || printf 15)" "$@"
 		fi
 		;;
 	ssh)
