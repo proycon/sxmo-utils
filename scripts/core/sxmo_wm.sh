@@ -75,7 +75,7 @@ swayinputevent() {
 }
 
 xorgfocusedwindow() {
-	activeoutput="$(xprop -id "$(xdotool getactivewindow)")"
+	activeoutput="$(xprop -id "$(xdotool getactivewindow 2>/dev/null)" 2>/dev/null)"
 	printf %s "$activeoutput" | \
 		grep ^WM_CLASS | cut -d" " -f3- | cut -d"," -f1 | \
 		xargs printf 'app: %s'
