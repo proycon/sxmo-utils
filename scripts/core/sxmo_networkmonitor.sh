@@ -5,7 +5,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 stderr() {
-	printf "sxmo_networkmonitor %s: %s" "$(date)" "$*" >&2
+	printf "sxmo_networkmonitor %s: %s\n" "$(date)" "$*" >&2
 }
 
 gracefulexit() {
