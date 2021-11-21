@@ -438,6 +438,8 @@ programchoicesinit() {
 			$icon_zmo Zoom            ^ 1 ^ sxmo_type -M Ctrl -k minus
 			$icon_arl History        ^ 1 ^ sxmo_type -M Alt -k Left
 			$icon_arr History        ^ 1 ^ sxmo_type -M Alt -k Right
+			$icon_win Home           ^ 0 ^ sxmo_type -M Alt -k Home
+			$icon_zmo Full Screen    ^ 0 ^ sxmo_type -k F11
 			$icon_rld Refresh     ^ 0 ^ sxmo_type -M Shift -M Ctrl r
 		"
 		WINNAME=Firefox
