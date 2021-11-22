@@ -52,20 +52,6 @@ vid_to_number() {
 	tr -d  ' '
 }
 
-number_to_contactname() {
-	NUMBER="$1"
-	CONTACT=$(sxmo_contacts.sh --all |
-		grep ": $NUMBER$" |
-		cut -d':' -f 2 |
-		sed 's/^[ \t]*//;s/[ \t]*$//' #strip leading/trailing whitespace
-	)
-	if [ -n "$CONTACT" ]; then
-		echo "$CONTACT"
-	else
-		echo "Unknown ($NUMBER)"
-	fi
-}
-
 log_event() {
 	EVT_HANDLE="$1"
 	EVT_VID="$2"
@@ -219,8 +205,8 @@ mute() {
 }
 
 incomingcallmenu() {
-	NUMBER=$(vid_to_number "$1")
-	CONTACTNAME=$(number_to_contactname "$NUMBER")
+	NUMBER="$(vid_to_number "$1")"
+	CONTACTNAME="$(sxmo_contacts.sh --name "$NUMBER")"
 
 	PICKED="$(
 		printf %b "$icon_phn Pickup\n$icon_phx Hangup\n$icon_mut Mute\n" |
