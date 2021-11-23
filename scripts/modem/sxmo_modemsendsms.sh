@@ -28,10 +28,7 @@ MODEM="$(modem_n)"
 NUMBER="$1"
 
 if ! echo "$NUMBER" | grep -q '+'; then
-	CONTACT=$(sxmo_contacts.sh --all | grep "^$NUMBER:" |
-		cut -d':' -f2 |
-		sed 's/^[ \t]*//;s/[ \t]*$//'
-	)
+	CONTACT="$(sxmo_contacts.sh --name "$NUMBER")"
 	if [ -z "$CONTACT" ]; then
 		info "$NUMBER does not look like a number, but it isn't a contact either.  Continuing anyway."
 	else

@@ -82,8 +82,7 @@ elif [ "$1" = "--name" ]; then
 			| xargs -0 printf "???: %s\n%b" "$2" \
 			| tac \
 			| grep -m1 ": $2$" \
-			| cut -d':' -f1 \
-			| sed 's/^[ \t]*//;s/[ \t]*$//'
+			| sed -e 's/\(.*\):\(.*\)/\1/' -e 's/^[ \t]*//;s/[ \t]*$//'
 	fi
 elif [ -n "$*" ]; then
 	all_contacts | grep -i "$*"
