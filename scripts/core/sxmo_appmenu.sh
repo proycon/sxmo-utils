@@ -120,7 +120,7 @@ programchoicesinit() {
 		CHOICES="
 			$icon_lck Lock               ^ 0 ^ sxmo_screenlock.sh lock
 			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_screenlock.sh off
-			$icon_zzz Suspend            ^ 0 ^ sxmo_screenlock.sh lock && sxmo_screenlock.sh crust
+			$icon_zzz Suspend            ^ 0 ^ sxmo_screenlock.sh off && sxmo_screenlock.sh crust
 			$icon_out Logout             ^ 0 ^ confirm Logout && pkill -9 dwm || pkill -9 sway
 			$icon_rld Reboot             ^ 0 ^ confirm Reboot && sxmo_terminal.sh doas reboot
 			$icon_pwr Poweroff           ^ 0 ^ confirm Poweroff && sxmo_terminal.sh doas poweroff
