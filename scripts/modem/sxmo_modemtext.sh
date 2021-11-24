@@ -15,7 +15,7 @@ err() {
 choosenumbermenu() {
 	# Prompt for number
 	NUMBER="$(
-		printf %b "\n$icon_cls Cancel\n$icon_grp More contacts\n$(sxmo_contacts.sh | grep -E "\+?[0-9]+$")" |
+		printf %b "\n$icon_cls Cancel\n$icon_grp More contacts\n$(sxmo_contacts.sh | grep -E "\+[0-9]+$")" |
 		awk NF |
 		sxmo_dmenu_with_kb.sh -p "Number" -i |
 		cut -d: -f2 |
@@ -79,19 +79,19 @@ sendtextmenu() {
 		CONFIRM="$(printf %b "$CHOICES" | dmenu -i -p "Confirm")"
 		case "$CONFIRM" in
 			*"Send"*)
-				sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT"
-				# TODO: I think we want to check if modemsendsms.sh is success before rm DRAFT...
-				rm "$DRAFT"
-				echo "Sent text to $NUMBER">&2
-				exit 0
+				if sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT"; then
+					rm "$DRAFT"
+					echo "Sent text to $NUMBER">&2
+					exit 0
+				else
+					err "Failed to send txt to $NUMBER"
+				fi
 				;;
 			"Remove file"*)
 				FILE="$(printf %s "$CONFIRM" | cut -d' ' -f3-)"
 				sed -i "\|$FILE|d" "$LOGDIR/$NUMBER/draft.attachments.txt"
-				echo "DEBUG: removing $FILE from $LOGDIR/$NUMBER/draft.attachments.txt">&2
 				if [ ! -s "$LOGDIR/$NUMBER/draft.attachments.txt" ] ; then
 					rm "$LOGDIR/$NUMBER/draft.attachments.txt"
-					echo "DEBUG: draft.attahcments now empty so delete it.">&2
 				fi
 				;;
 			"Remove recipient"*)
@@ -101,7 +101,6 @@ sendtextmenu() {
 					NUMBER="$(printf %s "$OLDNUMBER" | sed "s/$RECIPIENT//")"
 					mkdir -p "$LOGDIR/$NUMBER"
 					DRAFT="$LOGDIR/$NUMBER/draft.txt"
-					echo "REMOVE: mv $OLDNUMBER/draft.txt to $DRAFT" >&2
 					if [ -f "$LOGDIR/$OLDNUMBER/draft.txt" ]; then
 						# TODO: if there is already a DRAFT warn the user?
 						mv "$LOGDIR/$OLDNUMBER/draft.txt" "$DRAFT"
@@ -125,18 +124,22 @@ sendtextmenu() {
 				OLDNUMBER="$NUMBER"
 				ADDEDNUMBER="$(choosenumbermenu)"
 
-				NUMBER="$(printf %s%s "$NUMBER" "$ADDEDNUMBER" | xargs pn find | sort -u | tr -d '\n')"
-				echo "NUMBER: $OLDNUMBER ADDEDNUMBER: $ADDEDNUMBER"
-				mkdir -p "$LOGDIR/$NUMBER"
-				DRAFT="$LOGDIR/$NUMBER/draft.txt"
-				echo "ADD: mv $LOGDIR/$NUMBER/draft.txt to $DRAFT"
-				if [ -f "$LOGDIR/$OLDNUMBER/draft.txt" ]; then
-					# TODO: if there is already a DRAFT warn the user?
-					mv "$LOGDIR/$OLDNUMBER/draft.txt" "$DRAFT"
-				fi
-				if [ -f "$LOGDIR/$OLDNUMBER/draft.attachments.txt" ]; then
-					mv "$LOGDIR/$OLDNUMBER/draft.attachments.txt" \
-					"$LOGDIR/$NUMBER/draft.attachments.txt"
+				if ! echo "$ADDEDNUMBER" | grep -q '^+'; then
+					echo "We can't add numbers that don't start with +"
+				elif echo "$OLDNUMBER" | grep -q "$ADDEDNUMBER"; then
+					echo "Number already a recipient."
+				else
+					NUMBER="$(printf %s%s "$NUMBER" "$ADDEDNUMBER" | xargs pn find | sort -u | tr -d '\n')"
+					mkdir -p "$LOGDIR/$NUMBER"
+					DRAFT="$LOGDIR/$NUMBER/draft.txt"
+					if [ -f "$LOGDIR/$OLDNUMBER/draft.txt" ]; then
+						# TODO: if there is already a DRAFT warn the user?
+						mv "$LOGDIR/$OLDNUMBER/draft.txt" "$DRAFT"
+					fi
+					if [ -f "$LOGDIR/$OLDNUMBER/draft.attachments.txt" ]; then
+						mv "$LOGDIR/$OLDNUMBER/draft.attachments.txt" \
+						"$LOGDIR/$NUMBER/draft.attachments.txt"
+					fi
 				fi
 				;;
 			*"Cancel")
