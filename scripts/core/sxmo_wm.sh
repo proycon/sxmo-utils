@@ -137,7 +137,7 @@ xorgswitchfocus() {
 guesswm() {
 	SWAYSOCK="$(cat "$CACHEDIR"/sxmo.swaysock)"
 	export SWAYSOCK
-	if swaymsg; then
+	if swaymsg 2>/dev/null; then
 		export SXMO_WM=sway
 		export WAYLAND_DISPLAY=wayland-1
 	else
