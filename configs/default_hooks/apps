@@ -18,8 +18,6 @@ write_line_app() {
 	fi
 }
 
-wm="$(sxmo_wm.sh)"
-
 write_line_app aerc "$icon_eml Aerc" "sxmo_terminal.sh aerc"
 write_line_app amfora "$icon_glb Amfora" "sxmo_terminal.sh amfora"
 write_line_app alpine "$icon_eml Alpine" "sxmo_terminal.sh alpine"
@@ -34,7 +32,7 @@ write_line_app emacs "$icon_edt Emacs" "sxmo_terminal.sh emacs"
 write_line_app epiphany "$icon_glb Epiphany" "epiphany"
 write_line_app firefox "$icon_ffx Firefox" "firefox"
 write_line_app foliate "$icon_bok Foliate" "foliate"
-( [ "$wm" = sway ] && command -v foot >/dev/null) && \
+( [ "$SXMO_WM" = sway ] && command -v foot >/dev/null) && \
 	write_line "$icon_trm Foot" "foot $SHELL"
 write_line_app foxtrotgps "$icon_gps Foxtrotgps" "foxtrotgps"
 write_line_app geany "$icon_eml Geany" "geany"
@@ -76,7 +74,7 @@ write_line_app qutebrowser "$icon_glb Qutebrowser" "qutebrowser"
 write_line_app ranger "$icon_dir Ranger" "sxmo_terminal.sh ranger"
 write_line_app sacc "$icon_itm Sacc" "sxmo_terminal.sh sacc i-logout.cz/1/bongusta"
 write_line_app sic "$icon_itm Sic" "sxmo_terminal.sh sic"
-([ "$wm" = dwm ] && command -v st >/dev/null) && \
+([ "$SXMO_WM" = dwm ] && command -v st >/dev/null) && \
 	write_line "$icon_trm St" "st -e $SHELL"
 write_line_app surf "$icon_glb Surf" "surf"
 write_line_app syncthing "$icon_rld Syncthing" "syncthing"
@@ -91,5 +89,5 @@ write_line_app w3m "$icon_glb W3m" "sxmo_terminal.sh w3m duck.com"
 write_line_app vim "$icon_vim Vim" "sxmo_terminal.sh vim"
 write_line_app vis "$icon_vim Vis" "sxmo_terminal.sh vis"
 write_line_app vlc "$icon_mvi Vlc" "vlc"
-([ "$wm" = dwm ] && command -v xcalc >/dev/null) && \
+([ "$SXMO_WM" = dwm ] && command -v xcalc >/dev/null) && \
 	write_line "$icon_clc Xcalc" "xcalc"

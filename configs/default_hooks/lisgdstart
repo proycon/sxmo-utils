@@ -13,7 +13,7 @@ if [ -z "$LISGD_THRESHOLD_PRESSED" ]; then
 	LISGD_THRESHOLD_PRESSED=60
 fi
 
-if [ dwm = "$(sxmo_wm.sh)" ]; then
+if [ dwm = "$SXMO_WM" ]; then
 	case "$(xrandr | grep DSI-1 | cut -d' ' -f 5)" in
 		right) orientation=1;;
 		left) orientation=3;;
