@@ -184,6 +184,7 @@ processmms() {
 
 	if [ "$MESSAGE_TYPE" = "Received" ]; then
 		[ -n "$OPEN_ATTACHMENTS_CMD" ] && TEXT="$icon_att $TEXT"
+		[ "$FROM_NAME" = "???" ] && FROM_NAME="$FROM_NUM"
 		sxmo_notificationwrite.sh \
 			random \
 			"${OPEN_ATTACHMENTS_CMD}sxmo_modemtext.sh tailtextlog \"$LOGDIRNUM\"" \
@@ -191,7 +192,9 @@ processmms() {
 			"$FROM_NAME: $TEXT ($MMS_FILE)"
 
 		if [ "$count" -gt 0 ]; then
-			sxmo_hooks.sh sms "$FROM_NAME <$(sxmo_contacts.sh --name "$LOGDIRNUM")>" "$TEXT ($MMS_FILE)"
+			GROUPNAME="$(sxmo_contacts.sh --name "$LOGDIRNUM")"
+			[ "$GROUPNAME" = "???" ] && GROUPNAME="$LOGDIRNUM"
+			sxmo_hooks.sh sms "$FROM_NAME <$GROUPNAME>" "$TEXT ($MMS_FILE)"
 		else
 			sxmo_hooks.sh sms "$FROM_NAME" "$TEXT ($MMS_FILE)"
 		fi

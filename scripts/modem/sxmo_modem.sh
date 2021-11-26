@@ -120,6 +120,7 @@ checkforfinishedcalls() {
 
 			CONTACT="$(sxmo_contacts.sh --name "$FINISHEDNUMBER")"
 			stderr "Invoking missed call hook (async)"
+			[ "$CONTACT" = "???" ] && CONTACT="$FINISHEDNUMBER"
 			sxmo_hooks.sh missed_call "$CONTACT" &
 
 			sxmo_notificationwrite.sh \
@@ -159,6 +160,7 @@ checkforincomingcalls() {
 		rm -f "$NOTIFDIR/incomingcall_${VOICECALLID}_notification"*
 	else
 		stderr "Invoking ring hook (async)"
+		[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$INCOMINGNUMBER"
 		sxmo_hooks.sh ring "$CONTACTNAME" &
 
 		mkdir -p "$LOGDIR"
@@ -224,6 +226,7 @@ checkfornewtexts() {
 		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
 		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
 		CONTACTNAME=$(sxmo_contacts.sh --name "$NUM")
+		[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$NUM"
 
 		sxmo_notificationwrite.sh \
 			random \
