@@ -384,6 +384,19 @@ programchoicesinit() {
 			esac
 		fi
 	;;
+	*zathura* )
+		# Zathura
+		CHOICES="
+			$icon_flt Open		^ 0 ^ sxmo_type -k o
+			$icon_zmi Zoom		^ 1 ^ sxmo_type -k plus
+			$icon_zmo Zoom		^ 1 ^ sxmo_type -k minus
+			$icon_arl History	^ 1 ^ sxmo_type -M Ctrl -k o
+			$icon_arr History	^ 1 ^ sxmo_type -M Ctrl -k i
+			$icon_cfg Invert	^ 0 ^ sxmo_type -M Ctrl -k r
+			$icon_flt Index		^ 0 ^ sxmo_type -k Tab
+		"
+		WINNAME=Zathura
+		;;
 	*netsurf* )
 		# Netsurf
 		CHOICES="
