@@ -277,6 +277,8 @@ icon_map=""
 icon_att="📎"
 # shellcheck disable=SC2034
 icon_chs="♜" #chess
+# shellcheck disable=SC2034
+icon_str="" #star
 
 #allow the user to override icons
 # shellcheck disable=SC1091
