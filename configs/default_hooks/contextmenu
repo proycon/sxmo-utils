@@ -57,7 +57,7 @@ case "$WMCLASS" in
 			$icon_ard Brightness               ^ 1 ^ sxmo_brightness.sh down
 			$icon_ges Gestures $(
 				pgrep -f lisgd > /dev/null &&
-				printf %b "On → Off ^ 1 ^1 pkill -9 lisgd" || printf %b "Off → On ^ 1 ^ sxmo_hooks.sh lisgdstart &"
+				printf %b "On → Off ^ 1 ^ pkill -9 lisgd" || printf %b "Off → On ^ 1 ^ sxmo_hooks.sh lisgdstart &"
 			)
 			$icon_phn Modem Monitor $(
 				pgrep -f sxmo_modemmonitor.sh > /dev/null &&
