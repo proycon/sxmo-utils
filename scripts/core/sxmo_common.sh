@@ -46,6 +46,9 @@ export MMS_RECEIVED_DIR="$HOME/.mms/modemmanager"
 # shellcheck disable=SC2034
 export MMS_AUTO_DELETE="${SXMO_MMS_AUTO_DELETE:-1}"
 # shellcheck disable=SC2034
+export VVM_AUTO_DELETE="${SXMO_VVM_AUTO_DELETE:-"1"}"
+# shellcheck disable=SC2034
+export VVM_AUTO_MARKREAD="${SXMO_VVM_AUTO_MARKREAD:-"0"}"
 
 command -v "$KEYBOARD" > /dev/null || export KEYBOARD=svkbd-mobile-intl
 command -v "$EDITOR" > /dev/null || export EDITOR=vis

@@ -4,5 +4,6 @@ image/png=sxmo-sxiv.desktop
 image/gif=sxmo-sxiv.desktop
 audio/x-m4a=sxmo-mpv-music.desktop
 audio/mpeg=sxmo-mpv-music.desktop
+audio/amr=sxmo-mpv-music.desktop
 application/pdf=sxmo-zathura.desktop
 x-scheme-handler/tel=sxmo-phone-menu.desktop

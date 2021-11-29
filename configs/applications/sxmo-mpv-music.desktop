@@ -3,4 +3,4 @@ Name=mpv Music Player
 Exec=mpv -ao=alsa --vid=no -v
 Terminal=true
 Type=Application
-MimeType=audio/wav;audio/opus;audio/m4a;audio/flac;audio/mp3
+MimeType=audio/amr;audio/wav;audio/opus;audio/m4a;audio/flac;audio/mp3
