@@ -191,6 +191,7 @@ checkfornewtexts() {
 		# SMS with no TEXTID is an SMS WAP (I think). So skip.
 		if [ -z "$TEXTDATA" ]; then
 			stderr "no TEXTDATA, probably MMS."
+			echo "$(date) MMS no TEXTDATA" >> ~/mms.debug.log
 			continue
 		fi
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
@@ -216,6 +217,7 @@ checkfornewtexts() {
 		# so I think safer bet is to just check for TEXT = "--" and ghost sms's above..
 		if [ "$TEXT" = "--" ]; then
 			stderr "TEXT = '--'. Probably an MMS..."
+			echo "$(date) MMS TEXT --." >> ~/mms.debug.log
 			continue
 		fi
 		stderr "Probably not an MMS."

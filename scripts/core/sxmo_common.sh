@@ -43,6 +43,9 @@ export UNSUSPENDREASONFILE="$XDG_RUNTIME_DIR/sxmo.suspend.reason"
 export LASTSTATE="$XDG_RUNTIME_DIR/sxmo.suspend.laststate"
 # shellcheck disable=SC2034
 export MMS_RECEIVED_DIR="$HOME/.mms/modemmanager"
+# shellcheck disable=SC2034
+export MMS_AUTO_DELETE="${SXMO_MMS_AUTO_DELETE:-1}"
+# shellcheck disable=SC2034
 
 command -v "$KEYBOARD" > /dev/null || export KEYBOARD=svkbd-mobile-intl
 command -v "$EDITOR" > /dev/null || export EDITOR=vis

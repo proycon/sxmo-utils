@@ -28,11 +28,11 @@ NUMBER="$1"
 
 # if $1 is not a number, then assume its a contact and look up number
 if ! echo "$NUMBER" | grep -q '+'; then
-	CONTACT="$(sxmo_contacts.sh --name "$NUMBER")"
-	if [ -z "$CONTACT" ]; then
+	ACTUAL_NUMBER="$(sxmo_contacts.sh --all | grep "^$NUMBER:" | cut -d':' -f2 | sed 's/^ //')"
+	if [ -z "$ACTUAL_NUMBER" ]; then
 		info "$NUMBER does not look like a number, but it isn't in your contacts either.  Continuing anyway..."
 	else
-		NUMBER="$CONTACT"
+		NUMBER="$ACTUAL_NUMBER"
 	fi
 fi
 
@@ -45,9 +45,8 @@ else
 	TEXT="$*"
 fi
 
-# if multiple recipients or attachments, then send via mmsctl
+# if multiple recipients or attachment, then send via mmsctl
 if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ]; then
-
 	# generate mmsctl args for attachments found in draft.attachments.txt (one per line)
 	count=0
 	total_size=0
@@ -79,26 +78,43 @@ if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$
 	[ "$count" -gt "$MAX_ATTACHMENTS" ] && err "Number of attachments ($count) greater than MaxAttachments ($MAX_ATTACHMENTS)."
 	[ "$count" -ge 1 ] && [ "$total_size" -gt "$TOT_MAX_ATTACHMENT_SIZE" ] && err "Total size of attachments ($total_size) greater than TotalMaxAttachmentSize ($TOT_MAX_ATTACHMENT_SIZE)."
 
+	# generate recipients arguments
+	RECIPIENTS="$(echo "$NUMBER" | sed 's/+/ -r +/g' | sed 's/^ //')"
+
 	# make unique attachment argument for text message
 	TMPFILE="$(mktemp)"
 	printf %s "$TEXT" > "$TMPFILE"
 	ATTACHMENTS="$(printf "%s '%s'%s" "-a" "$TMPFILE" "$ATTACHMENTS")"
-
-	# generate recipients arguments
-	RECIPIENTS="$(echo "$NUMBER" | sed 's/+/ -r +/g' | sed 's/^ //')"
-
-	info "$0: Launching mmsctl -S $RECIPIENTS $ATTACHMENTS..."
-	RES="$(printf "%s %s %s" "-S" "$RECIPIENTS" "$ATTACHMENTS" | xargs mmsctl 2>&1)"
-	OK="$?"
+	info "DEBUG: Launching mmsctl -S $RECIPIENTS $ATTACHMENTS..."
+	printf "%s %s %s" "-S" "$RECIPIENTS" "$ATTACHMENTS" | xargs mmsctl
 	rm "$TMPFILE"
-	if [ "$OK" != 0 ]; then
-		err "mmsctl err: $RES"
-	fi
-	[ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ] && rm "$LOGDIR/$NUMBER/draft.attachments.txt"
 
-	# sxmo_modemmonitor.sh dbus-monitor subprocess should now detect mms as 'draft' 
-	# and call sxmo_mms.sh processmms() to generate line in modemlog.tsv, 
-	# sms.txt, etc., accordingly
+	# mmsctl doesn't actually fail if can't send
+	# wait for message to change from 'draft' to 'sent' then delete *all* sent messages.
+	sleep 1s
+	NAMED_PIPE="$(mktemp -u)"
+	mkfifo "$NAMED_PIPE"
+	mmsctl -M > "$NAMED_PIPE" &
+	while read -r line; do
+		if echo "$line" | grep -q '^"message_path":'; then
+			MESSAGE_PATH="$(echo "$line" | cut -d':' -f2 | cut -d'"' -f2)"
+		fi
+		if echo "$line" | grep -q '^"Status":'; then
+			STATUS="$(echo "$line" | cut -d':' -f2 | cut -d'"' -f2)"
+			if [ "$STATUS" = "sent" ]; then
+				info "DEBUG: Processing sent $MESSAGE_PATH..."
+				sxmo_mms.sh processmms "$MESSAGE_PATH" Sent
+				SENT_SUCCESS=1
+			else
+				info "WARNING: found $MESSAGE_PATH with status $STATUS"
+				info "Run 'sxmo_mms.sh checkforlostmms' maybe?"
+			fi
+		fi
+	done < "$NAMED_PIPE"
+
+	[ -z "$SENT_SUCCESS" ] && err "Couldn't send text message."
+
+	[ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ] && rm "$LOGDIR/$NUMBER/draft.attachments.txt"
 
 # we are dealing with a normal sms, so use mmcli
 else

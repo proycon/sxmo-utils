@@ -81,9 +81,6 @@ mainloop() {
 			if echo "$line" | grep -q 'string "received"'; then
 				sxmo_mms.sh processmms "$MESSAGE_PATH" "Received"
 			fi
-			if echo "$line" | grep -q 'string "draft"'; then
-				sxmo_mms.sh processmms "$MESSAGE_PATH" "Sent"
-			fi
 	done &
 
 	wait
