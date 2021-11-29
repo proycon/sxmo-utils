@@ -144,7 +144,7 @@ fi
 printf " "
 
 # Volume
-AUDIODEV="$(sxmo_audiocurrentdevice.sh)"
+AUDIODEV="$(sxmo_audiocurrentdevice.sh 2>/dev/null)"
 AUDIOSYMBOL="$(printf %s "$AUDIODEV" | cut -c1)"
 if [ "$AUDIOSYMBOL" = "L" ] || [ "$AUDIOSYMBOL" = "N" ] || [ "$AUDIOSYMBOL" = "M" ]; then
 	printf "" #pipewire or speakers or none, use no special symbol
