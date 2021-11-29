@@ -54,7 +54,7 @@ getprogchoices() {
 	done
 
 	# Decorate menu at bottom w/ system menu entry if not system menu
-	echo $WINNAME | grep -qv Sys && CHOICES="
+	echo "$WINNAME" | grep -qv Sys && CHOICES="
 		$CHOICES
 		$icon_mnu System Menu   ^ 0 ^ sxmo_appmenu.sh sys
 	"
