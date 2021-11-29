@@ -55,7 +55,14 @@ case "$WMCLASS" in
 		CHOICES="
 			$icon_aru Brightness               ^ 1 ^ sxmo_brightness.sh up
 			$icon_ard Brightness               ^ 1 ^ sxmo_brightness.sh down
-			$icon_phn Modem Toggle               ^ 1 ^ sxmo_modemmonitortoggle.sh
+			$icon_ges Gestures $(
+				pgrep -f lisgd > /dev/null &&
+				printf %b "On → Off ^ 1 ^1 pkill -9 lisgd" || printf %b "Off → On ^ 1 ^ sxmo_hooks.sh lisgdstart &"
+			)
+			$icon_phn Modem Monitor $(
+				pgrep -f sxmo_modemmonitor.sh > /dev/null &&
+				printf %b "On → Off ^ 1 ^ sxmo_modemmonitortoggle.sh off &" || printf %b "Off → On ^ 0 ^ sxmo_modemmonitortoggle.sh on &"
+			)
 			$icon_phn Modem Restart              ^ 1 ^ sxmo_modemmonitortoggle.sh restart
 			$icon_inf Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
 			$icon_phl Modem Log                  ^ 0 ^ sxmo_modemlog.sh
@@ -65,7 +72,10 @@ case "$WMCLASS" in
 				printf %b "On → Off" ||  printf %b "Off → On";
 				printf %b "^ 1 ^ doas sxmo_wifitoggle.sh"
 			)
-			$(pgrep -f sxmo_lock_idle.sh > /dev/null && echo "$icon_cfg Stop lock idle ^ 1 ^ pkill -f sxmo_lock_idle.sh" || echo "$icon_cfg Start lock idle ^ 1 ^ setsid -f sxmo_lock_idle.sh")
+			$icon_cfg Idle Monitor $(
+				pgrep -f sxmo_lock_idle.sh > /dev/null &&
+				printf %b "On → Off ^ 1 ^ pkill -f sxmo_lock_idle.sh" || printf %b "Off → On ^ 1 ^ setsid -f sxmo_lock_idle.sh"
+			)
 			$icon_cfg Invert Colors              ^ 1 ^ xcalib -a -invert
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			$icon_ror Autorotate $(

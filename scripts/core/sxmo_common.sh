@@ -282,6 +282,8 @@ icon_att="📎"
 icon_chs="♜" #chess
 # shellcheck disable=SC2034
 icon_str="" #star
+# shellcheck disable=SC2034
+icon_ges="ﳉ" #gesture
 
 #allow the user to override icons
 # shellcheck disable=SC1091
