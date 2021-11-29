@@ -24,26 +24,12 @@ sxmo_type() {
 	sxmo_type.sh -s 200 "$@" # dunno why this is necessary but it sucks without
 }
 
-programchoicesinit() {
-	XPROPOUT="$(sxmo_wm.sh focusedwindow)"
-	WMCLASS="${1:-$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
-	if [ -z "$XPROPOUT" ]; then
-		printf "sxmo_appmenu: detected no active window, no problem, opening system menu\n" >&2
-	else
-		printf "sxmo_appmenu: opening menu for wmclass %s\n" "$WMCLASS" >&2
-	fi
-
+getprogchoices() {
 	RES="$(sxmo_hooks.sh contextmenu "$WMCLASS" "$XPROPOUT")"
 	if [ -n "$RES" ]; then
 		WINNAME="$(printf %s "$RES" | head -n1)"
 		CHOICES="$(printf %s "$RES" | tail -n+2)"
 	fi
-}
-
-getprogchoices() {
-	# E.g. sets CHOICES var
-	programchoicesinit "$@"
-
 
 	# For the Sys menu decorate at top with notifications if >1 notification
 	if [ "$WINNAME" = "Sys" ]; then
