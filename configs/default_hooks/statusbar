@@ -41,8 +41,11 @@ else
 				printf ""
 			fi
 			;;
-		disconnected)
+		enabled)
 			printf "ﲁ"
+			;;
+		connecting|searching)
+			printf ""
 			;;
 	esac
 fi
