@@ -92,5 +92,6 @@ write_line_app w3m "$icon_glb W3m" "sxmo_terminal.sh w3m duck.com"
 write_line_app vim "$icon_vim Vim" "sxmo_terminal.sh vim"
 write_line_app vis "$icon_vim Vis" "sxmo_terminal.sh vis"
 write_line_app vlc "$icon_mvi Vlc" "vlc"
+write_line_app vte-2.91 "$icon_trm VTE 3" "vte-2.91"
 ([ "$SXMO_WM" = dwm ] && command -v xcalc >/dev/null) && \
 	write_line "$icon_clc Xcalc" "xcalc"

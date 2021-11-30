@@ -12,6 +12,9 @@ case "$TERMCMD" in
 	"foot")
 		set -- foot -T "$TERMNAME" "$@"
 		;;
+	"vte-2.91"*)
+		set -- ${TERMCMD% --} --title "$TERMNAME" -- "$@"
+		;;
 	*)
 		printf "%s: '%s'\n" "Not implemented for TERMCMD" "$TERMCMD" >&2
 		set -- $TERMCMD "$@"
