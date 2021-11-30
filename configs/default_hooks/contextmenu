@@ -61,9 +61,9 @@ case "$WMCLASS" in
 			)
 			$icon_phn Modem Monitor $(
 				pgrep -f sxmo_modemmonitor.sh > /dev/null &&
-				printf %b "On → Off ^ 1 ^ sxmo_modemmonitortoggle.sh off &" || printf %b "Off → On ^ 0 ^ sxmo_modemmonitortoggle.sh on &"
+				printf %b "On → Off ^ 1 ^ sxmo_modemmonitortoggle.sh off" || printf %b "Off → On ^ 1 ^ sxmo_modemmonitortoggle.sh on"
 			)
-			$icon_phn Modem Restart              ^ 1 ^ sxmo_modemmonitortoggle.sh restart
+			$icon_phn Modem Daemons Restart      ^ 0 ^ sxmo_modemmonitortoggle.sh restart_daemons 
 			$icon_inf Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
 			$icon_phl Modem Log                  ^ 0 ^ sxmo_modemlog.sh
 			$icon_img Config MMS                 ^ 1 ^ sxmo_mmsdconfig.sh

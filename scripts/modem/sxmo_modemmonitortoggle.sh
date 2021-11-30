@@ -11,6 +11,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 daemon_start() {
+	notify-send "Starting modem daemons. This may take a minute..."
 	case "$OS" in
 		alpine|postmarketos)
 			doas rc-service "$1" start
@@ -23,6 +24,7 @@ daemon_start() {
 }
 
 daemon_stop() {
+	notify-send "Stopping modem daemons. This may take a minute..."
 	case "$OS" in
 		alpine|postmarketos)
 			doas rc-service "$1" stop
@@ -81,6 +83,10 @@ ensure_daemons() {
 	echo "sxmo_modemmonitortoggle: forcing modem restart" >&2
 	notify-send "Resetting modem daemons, this may take a minute..."
 
+	restart_daemons || return 1
+}
+
+restart_daemons() {
 	daemon_stop modemmanager
 	daemon_stop eg25-manager
 	sleep 2
@@ -90,6 +96,8 @@ ensure_daemons() {
 		notify-send --urgency=critical "We failed to start the modem daemons. We may need hard reboot."
 		return 1
 	fi
+
+	return 0
 }
 
 on() {
@@ -126,6 +134,7 @@ case "$1" in
 	on) ensure_daemons && on;;
 	off) off;;
 	ensure) ensure_daemons;;
+	restart_daemons) off; restart_daemons && on;;
 esac
 
 sleep 1

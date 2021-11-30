@@ -19,9 +19,11 @@ checkmodem() {
 			break
 		else
 			TRIES=$((TRIES+1))
-			stderr "modem not found, waiting for modem... (try #$TRIES)"
+			notify-send "Modem not found. Waiting for modem (try #$TRIES)..."
+			stderr "Modem not found. Waiting for modem (try #$TRIES)..."
 			sleep 3
 			if [ "$TRIES" -eq 10 ]; then
+				notify-send "ERROR! Modem could not be found after 10 tries. Calling sxmo_modemmonitortoggle.sh ensure."
 				stderr "ERROR! checkmodem couldn't find modem. Calling sxmo_modemonitortoggle.sh ensure"
 				sxmo_modemmonitortoggle.sh ensure
 				break
