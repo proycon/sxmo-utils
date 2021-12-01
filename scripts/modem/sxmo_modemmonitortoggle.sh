@@ -135,6 +135,16 @@ case "$1" in
 	off) off;;
 	ensure) ensure_daemons;;
 	restart_daemons) off; restart_daemons && on;;
+	start_daemons) off; restart_daemons && on;;
+	stop_daemons) off; daemon_stop modemmanager; daemon_stop eg25-manager;;
+	daemons_status) 
+		if (daemon_isrunning eg25-manager) && \
+			(daemon_isrunning modemmanager); then
+			exit 0
+		else
+			exit 1
+		fi
+		;;
 esac
 
 sleep 1

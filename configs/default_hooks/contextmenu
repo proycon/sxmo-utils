@@ -55,36 +55,39 @@ case "$WMCLASS" in
 		CHOICES="
 			$icon_aru Brightness               ^ 1 ^ sxmo_brightness.sh up
 			$icon_ard Brightness               ^ 1 ^ sxmo_brightness.sh down
-			$icon_ges Gestures $(
+			$icon_cfg Gestures $(
 				pgrep -f lisgd > /dev/null &&
-				printf %b "On → Off ^ 1 ^ pkill -9 lisgd" || printf %b "Off → On ^ 1 ^ sxmo_hooks.sh lisgdstart &"
+				printf %b "$icon_ton ^ 1 ^ pkill -9 lisgd" || printf %b "$icon_tof ^ 1 ^ sxmo_hooks.sh lisgdstart &"
 			)
 			$icon_phn Modem Monitor $(
 				pgrep -f sxmo_modemmonitor.sh > /dev/null &&
-				printf %b "On → Off ^ 1 ^ sxmo_modemmonitortoggle.sh off" || printf %b "Off → On ^ 1 ^ sxmo_modemmonitortoggle.sh on"
+				printf %b "$icon_ton ^ 1 ^ sxmo_modemmonitortoggle.sh off" || printf %b "$icon_tof ^ 1 ^ sxmo_modemmonitortoggle.sh on"
 			)
-			$icon_phn Modem Daemons Restart      ^ 0 ^ sxmo_modemmonitortoggle.sh restart_daemons 
+			$icon_phn Modem Daemons $(
+				sxmo_modemmonitortoggle.sh daemons_status > /dev/null &&
+				printf %b "$icon_ton ^ 1 ^ sxmo_modemmonitortoggle.sh stop_daemons" || printf %b "$icon_tof ^ 1 ^ sxmo_modemmonitortoggle.sh start_daemons"
+			)
 			$icon_inf Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
 			$icon_phl Modem Log                  ^ 0 ^ sxmo_modemlog.sh
 			$icon_img Config MMS                 ^ 1 ^ sxmo_mmsdconfig.sh
 			$icon_wif Wifi $(
 				rfkill -rn | grep wlan | grep -qE "unblocked unblocked" &&
-				printf %b "On → Off" ||  printf %b "Off → On";
+				printf %b "$icon_ton" ||  printf %b "$icon_tof";
 				printf %b "^ 1 ^ doas sxmo_wifitoggle.sh"
 			)
 			$icon_cfg Idle Monitor $(
 				pgrep -f sxmo_lock_idle.sh > /dev/null &&
-				printf %b "On → Off ^ 1 ^ pkill -f sxmo_lock_idle.sh" || printf %b "Off → On ^ 1 ^ setsid -f sxmo_lock_idle.sh"
+				printf %b "$icon_ton ^ 1 ^ pkill -f sxmo_lock_idle.sh" || printf %b "$icon_tof ^ 1 ^ setsid -f sxmo_lock_idle.sh"
 			)
 			$icon_cfg Invert Colors              ^ 1 ^ xcalib -a -invert
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			$icon_ror Autorotate $(
 				pgrep -f "$(command -v sxmo_rotateautotoggle.sh)" > /dev/null &&
-				printf %b "On → Off ^ 0 ^ sxmo_rotateautotoggle.sh &" ||  printf %b "Off → On ^ 0 ^ sxmo_rotateautotoggle.sh &"
+				printf %b "$icon_ton ^ 0 ^ sxmo_rotateautotoggle.sh &" ||  printf %b "$icon_tof ^ 0 ^ sxmo_rotateautotoggle.sh &"
 			)
 			$icon_lck Proximity Lock $(
 				pgrep -f "$(command -v sxmo_proximitylock.sh)" > /dev/null &&
-				printf %b "On → Off ^ 0 ^ sxmo_proximitylocktoggle.sh &" ||  printf %b "Off → On ^ 0 ^ sxmo_proximitylocktoggle.sh &"
+				printf %b "$icon_ton ^ 0 ^ sxmo_proximitylocktoggle.sh &" ||  printf %b "$icon_tof ^ 0 ^ sxmo_proximitylocktoggle.sh &"
 			)
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
 			$icon_rol Toggle WM                  ^ 1 ^ sxmo_terminal.sh sxmo_wmtoggle.sh
@@ -360,8 +363,8 @@ case "$WMCLASS" in
 						$icon_cpy Copy complete   ^ 0 ^ sxmo_type -M Ctrl -M Shift -k i
 						$icon_itm Selmode $(
 						  [ "$STSELMODEON" = 1 ] &&
-						  printf %b 'On → Off' ||
-						  printf %b 'Off → On'
+						  printf %b '$icon_ton' ||
+						  printf %b '$icon_tof'
 						  printf %b '^ 0 ^ sxmo_type -M Ctrl -M Shift -k s'
 						)
 						$([ "$STSELMODEON" = 1 ] && echo 'Copy selection ^ 0 ^ sxmo_type -M Ctrl -M Shift -k c')
@@ -502,7 +505,7 @@ case "$WMCLASS" in
 			$(command -v megapixels >/dev/null && echo "$icon_cam Camera ^ 0 ^ GDK_SCALE=2 megapixels")
 			$icon_fll Flashlight $(
 				grep -qE '^0$' /sys/class/leds/white:flash/brightness &&
-				printf %b "Off → On" ||  printf %b "On → Off";
+				printf %b "$icon_tof" ||  printf %b "$icon_ton";
 				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 			)
 			$icon_net Networks                                           ^ 0 ^ sxmo_networks.sh

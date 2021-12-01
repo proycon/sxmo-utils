@@ -173,6 +173,8 @@ icon_att="📎"
 icon_chs="♜" #chess
 icon_str="" #star
 icon_ges="ﳉ" #gesture
+icon_ton=""
+icon_tof=""
 
 #allow the user to override icons
 # shellcheck disable=SC1091
