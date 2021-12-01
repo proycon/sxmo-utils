@@ -314,7 +314,7 @@ case "$WMCLASS" in
 				$icon_msg Reply          ^ 0 ^ sxmo_modemtext.sh sendtextmenu $number
 				$icon_phn Call           ^ 0 ^ sxmo_modemdial.sh $number
 				$([ -d "$LOGDIR/$number/attachments" ] && echo "$icon_att View Attachments ^ 1 ^ sxmo_files.sh $LOGDIR/$number/attachments")
-				$(sxmo_contacts.sh --name "$number" | grep -q '???' || echo "$icon_usr Add to contacts ^ 0 ^ sxmo_contactmenu.sh newcontact $number")
+				$(sxmo_contacts.sh --name "$number" | grep -q '???' && echo "$icon_usr Add to contacts ^ 1 ^ sxmo_contactmenu.sh newcontact $number")
 				$icon_aru Scroll up       ^ 1 ^ sxmo_type -M Shift -M Ctrl b
 				$icon_ard Scroll down     ^ 1 ^ sxmo_type -M Shift -M Ctrl f
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
