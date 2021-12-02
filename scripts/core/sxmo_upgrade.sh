@@ -10,7 +10,7 @@ update_apk() {
 	doas apk update
 
 	echo "Upgrading all packages"
-	doas apk upgrade
+	doas apk upgrade -v
 
 	echo "Upgrade complete - reboot for all changes to take effect"
 }
@@ -23,6 +23,6 @@ update_pacman() {
 }
 
 case "$OS" in
-	"Alpine Linux"|postmarketOS) upgrade_apk;;
-	"Arch Linux ARM"|alarm) upgrade_pacman;;
+	"Alpine Linux"|postmarketOS) update_apk;;
+	"Arch Linux ARM"|alarm) update_pacman;;
 esac
