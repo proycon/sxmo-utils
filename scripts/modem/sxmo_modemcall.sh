@@ -208,9 +208,15 @@ incomingcallmenu() {
 	NUMBER="$(vid_to_number "$1")"
 	CONTACTNAME="$(sxmo_contacts.sh --name "$NUMBER")"
 
+	if [ "$SXMO_WM" = "sway" ]; then
+		pickup_height="40"
+	else
+		pickup_height="100"
+	fi
+
 	PICKED="$(
 		printf %b "$icon_phn Pickup\n$icon_phx Hangup\n$icon_mut Mute\n" |
-		dmenu -p "$CONTACTNAME"
+		dmenu -H "$pickup_height" -p "$CONTACTNAME"
 	)" || exit
 
 	if echo "$PICKED" | grep -q "Pickup"; then
