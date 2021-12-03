@@ -102,6 +102,7 @@ customxinit() {
 }
 
 startdwm() {
+	[ -f "$XDG_CACHE_HOME/sxmo/dwm.log" ] && mv -f "$XDG_CACHE_HOME/sxmo/dwm.log" "$XDG_CACHE_HOME/sxmo/dwm.previous.log"
 	dbus-run-session sh -c "
 		set -- customxinit
 		. $0
