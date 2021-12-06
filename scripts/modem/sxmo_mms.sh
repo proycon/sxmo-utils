@@ -24,7 +24,7 @@ checkmmsd() {
 # and processes them.
 checkforlostmms() {
 	ALL_MMS_TEMP="$(mktemp)"
-	mmsctl -M | jq -r '.message_path' | rev | cut -d'/' -f1 | rev | sort -u > "$ALL_MMS_TEMP"
+	dbus-send --dest=org.ofono.mms --print-reply /org/ofono/mms/modemmanager org.ofono.mms.Service.GetMessages | grep "object path" | cut -d'"' -f2 | rev | cut -d'/' -f1 | rev | sort -u > "$ALL_MMS_TEMP"
 	count="$(wc -l < "$ALL_MMS_TEMP")"
 	if [ "$count" -gt 0 ]; then
 		stderr "Found $count unprocessed messages! Processing them..."
@@ -87,32 +87,33 @@ processmms() {
 	MESSAGE_PATH="$1"
 	MESSAGE_TYPE="$2" # Sent or Received or Unknown
 	MESSAGE="$(mmsctl -M -o "$MESSAGE_PATH")"
-	stderr "processmms $MESSAGE_PATH $MESSAGE_TYPE"
+	stderr "DEBUG: processmms MESSAGE_PATH: $MESSAGE_PATH MESSAGE_TYPE: $MESSAGE_TYPE"
 	echo "$(date) MMS processmms $MESSAGE_PATH $MESSAGE_TYPE" >> ~/mms.debug.log
 
 	# If a message expires on the server-side, just chuck it
 	if printf %s "$MESSAGE" | grep -q "Accept-Charset (deprecated): Message not found"; then
 		stderr "$MESSAGE_PATH not found! Deleting."
-		mmsctl -D -o "$MESSAGE_PATH"
+		dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
 		return
 	fi
 
-	# Unknown is what downloadmissedmms() sends.
+	# Unknown is what checkforlostmms() sends.
 	if [ "$MESSAGE_TYPE" = "Unknown" ]; then
-		MESSAGE_TYPE="$(printf %s "$MESSAGE" | jq -r '.attrs.Status')"
-		case "$MESSAGE_TYPE" in
+		MESSAGE_STATUS="$(printf %s "$MESSAGE" | jq -r '.attrs.Status')"
+		case "$MESSAGE_STATUS" in
 			sent)
 				MESSAGE_TYPE="Sent"
 				;;
 			draft)
-				MESSAGE_TYPE="Sent"
-				stderr "WARNING: Draft"
+				stderr "Deleting draft ($MESSAGE_PATH)."
+				dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
+				return
 				;;
 			received)
 				MESSAGE_TYPE="Received"
 				;;
 			*)
-				stderr "Bad message type: $MESSAGE_PATH $MESSAGE_TYPE"
+				stderr "Bad message type '$MESSAGE_TYPE' ($MESSAGE_PATH)."
 				return
 				;;
 		esac
@@ -125,13 +126,16 @@ processmms() {
 	if [ -z "$MYNUM" ]; then
 		MYNUM="$(sxmo_contacts.sh --me)"
 		if [ -z "$MYNUM" ]; then
-			stderr "We cannot determine the modem number. Configure the Me contact."
+			stderr "We cannot determine the modem number." 
+			stderr "Configure the Me contact."
+			stderr "Using a fake number in the meanwhile: +12345670000."
+			MYNUM="+12345670000"
 		fi
 	fi
 
 	if [ "$MESSAGE_TYPE" = "Sent" ]; then
 		FROM_NUM="$MYNUM"
-	else
+	elif [ "$MESSAGE_TYPE" = "Received" ]; then
 		FROM_NUM="$(printf %s "$MESSAGE" | jq -r '.attrs.Sender')"
 	fi
 
@@ -150,7 +154,7 @@ processmms() {
 		# not a group chat
 		if [ "$MESSAGE_TYPE" = "Sent" ]; then
 			LOGDIRNUM="$TO_NUMS"
-		else
+		elif [ "$MESSAGE_TYPE" = "Received" ]; then
 			LOGDIRNUM="$FROM_NUM"
 		fi
 		mkdir -p "$LOGDIR/$LOGDIRNUM"
@@ -163,7 +167,7 @@ processmms() {
 	if [ "$MESSAGE_TYPE" = "Received" ]; then
 		printf "%s\trecv_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> "$LOGDIR/modemlog.tsv"
 		printf "%s\trecv_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> ~/mms.debug.log
-	else
+	elif [ "$MESSAGE_TYPE" = "Sent" ]; then
 		printf "%s\tsent_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> "$LOGDIR/modemlog.tsv"
 		printf "%s\tsent_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> ~/mms.debug.log
 	fi
@@ -198,7 +202,7 @@ processmms() {
 	fi
 
 	if [ "$MMS_AUTO_DELETE" -eq 1 ]; then
-		mmsctl -D -o "$MESSAGE_PATH"
+		dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
 		stderr "Deleting $MESSAGE_PATH..."
 	fi
 }

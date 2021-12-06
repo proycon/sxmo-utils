@@ -85,35 +85,75 @@ if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$
 	TMPFILE="$(mktemp)"
 	printf %s "$TEXT" > "$TMPFILE"
 	ATTACHMENTS="$(printf "%s '%s'%s" "-a" "$TMPFILE" "$ATTACHMENTS")"
-	info "DEBUG: Launching mmsctl -S $RECIPIENTS $ATTACHMENTS..."
-	printf "%s %s %s" "-S" "$RECIPIENTS" "$ATTACHMENTS" | xargs mmsctl
-	rm "$TMPFILE"
 
-	# mmsctl doesn't actually fail if can't send
-	# wait for message to change from 'draft' to 'sent' then delete *all* sent messages.
-	sleep 1s
+	# First, send it via mmsctl.  mmsctl does the equivalent of:
+	# dbus-send --dest=org.ofono.mms --print-reply /org/ofono/mms/modemmanager \
+	# org.ofono.mms.Service.SendMessage string:"+1234560000" variant:smil \
+	# string:"cid-1,text/plain,foobar.txt"
+	info "DEBUG: Launching mmsctl -S $RECIPIENTS $ATTACHMENTS"
+	MMSCTL_RES="$(printf "%s %s %s" "-S" "$RECIPIENTS" "$ATTACHMENTS" | xargs mmsctl 2>&1)"
+	MMSCTL_OK="$?"
+	rm "$TMPFILE"
+	# Possible results:
+	#
+	# syntax error) "mmsctl: unrecognized option:"
+	#
+	# mmsdtng not running) "DBus error: The name org.ofono.mms was not
+	# provided by any .service files"
+	#
+	# not sure) "DBus error: Did not receive a reply.  Possible causes
+	# include: the remote application did not send a reply, the message bus
+	# security policy blocked the reply, the reply timeout expered, or the
+	# network connection was broken."
+        #
+	# Note that mmsctl will (wrongly) return success with bad filename,
+	# attachment size too big, and max attachments too large.  Hence, I check 
+	# for those above.  
+	#
+	# Note also that mmsctl will send a success only if it reaches mmsdtng, and
+	# so it will not tell us if the message was actually sent.
+	if [ "$MMSCTL_OK" -ne 0 ]; then
+		if echo "$MMSCTL_RES" | grep -q "unrecognized option"; then
+			err "mmsctl syntax error!"
+		elif echo "$MMSCTL_RES" | grep -q "was not provied"; then
+			err "mmsdtng down ($MMSCTL_RES)!"
+		else
+			info "DEBUG: Unknown mmsctl error: $MMSCTL_RES"
+			# Note that *sometimes* mmsctl will still create a draft in this case.
+			# Hence, we continue to cleanup draft and do not exit here..
+		fi
+	else
+		info "DEBUG: mmsctl returned success.  Checking for sent status..."
+	fi
+
+	# Second, check to see if it actually sent. mmsdtng creates a 
+	# new message with the status 'draft' and once it *actually*
+	# sends it it changes the status to 'sent'.  Hence, here we 
+	# sit on PropertyChanged and detect if status changes to sent.
 	NAMED_PIPE="$(mktemp -u)"
 	mkfifo "$NAMED_PIPE"
-	mmsctl -M > "$NAMED_PIPE" &
+	# 60 second timeout because on dns errors, mmsdtng takes this long sometimes
+	timeout 60 dbus-monitor "interface='org.ofono.mms.Message',type='signal',member='PropertyChanged'" > "$NAMED_PIPE" &
 	while read -r line; do
-		if echo "$line" | grep -q '^"message_path":'; then
-			MESSAGE_PATH="$(echo "$line" | cut -d':' -f2 | cut -d'"' -f2)"
+		if echo "$line" | grep -q 'member=PropertyChanged'; then
+			MESSAGE_PATH="$(echo "$line" | cut -d'=' -f6 | cut -d';' -f1)"
 		fi
-		if echo "$line" | grep -q '^"Status":'; then
-			STATUS="$(echo "$line" | cut -d':' -f2 | cut -d'"' -f2)"
-			if [ "$STATUS" = "sent" ]; then
-				info "DEBUG: Processing sent $MESSAGE_PATH..."
-				sxmo_mms.sh processmms "$MESSAGE_PATH" Sent
-				SENT_SUCCESS=1
-			else
-				info "WARNING: found $MESSAGE_PATH with status $STATUS"
-				info "Run 'sxmo_mms.sh checkforlostmms' maybe?"
-			fi
+		if echo "$line" | grep -q "string \"sent\""; then
+			SENT_SUCCESS=1
+			break
 		fi
 	done < "$NAMED_PIPE"
+	rm -f "$NAMED_PIPE"
 
-	[ -z "$SENT_SUCCESS" ] && err "Couldn't send text message."
+	# we failed to send!
+	if [ -z "$SENT_SUCCESS" ]; then
+		# Delete all drafts.  checkforlostmms will try to do this.
+		sxmo_mms.sh checkforlostmms
+		err "Couldn't send text message.  Check mmsd log for errors."
+	fi
 
+	# we sent!  process it and cleanup
+	sxmo_mms.sh processmms "$MESSAGE_PATH" "Sent"
 	[ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ] && rm "$LOGDIR/$NUMBER/draft.attachments.txt"
 
 # we are dealing with a normal sms, so use mmcli

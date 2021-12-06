@@ -62,18 +62,20 @@ sendtextmenu() {
 	do
 		ATTACHMENTS=
 		if [ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ]; then
-			ATTACHMENTS="$(tr '\n' '\0' < "$LOGDIR/$NUMBER/draft.attachments.txt" | xargs -0 printf "Remove file %s\n")"
+			# shellcheck disable=SC2016
+			ATTACHMENTS="$(tr '\n' '\0' < "$LOGDIR/$NUMBER/draft.attachments.txt" | xargs -0 -I{} sh -c 'printf " 📎 "$(basename {})" :: {}\n"')"
 		fi
 
 		RECIPIENTS=
 		if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ]; then
-			RECIPIENTS="$(printf %s "$NUMBER" | xargs pn find | xargs printf "Remove recipient %s\n")"
+			# shellcheck disable=SC2016
+			RECIPIENTS="$(printf %s "$NUMBER" | xargs pn find | xargs -I{} sh -c 'printf "  "$(sxmo_contacts.sh --name {})" :: {}\n"')"
 		fi
 
-		CHOICES="$(printf "%s Send (%s)\n%b\n%s Add Attachment\n%b\n%s Add Recipient\n%s Edit '%s'\n%s Cancel\n" \
-				"$icon_snd" "$NUMBER" "$ATTACHMENTS" "$icon_att" "$RECIPIENTS" "$icon_usr" "$icon_edt" \
-				"$(cat "$LOGDIR/$NUMBER/draft.txt")" "$icon_cls" \
-				| awk NF
+		CHOICES="$(printf "%s Send to %s (%s)\n%b\n%s Add Recipient\n%b\n%s Add Attachment\n%s Edit '%s'\n%s Cancel\n" \
+			"$icon_snd" "$(sxmo_contacts.sh --name "$NUMBER")" "$NUMBER" "$RECIPIENTS" "$icon_usr" "$ATTACHMENTS" "$icon_att" "$icon_edt" \
+			"$(cat "$LOGDIR/$NUMBER/draft.txt")" "$icon_cls" \
+			| awk NF
 		)"
 
 		CONFIRM="$(printf %b "$CHOICES" | dmenu -i -p "Confirm")"
@@ -87,17 +89,19 @@ sendtextmenu() {
 					err "Failed to send txt to $NUMBER"
 				fi
 				;;
-			"Remove file"*)
-				FILE="$(printf %s "$CONFIRM" | cut -d' ' -f3-)"
+			# Remove Attachment
+			" 📎"*)
+				FILE="$(printf %s "$CONFIRM" | awk -F' :: ' '{print $2}')"  
 				sed -i "\|$FILE|d" "$LOGDIR/$NUMBER/draft.attachments.txt"
 				if [ ! -s "$LOGDIR/$NUMBER/draft.attachments.txt" ] ; then
 					rm "$LOGDIR/$NUMBER/draft.attachments.txt"
 				fi
 				;;
-			"Remove recipient"*)
+			# Remove Recipient
+			" "*)
 				if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ]; then 
 					OLDNUMBER="$NUMBER"
-					RECIPIENT="$(printf %s "$CONFIRM" | cut -d' ' -f3-)"
+					RECIPIENT="$(printf %s "$CONFIRM" | awk -F' :: ' '{print $2}')"
 					NUMBER="$(printf %s "$OLDNUMBER" | sed "s/$RECIPIENT//")"
 					mkdir -p "$LOGDIR/$NUMBER"
 					DRAFT="$LOGDIR/$NUMBER/draft.txt"
@@ -109,6 +113,9 @@ sendtextmenu() {
 						mv "$LOGDIR/$OLDNUMBER/draft.attachments.txt" \
 							"$LOGDIR/$NUMBER/draft.attachments.txt"
 					fi
+					kill "$(lsof | grep "/$OLDNUMBER/sms.txt" | cut -f1)"
+					[ -e "$LOGDIR/$NUMBER/sms.txt" ] || touch "$LOGDIR/$NUMBER/sms.txt"
+					tailtextlog "$NUMBER" &
 				fi
 				;;
 			*"Edit"*)
@@ -140,6 +147,9 @@ sendtextmenu() {
 						mv "$LOGDIR/$OLDNUMBER/draft.attachments.txt" \
 						"$LOGDIR/$NUMBER/draft.attachments.txt"
 					fi
+					kill "$(lsof | grep "/$OLDNUMBER/sms.txt" | cut -f1)"
+					[ -e "$LOGDIR/$NUMBER/sms.txt" ] || touch "$LOGDIR/$NUMBER/sms.txt"
+					tailtextlog "$NUMBER" &
 				fi
 				;;
 			*"Cancel")
