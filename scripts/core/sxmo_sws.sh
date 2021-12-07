@@ -27,7 +27,7 @@ FORMAT=$(echo "$FORMAT" | \
               s/\(.*\)/\"\1\"/')
 
 # Get the container ID from the node tree
-CON_ID=$(swaymsg -t get_tree | \
+selection=$(swaymsg -t get_tree | \
     jq -r ".nodes[]
         | {output: .name, content: .nodes[]}
         | {output: .output, workspace: .content.name,
@@ -39,11 +39,18 @@ CON_ID=$(swaymsg -t get_tree | \
            id: .apps.id, app_id: .apps.app_id, name: .apps.name }
         | $FORMAT
         | tostring" | \
+    awk '(1){print} END{printf "Previous Workspace\nNext Workspace\n"}' | \
     $DMENU -i -p "Window Switcher")
 
-# Requires the actual `id` to be at the end and between paretheses
-CON_ID=${CON_ID##*(}
-CON_ID=${CON_ID%)}
 
-# Focus on the chosen window
-swaymsg "[con_id=$CON_ID]" focus
+case "$selection" in
+"Next Workspace")
+	sxmo_workspace.sh next;;
+"Previous Workspace")
+	sxmo_workspace.sh previous;;
+*)
+	# Requires the actual `id` to be at the end and between parentheses
+	CON_ID=${selection##*(}
+	CON_ID=${CON_ID%)}
+	swaymsg "[con_id=$CON_ID]" focus;;
+esac
