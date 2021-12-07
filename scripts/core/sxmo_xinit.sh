@@ -111,6 +111,16 @@ startdwm() {
 	"
 }
 
+stopdwm() {
+	pkill -f sxmo_rotateautotoggle.sh
+	pkill -f sxmo_notificationmonitor.sh
+	pkill lisgd
+
+	pkill svkbd
+	pkill conky
+	pkill dmenu
+}
+
 xinit() {
 	envvars
 	device_envvars # set device env vars here to allow potentially overriding envvars
@@ -123,6 +133,7 @@ xinit() {
 	xdefaults
 	daemons
 	startdwm
+	stopdwm
 	sxmo_hooks.sh stop
 }
 

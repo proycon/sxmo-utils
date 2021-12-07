@@ -68,6 +68,16 @@ startsway() {
 	"
 }
 
+stopsway() {
+	pkill -f sxmo_rotateautotoggle.sh
+	pkill -f sxmo_notificationmonitor.sh
+	pkill lisgd
+
+	pkill wvkbd
+	pkill wayout
+	pkill bemenu
+}
+
 init() {
 	envvars
 	device_envvars # set device env vars here to allow potentially overriding envvars
@@ -80,6 +90,7 @@ init() {
 	defaults
 	defaultconfigs
 	startsway
+	stopsway
 	sxmo_hooks.sh stop
 }
 
