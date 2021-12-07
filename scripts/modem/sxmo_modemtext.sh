@@ -122,7 +122,7 @@ sendtextmenu() {
 				sendtextmenu "$NUMBER"
 				;;
 			*"Add Attachment")
-				ATTACHMENT="$(sxmo_files.sh "$HOME" selectonly)"
+				ATTACHMENT="$(sxmo_files.sh "$HOME" --select-only)"
 				if [ -f "$ATTACHMENT" ]; then
 					printf "%s\n" "$ATTACHMENT" >> "$LOGDIR/$NUMBER/draft.attachments.txt"
 				fi

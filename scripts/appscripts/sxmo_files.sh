@@ -6,14 +6,37 @@
 
 set -e
 
-DIR="$1"
-[ -z "$DIR" ] && DIR="$HOME"
-cd "$DIR" || exit 1
+usage() {
+	printf "%s <FILES> [--date-sort] [--reverse-sort] [--select-only] [-h help]\n" \
+		"$(basename "$0")"
+	exit 1
+}
 
-[ -n "$2" ] && SELECTONLY=1
-
+DIR="$HOME"
 SORT=
 REVERSE=
+
+while [ -n "$1" ]; do
+	case "$1" in
+		--select-only)
+			SELECTONLY=1
+			;;
+		--date-sort)
+			SORT="--sort=t"
+			;;
+		--reverse-sort)
+			REVERSE="-r"
+			;;
+		-h)
+			usage
+			;;
+		*)
+			DIR="$1"
+	esac
+	shift
+done
+
+cd "$DIR"
 
 sort_loop() {
 	CHOICES="$([ -z "$SORT" ] && printf "date" || printf "name")\n$([ -z "$REVERSE" ] && printf "desc" || printf "asc")\n"
