@@ -10,6 +10,15 @@ usage () {
 case "$(cut -d, -f2 < /sys/firmware/devicetree/base/compatible)" in
 	l8910qcom) # bq-paella
 		color="white"; type="kbd_backlight";;
+	pinephone-prorockchip) # pinephone pro
+		case $1 in
+			red) color="$1"; type="standby" ;;
+			green) color="$1"; type="disk-activity" ;;
+			blue) color="$1"; type="charging" ;;
+			white) color="$1"; type="flash" ;; #TODO: Not found on pinephone pro yet!
+			*) usage ;;
+		esac
+		;;
 	*) # assume pinephone/pinetab
 		case $1 in
 			red|green|blue) color="$1"; type="indicator" ;;
