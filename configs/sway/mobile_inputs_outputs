@@ -20,6 +20,14 @@ input 1:1:1c21800.lradc {
     xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
 }
 
+### PinePhone Pro (pine64-pinephonepro)
+# Power button
+input 1:1:gpio-key-power {
+    repeat_delay 200
+    repeat_rate 15
+    xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+}
+
 ### BQ Aquaris X5 (bq-paella)
 # Power button
 input 0:0:pm8941_pwrkey {
@@ -61,6 +69,14 @@ bindsym --input-device=1:1:1c21800.lradc XF86AudioLowerVolume \
     "sxmo_inputhandler.sh voldown_one" \
     "sxmo_inputhandler.sh voldown_two" \
     "sxmo_inputhandler.sh voldown_three"
+
+### PinePhone Pro (pine64-pinephonepro)
+# Multikey handling for power button
+bindsym --input-device=1:1:gpio-key-power XF86PowerOff \
+    exec sxmo_multikey.sh powerbutton \
+    "sxmo_inputhandler.sh powerbutton_one" \
+    "sxmo_inputhandler.sh powerbutton_two" \
+    "sxmo_inputhandler.sh powerbutton_three"
 
 ### BQ Aquaris X5 (bq-paella)
 bindsym --input-device=0:0:pm8941_pwrkey XF86PowerOff \
