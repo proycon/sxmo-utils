@@ -22,6 +22,10 @@ proximity_lock_on() {
 	sxmo_daemons.sh running proximity_lock -q && exit_not_idle "proxlock"
 }
 
+camera_open() {
+	pgrep -f megapixels > /dev/null && exit_not_idle "camera"
+}
+
 waiting_rtcwake() {
 	if grep -q crust "$LASTSTATE" && \
 		grep -q rtc "$UNSUSPENDREASONFILE"; then
@@ -32,5 +36,6 @@ waiting_rtcwake() {
 ongoing_call
 proximity_lock_on
 waiting_rtcwake
+camera_open
 
 exit 0

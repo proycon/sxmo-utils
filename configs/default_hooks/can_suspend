@@ -33,9 +33,14 @@ playing_mpc() {
 	(mpc status | grep -q '\[playing\]') && exit_should_wait "mpc"
 }
 
+photos_processing() {
+	pgrep -f postprocess.sh > /dev/null && exit_should_wait "photos processing"
+}
+
 modem_use
 playing_mpc
 screenlock
+photos_processing
 active_ssh
 
 exit 0
