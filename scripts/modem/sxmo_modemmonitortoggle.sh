@@ -12,10 +12,10 @@
 
 daemon_start() {
 	case "$OS" in
-		"Alpine Linux"|postmarketOS)
+		alpine|postmarketos)
 			doas rc-service "$1" start
 			;;
-		"Arch Linux ARM"|alarm)
+		arch|archarm)
 			[ "$1" = "modemmanager" ] && set -- ModemManager
 			doas systemctl start "$1"
 			;;
@@ -24,10 +24,10 @@ daemon_start() {
 
 daemon_stop() {
 	case "$OS" in
-		"Alpine Linux"|postmarketOS)
+		alpine|postmarketos)
 			doas rc-service "$1" stop
 			;;
-		"Arch Linux ARM"|alarm)
+		arch|archarm)
 			[ "$1" = "modemmanager" ] && set -- ModemManager
 			doas systemctl stop "$1"
 			;;
@@ -37,10 +37,10 @@ daemon_stop() {
 daemon_isrunning() {
 	daemon_exists "$1" || return 0
 	case "$OS" in
-		"Alpine Linux"|postmarketOS)
+		alpine|postmarketos)
 			rc-service "$1" status | grep -q started
 			;;
-		"Arch Linux ARM"|alarm)
+		arch|archarm)
 			[ "$1" = "modemmanager" ] && set -- ModemManager
 			systemctl status "$1" | grep -q running
 			;;
@@ -49,10 +49,10 @@ daemon_isrunning() {
 
 daemon_exists() {
 	case "$OS" in
-		"Alpine Linux"|postmarketOS)
+		alpine|postmarketos)
 			[ -f /etc/init.d/"$1" ]
 			;;
-		"Arch Linux ARM"|alarm)
+		arch|archarm)
 			systemctl status "$1" >/dev/null
 			;;
 	esac

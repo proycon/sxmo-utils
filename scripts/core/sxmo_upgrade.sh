@@ -23,6 +23,6 @@ update_pacman() {
 }
 
 case "$OS" in
-	"Alpine Linux"|postmarketOS) update_apk;;
-	"Arch Linux ARM"|alarm) update_pacman;;
+	alpine|postmarketos) update_apk;;
+	arch|archarm) update_pacman;;
 esac
