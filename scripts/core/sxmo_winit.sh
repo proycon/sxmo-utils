@@ -71,6 +71,7 @@ startsway() {
 stopsway() {
 	pkill -f sxmo_rotateautotoggle.sh
 	pkill -f sxmo_notificationmonitor.sh
+	pkill -f sxmo_networkmonitor.sh
 	pkill lisgd
 
 	pkill wvkbd

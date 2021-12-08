@@ -50,7 +50,6 @@ install: $(PROGRAMS)
 	install -D -m 0644 -T configs/xorg/monitor.conf $(DESTDIR)$(PREFIX)/share/X11/xorg.conf.d/90-monitor.conf
 
 	mkdir -p $(DESTDIR)/etc/NetworkManager/dispatcher.d
-	install -D -m 0755 -T configs/networkmanager/updatestatusbar.sh $(DESTDIR)/etc/NetworkManager/dispatcher.d/10-updatestatusbar.sh
 
 	# Bin
 	install -D -t $(DESTDIR)$(PREFIX)/bin scripts/*/*
