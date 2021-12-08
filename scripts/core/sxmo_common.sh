@@ -12,11 +12,10 @@
 # Determine current operating system see os-release(5)
 # https://www.linux.org/docs/man5/os-release.html
 if [ -e /etc/os-release ]; then
-	# freedesktop.org and systemd
-	# shellcheck disable=SC2034
+	# shellcheck source=/dev/null
 	. /etc/os-release
 elif [ -e /usr/lib/os-release ]; then
-	# shellcheck disable=SC2034
+	# shellcheck source=/dev/null
 	. /usr/lib/os-release
 fi
 export OS="${ID:-unknown}"
