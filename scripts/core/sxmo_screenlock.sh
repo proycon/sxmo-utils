@@ -154,7 +154,7 @@ crust() {
 
 	updateLed
 
-	echo "$(date) sxmo_crust: woke up from crust (reason=$UNSUSPENDREASON)" >&2
+	echo "$(date) sxmo_screenlock: woke up from crust (reason=$UNSUSPENDREASON)" >&2
 	if [ "$UNSUSPENDREASON" != "modem" ]; then
 		echo 1200 > "$NETWORKRTCSCAN"
 	fi
