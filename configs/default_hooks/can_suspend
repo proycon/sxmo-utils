@@ -20,7 +20,12 @@ active_ssh() {
 	(netstat | grep ESTABLISHED | grep -q ssh) && exit_should_wait "ssh"
 }
 
+screenlock() {
+	pgrep -f sxmo_screenlock.sh >/dev/null && exit_should_wait "screenlock"
+}
+
 modem_use
 active_ssh
+screenlock
 
 exit 0

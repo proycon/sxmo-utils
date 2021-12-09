@@ -4,9 +4,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-# Run xinput and get touchscreen id
-TOUCH_POINTER_ID="${TOUCH_POINTER_ID:-"8"}"
-
 REDLED_PATH="/sys/class/leds/red:indicator/brightness"
 BLUELED_PATH="/sys/class/leds/blue:indicator/brightness"
 
@@ -29,7 +26,7 @@ saveAllEventCounts() {
 }
 
 whichWake() {
-    #attempt to find the reason why we woke up:
+	#attempt to find the reason why we woke up:
 	if [ "$(cat "$POWERRTC")" -gt "$(cat "$OLD_POWER_WAKECOUNT")" ] ; then
 		echo "usb power"
 	elif [ "$(cat "$MODEMUPRTC")" -gt "$(cat "$OLD_MODEM_WAKECOUNT")" ] ; then
@@ -72,13 +69,9 @@ updateLed() {
 	esac
 }
 
-if [ "$1" != "getCurState" ] && [ "$1" != "updateLed" ]; then
-	d=$(date)
-	echo "sxmo_screenlock: transitioning to stage $1 ($d)" >&2
-fi
-
 lock() {
 	#locked state with screen on
+	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage lock" >&2
 
 	# always echo last state first so that user can use it in their hooks
 	# TODO: Document LASTSTATE
@@ -96,6 +89,7 @@ lock() {
 
 unlock() {
 	#normal unlocked state, screen on
+	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage unlock" >&2
 
 	getCurState > "$LASTSTATE"
 
@@ -112,6 +106,7 @@ unlock() {
 
 off() {
 	#locked state with screen off
+	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage off" >&2
 
 	getCurState > "$LASTSTATE"
 
@@ -126,8 +121,10 @@ off() {
 }
 
 crust() {
+	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage crust" >&2
 	getCurState > "$LASTSTATE"
-	# USER MUST USE sxmo_screenlock.sh rtc rather than using rtcwake directly.
+
+	# TODO: is this necessary?
 	echo 1 > "$REDLED_PATH"
 	echo 0 > "$BLUELED_PATH"
 
@@ -147,7 +144,7 @@ crust() {
 		#The actual suspension to crust happens here, mediated by rtcwake
 		rtcwake -m mem -s "$suspend_time"
 		#We woke up again
-		UNSUSPENDREASON=$(whichWake)
+		UNSUSPENDREASON="$(whichWake)"
 	else
 		UNSUSPENDREASON=rtc # we fake the crust for those seconds
 	fi
@@ -157,8 +154,7 @@ crust() {
 
 	updateLed
 
-	d=$(date)
-	echo "sxmo_screenlock: woke up from crust (reason=$UNSUSPENDREASON) ($d)" >&2
+	echo "$(date) sxmo_crust: woke up from crust (reason=$UNSUSPENDREASON)" >&2
 	if [ "$UNSUSPENDREASON" != "modem" ]; then
 		echo 1200 > "$NETWORKRTCSCAN"
 	fi
@@ -166,6 +162,7 @@ crust() {
 	if [ "$UNSUSPENDREASON" = "usb power" ]; then
 		lock
 	fi
+
 	if [ "$UNSUSPENDREASON" != "rtc" ]; then
 		pkill -10 -f sxmo_lock_idle.sh
 	fi
