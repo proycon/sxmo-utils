@@ -2,12 +2,15 @@
 
 # Must be run as root
 
-if [ -f /etc/os-release ]; then
+# see sxmo_common.sh
+if [ -e /etc/os-release ]; then
+	# shellcheck source=/dev/null
 	. /etc/os-release
-	OS="$NAME"
-else
-	OS="Unknown"
+elif [ -e /usr/lib/os-release ]; then
+	# shellcheck source=/dev/null
+	. /usr/lib/os-release
 fi
+export OS="${ID:-unknown}"
 
 on() {
 	modprobe bluetooth
@@ -17,10 +20,10 @@ on() {
 	modprobe bnep
 	rfkill unblock bluetooth
 	case "$OS" in
-		"Alpine Linux"|postmarketOS)
+		alpine|postmarketos)
 			rc-service bluetooth start
 			;;
-		"Arch Linux ARM"|alarm)
+		arch|archarm)
 			systemctl stop bluetooth
 			;;
 	esac
@@ -28,10 +31,10 @@ on() {
 
 off() {
 	case "$OS" in
-		"Alpine Linux"|postmarketOS)
+		alpine|postmarketos)
 			rc-service bluetooth stop
 			;;
-		"Arch Linux ARM"|alarm)
+		arch|archarm)
 			systemctl stop bluetooth
 			;;
 	esac
