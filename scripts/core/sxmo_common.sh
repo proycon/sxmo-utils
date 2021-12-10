@@ -73,6 +73,8 @@ icon_wif="W" #we override this later if the user wants icons
 #this script is meant to be sourced
 #the glyphs are often in the private use area and
 #therefore require a font like those in https://github.com/ryanoasis/nerd-fonts/ for proper display
+# note that you should *not* use glyphs in range U+F500 - U+FD46 as these wont render.
+# this is a known bug in nerdfonts: https://github.com/ryanoasis/nerd-fonts/issues/365
 
 icon_itm="" #item (default)
 icon_trm='' #terminal
@@ -96,6 +98,8 @@ icon_mmc=""
 icon_mus=""
 icon_mut="" #mute
 icon_spk="" #speaker
+icon_spm=""
+icon_spl=""
 icon_img=""
 icon_usr=""
 icon_tmr="" #timer
@@ -174,6 +178,11 @@ icon_chs="♜" #chess
 icon_str="" #star
 icon_ton=""
 icon_tof=""
+icon_mod="" # modem
+icon_usb="禍" # usb
+icon_ear="" # earpiece
+icon_dot="" # searching, connecting, etc.
+icon_ena="" # enabled
 
 #allow the user to override icons
 # shellcheck disable=SC1091

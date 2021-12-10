@@ -20,12 +20,12 @@ fi
 
 MODEMSTATUS=""
 if [ -z "$MMCLI" ]; then
-	printf ""
+	printf "$icon_cls"
 else
 	MODEMSTATUS="$(printf %s "$MMCLI" | jq -r .modem.generic.state)"
 	case "$MODEMSTATUS" in
 		locked)
-			printf ""
+			printf "$icon_lck"
 			;;
 		registered|connected)
 			MODEMSIGNAL="$(printf %s "$MMCLI" | jq -r '.modem.generic."signal-quality".value')"
@@ -42,10 +42,10 @@ else
 			fi
 			;;
 		enabled)
-			printf "ﲁ"
+			printf "$icon_ena"
 			;;
 		connecting|searching)
-			printf ""
+			printf "$icon_dot"
 			;;
 	esac
 fi
@@ -58,36 +58,36 @@ if [ "$MODEMSTATUS" = "connected" ]; then
 			printf 5g # no icon yet
 			;;
 		*lte*)
-			printf ﰒ
+			printf 4g # ﰒ is in the bad range
 			;;
 		*umts*|*hsdpa*|*hsupa*|*hspa*|*1xrtt*|*evdo0*|*evdoa*|*evdob*)
-			printf ﰑ
+			printf 3g # ﰑ is in the bad range
 			;;
 		*edge*)
 			printf E
 			;;
 		*pots*|*gsm*|*gprs*)
-			printf ﰐ
+			printf 2g # ﰐ is in the bad range
 			;;
 	esac
 fi
 
 if pgrep -f sxmo_modemmonitor.sh > /dev/null; then
-	printf " "
+	printf " $icon_mod"
 fi
 
 WLANSTATE="$(tr -d "\n" < /sys/class/net/wlan0/operstate)"
 if [ "$WLANSTATE" = "up" ]; then
-	printf " "
+	printf " $icon_wif"
 fi
 
 # symbol if wireguard/vpn is connected
 VPNDEVICE="$(nmcli con show | grep vpn | awk '{ print $4 }')"
 WGDEVICE="$(nmcli con show | grep wireguard | awk '{ print $4 }')"
 if [ -n "$VPNDEVICE" ] && [ "$VPNDEVICE" != "--" ]; then
-	printf " "
+	printf " $icon_key"
 elif [ -n "$WGDEVICE" ] && [ "$WGDEVICE" != "--" ]; then
-	printf " "
+	printf " $icon_key"
 fi
 
 # Find battery and get percentage + status
@@ -149,9 +149,9 @@ AUDIOSYMBOL="$(printf %s "$AUDIODEV" | cut -c1)"
 if [ "$AUDIOSYMBOL" = "L" ] || [ "$AUDIOSYMBOL" = "N" ] || [ "$AUDIOSYMBOL" = "M" ]; then
 	printf "" #pipewire or speakers or none, use no special symbol
 elif [ "$AUDIOSYMBOL" = "H" ]; then
-	printf " "
+	printf "$icon_hdp "
 elif [ "$AUDIOSYMBOL" = "E" ]; then
-	printf " " #earpiece
+	printf "$icon_ear " #earpiece
 fi
 VOL=0
 [ "$AUDIODEV" = "None" ] || VOL="$(
@@ -163,13 +163,13 @@ VOL=0
 )"
 if [ "$AUDIODEV" != "None" ]; then
 	if [ "$VOL" -gt 66 ]; then
-		printf ""
+		printf "$icon_spk"
 	elif [ "$VOL" -gt 33 ]; then
-		printf ""
+		printf "$icon_spm"
 	elif [ "$VOL" -gt 0 ]; then
-		printf ""
+		printf "$icon_spl"
 	elif [ "$VOL" -eq 0 ]; then
-		printf "ﱝ"
+		printf "$icon_mut"
 	fi
 fi
 
