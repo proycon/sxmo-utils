@@ -207,6 +207,7 @@ mute() {
 incomingcallmenu() {
 	NUMBER="$(vid_to_number "$1")"
 	CONTACTNAME="$(sxmo_contacts.sh --name "$NUMBER")"
+	[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$NUMBER"
 
 	if [ "$SXMO_WM" = "sway" ]; then
 		pickup_height="40"
