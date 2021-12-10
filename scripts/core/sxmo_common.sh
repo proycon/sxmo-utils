@@ -172,7 +172,6 @@ icon_map=""
 icon_att="📎"
 icon_chs="♜" #chess
 icon_str="" #star
-icon_ges="ﳉ" #gesture
 icon_ton=""
 icon_tof=""
 
