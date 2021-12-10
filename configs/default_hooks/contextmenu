@@ -84,7 +84,7 @@ case "$WMCLASS" in
 				pgrep -f sxmo_lock_idle.sh > /dev/null &&
 				printf %b "$icon_ton ^ 1 ^ pkill -f sxmo_lock_idle.sh" || printf %b "$icon_tof ^ 1 ^ setsid -f sxmo_lock_idle.sh"
 			)
-			$icon_cfg Invert Colors              ^ 1 ^ xcalib -a -invert
+			$(test "$SXMO_WM" = dwm && printf %b "$icon_cfg Invert Colors ^ 1 ^ xcalib -a -invert")
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			$icon_ror Autorotate $(
 				pgrep -f "$(command -v sxmo_rotateautotoggle.sh)" > /dev/null &&
