@@ -14,7 +14,7 @@ finish() {
 INITIALSTATE="$(sxmo_screenlock.sh getCurState)"
 trap 'finish' TERM INT
 
-proximity_raw_bus="$(find /sys/ -name 'in_proximity_raw')"
+proximity_raw_bus="$(find /sys/devices/platform/soc -name 'in_proximity_raw')"
 distance() {
 	cat "$proximity_raw_bus"
 }
