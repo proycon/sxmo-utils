@@ -72,7 +72,6 @@ case "$WMCLASS" in
 				printf %b "$icon_ton ^ 0 ^ sxmo_proximitylocktoggle.sh &" ||  printf %b "$icon_tof ^ 0 ^ sxmo_proximitylocktoggle.sh &"
 			)
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
-			$icon_rol Toggle WM                  ^ 1 ^ sxmo_terminal.sh sxmo_wmtoggle.sh
 			$icon_upc Upgrade Pkgs               ^ 0 ^ sxmo_terminal.sh sxmo_upgrade.sh
 			$icon_cfg Edit configuration         ^ 0 ^ sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/$(test "$SXMO_WM" = sway && printf sway || printf xinit)
 			$(command -v pmos-tweaks >/dev/null && echo "$icon_cfg PostmarketOS Tweaks	     ^ 0 ^ GDK_SCALE=1 pmos-tweaks")
@@ -99,7 +98,8 @@ case "$WMCLASS" in
 			$icon_lck Lock               ^ 0 ^ sxmo_screenlock.sh lock
 			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_screenlock.sh off
 			$icon_zzz Suspend            ^ 0 ^ sxmo_screenlock.sh off && sxmo_screenlock.sh crust
-			$icon_out Logout             ^ 0 ^ confirm Logout && pkill -9 dwm || pkill -9 sway
+			$icon_out Logout             ^ 0 ^ confirm Logout && (pkill -9 dwm || pkill -9 sway)
+			$icon_rol Toggle WM          ^ 0 ^ confirm Toggle && sxmo_terminal.sh sxmo_wmtoggle.sh
 			$icon_rld Reboot             ^ 0 ^ confirm Reboot && sxmo_terminal.sh doas reboot
 			$icon_pwr Poweroff           ^ 0 ^ confirm Poweroff && sxmo_terminal.sh doas poweroff
 		"
