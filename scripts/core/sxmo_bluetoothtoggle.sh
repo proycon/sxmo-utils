@@ -24,7 +24,7 @@ on() {
 			rc-service bluetooth start
 			;;
 		arch|archarm)
-			systemctl stop bluetooth
+			systemctl start bluetooth
 			;;
 	esac
 }
