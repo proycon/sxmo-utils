@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 ARG="$1"
 
 # include common definitions

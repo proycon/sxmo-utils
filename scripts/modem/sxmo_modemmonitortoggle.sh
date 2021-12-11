@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # This script toggles the modem monitor
 # It optionally takes a parameter "on" or "off"

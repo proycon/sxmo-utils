@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 # This script prints in reverse chronological order unique entries from the
 # modem log merged with contact names defined in contacts file tsv.
 #   Wherein $CONTACTSFILE is tsv with two fields: number\tcontact name

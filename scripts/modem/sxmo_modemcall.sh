@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 ALSASTATEFILE="$XDG_CACHE_HOME"/precall.alsa.state
 trap "gracefulexit" INT TERM
 

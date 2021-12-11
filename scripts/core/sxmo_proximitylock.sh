@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 isLocked() {
 	curState="$(sxmo_screenlock.sh getCurState)"

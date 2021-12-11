@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # This script is executed (asynchronously) when you pick up an incoming call
 

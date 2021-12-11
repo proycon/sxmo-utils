@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # This script handles input actions, it is called by lisgd for gestures
 # and by dwm for button presses

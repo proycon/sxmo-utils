@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # This script is meant to be sourced by various sxmo scripts
 # and defines some common settings

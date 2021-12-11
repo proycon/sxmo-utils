@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 INPUT="$(cat)"
 STWIN="$(xprop -root | sed -n '/^_NET_ACTIVE_WINDOW/ s/.* //p')"
 

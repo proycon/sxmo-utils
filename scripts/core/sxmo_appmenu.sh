@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 trap gracefulexit INT TERM
 
 # include common definitions

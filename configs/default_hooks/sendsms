@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # This script is executed after you send a text
 #You can use it to play a notification sound or forward the sms elsewhere

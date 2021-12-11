@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh

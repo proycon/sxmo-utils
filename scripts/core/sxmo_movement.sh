@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 anglevel_x_raw_bus="$(find /sys/ -name 'in_anglvel_x_raw')"
 anglx() {

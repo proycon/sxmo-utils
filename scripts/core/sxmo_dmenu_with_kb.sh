@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 if [ -n "$SXMO_WM" ]; then
 	if sxmo_keyboard.sh isopen; then

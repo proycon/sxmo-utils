@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 # scrot refuses to work with double quotes
 # shellcheck disable=SC2016
 

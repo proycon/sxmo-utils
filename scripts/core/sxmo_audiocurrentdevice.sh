@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 SPEAKER=${SPEAKER:-"Line Out"}
 HEADPHONE=${HEADPHONE:-"Headphone"}
 EARPIECE=${EARPIECE:-"Earpiece"}

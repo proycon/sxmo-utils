@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 # surf_linkselect.sh:
 #   Usage: curl somesite.com | surf_linkselect [SURFWINDOWID] [PROMPT]
 #   Deps: xmllint, dmenu

@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 VIBS=5
 VIBI=0

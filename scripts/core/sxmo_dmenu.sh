@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # We still use dmenu in dwm|worgs cause pointer/touch events
 # are not implemented yet in the X11 library of bemenu

@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 err() {
 	printf %b "$1" | dmenu

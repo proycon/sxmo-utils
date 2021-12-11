@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # shellcheck disable=SC2034
 SXMO_NO_ICONS=1 #just to make it a bit faster
