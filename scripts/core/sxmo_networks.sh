@@ -16,6 +16,10 @@ toggleconnection() {
 	if echo "$CONNLINE" | grep -q "^$icon_chk "; then
 		RES="$(printf %s "$CONNNAME" | sed "s|^$icon_chk ||" | xargs -0 nmcli c down 2>&1)"
 	else
+		if [ "$(echo "$CONNLINE" | cut -d: -f2)" = " $icon_wif" ]; then
+			notify-send "Enabling Wifi first."
+			doas sxmo_wifitoggle.sh
+		fi
 		RES="$(nmcli c up "$CONNNAME" 2>&1)"
 	fi
 	notify-send "$RES"
