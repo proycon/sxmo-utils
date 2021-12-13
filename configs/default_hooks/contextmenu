@@ -204,6 +204,24 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=Nano
+		elif printf %s "$WMNAME" | grep -qi -w "micro"; then
+			#Micro
+			CHOICES="
+				$icon_aru Scroll up       ^ 1 ^ sxmo_type -k Prior
+				$icon_ard Scroll down     ^ 1 ^ sxmo_type -k Next
+				$icon_prv Previous Tab    ^ 1 ^ sxmo_type -M Alt , -m Alt
+				$icon_nxt Next Tab        ^ 1 ^ sxmo_type -M Alt . -m Alt
+				$icon_sav Save            ^ 1 ^ sxmo_type -M Ctrl s -m Ctrl
+				$icon_cls Quit            ^ 0 ^ sxmo_type -M Ctrl q -m Ctrl
+				$icon_fnd Find            ^ 0 ^ sxmo_type -M Ctrl f -m Ctrl
+				$icon_fnd Find Previous   ^ 1 ^ sxmo_type -M Ctrl p -m Ctrl
+				$icon_fnd Find Next       ^ 1 ^ sxmo_type -M Ctrl n -m Ctrl
+				$icon_trm Command Bar     ^ 0 ^ sxmo_type -M Ctrl e -m Ctrl
+				$icon_cpy Copy            ^ 0 ^ sxmo_type -M Ctrl c -m Ctrl
+				$icon_pst Paste           ^ 0 ^ sxmo_type -M Ctrl v -m Ctrl
+				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
+			"
+			WINNAME=Micro
 		elif printf %s "$WMNAME" | grep -qi -w "tuir"; then
 			#tuir (reddit client) in foot
 			CHOICES="
