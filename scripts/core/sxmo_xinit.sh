@@ -106,8 +106,8 @@ startdwm() {
 		set -- customxinit
 		. $0
 		$0 daemonsneedingdbus
-		dwm 2> "$XDG_CACHE_HOME/sxmo/sxmo.log"
-	"
+		dwm
+	" 2> "$XDG_CACHE_HOME/sxmo/sxmo.log"
 }
 
 stopdwm() {
