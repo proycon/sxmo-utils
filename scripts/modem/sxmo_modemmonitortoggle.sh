@@ -44,7 +44,7 @@ daemon_isrunning() {
 			;;
 		arch|archarm)
 			[ "$1" = "modemmanager" ] && set -- ModemManager
-			systemctl status "$1" | grep -q running
+			systemctl is-active --quiet "$1"
 			;;
 	esac
 }
@@ -55,23 +55,21 @@ daemon_exists() {
 			[ -f /etc/init.d/"$1" ]
 			;;
 		arch|archarm)
-			systemctl status "$1" >/dev/null
+			[ "$1" = "modemmanager" ] && set -- ModemManager
+			systemctl status "$1" > /dev/null 2>&1
+			[ $? -ne 4 ]
 			;;
 	esac
 }
 
 ensure_daemon() {
-	TRIES=0
-	while ! daemon_isrunning "$1"; do
-		if [ "$TRIES" -eq 10 ]; then
-			return 1
-		fi
-		TRIES=$((TRIES+1))
+	for _ in $(seq 1 10); do
+		daemon_isrunning "$1" && return 0
 		daemon_start "$1"
 		sleep 5
 	done
 
-	return 0
+	return 1
 }
 
 ensure_daemons() {
