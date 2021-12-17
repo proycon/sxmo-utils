@@ -50,6 +50,8 @@ install: $(PROGRAMS)
 	install -D -m 0644 -T configs/xorg/monitor.conf $(DESTDIR)$(PREFIX)/share/X11/xorg.conf.d/90-monitor.conf
 
 	mkdir -p $(DESTDIR)/etc/NetworkManager/dispatcher.d
+	
+	install -D -m 0644 -T configs/appcfg/mpv_input.conf $(DESTDIR)/etc/mpv/input.conf
 
 	# Bin
 	install -D -t $(DESTDIR)$(PREFIX)/bin scripts/*/*
