@@ -22,7 +22,7 @@ if [ -n "$WAYLAND_DISPLAY" ] && command -v wayout > /dev/null; then
 			sleep 60
 			pangodraw
 		done
-	) | wayout --font "FiraMono Nerd Font" --foreground-color "#ffffff" --fontsize "40" --height 200 --textalign center --feed-par
+	) | wayout --font "FiraMono Nerd Font" --foreground-color "#ffffff" --fontsize "80" --height 200 --textalign center --feed-par
 elif [ -n "$DISPLAY" ] && command -v conky > /dev/null; then
 	# For X we use conky (if not already running):
 	pidof conky || conky -c /usr/share/sxmo/appcfg/conky24h.conf -d  #24 hour clock
