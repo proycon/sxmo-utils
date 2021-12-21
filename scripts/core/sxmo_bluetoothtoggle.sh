@@ -22,9 +22,11 @@ on() {
 	case "$OS" in
 		alpine|postmarketos)
 			rc-service bluetooth start
+			rc-update add bluetooth
 			;;
 		arch|archarm)
 			systemctl start bluetooth
+			systemctl enable bluetooth
 			;;
 	esac
 }
@@ -33,9 +35,11 @@ off() {
 	case "$OS" in
 		alpine|postmarketos)
 			rc-service bluetooth stop
+			rc-update del bluetooth
 			;;
 		arch|archarm)
 			systemctl stop bluetooth
+			systemctl disable bluetooth
 			;;
 	esac
 	rfkill block bluetooth
