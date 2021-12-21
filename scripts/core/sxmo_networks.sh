@@ -4,155 +4,243 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+set -e
+
+nofail() {
+	"$@" || return 0
+}
+
+stderr() {
+	printf "%s sxmo_networks.sh: %s.\n" "$(date)" "$*" >&2
+}
+
 connections() {
-	ACTIVE="$(nmcli -c no -t c show --active | cut -d: -f1,3 | sed "s/^/$icon_chk:/")"
-	INACTIVE="$(nmcli -c no -t c show | cut -d: -f1,3 | sed "s/^/ :/")"
-	printf %b "$ACTIVE\n$INACTIVE" | sort -u -t: -k2,2 | sed "s/^ ://" | sed "s/^$icon_chk:/$icon_chk /"
+	nmcli -c no -f device,type,name -t c show | \
+		sed "s/802-11-wireless:/$icon_wif /" | \
+		sed "s/gsm:/$icon_mod /" | \
+		sed "s/802-3-ethernet:/$icon_usb /" | \
+		sed "s/^:/$icon_dof /" |\
+		sed "s/^cdc-wdm.*:/$icon_don /" |\
+		sed "s/^wlan.*:/$icon_don /" |\
+		sed "s/^usb.*:/$icon_don /"
 }
 
 toggleconnection() {
 	CONNLINE="$1"
-	CONNNAME="$(echo "$CONNLINE" | cut -d: -f1)"
-	if echo "$CONNLINE" | grep -q "^$icon_chk "; then
-		RES="$(printf %s "$CONNNAME" | sed "s|^$icon_chk ||" | xargs -0 nmcli c down 2>&1)"
+	if echo "$CONNLINE" | grep -q "^$icon_don "; then
+		CONNNAME="$(echo "$CONNLINE" | cut -d' ' -f3-)"
+		RES="$(nofail nmcli c down "$CONNNAME" 2>&1)"
 	else
-		if [ "$(echo "$CONNLINE" | cut -d: -f2)" = " $icon_wif" ]; then
-			notify-send "Enabling Wifi first."
+		CONNNAME="$(echo "$CONNLINE" | cut -d' ' -f3-)"
+		if [ "$(echo "$CONNLINE" | cut -d' ' -f2)" = "$icon_wif" ] && [ -z "$WIFI_ENABLED" ]; then
+			notify-send "Enabling wifi first."
 			doas sxmo_wifitoggle.sh
 		fi
-		RES="$(nmcli c up "$CONNNAME" 2>&1)"
+		RES="$(nofail nmcli c up "$CONNNAME" 2>&1)"
 	fi
 	notify-send "$RES"
+	stderr "$RES"
 }
 
 deletenetworkmenu() {
 	CHOICE="$(
-		printf %b "Close Menu\n$(connections)" |
+		printf %b "$icon_cls Close Menu\n$(connections)" |
 			dmenu -p "Delete Network"
 	)"
-	if [ "$CHOICE" = "Close Menu" ]; then
-		return
-	else
-		CONNNAME="$(echo "$CHOICE" | cut -d: -f1)"
-		RES="$(nmcli c delete "$CONNNAME" 2>&1)"
-		notify-send "$RES"
-	fi
+	[ -z "$CHOICE" ] && return
+	echo "$CHOICE" | grep -q "Close Menu" && return
+	CONNNAME="$(echo "$CHOICE" | cut -d' ' -f3-)"
+	RES="$(nofail nmcli c delete "$CONNNAME" 2>&1)"
+	notify-send "$RES"
+	stderr "$RES"
 }
 
 getifname() {
 	IFTYPE="$1"
 	IFNAME="$(nmcli d | grep -m 1 "$IFTYPE" | cut -d' ' -f1)"
-	[ -z "$IFNAME" ] && notify-send "No interface with type $IFTYPE found" && IFNAME=lo
+	if [ -z "$IFNAME" ]; then
+		notify-send "No interface with type $IFTYPE found"
+		stderr "No interface with type $IFTYPE found"
+		IFNAME=lo
+	fi
 	echo "$IFNAME"
 }
 
 addnetworkgsmmenu() {
 	CONNNAME="$(
-		echo "Close Menu" |
-			sxmo_dmenu_with_kb.sh -p "Add GSM: Alias"
+		echo "$icon_cls Close Menu" |
+			sxmo_dmenu_with_kb.sh -p "Alias"
 	)"
-	[ "$CONNNAME" = "Close Menu" ] && return
+	[ -z "$CONNAME" ] && return
+	echo "$CONNNAME" | grep -q "Close Menu" && return
 
 	APN="$(
-		echo "Close Menu" |
-			sxmo_dmenu_with_kb.sh -p "Add GSM: APN"
+		echo "$icon_cls Close Menu" |
+			sxmo_dmenu_with_kb.sh -p "APN"
 	)"
-	[ "$APN" = "Close Menu" ] && return
+	[ -z "$APN" ] && return
+	echo "$APN" | grep -q "Close Menu" && return
 
 	# TODO: Support gsm bearer username & password
-	nmcli c add \
+	RES="$(nofail nmcli c add \
 		type gsm \
 		ifname "$(getifname gsm)" \
 		con-name "$CONNNAME" \
-		apn "$APN"
+		apn "$APN" 2>&1)"
+	stderr "$RES"
+	notify-send "$RES"
 }
 
 addnetworkwpamenu() {
 	SSID="$(
 		nmcli d wifi list | tail -n +2 | grep -v '^\*' | awk -F'  ' '{ print $6 }' | grep -v '\-\-' |
-		xargs -0 printf 'Close Menu\n%s' |
-		sxmo_dmenu_with_kb.sh -p "Add WPA: SSID"
+		xargs -0 printf "$icon_cls Close Menu\n%s" |
+		sxmo_dmenu_with_kb.sh -p "SSID"
 	)"
-	[ "$SSID" = "Close Menu" ] && return
+	[ -z "$SSID" ] && return
+	echo "$SSID" | grep -q "Close Menu" && return
 
 	PASSPHRASE="$(
-		echo "Close Menu" |
-			sxmo_dmenu_with_kb.sh -p "Add WPA: Passphrase"
+		echo "$icon_cls Close Menu" |
+			sxmo_dmenu_with_kb.sh -p "Passphrase"
 	)"
-	[ "$PASSPHRASE" = "Close Menu" ] && return
+	[ -z "$PASSPHRASE" ] && return
+	echo "$PASSPHRASE" | grep -q "Close Menu" && return
 
-	nmcli c add \
+	RES="$(nofail nmcli c add \
 		type wifi \
 		ifname wlan0 \
 		con-name "$SSID" \
 		802-11-wireless-security.key-mgmt wpa-psk \
 		ssid "$SSID" \
-		802-11-wireless-security.psk "$PASSPHRASE"
+		802-11-wireless-security.psk "$PASSPHRASE" 2>&1)"
+	stderr "$RES"
+	notify-send "$RES"
 }
 
 addhotspotusbmenu() {
 	CONNNAME="$(
-		echo "Close Menu" |
-			sxmo_dmenu_with_kb.sh -p "Add USB Hotspot: Alias"
+		echo "$icon_cls Close Menu" |
+			sxmo_dmenu_with_kb.sh -p "Alias"
 	)"
-	[ "$CONNNAME" = "Close Menu" ] && return
+	[ -z "$CONNAME" ] && return
+	echo "$CONNNAME" | grep -q "Close Menu" && return
 
 	# TODO: restart udhcpd after disconnecting on postmarketOS
-	nmcli c add \
+	RES="$(nofail nmcli c add \
 		type ethernet \
 		ifname usb0 \
 		con-name "$CONNNAME" \
-		ipv4.method shared
+		ipv4.method shared 2>&1)"
+	stderr "$RES"
+	notify-send "$RES"
+}
+
+addhotspotwifimenu() {
+	SSID="$(
+		echo "$icon_cls Close Menu" |
+			sxmo_dmenu_with_kb.sh -p "SSID"
+	)"
+	[ -z "$SSID" ] && return
+	echo "$SSID" | grep -q "Close Menu" && return
+
+	key="$(
+		echo "$icon_cls Close Menu" |
+			sxmo_dmenu_with_kb.sh -p "Passphrase"
+	)"
+	[ -z "$key" ] && return
+	echo "$key" | grep -q "Close Menu" && return
+
+	key1="$(
+		echo "$icon_cls Close Menu" |
+			sxmo_dmenu_with_kb.sh -p "Confirm"
+	)"
+	[ -z "$key1" ] && return
+	echo "$key1" | grep -q "Close Menu" && return
+
+	if [ "$key" != "$key1" ]; then
+		notify-send "key mismatch"
+		stderr "key mismatch"
+		return
+	fi
+
+	channel="$(
+		printf "%s Close Menu\n11\n" "$icon_cls" | sxmo_dmenu_with_kb.sh -p "Channel"
+	)"
+	[ -z "$channel" ] && return
+	echo "$channel" | grep -q "Close Menu" && return
+
+	RES="$(nofail nmcli device wifi hotspot ifname wlan0 \
+		con-name "Hotspot $SSID" \
+		ssid "$SSID" \
+		channel "$channel" \
+		band bg password "$key")"
+	stderr "$RES"
+	notify-send "$RES"
 }
 
 networksmenu() {
 	while true; do
+		if rfkill -rn | grep wlan | grep -qE "unblocked unblocked"; then
+			WIFI_ENABLED=1
+		fi
 		CHOICE="$(
 			printf %b "
+				$icon_cls Close Menu
+				$icon_mnu System Menu
 				$(connections)
-				Add a GSM Network
-				Add a WPA Network
-				Add a Hotspot
-				Add a USB Hotspot
-				Delete a Network
-				Launch Nmtui
-				Launch Ifconfig
-				Scan Wifi Networks
-				System Menu
-				Close Menu
+				$icon_mod Add a GSM Network
+				$([ -z "$WIFI_ENABLED" ] || printf %b "$icon_wif Add a WPA Network")
+				$([ -z "$WIFI_ENABLED" ] || printf %b "$icon_wif Add a Wifi Hotspot")
+				$icon_usb Add a USB Hotspot
+				$icon_cls Delete a Network
+				$icon_cfg Nmtui
+				$icon_cfg Ifconfig
+				$([ -z "$WIFI_ENABLED" ] || printf %b "$icon_wif Scan Wifi Networks")
+				$([ -z "$WIFI_ENABLED" ] || printf %b "$icon_wif Disable Wifi")
+				$([ -z "$WIFI_ENABLED" ] && printf %b "$icon_wif Enable Wifi")
 			" |
 			awk '{$1=$1};1' | grep '\w' | dmenu -p 'Networks'
 		)"
+		[ -z "$CHOICE" ] && exit
 		case "$CHOICE" in
-			"System Menu" )
+			*"System Menu" )
 				sxmo_appmenu.sh sys && exit
 				;;
-			"Close Menu" )
+			*"Close Menu" )
 				exit
 				;;
-			"Add a GSM Network" )
+			*"Add a GSM Network" )
 				addnetworkgsmmenu
 				;;
-			"Add a WPA Network" )
+			*"Add a WPA Network" )
 				addnetworkwpamenu
 				;;
-			"Add a Hotspot" )
-				sxmo_hotspot.sh
+			*"Add a Wifi Hotspot" )
+				addhotspotwifimenu
 				;;
-			"Add a USB Hotspot")
+			*"Add a USB Hotspot")
 				addhotspotusbmenu
 				;;
-			"Delete a Network" )
+			*"Delete a Network" )
 				deletenetworkmenu
 				;;
-			"Launch Nmtui" )
-				sxmo_terminal.sh nmtui &
+			*"Nmtui" )
+				sxmo_terminal.sh nmtui || continue # Killeable
 				;;
-			"Launch Ifconfig" )
-				sxmo_terminal.sh watch -n 2 ifconfig &
+			*"Ifconfig" )
+				sxmo_terminal.sh watch -n 2 ifconfig || continue # Killeable
 				;;
-			"Scan Wifi Networks" )
-				sxmo_terminal.sh watch -n 2 nmcli d wifi list &
+			*"Scan Wifi Networks" )
+				sxmo_terminal.sh watch -n 2 nmcli d wifi list || continue # Killeable
+				;;
+			*"Enable Wifi" )
+				doas sxmo_wifitoggle.sh
+				sxmo_statusbarupdate.sh wifitoggle
+				;;
+			*"Disable Wifi" )
+				doas sxmo_wifitoggle.sh
+				sxmo_statusbarupdate.sh wifitoggle
 				;;
 			*)
 				toggleconnection "$CHOICE"

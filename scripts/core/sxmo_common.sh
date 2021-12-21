@@ -184,6 +184,10 @@ icon_usb="禍" # usb
 icon_ear="" # earpiece
 icon_dot="" # searching, connecting, etc.
 icon_ena="" # enabled
+icon_mod="" # modem
+icon_usb="" # usb
+icon_dof="" # dot off
+icon_don="" # dot on
 
 #allow the user to override icons
 # shellcheck disable=SC1091
