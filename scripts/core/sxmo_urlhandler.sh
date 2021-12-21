@@ -39,7 +39,7 @@ COMMAND=$(
 		$(command -v echo       >/dev/null && echo 'echo URL | xsel -i')
 		$(command -v youtube-dl >/dev/null && echo 'youtube-dl -o- URL | mpv -ao=alsa -v -')
 		$(command -v youtube-dl >/dev/null && echo 'youtube-dl URL')
-		$(command -v curl       >/dev/null && echo 'curl URL | vis -')
+		$(command -v curl       >/dev/null && echo "curl URL | $EDITOR -")
 		$(command -v wget       >/dev/null && echo 'wget URL')
 		$(command -v aria2c     >/dev/null && echo 'aria2c URL')
 	" |
