@@ -22,14 +22,47 @@ prepare_contacts_list() {
 	awk '!($0 in a){a[$0]; print}' |
 	sed '/^[[:space:]]*$/d' |
 	awk -F '\t' -v CONTACTSFILE="$CONTACTSFILE" '
+		function join(array, sep) {
+			result = ""
+			cs = ""
+
+			for (i in array) {
+				if (length(result)) cs = sep;
+				result = result cs array[i]
+			}
+
+			return result
+		}
+
+		function name_for_num(num) {
+			if (!a[num]) a[num] = "???";
+			return a[num]
+		}
+
 		FILENAME == CONTACTSFILE {
-			if (!length) next;
+			if (!length()) next;
 			a[$1] = $2;
 			next
 		}
+
+		# Multiple numbers, unknown group name
+		/(\+[^+]+){2,}/ && !a[$1] {
+			split("", names) # empty the names array
+			split($1, nums, "+")
+
+			for (i in nums) {
+				num = nums[i]
+				if (length(num) == 0) continue;
+
+				names[i] = name_for_num("+" num)
+			}
+
+			print join(names, ", ") ": " $0
+			next
+		}
+
 		{
-			if (!a[$1]) a[$1] = "???";
-			print a[$1] ": " $0
+			print name_for_num($1) ": " $0
 		}
 	' "$CONTACTSFILE" -
 }
