@@ -60,4 +60,5 @@ command -v firefox && export BROWSER=firefox
 #export KEYBOARD_ARGS="-o | clickclack -V"
 
 # Auto hide cursor with touchscreen, Show it with a mouse
-unclutter-xfixes --hide-on-touch --start-hidden &
+command -v "unclutter-xfixes" > /dev/null && alias unclutter="unclutter-xfixes"
+unclutter --hide-on-touch --start-hidden &
