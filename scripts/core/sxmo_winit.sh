@@ -64,8 +64,8 @@ defaultconfigs() {
 startsway() {
 	[ -f "$XDG_CACHE_HOME/sxmo/sxmo.log" ] && mv -f "$XDG_CACHE_HOME/sxmo/sxmo.log" "$XDG_CACHE_HOME/sxmo/sxmo.previous.log"
 	dbus-run-session sh -c "
-		/usr/bin/sway -c "$XDG_CONFIG_HOME/sxmo/sway" 2> "$XDG_CACHE_HOME/sxmo/sxmo.log"
-	"
+		/usr/bin/sway -c "$XDG_CONFIG_HOME/sxmo/sway"
+	" 2> "$DEBUGLOG"
 }
 
 stopsway() {

@@ -168,7 +168,7 @@ conversationloop() {
 
 	set -e
 
-	sxmo_keyboard.sh open
+	sxmo_keyboard.sh open 2>>"$CACHEDIR"/sxmo.log
 
 	while true; do
 		DRAFT="$LOGDIR/$NUMBER/draft.txt"

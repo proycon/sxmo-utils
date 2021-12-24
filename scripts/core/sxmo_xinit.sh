@@ -111,7 +111,7 @@ startdwm() {
 		. $0
 		$0 daemonsneedingdbus
 		dwm
-	" 2> "$XDG_CACHE_HOME/sxmo/sxmo.log"
+	" 2> "$DEBUGLOG"
 }
 
 stopdwm() {
