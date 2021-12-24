@@ -186,8 +186,6 @@ networksmenu() {
 		fi
 		CHOICE="$(
 			printf %b "
-				$icon_cls Close Menu
-				$icon_mnu System Menu
 				$(connections)
 				$icon_mod Add a GSM Network
 				$([ -z "$WIFI_ENABLED" ] || printf %b "$icon_wif Add a WPA Network")
@@ -199,6 +197,8 @@ networksmenu() {
 				$([ -z "$WIFI_ENABLED" ] || printf %b "$icon_wif Scan Wifi Networks")
 				$([ -z "$WIFI_ENABLED" ] || printf %b "$icon_wif Disable Wifi")
 				$([ -z "$WIFI_ENABLED" ] && printf %b "$icon_wif Enable Wifi")
+				$icon_mnu System Menu
+				$icon_cls Close Menu
 			" |
 			awk '{$1=$1};1' | grep '\w' | dmenu -p 'Networks'
 		)"
