@@ -16,11 +16,12 @@ checkmmsd() {
 	fi
 }
 
-# SXMO deletes each mms from the server once it is processed.
-# However, sometimes things don't always go as planned.
-# This function checks to see if there are mms on the server
-# and processes them.
+# if SXMO_MMS_AUTO_DELETE=1, then SXMO will delete each mms from the server
+# once it is processed.  However, sometimes things don't always go as planned.
+# This function checks to see if there are mms on the server and processes
+# them.
 checkforlostmms() {
+	[ "$MMS_AUTO_DELETE" -eq 0 ] && return
 	ALL_MMS_TEMP="$(mktemp)"
 	dbus-send --dest=org.ofono.mms --print-reply /org/ofono/mms/modemmanager org.ofono.mms.Service.GetMessages | grep "object path" | cut -d'"' -f2 | rev | cut -d'/' -f1 | rev | sort -u > "$ALL_MMS_TEMP"
 	count="$(wc -l < "$ALL_MMS_TEMP")"
@@ -205,7 +206,13 @@ processmms() {
 		fi
 	fi
 
+	# system defeaults are MMS_AUTO_DELETE=1 and MMS_KEEP_MMSFILE=1
 	if [ "$MMS_AUTO_DELETE" -eq 1 ]; then
+		# keep the mms payload file (useful for debugging)
+		if [ "$MMS_KEEP_MMSFILE" -eq 1 ]; then
+			mkdir -p "$MMS_BASE_DIR/bak"
+			cp "$MMS_BASE_DIR/$MMS_FILE" "$MMS_BASE_DIR/bak/$MMS_FILE"
+		fi
 		dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
 		stderr "Finished processing $MMS_FILE. Deleting it."
 	fi
