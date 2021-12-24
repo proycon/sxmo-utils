@@ -192,8 +192,8 @@ checkfornewtexts() {
 		TEXTDATA="$(mmcli -m "$(modem_n)" -s "$TEXTID" -K)"
 		# SMS with no TEXTID is an SMS WAP (I think). So skip.
 		if [ -z "$TEXTDATA" ]; then
-			stderr "no TEXTDATA, probably MMS."
-			printf %b "$(date -Iseconds)\tdebug_mms\tNULL\tNO TEXTDATA (Probably MMS)\n" >> "$LOGDIR/modemlog.tsv"
+			stderr "Received an empty SMS (TEXTID: $TEXTID).  I will assume this is an MMS."
+			printf %b "$(date -Iseconds)\tdebug_mms\tNULL\tEMPTY (TEXTID: $TEXTID)\n" >> "$LOGDIR/modemlog.tsv"
 			continue
 		fi
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
@@ -206,7 +206,13 @@ checkfornewtexts() {
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 		TIME="$(date -Iseconds -d "$TIME")"
 
-		if cut -f1 "$BLOCKFILE" | grep -q "^$NUM$"; then
+		# Note: this will *not* block MMS, since we have to unpack the phone numbers for an MMS
+		# later.
+		#
+		# TODO: a user *could* block the sms wap number (which would be user error).  But then
+		# the mms would not be processed.  So probably give a warning here if the user has blocked 
+		# the sms wap number?
+		if cut -f1 "$BLOCKFILE" 2>/dev/null | grep -q "^$NUM$"; then
 			mkdir -p "$BLOCKDIR/$NUM"
 			stderr "BLOCKED text from number: $NUM (TEXTID: $TEXTID)"
 			printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$BLOCKDIR/$NUM/sms.txt"
@@ -215,15 +221,11 @@ checkfornewtexts() {
 			continue
 		fi
 
-		# mmsd-tng devs think that if there's no data, then not an mms,
-		# but I've found that sometimes sms can have '--' in DATA
-		# so I think safer bet is to just check for TEXT = "--" and ghost sms's above..
 		if [ "$TEXT" = "--" ]; then
-			stderr "TEXT = '--'. Probably an MMS..."
-			printf %b "$TIME\tdebug_mms\t$NUM\t$TEXT (Probably MMS)\n" >> "$LOGDIR/modemlog.tsv"
+			stderr "Text from $NUM (TEXTID: $TEXTID) with '--'.  I will assume this is an MMS."
+			printf %b "$TIME\tdebug_mms\t$NUM\t$TEXT\n" >> "$LOGDIR/modemlog.tsv"
 			continue
 		fi
-		stderr "Probably not an MMS."
 
 		mkdir -p "$LOGDIR/$NUM"
 		stderr "Text from number: $NUM (TEXTID: $TEXTID)"
