@@ -190,7 +190,7 @@ execute() {
 		exit 0
 	fi
 
-	eval "$@"
+	eval "$*"
 }
 
 fetch_file() {
@@ -199,7 +199,7 @@ fetch_file() {
 		return
 	fi
 
-	eval "$@"
+	eval "$*"
 }
 
 build_command() {

@@ -77,8 +77,12 @@ daemonsneedingdbus() {
 	sxmo_hooks.sh lisgdstart &
 
 	# Auto hide cursor with touchscreen, Show it with a mouse
-	command -v "unclutter-xfixes" > /dev/null && alias unclutter="unclutter-xfixes"
-	unclutter --hide-on-touch --start-hidden &
+	if command -v "unclutter-xfixes" > /dev/null; then
+		set -- unclutter-xfixes
+	else
+		set -- unclutter
+	fi
+	"$1" --hide-on-touch --start-hidden &
 }
 
 defaultconfig() {
