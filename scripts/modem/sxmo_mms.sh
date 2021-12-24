@@ -46,6 +46,12 @@ extractmmsattachement() {
 			text/plain)
 				DATA_EXT="txt"
 				;;
+			image/gif)
+				DATA_EXT="gif"
+				;;
+			image/png)
+				DATA_EXT="png"
+				;;
 			image/jpeg)
 				DATA_EXT="jpeg"
 				;;
