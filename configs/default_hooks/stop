@@ -2,3 +2,4 @@
 
 pkill -f sxmo_lock_idle.sh
 pkill mmsdtng
+pkill unclutter
