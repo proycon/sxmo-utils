@@ -5,24 +5,14 @@
 
 set -e
 
-MMSCONFIG="$MMS_BASE_DIR/mms"
+VVMCONFIG="$VVM_BASE_DIR/vvm"
 
 defaultconfig() {
 	cat <<EOF
 [Modem Manager]
-CarrierMMSC=http://wholesale.mmsmvno.com/mms/wapenc
-MMS_APN=Ultra
-CarrierMMSProxy=NULL
-DefaultModemNumber=NULL
-AutoProcessOnConnection=true
-AutoProcessSMSWAP=true
-
-[Settings]
-UseDeliveryReports=false
-AutoCreateSMIL=false
-ForceCAres=false
-TotalMaxAttachmentSize=1100000
-MaxAttachments=25
+"Enable VVM": true
+"VVM Type": cvvm
+"Destination Number": 127
 EOF
 }
 
@@ -40,7 +30,7 @@ editfile() {
 	while : ; do
 		CHOICE="$(grep "=" < "$FILE" |
 			xargs -0 printf "$icon_ret Close Menu\n$icon_rol Default Config\n%b" |
-			dmenu -p "MMS Config"
+			dmenu -p "VVM Config"
 		)"
 
 		case "$CHOICE" in
@@ -68,19 +58,19 @@ newfile() {
 	mv "$tmp" "$MMSCONFIG"
 }
 
-mkdir -p "$MMS_BASE_DIR"
+mkdir -p "$VVM_BASE_DIR"
 
-if pgrep mmsdtng > /dev/null; then
-	pkill mmsdtng
+if pgrep ^vvmd; then
+	pkill ^vvmd
 fi
 
 finish() {
-	setsid -f mmsdtng
+	setsid -f vvmd
 }
 trap 'finish' EXIT
 
-if [ -f "$MMSCONFIG" ]; then
-	editfile "$MMSCONFIG"
+if [ -f "$VVMCONFIG" ]; then
+	editfile "$VVMCONFIG"
 else
 	newfile
 fi

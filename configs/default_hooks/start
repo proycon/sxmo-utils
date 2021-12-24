@@ -26,6 +26,10 @@ sxmo_hooks.sh desktop_widget &
 # Enable automatic screen off and crust when phone is locked and idle
 sxmo_lock_idle.sh &
 
-if [ -f "$HOME"/.mms/modemmanager/mms ]; then
+if [ -f "$MMS_BASE_DIR/mms" ]; then
 	mmsdtng &
+fi
+
+if [ -f "$VVM_BASE_DIR/vvm" ]; then
+	vvmd &
 fi

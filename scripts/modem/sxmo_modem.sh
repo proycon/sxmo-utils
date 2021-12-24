@@ -193,7 +193,7 @@ checkfornewtexts() {
 		# SMS with no TEXTID is an SMS WAP (I think). So skip.
 		if [ -z "$TEXTDATA" ]; then
 			stderr "no TEXTDATA, probably MMS."
-			echo "$(date) MMS no TEXTDATA" >> ~/mms.debug.log
+			printf %b "$(date -Iseconds)\tdebug_mms\tNULL\tNO TEXTDATA (Probably MMS)\n" >> "$LOGDIR/modemlog.tsv"
 			continue
 		fi
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
@@ -204,6 +204,7 @@ checkfornewtexts() {
 		)"
 		NUM="$(cleanupnumber "$NUM")"
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
+		TIME="$(date -Iseconds -d "$TIME")"
 
 		if cut -f1 "$BLOCKFILE" | grep -q "^$NUM$"; then
 			mkdir -p "$BLOCKDIR/$NUM"
@@ -219,7 +220,7 @@ checkfornewtexts() {
 		# so I think safer bet is to just check for TEXT = "--" and ghost sms's above..
 		if [ "$TEXT" = "--" ]; then
 			stderr "TEXT = '--'. Probably an MMS..."
-			echo "$(date) MMS TEXT --." >> ~/mms.debug.log
+			printf %b "$TIME\tdebug_mms\t$NUM\t$TEXT (Probably MMS)\n" >> "$LOGDIR/modemlog.tsv"
 			continue
 		fi
 		stderr "Probably not an MMS."

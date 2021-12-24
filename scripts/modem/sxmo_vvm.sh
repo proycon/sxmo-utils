@@ -1,12 +1,27 @@
 #!/bin/sh
+# Main vvm (Visual Voice Mail) code.  Functions here are called from sxmo_modemmonitor.sh
+
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+stderr() {
+	printf "%s sxmo_vvm: %s.\n" "$(date)" "$*" >&2
+}
+
+checkvvmd() {
+	if [ -f "$VVM_BASE_DIR/vvm" ]; then
+		pgrep vvmd > /dev/null && return
+		pgrep -f sxmo_vvmdconfig && return
+		stderr "vvmd not found, attempting to start it: $DBUS_SESSION_BUS_ADDRESS."
+		setsid -f vvmd
+	fi
+}
+
 # usually invoked from sxmo_modemmonitor.sh once a dbus signal is received
 processvvm() {
-	VVM_DATE="$1" # date of voice mail
-	VVM_SENDER="$2" # who the voice mail is from
-	VVM_ID="$3" # id assigned to voice mail from vvmd
+	VVM_DATE="$(date -Iseconds -d "$1")" # date of voice mail
+	VVM_SENDER="$2" # number the voice mail is from
+	VVM_ID="$3" # unique id assigned to voice mail from vvmd
 	VVM_ATTACHMENT="$4" # full path + filename of amr file
 	VVM_FILE="$LOGDIR/$VVM_SENDER/attachments/$(basename "$VVM_ATTACHMENT")"
 	VVM_SENDER_NAME="$(sxmo_contacts.sh --name "$VVM_SENDER")"
@@ -19,7 +34,7 @@ processvvm() {
 	if [ -f "$VVM_ATTACHMENT" ]; then
 		cp "$VVM_ATTACHMENT" "$VVM_FILE"
 	else
-		printf "ERR: %s vvm attachment (%s) not found!" "$(date)" "$VVM_ATTACHMENT" >&2
+		stderr "ERR: vvm attachment ($VVM_ATTACHMENT) not found!"
 		exit 1
 	fi
 

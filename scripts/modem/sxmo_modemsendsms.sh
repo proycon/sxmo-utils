@@ -47,6 +47,11 @@ fi
 
 # if multiple recipients or attachment, then send via mmsctl
 if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ]; then
+
+	if ! [ -f "$MMS_BASE_DIR/mms" ]; then
+		err "MMS ($MMS_BASE_DIR) not configured."
+	fi
+
 	# generate mmsctl args for attachments found in draft.attachments.txt (one per line)
 	count=0
 	total_size=0
@@ -71,8 +76,8 @@ if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$
 	fi
 
 	# basic mms error checking (since mmsctl does not do it)
-	TOT_MAX_ATTACHMENT_SIZE="$(grep "^TotalMaxAttachmentSize" "$MMS_RECEIVED_DIR/mms" | cut -d'=' -f2)"
-	MAX_ATTACHMENTS="$(grep "^MaxAttachments" "$MMS_RECEIVED_DIR/mms" | cut -d'=' -f 2)"
+	TOT_MAX_ATTACHMENT_SIZE="$(grep "^TotalMaxAttachmentSize" "$MMS_BASE_DIR/mms" | cut -d'=' -f2)"
+	MAX_ATTACHMENTS="$(grep "^MaxAttachments" "$MMS_BASE_DIR/mms" | cut -d'=' -f 2)"
 	[ -z "$MAX_ATTACHMENTS" ] && MAX_ATTACHMENTS="25"
 	[ -z "$TOT_MAX_ATTACHMENT_SIZE" ] && TOT_MAX_ATTACHMENT_SIZE="1100000"
 	[ "$count" -gt "$MAX_ATTACHMENTS" ] && err "Number of attachments ($count) greater than MaxAttachments ($MAX_ATTACHMENTS)."

@@ -8,13 +8,11 @@ stderr() {
 }
 
 checkmmsd() {
-	if [ -f "$HOME/.mms/modemmanager/mms" ]; then
+	if [ -f "$MMS_BASE_DIR/mms" ]; then
 		pgrep mmsdtng > /dev/null && return
-		printf "%s: MMSDTNG not found, restarting it!\n" "$(date)" >> ~/mms.debug.log
-		printf "sxmo_mms: mmsdtng not found, attempting to start it.\n" >&2
+		pgrep -f sxmo_mmsdconfig.sh && return
+		stderr "mmsdtng not found, attempting to start it." >&2
 		setsid -f mmsdtng
-		nmcli d disconnect cdc-wdm0
-		nmcli d connect cdc-wdm0
 	fi
 }
 
@@ -60,7 +58,7 @@ extractmmsattachement() {
 				;;
 		esac
 
-		if [ -f "$MMS_RECEIVED_DIR/$MMS_FILE" ]; then
+		if [ -f "$MMS_BASE_DIR/$MMS_FILE" ]; then
 			OUTFILE="$MMS_FILE.$DATA_EXT"
 			count=0
 			while [ -f "$LOGDIR/$LOGDIRNUM/attachments/$OUTFILE" ]; do
@@ -68,7 +66,7 @@ extractmmsattachement() {
 				count="$((count+1))"
 			done
 			dd skip="$AOFFSET" count="$ASIZE" \
-				if="$MMS_RECEIVED_DIR/$MMS_FILE" \
+				if="$MMS_BASE_DIR/$MMS_FILE" \
 				of="$LOGDIR/$LOGDIRNUM/attachments/$OUTFILE" \
 				bs=1 >/dev/null 2>&1
 		fi
@@ -88,12 +86,12 @@ processmms() {
 	MESSAGE_TYPE="$2" # Sent or Received or Unknown
 	MESSAGE="$(mmsctl -M -o "$MESSAGE_PATH")"
 	stderr "DEBUG: processmms MESSAGE_PATH: $MESSAGE_PATH MESSAGE_TYPE: $MESSAGE_TYPE"
-	echo "$(date) MMS processmms $MESSAGE_PATH $MESSAGE_TYPE" >> ~/mms.debug.log
 
 	# If a message expires on the server-side, just chuck it
 	if printf %s "$MESSAGE" | grep -q "Accept-Charset (deprecated): Message not found"; then
 		stderr "$MESSAGE_PATH not found! Deleting."
 		dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
+		printf "%s\tdebug_mms\t%s\t%s\n" "$(date -Iseconds)" "NULL" "ERROR: Message not found." >> "$LOGDIR/modemlog.tsv"
 		return
 	fi
 
@@ -121,6 +119,7 @@ processmms() {
 
 	MMS_FILE="$(printf %s "$MESSAGE_PATH" | rev | cut -d'/' -f1 | rev)"
 	DATE="$(printf %s "$MESSAGE" | jq -r '.attrs.Date')"
+	DATE="$(date -Iseconds -d "$DATE")"
 
 	MYNUM="$(printf %s "$MESSAGE" | jq -r '.attrs."Modem Number"')"
 	if [ -z "$MYNUM" ]; then
@@ -166,10 +165,10 @@ processmms() {
 
 	if [ "$MESSAGE_TYPE" = "Received" ]; then
 		printf "%s\trecv_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> "$LOGDIR/modemlog.tsv"
-		printf "%s\trecv_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> ~/mms.debug.log
 	elif [ "$MESSAGE_TYPE" = "Sent" ]; then
 		printf "%s\tsent_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> "$LOGDIR/modemlog.tsv"
-		printf "%s\tsent_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> ~/mms.debug.log
+	else
+		printf "%s\tdebug_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "ERROR UNKNOWN: $MMS_FILE" >> "$LOGDIR/modemlog.tsv"
 	fi
 
 	# process 'content' of mms payload
@@ -195,9 +194,9 @@ processmms() {
 		if [ "$count" -gt 0 ]; then
 			GROUPNAME="$(sxmo_contacts.sh --name "$LOGDIRNUM")"
 			[ "$GROUPNAME" = "???" ] && GROUPNAME="$LOGDIRNUM"
-			sxmo_hooks.sh sms "$FROM_NAME <$GROUPNAME>" "$TEXT ($MMS_FILE)"
+			sxmo_hooks.sh sms "$FROM_NAME" "$TEXT" "$MMS_FILE" "$GROUPNAME"
 		else
-			sxmo_hooks.sh sms "$FROM_NAME" "$TEXT ($MMS_FILE)"
+			sxmo_hooks.sh sms "$FROM_NAME" "$TEXT" "$MMS_FILE"
 		fi
 	fi
 
