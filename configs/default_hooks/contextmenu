@@ -61,11 +61,11 @@ case "$WMCLASS" in
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			$icon_ror Autorotate $(
 				pgrep -f "$(command -v sxmo_rotateautotoggle.sh)" > /dev/null &&
-				printf %b "$icon_ton ^ 0 ^ sxmo_rotateautotoggle.sh &" ||  printf %b "$icon_tof ^ 0 ^ sxmo_rotateautotoggle.sh &"
+				printf %b "$icon_ton ^ 1 ^ sxmo_rotateautotoggle.sh &" ||  printf %b "$icon_tof ^ 1 ^ sxmo_rotateautotoggle.sh &"
 			)
 			$icon_lck Proximity Lock $(
 				pgrep -f "$(command -v sxmo_proximitylock.sh)" > /dev/null &&
-				printf %b "$icon_ton ^ 0 ^ sxmo_proximitylocktoggle.sh &" ||  printf %b "$icon_tof ^ 0 ^ sxmo_proximitylocktoggle.sh &"
+				printf %b "$icon_ton ^ 1 ^ sxmo_proximitylocktoggle.sh &" ||  printf %b "$icon_tof ^ 1 ^ sxmo_proximitylocktoggle.sh &"
 			)
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
 			$icon_upc Upgrade Pkgs               ^ 0 ^ sxmo_terminal.sh sxmo_upgrade.sh
