@@ -8,6 +8,7 @@
 # must be considered not idle (ongoing call, playing mpd, etc)
 
 exit_not_idle() {
+	printf "%s is_idle: %s\n" "$(date)" "$1" >&2
 	printf %s "$1"
 	exit 1
 }
