@@ -54,17 +54,18 @@ command -v shopt > /dev/null && shopt -s expand_aliases
 alias dmenu="sxmo_dmenu.sh"
 alias jq="gojq" # better performances
 
-alias find="busybox find"
 # Use native commands if busybox was compile without those apples (for example Debians busybox)
 if busybox pkill -l > /dev/null; then
 	alias pkill="busybox pkill"
 	alias pgrep="busybox pgrep"
 fi
-alias xargs="busybox xargs"
-alias less="busybox less"
-alias tail="busybox tail"
+alias find="busybox find"
 alias grep="busybox grep"
-alias netstat="busybox netstat" # for is_idle
+alias less="busybox less"
+alias more="busybox more"
+alias netstat="busybox netstat"
+alias tail="busybox tail"
+alias xargs="busybox xargs"
 
 SXMO_COMMON_INCLUDED=1
 
