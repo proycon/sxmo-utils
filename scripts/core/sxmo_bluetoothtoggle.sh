@@ -13,11 +13,6 @@ fi
 export OS="${ID:-unknown}"
 
 on() {
-	modprobe bluetooth
-	modprobe hci_uart
-	modprobe btrtl
-	modprobe btbcm
-	modprobe bnep
 	rfkill unblock bluetooth
 	case "$OS" in
 		alpine|postmarketos)
@@ -43,11 +38,6 @@ off() {
 			;;
 	esac
 	rfkill block bluetooth
-	rmmod hci_uart
-	rmmod btbcm
-	rmmod btrtl
-	rmmod bnep
-	rmmod bluetooth
 }
 
 case "$1" in
