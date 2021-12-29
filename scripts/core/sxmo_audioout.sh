@@ -21,4 +21,4 @@ elif [ "$ARG" = "Earpiece" ]; then
 	amixer set "$EARPIECE" unmute
 fi
 
-sxmo_statusbarupdate.sh
+sxmo_statusbarupdate.sh audioout

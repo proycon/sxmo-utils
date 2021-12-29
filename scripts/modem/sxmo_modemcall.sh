@@ -20,7 +20,7 @@ finish() {
 	else
 		alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
 	fi
-	setsid -f sh -c 'sleep 2; sxmo_statusbarupdate.sh'
+	setsid -f sh -c 'sleep 2; sxmo_statusbarupdate.sh modemcall'
 	if [ -n "$1" ]; then
 		echo "sxmo_modemcall: $1">&2
 		notify-send Call "$1"

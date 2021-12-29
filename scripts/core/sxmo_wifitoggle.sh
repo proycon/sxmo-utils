@@ -35,4 +35,4 @@ case "$1" in
 		fi
 esac
 
-sxmo_statusbarupdate.sh
+sxmo_statusbarupdate.sh wifitoggle

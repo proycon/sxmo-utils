@@ -13,7 +13,7 @@ notify() {
 		xargs printf %.0f
 	)"
 	notify-send "♫ Volume" "$VOL"
-	sxmo_statusbarupdate.sh
+	sxmo_statusbarupdate.sh vol
 }
 
 up() {

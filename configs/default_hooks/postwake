@@ -7,6 +7,6 @@ UNSUSPENDREASON="$1"
 #decide what to do
 
 pkill -USR2 conky # refresh conky
-sxmo_statusbarupdate.sh
+sxmo_statusbarupdate.sh postwakehook
 
 # Add here whatever you want to do
