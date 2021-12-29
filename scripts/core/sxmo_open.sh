@@ -154,21 +154,19 @@ extension_mime_type() {
 }
 
 get_mime_type() {
-	# Seems like an x-scheme
-	if echo "$1" | grep -q '^.\+:'; then
+	if [ -r "$1" ]; then
+		# is readable
+		mime_type="$(file -b --mime-type "$1")"
+	elif ! test -e "$1" && echo "$1" | grep -q '^.\+:'; then
+		# Seems like an x-scheme
 		if echo "$1" | grep -q '^https\?:'; then
 			mime_type="$(curl_mime_type "$1")"
 		fi
 
 		[ -z "$mime_type" ] && mime_type="x-scheme-handler/$(echo "$1" | grep -o '^\w\+')"
 	else
-		# is readable
-		if [ -r "$1" ]; then
-			mime_type="$(file -b --mime-type "$1")"
-		else
-			echo "This file does not exists?" >&2
-			exit 1
-		fi
+		echo "This file does not exists?" >&2
+		exit 1
 	fi
 
 	# we try to be more precise then
