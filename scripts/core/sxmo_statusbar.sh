@@ -4,7 +4,7 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-WM="$SXMO_WM"
+POLL_TIME="${SXMO_STATUSBAR_POLL_TIME:-10}"
 
 forceupdate() {
 	kill "$SLEEPID"
@@ -28,7 +28,7 @@ setbar "SXMO : Simple Mobile"
 
 while :
 do
-	sleep 10 &
+	sleep "$POLL_TIME" &
 	SLEEPID=$!
 
 	update &
