@@ -5,7 +5,14 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 notify() {
-	light | xargs notify-send " Brightness"
+	case "$SXMO_WM" in
+		sway)
+			light | grep -o "^[0-9]*" > "$XDG_RUNTIME_DIR"/sxmo.wobsock
+			;;
+		*)
+			light | xargs notify-send " Brightness"
+			;;
+	esac
 }
 
 setvalue() {

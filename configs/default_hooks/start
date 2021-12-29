@@ -33,3 +33,13 @@ fi
 if [ -f "$VVM_BASE_DIR/vvm" ]; then
 	vvmd &
 fi
+
+case "$SXMO_WM" in
+	sway)
+		useable_width="$(swaymsg -t get_outputs -r | jq '.[] | select(.focused == true) | .rect.width')"
+		wob_sock="$XDG_RUNTIME_DIR"/sxmo.wobsock
+		mkfifo "$wob_sock"
+		tail -f "$wob_sock" 2> /dev/null | \
+			wob -W "$((useable_width - 60))" -a top -a left -a right -M 10 &
+		;;
+esac

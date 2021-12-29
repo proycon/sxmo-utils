@@ -12,7 +12,14 @@ notify() {
 		awk '{ s += $1; c++ } END { print s/c }'  |
 		xargs printf %.0f
 	)"
-	notify-send "♫ Volume" "$VOL"
+	case "$SXMO_WM" in
+		sway)
+			printf "%s\n" "$VOL" > "$XDG_RUNTIME_DIR"/sxmo.wobsock
+			;;
+		*)
+			notify-send "♫ Volume" "$VOL"
+			;;
+	esac
 	sxmo_statusbarupdate.sh vol
 }
 
