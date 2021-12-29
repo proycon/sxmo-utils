@@ -32,6 +32,9 @@ toggleconnection() {
 		RES="$(nofail nmcli c down "$CONNNAME" 2>&1)"
 	else
 		CONNNAME="$(echo "$CONNLINE" | cut -d' ' -f3-)"
+		if rfkill -rn | grep wlan | grep -qE "unblocked unblocked"; then
+			WIFI_ENABLED=1
+		fi
 		if [ "$(echo "$CONNLINE" | cut -d' ' -f2)" = "$icon_wif" ] && [ -z "$WIFI_ENABLED" ]; then
 			notify-send "Enabling wifi first."
 			doas sxmo_wifitoggle.sh
@@ -181,10 +184,10 @@ addhotspotwifimenu() {
 
 networksmenu() {
 	while true; do
-		if rfkill -rn | grep wlan | grep -qE "unblocked unblocked"; then
-			WIFI_ENABLED=1
-		fi
 		CHOICE="$(
+			if rfkill -rn | grep wlan | grep -qE "unblocked unblocked"; then
+				WIFI_ENABLED=1
+			fi
 			printf %b "
 				$(connections)
 				$icon_mod Add a GSM Network
