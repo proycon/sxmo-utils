@@ -134,6 +134,79 @@ xorgswitchfocus() {
 	xdotool key --clearmodifiers Super+x
 }
 
+_swaygetcurrentworkspace() {
+	swaymsg -t get_outputs  | \
+		jq -r '.[] | select(.focused) | .current_workspace'
+}
+
+_swaygetnextworkspace() {
+	value="$(($(_swaygetcurrentworkspace)+1))"
+	if [ "$value" -eq "$((${SXMO_WORKSPACE_WRAPPING:-4}+1))" ]; then
+		printf 1
+	else
+		printf %s "$value"
+	fi
+}
+
+_swaygetpreviousworkspace() {
+	value="$(($(_swaygetcurrentworkspace)-1))"
+	if [ "$value" -lt 1 ]; then
+		if [ "${SXMO_WORKSPACE_WRAPPING:-4}" -ne 0 ]; then
+			printf %s "${SXMO_WORKSPACE_WRAPPING:-4}"
+		fi
+	else
+		printf %s "$value"
+	fi
+}
+
+swaynextworkspace() {
+	swaymsg "workspace $(_swaygetnextworkspace)"
+}
+
+xorgnextworkspace() {
+	xdotool key --clearmodifiers Super+Shift+r
+}
+
+swaypreviousworkspace() {
+	swaymsg "workspace $(_swaygetpreviousworkspace)"
+}
+
+xorgpreviousworkspace() {
+	xdotool key --clearmodifiers Super+Shift+e
+}
+
+swaymovenextworkspace() {
+	swaymsg "move container to workspace $(_swaygetnextworkspace)"
+}
+
+xorgmovenextworkspace() {
+	xdotool key --clearmodifiers Super+r
+}
+
+swaymovepreviousworkspace() {
+	swaymsg "move container to workspace $(_swaygetpreviousworkspace)"
+}
+
+xorgmovepreviousworkspace() {
+	xdotool key --clearmodifiers Super+e
+}
+
+swayworkspace() {
+	swaymsg "workspace $1"
+}
+
+xorgworkspace() {
+	xdotool key --clearmodifiers "Super+$1"
+}
+
+swaymoveworkspace() {
+	swaymsg "move container to workspace $1"
+}
+
+xorgmoveworkspace() {
+	xdotool key --clearmodifiers "Super+shift+$1"
+}
+
 guesswm() {
 	SWAYSOCK="$(cat "$CACHEDIR"/sxmo.swaysock)"
 	export SWAYSOCK

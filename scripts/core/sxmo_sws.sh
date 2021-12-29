@@ -45,12 +45,15 @@ selection=$(swaymsg -t get_tree | \
 
 case "$selection" in
 "Next Workspace")
-	sxmo_workspace.sh next;;
+	sxmo_wm.sh nextworkspace
+	;;
 "Previous Workspace")
-	sxmo_workspace.sh previous;;
+	sxmo_wm.sh previousworkspace
+	;;
 *)
 	# Requires the actual `id` to be at the end and between parentheses
 	CON_ID=${selection##*(}
 	CON_ID=${CON_ID%)}
-	swaymsg "[con_id=$CON_ID]" focus;;
+	swaymsg "[con_id=$CON_ID]" focus
+	;;
 esac

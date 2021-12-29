@@ -205,19 +205,19 @@ case "$ACTION" in
 		exit
 		;;
 	"rightleftedge")
-		sxmo_workspace.sh previous
+		sxmo_wm.sh previousworkspace
 		exit 0
 		;;
 	"leftrightedge")
-		sxmo_workspace.sh next
+		sxmo_wm.sh nextworkspace
 		exit 0
 		;;
 	"twoleft")
-		sxmo_workspace.sh move-previous
+		sxmo_wm.sh movepreviousworkspace
 		exit 0
 		;;
 	"tworight")
-		sxmo_workspace.sh move-next
+		sxmo_wm.sh movenextworkspace
 		exit 0
 		;;
 	"righttopedge")
