@@ -48,6 +48,26 @@ input 0:0:pm8941_resin {
     xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
 }
 
+### Purism Librem 5 (purism-librem5)
+## Power button
+input 0:0:30370000.snvs:snvs-powerkey {
+    repeat_delay 200
+    repeat_rate 15
+    xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+}
+# Volume up button
+input 1:1:gpio-keys {
+    repeat_delay 200
+    repeat_rate 15
+    xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+}
+# Volume down button
+input 1:1:gpio-keys {
+    repeat_delay 200
+    repeat_rate 15
+    xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+}
+
 exec sxmo_multikey.sh clear
 
 ### PinePhone (pine64-pinephone) / PineTab (pine64-pinetab)
@@ -92,6 +112,26 @@ bindsym --input-device=1:1:GPIO_Buttons XF86AudioRaiseVolume \
     "sxmo_inputhandler.sh volup_three"
 # Multikey handling for voldown button
 bindsym --input-device=0:0:pm8941_resin XF86AudioLowerVolume \
+    exec sxmo_multikey.sh voldown \
+    "sxmo_inputhandler.sh voldown_one" \
+    "sxmo_inputhandler.sh voldown_two" \
+    "sxmo_inputhandler.sh voldown_three"
+
+### Purism Librem 5 (purism-librem5)
+# Multikey handling for power button
+bindsym --input-device=0:0:30370000.snvs:snvs-powerkey XF86PowerOff \
+    exec sxmo_multikey.sh powerbutton \
+    "sxmo_inputhandler.sh powerbutton_one" \
+    "sxmo_inputhandler.sh powerbutton_two" \
+    "sxmo_inputhandler.sh powerbutton_three"
+# Multikey handling for volup button
+bindsym --input-device=1:1:gpio-keys XF86AudioRaiseVolume \
+    exec sxmo_multikey.sh volup \
+    "sxmo_inputhandler.sh volup_one" \
+    "sxmo_inputhandler.sh volup_two" \
+    "sxmo_inputhandler.sh volup_three"
+# Multikey handling for voldown button
+bindsym --input-device=1:1:gpio-keys XF86AudioLowerVolume \
     exec sxmo_multikey.sh voldown \
     "sxmo_inputhandler.sh voldown_one" \
     "sxmo_inputhandler.sh voldown_two" \
