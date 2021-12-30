@@ -6,7 +6,7 @@
 
 PIDS=""
 for i in "$@"; do
-	sxmo_setled.sh "$i" 150 &
+	sxmo_setled.sh "$i" 100 &
 	PIDS="$PIDS $!"
 done
 

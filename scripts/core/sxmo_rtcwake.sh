@@ -29,11 +29,11 @@ finish() {
 
 blink() {
 	while [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; do
-		sxmo_setled.sh red 1
+		sxmo_setled.sh red 100
 		sxmo_setled.sh blue 0
 		sleep 0.25
-		sxmo_setled.sh red 1
-		sxmo_setled.sh blue 1
+		sxmo_setled.sh red 100
+		sxmo_setled.sh blue 100
 		sleep 0.25
 	done
 }

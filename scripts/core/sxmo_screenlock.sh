@@ -52,12 +52,12 @@ updateLed() {
 	#set the LED to reflect the current lock state
 	case "$(getCurState)" in
 		"off")
-			sxmo_setled.sh red 1
-			sxmo_setled.sh blue 1
+			sxmo_setled.sh red 100
+			sxmo_setled.sh blue 100
 			;;
 		"lock")
 			sxmo_setled.sh red 0
-			sxmo_setled.sh blue 1
+			sxmo_setled.sh blue 100
 			;;
 		"unlock")
 			sxmo_setled.sh red 0
@@ -122,7 +122,7 @@ crust() {
 	getCurState > "$LASTSTATE"
 
 	# TODO: is this necessary?
-	sxmo_setled.sh red 1
+	sxmo_setled.sh red 100
 	sxmo_setled.sh blue 0
 
 	saveAllEventCounts
