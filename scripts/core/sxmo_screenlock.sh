@@ -4,9 +4,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-REDLED_PATH="/sys/class/leds/red:indicator/brightness"
-BLUELED_PATH="/sys/class/leds/blue:indicator/brightness"
-
 WAKEUPRTC="/sys/class/wakeup/wakeup1/active_count"
 MODEMUPRTC="/sys/class/wakeup/wakeup10/active_count"
 NETWORKRTCSCAN="/sys/module/8723cs/parameters/rtw_scan_interval_thr"
@@ -55,16 +52,16 @@ updateLed() {
 	#set the LED to reflect the current lock state
 	case "$(getCurState)" in
 		"off")
-			echo 1 > "$REDLED_PATH"
-			echo 1 > "$BLUELED_PATH"
+			sxmo_setled.sh red 1
+			sxmo_setled.sh blue 1
 			;;
 		"lock")
-			echo 0 > "$REDLED_PATH"
-			echo 1 > "$BLUELED_PATH"
+			sxmo_setled.sh red 0
+			sxmo_setled.sh blue 1
 			;;
 		"unlock")
-			echo 0 > "$REDLED_PATH"
-			echo 0 > "$BLUELED_PATH"
+			sxmo_setled.sh red 0
+			sxmo_setled.sh blue 0
 			;;
 	esac
 }
@@ -125,8 +122,8 @@ crust() {
 	getCurState > "$LASTSTATE"
 
 	# TODO: is this necessary?
-	echo 1 > "$REDLED_PATH"
-	echo 0 > "$BLUELED_PATH"
+	sxmo_setled.sh red 1
+	sxmo_setled.sh blue 0
 
 	saveAllEventCounts
 

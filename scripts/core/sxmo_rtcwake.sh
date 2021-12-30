@@ -3,9 +3,6 @@
 # shellcheck disable=SC1090
 . "$(which sxmo_common.sh)"
 
-REDLED_PATH="/sys/class/leds/red:indicator/brightness"
-BLUELED_PATH="/sys/class/leds/blue:indicator/brightness"
-
 finish() {
 	kill "$BLINKPID"
 
@@ -32,11 +29,11 @@ finish() {
 
 blink() {
 	while [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; do
-		echo 1 > "$REDLED_PATH"
-		echo 0 > "$BLUELED_PATH"
+		sxmo_setled.sh red 1
+		sxmo_setled.sh blue 0
 		sleep 0.25
-		echo 1 > "$REDLED_PATH"
-		echo 1 > "$BLUELED_PATH"
+		sxmo_setled.sh red 1
+		sxmo_setled.sh blue 1
 		sleep 0.25
 	done
 }
