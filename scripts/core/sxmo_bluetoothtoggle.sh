@@ -64,5 +64,3 @@ case "$1" in
 			on
 		fi
 esac
-
-sxmo_statusbarupdate.sh bluetoothtoggle
