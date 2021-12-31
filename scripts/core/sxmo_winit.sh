@@ -62,21 +62,23 @@ defaultconfigs() {
 }
 
 startsway() {
+	cleanupsway
 	[ -f "$XDG_CACHE_HOME/sxmo/sxmo.log" ] && mv -f "$XDG_CACHE_HOME/sxmo/sxmo.log" "$XDG_CACHE_HOME/sxmo/sxmo.previous.log"
 	dbus-run-session sh -c "
 		/usr/bin/sway -c "$XDG_CONFIG_HOME/sxmo/sway"
 	" 2> "$DEBUGLOG"
 }
 
-stopsway() {
-	pkill -f sxmo_rotateautotoggle.sh
-	pkill -f sxmo_notificationmonitor.sh
+cleanupsway() {
+	pkill -f sxmo_modemmonitor.sh
 	pkill -f sxmo_networkmonitor.sh
-	pkill lisgd
-
-	pkill wvkbd
-	pkill wayout
+	pkill -f sxmo_notificationmonitor.sh
+	pkill -f sxmo_rotateautotoggle.sh
 	pkill bemenu
+	pkill lisgd
+	pkill wayout
+	pkill wvkbd
+	pkill -f "tail.*run/sxmo.wobsock"
 }
 
 init() {
@@ -91,7 +93,7 @@ init() {
 	defaults
 	defaultconfigs
 	startsway
-	stopsway
+	cleanupsway
 	sxmo_hooks.sh stop
 }
 
