@@ -6,6 +6,10 @@ trap "gracefulexit" INT TERM
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+stderr() {
+	printf "%s modemcall: %s\n" "$(date)" "$*" >&2
+}
+
 modem_n() {
 	MODEMS="$(mmcli -L)"
 	echo "$MODEMS" | grep -qoE 'Modem\/([0-9]+)' || finish "Couldn't find modem - is your modem enabled?"
@@ -22,7 +26,7 @@ finish() {
 	fi
 	setsid -f sh -c 'sleep 2; sxmo_statusbarupdate.sh modemcall'
 	if [ -n "$1" ]; then
-		echo "sxmo_modemcall: $1">&2
+		stderr "$1"
 		notify-send Call "$1"
 	fi
 	[ -n "$LOCKPID" ] && kill "$LOCKPID"
@@ -40,7 +44,7 @@ gracefulexit() {
 modem_cmd_errcheck() {
 	RES="$(mmcli "$@" 2>&1)"
 	OK="$?"
-	echo "sxmo_modemcall: Command: mmcli $*">&2
+	stderr "Command: mmcli $*"
 	if [ "$OK" != 0 ]; then finish "Problem executing mmcli command!\n$RES"; fi
 	echo "$RES"
 }
@@ -66,6 +70,7 @@ toggleflag() {
 	shift
 	FLAGS="$*"
 
+	# TODO: why >&2 here?
 	echo -- "$FLAGS" | grep -- "$TOGGLEFLAG" >&2 &&
 		NEWFLAGS="$(echo -- "$FLAGS" | sed "s/$TOGGLEFLAG//g")" ||
 		NEWFLAGS="$(echo -- "$FLAGS $TOGGLEFLAG")"
@@ -83,7 +88,7 @@ toggleflagset() {
 
 acceptcall() {
 	CALLID="$1"
-	echo "sxmo_modemcall: Attempting to initialize CALLID $CALLID">&2
+	stderr "Attempting to initialize CALLID $CALLID"
 	DIRECTION="$(
 		mmcli --voice-status -o "$CALLID" -K |
 		grep call.properties.direction |
@@ -94,15 +99,15 @@ acceptcall() {
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --start
 		touch "$CACHEDIR/${CALLID}.initiatedcall" #this signals that we started this call
 		log_event "call_start" "$CALLID"
-		echo "sxmo_modemcall: Started call $CALLID">&2
+		stderr "Started call $CALLID"
 	elif [ "$DIRECTION" = "incoming" ]; then
-		echo "sxmo_modemcall: Invoking pickup hook (async)">&2
+		stderr "Invoking pickup hook (async)"
 		sxmo_hooks.sh pickup &
 		touch "$CACHEDIR/${CALLID}.pickedupcall" #this signals that we picked this call up
 											     #to other asynchronously running processes
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --accept
 		log_event "call_pickup" "$CALLID"
-		echo "sxmo_modemcall: Picked up call $CALLID">&2
+		stderr "Picked up call $CALLID"
 	else
 		finish "Couldn't initialize call with callid <$CALLID>; unknown direction <$DIRECTION>"
 	fi
@@ -118,7 +123,7 @@ hangup() {
 	else
 		#this call was never picked up and hung up immediately, so it is a discarded call
 		touch "$CACHEDIR/${CALLID}.discardedcall" #this signals that we discarded this call to other asynchronously running processes
-		echo "sxmo_modemcall: Invoking discard hook (async)">&2
+		stderr "sxmo_modemcall: Invoking discard hook (async)"
 		sxmo_hooks.sh discard &
 		log_event "call_discard" "$CALLID"
 	fi
@@ -142,7 +147,7 @@ incallsetup() {
 }
 
 incallmenuloop() {
-	echo "sxmo_modemcall: Current flags are $FLAGS">&2
+	stderr "Current flags are $FLAGS"
 	CHOICES="
 		$icon_aru Volume up                                                          ^ sxmo_vol.sh up
 		$icon_ard Volume down                                                          ^ sxmo_vol.sh down
@@ -165,12 +170,12 @@ incallmenuloop() {
 			dmenu --index "$DMENUIDX" -p "$NUMBER"
 	)" || hangup "$CALLID" # in case the menu is closed
 
-	echo "sxmo_modemcall: Picked is $PICKED" >&2
+	stderr "Picked is $PICKED"
 	echo "$PICKED" | grep -Ev "."
 
 	CMD="$(echo "$CHOICES" | grep "$PICKED" | cut -d'^' -f2)"
 	DMENUIDX="$(printf "%s - 2" "$(echo "$CHOICES" | grep -n "$PICKED" | cut -d ':' -f1)" | bc)"
-	echo "sxmo_modemcall: Eval in call context: $CMD" >&2
+	stderr "Eval in call context: $CMD"
 	eval "$CMD"
 	incallmenuloop
 }
@@ -198,7 +203,7 @@ pickup() {
 mute() {
 	CALLID="$1"
 	touch "$CACHEDIR/${CALLID}.mutedring" #this signals that we muted this ring
-	echo "sxmo_modemmonitor: Invoking mute_ring hook (async)">&2
+	stderr "Invoking mute_ring hook (async)"
 	sxmo_hooks.sh mute_ring "$CONTACTNAME" &
 	log_event "ring_mute" "$1"
 	finish "Ringing with $NUMBER muted"

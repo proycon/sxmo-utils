@@ -6,13 +6,45 @@ trap "gracefulexit" INT TERM
 . "$(dirname "$0")/sxmo_common.sh"
 
 stderr() {
-	printf "sxmo_modemmonitor %s: %s\n" "$(date)" "$*" >&2
+	printf "%s modemmonitor: %s.\n" "$(date)" "$*" >&2
 }
 
 gracefulexit() {
 	sleep 1
-	stderr "gracefully exiting (on signal or after error)">&2
+	stderr "gracefully exiting (on signal or after error)"
 	kill -9 0
+}
+
+statenumtoname() {
+	case "$*" in
+		"int32 -1") pnewstate="FAILED (-1)"
+			;;
+		"int32 0") pnewstate="UNKNOWN (0)"
+			;;
+		"int32 1") pnewstate="INITIALIZING (1)"
+			;;
+		"int32 2") pnewstate="LOCKED (2)"
+			;;
+		"int32 3") pnewstate="DISABLED (3)"
+			;;
+		"int32 4") pnewstate="DISABLING (4)"
+			;;
+		"int32 5") pnewstate="ENABLING (5)"
+			;;
+		"int32 6") pnewstate="ENABLED (6)"
+			;;
+		"int32 7") pnewstate="SEARCHING (7)"
+			;;
+		"int32 8") pnewstate="REGISTERED (8)"
+			;;
+		"int32 9") pnewstate="DISCONNECTING (9)"
+			;;
+		"int32 10") pnewstate="CONNECTING (10)"
+			;;
+		"int32 11") pnewstate="CONNECTED (11)"
+			;;
+	esac
+	printf %s "$pnewstate"
 }
 
 mainloop() {
@@ -45,21 +77,26 @@ mainloop() {
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem',type='signal',member='StateChanged'" | \
 		while read -r line; do
 			if echo "$line" | grep -E "^signal.*StateChanged"; then
-				# shellcheck disable=SC2034
-				read -r oldstate #unused but we need to read past it
+				read -r oldstate
 				read -r newstate
+				read -r reason
+				stderr "$(statenumtoname "$oldstate") -> $(statenumtoname "$newstate") [reason: $(echo "$reason" | cut -d' ' -f2)]"
+				# 2=MM_MODEM_STATE_LOCKED
 				if echo "$newstate" | grep "int32 2"; then
+					stderr "calling unlocksim"
 					pidof unlocksim || sxmo_hooks.sh unlocksim &
+				# 8=MM_MODEM_STATE_REGISTERED
 				elif echo "$newstate" | grep "int32 8"; then
+					stderr "reloading checks"
 					#if there is a PIN entry menu open, kill it:
 					# shellcheck disable=SC2009
-					ps aux | grep dmenu | grep PIN | gawk '{ print $1 }' | xargs kill
+					ps aux | grep dmenu | grep PIN | gawk '{ print $1 }' | xargs kill 2>/dev/null
 					sxmo_modem.sh checkforfinishedcalls
 					sxmo_modem.sh checkforincomingcalls
 					sxmo_modem.sh checkfornewtexts
 					sxmo_mms.sh checkforlostmms
 				fi
-				sxmo_statusbarupdate.sh
+				sxmo_statusbarupdate.sh "modemmonitor"
 			fi
 		done &
 

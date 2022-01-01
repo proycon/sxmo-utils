@@ -4,7 +4,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 stderr() {
-	printf "sxmo_modem %s: %s\n" "$(date)" "$*" >&2
+	printf "%s sxmo_modem: %s\n" "$(date)" "$*" >&2
 }
 
 checkmodem() {
@@ -149,13 +149,13 @@ checkforincomingcalls() {
 	cat "$LASTSTATE" > "$CACHEDIR/${VOICECALLID}.laststate"
 
 	# Determine the incoming phone number
-	stderr "Incoming Call:"
+	stderr "Incoming Call..."
 	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
 	INCOMINGNUMBER="$(cleanupnumber "$INCOMINGNUMBER")"
 	CONTACTNAME=$(sxmo_contacts.sh --name "$INCOMINGNUMBER")
 
 	TIME="$(date --iso-8601=seconds)"
-	if cut -f1 "$BLOCKFILE" | grep -q "^$INCOMINGNUMBER$"; then
+	if cut -f1 "$BLOCKFILE" 2>/dev/null | grep -q "^$INCOMINGNUMBER$"; then
 		stderr "BLOCKED call from number: $VOICECALLID"
 		sxmo_modemcall.sh mute "$VOICECALLID"
 		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$BLOCKDIR/modemlog.tsv"

@@ -4,7 +4,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 stderr() {
-	printf "%s sxmo_mms: %s.\n" "$(date)" "$*" >&2
+	printf "%s sxmo_mms: %s\n" "$(date)" "$*" >&2
 }
 
 checkmmsd() {
@@ -165,7 +165,7 @@ processmms() {
 		printf "%s MMS from %s at %s:\n" "$MESSAGE_TYPE" "$FROM_NAME" "$DATE" >> "$LOGDIR/$LOGDIRNUM/sms.txt"
 	fi
 
-	stderr "$MESSAGE_TYPE MMS ($MMS_FILE) from number $LOGDIRNUM to number $TO_NUMS"
+	stderr "$MESSAGE_TYPE MMS ($MMS_FILE) from number $LOGDIRNUM"
 
 	if cut -f1 "$BLOCKFILE" 2>/dev/null | grep -q "^$LOGDIRNUM$"; then
 		mkdir -p "$BLOCKDIR/$LOGDIRNUM"
