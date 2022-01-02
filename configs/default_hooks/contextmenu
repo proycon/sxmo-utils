@@ -53,6 +53,11 @@ case "$WMCLASS" in
 				printf %b "$icon_ton" ||  printf %b "$icon_tof";
 				printf %b "^ 1 ^ doas sxmo_bluetoothtoggle.sh && sxmo_statusbarupdate.sh bluetoothtoggle"
 			)
+			$icon_wif Wifi $(
+				rfkill -rn | grep wlan | grep -qE "unblocked unblocked" &&
+				printf %b "$icon_ton" ||  printf %b "$icon_tof";
+				printf %b "^ 1 ^ doas sxmo_wifitoggle.sh && sxmo_statusbarupdate.sh wifitoggle"
+			)
 			$icon_cfg Idle Monitor $(
 				pgrep -f sxmo_lock_idle.sh > /dev/null &&
 				printf %b "$icon_ton ^ 1 ^ pkill -f sxmo_lock_idle.sh" || printf %b "$icon_tof ^ 1 ^ setsid -f sxmo_lock_idle.sh"

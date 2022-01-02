@@ -198,8 +198,6 @@ networksmenu() {
 				$icon_cfg Nmtui
 				$icon_cfg Ifconfig
 				$([ -z "$WIFI_ENABLED" ] || printf %b "$icon_wif Scan Wifi Networks")
-				$([ -z "$WIFI_ENABLED" ] || printf %b "$icon_wif Disable Wifi")
-				$([ -z "$WIFI_ENABLED" ] && printf %b "$icon_wif Enable Wifi")
 				$icon_mnu System Menu
 				$icon_cls Close Menu
 			" |
@@ -236,14 +234,6 @@ networksmenu() {
 				;;
 			*"Scan Wifi Networks" )
 				sxmo_terminal.sh watch -n 2 nmcli d wifi list || continue # Killeable
-				;;
-			*"Enable Wifi" )
-				doas sxmo_wifitoggle.sh
-				sxmo_statusbarupdate.sh wifitoggle
-				;;
-			*"Disable Wifi" )
-				doas sxmo_wifitoggle.sh
-				sxmo_statusbarupdate.sh wifitoggle
 				;;
 			*)
 				toggleconnection "$CHOICE"
