@@ -10,11 +10,11 @@ if [ -z "$TERMNAME" ]; then
 fi
 
 case "$TERMCMD" in
-	"st -e")
-		set -- st -T "$TERMNAME" -e "$@"
+	"st"*)
+		set -- "$TERMCMD" -T "$TERMNAME" -e "$@"
 		;;
-	"foot")
-		set -- foot -T "$TERMNAME" "$@"
+	"foot"*)
+		set -- "$TERMCMD" -T "$TERMNAME" "$@"
 		;;
 	"vte-2.91"*)
 		set -- ${TERMCMD% --} --title "$TERMNAME" -- "$@"

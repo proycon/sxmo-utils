@@ -5,7 +5,7 @@ envvars() {
 	# shellcheck disable=SC1091
 	[ -f /etc/profile ] && . /etc/profile
 	export SXMO_WM=dwm
-	command -v "$TERMCMD" || export TERMCMD="st -e"
+	command -v "$TERMCMD" || export TERMCMD="st"
 	command -v "$BROWSER" || export BROWSER=surf
 	command -v "$EDITOR" || export EDITOR=vis
 	command -v "$SHELL" || export SHELL=/bin/sh
