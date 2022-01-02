@@ -35,7 +35,9 @@ handlenewnotiffile(){
 		fi
 
 		[ -e "$NOTIFWATCHFILE" ] && (
-			inotifywait "$NOTIFWATCHFILE" && rm -f "$NOTIFFILE"
+			inotifywait "$NOTIFWATCHFILE" && \
+				rm -f "$NOTIFFILE" && \
+				syncled
 		) &
 	fi
 }
@@ -49,7 +51,6 @@ recreateexistingnotifs() {
 
 syncled() {
 	if [ "$(find "$NOTIFDIR"/ -type f | wc -l)" -gt 0 ]; then
-		sleep 0.1
 		sxmo_setled.sh green 100
 	else
 		sxmo_setled.sh green 0
