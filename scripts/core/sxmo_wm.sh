@@ -153,6 +153,8 @@ _swaygetpreviousworkspace() {
 	if [ "$value" -lt 1 ]; then
 		if [ "${SXMO_WORKSPACE_WRAPPING:-4}" -ne 0 ]; then
 			printf %s "${SXMO_WORKSPACE_WRAPPING:-4}"
+		else
+			return 1 # cant have previous workspace
 		fi
 	else
 		printf %s "$value"
@@ -168,7 +170,7 @@ xorgnextworkspace() {
 }
 
 swaypreviousworkspace() {
-	swaymsg "workspace $(_swaygetpreviousworkspace)"
+	_swaygetpreviousworkspace | xargs -r swaymsg -- workspace
 }
 
 xorgpreviousworkspace() {
@@ -184,7 +186,7 @@ xorgmovenextworkspace() {
 }
 
 swaymovepreviousworkspace() {
-	swaymsg "move container to workspace $(_swaygetpreviousworkspace)"
+	_swaygetpreviousworkspace | xargs -r swaymsg -- move container to workspace
 }
 
 xorgmovepreviousworkspace() {
