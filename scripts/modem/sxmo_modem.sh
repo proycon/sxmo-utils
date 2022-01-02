@@ -94,7 +94,7 @@ checkforfinishedcalls() {
 		if [ -f "$CACHEDIR/${FINISHEDCALLID}.discardedcall" ]; then
 			#this call was discarded
 			stderr "Discarded call from $FINISHEDNUMBER"
-			printf %b "$TIME\tcall_discarded\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
 			pkill -f sxmo_modemcall.sh
