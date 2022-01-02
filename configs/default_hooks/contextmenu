@@ -96,8 +96,8 @@ case "$WMCLASS" in
 			$icon_zzz Suspend            ^ 0 ^ sxmo_screenlock.sh off && sxmo_screenlock.sh crust
 			$icon_out Logout             ^ 0 ^ confirm Logout && (pkill -9 dwm || pkill -9 sway)
 			$icon_rol Toggle WM          ^ 0 ^ confirm Toggle && sxmo_terminal.sh sxmo_wmtoggle.sh
-			$icon_rld Reboot             ^ 0 ^ confirm Reboot && (pkill -f sxmo_lock_idle.sh; sxmo_terminal.sh doas reboot)
-			$icon_pwr Poweroff           ^ 0 ^ confirm Poweroff && (pkill -f sxmo_lock_idle.sh; sxmo_terminal.sh doas poweroff)
+			$icon_rld Reboot             ^ 0 ^ confirm Reboot && sxmo_power.sh reboot
+			$icon_pwr Poweroff           ^ 0 ^ confirm Poweroff && sxmo_power.sh poweroff
 		"
 		WINNAME=Power
 		;;
