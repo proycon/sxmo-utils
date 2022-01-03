@@ -7,7 +7,7 @@ sources:
 tasks:
   - shellcheck: |
       cd sxmo-utils
-      shellcheck -x scripts/*/*
+      shellcheck -x scripts/*/*.sh
   - editorconfig-check: |
       cd sxmo-utils
       ec
