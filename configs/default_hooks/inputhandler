@@ -40,8 +40,8 @@ case "$WMCLASS" in
 						sxmo_type.sh -k Page_Up
 						exit 0
 						;;
-			esac
-			;;
+				esac
+				;;
 		esac
 		;;
 	*"mpv"*)
