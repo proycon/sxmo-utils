@@ -1,6 +1,10 @@
 #!/bin/sh
 # shellcheck disable=SC2086
 
+if [ -z "$*" ]; then
+	set -- $SHELL
+fi
+
 if [ -z "$TERMNAME" ]; then
 	TERMNAME="$*"
 fi
@@ -20,8 +24,4 @@ case "$TERMCMD" in
 		set -- $TERMCMD "$@"
 esac
 
-if [ -z "$*" ]; then
-	echo "sxmo_terminal.sh called in TERMMODE without any arguments (returning, nothing to do)" >&2
-else
-	exec "$@"
-fi
+exec "$@"
