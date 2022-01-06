@@ -39,7 +39,8 @@ case "$SXMO_WM" in
 		useable_width="$(swaymsg -t get_outputs -r | jq '.[] | select(.focused == true) | .rect.width')"
 		wob_sock="$XDG_RUNTIME_DIR"/sxmo.wobsock
 		mkfifo "$wob_sock"
-		tail -f "$wob_sock" 2> /dev/null | \
+		# cat the fifo without closing.
+		cat 0<> "$wob_sock" 2> /dev/null | \
 			wob -W "$((useable_width - 60))" -a top -a left -a right -M 10 &
 		;;
 esac
