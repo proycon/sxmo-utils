@@ -21,7 +21,7 @@ elif [ -e /usr/lib/os-release ]; then
 fi
 export OS="${ID:-unknown}"
 
-export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-$HOME/.local/run}"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/dev/shm/user/$(id -u)}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 export NOTIFDIR="${XDG_DATA_HOME:-$HOME/.local/share}"/sxmo/notifications
 export CACHEDIR="${XDG_CACHE_HOME:-$HOME/.cache}"/sxmo
