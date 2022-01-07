@@ -15,7 +15,7 @@ all: $(PROGRAMS)
 test: shellcheck
 
 shellcheck:
-	shellcheck -x scripts/*/*
+	shellcheck -x scripts/*/*.sh
 
 programs/sxmo_megiaudioroute: programs/sxmo_megiaudioroute.c
 	gcc -o programs/sxmo_megiaudioroute programs/sxmo_megiaudioroute.c
