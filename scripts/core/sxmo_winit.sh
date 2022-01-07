@@ -27,8 +27,8 @@ device_envvars() {
 }
 
 setupxdgdir() {
-	mkdir -p $XDG_RUNTIME_DIR
-	chmod 700 $XDG_RUNTIME_DIR
+	mkdir -p "$XDG_RUNTIME_DIR"
+	chmod 700 "$XDG_RUNTIME_DIR"
 	chown "$USER:$USER" "$XDG_RUNTIME_DIR"
 
 	mkdir -p "$XDG_CACHE_HOME/sxmo/"
