@@ -16,10 +16,6 @@ envvars() {
 	# shellcheck source=/dev/null
 	[ -f "$HOME"/.profile ] && . "$HOME"/.profile
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
-	[ -z "$XDG_CONFIG_HOME" ] && export XDG_CONFIG_HOME=~/.config
-	[ -z "$XDG_CACHE_HOME" ] && export XDG_CACHE_HOME=~/.cache
-	[ -z "$XDG_DATA_HOME" ] && export XDG_DATA_HOME=~/.local/share
-	[ -z "$XDG_RUNTIME_DIR" ] && export XDG_RUNTIME_DIR=~/.local/run
 	[ -z "$XDG_PICTURES_DIR" ] && export XDG_PICTURES_DIR=~/Pictures
 }
 
