@@ -14,7 +14,7 @@ trap "forceupdate" USR1
 POLL_TIME="${SXMO_STATUSBAR_POLL_TIME:-10}"
 
 setbar() {
-	case "$WM" in
+	case "$SXMO_WM" in
 		dwm) xsetroot -name "$*";;
 		*) printf "%s\n" "$*";;
 	esac
