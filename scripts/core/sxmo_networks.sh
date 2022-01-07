@@ -74,7 +74,7 @@ addnetworkgsmmenu() {
 		echo "$icon_cls Close Menu" |
 			sxmo_dmenu_with_kb.sh -p "Alias"
 	)"
-	[ -z "$CONNAME" ] && return
+	[ -z "$CONNNAME" ] && return
 	echo "$CONNNAME" | grep -q "Close Menu" && return
 
 	APN="$(
@@ -126,7 +126,7 @@ addhotspotusbmenu() {
 		echo "$icon_cls Close Menu" |
 			sxmo_dmenu_with_kb.sh -p "Alias"
 	)"
-	[ -z "$CONNAME" ] && return
+	[ -z "$CONNNAME" ] && return
 	echo "$CONNNAME" | grep -q "Close Menu" && return
 
 	# TODO: restart udhcpd after disconnecting on postmarketOS
