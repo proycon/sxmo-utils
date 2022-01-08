@@ -96,7 +96,7 @@ processmms() {
 	if printf %s "$MESSAGE" | grep -q "Accept-Charset (deprecated): Message not found"; then
 		stderr "The mms ($MESSAGE_PATH) states: 'Message not found'. Deleting."
 		dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
-		printf "%s\tdebug_mms\t%s\t%s\n" "$(date -Iseconds)" "NULL" "ERROR: Message not found." >> "$LOGDIR/modemlog.tsv"
+		printf "%s\tdebug_mms\t%s\t%s\n" "$(date +%FT%H:%M:%S%z)" "NULL" "ERROR: Message not found." >> "$LOGDIR/modemlog.tsv"
 		return
 	fi
 
@@ -124,7 +124,7 @@ processmms() {
 
 	MMS_FILE="$(printf %s "$MESSAGE_PATH" | rev | cut -d'/' -f1 | rev)"
 	DATE="$(printf %s "$MESSAGE" | jq -r '.attrs.Date')"
-	DATE="$(date -Iseconds -d "$DATE")"
+	DATE="$(date +%FT%H:%M:%S%z -d "$DATE")"
 
 	MYNUM="$(printf %s "$MESSAGE" | jq -r '.attrs."Modem Number"')"
 	if [ -z "$MYNUM" ]; then

@@ -19,7 +19,7 @@ checkvvmd() {
 
 # usually invoked from sxmo_modemmonitor.sh once a dbus signal is received
 processvvm() {
-	VVM_DATE="$(date -Iseconds -d "$1")" # date of voice mail
+	VVM_DATE="$(date +%FT%H:%M:%S%z -d "$1")" # date of voice mail
 	VVM_SENDER="$2" # number the voice mail is from
 	VVM_ID="$3" # unique id assigned to voice mail from vvmd
 	VVM_ATTACHMENT="$4" # full path + filename of amr file

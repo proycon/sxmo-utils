@@ -181,7 +181,7 @@ else
 		mmcli -m "$MODEM" --messaging-delete-sms="$i"
 	done
 
-	TIME="$(date --iso-8601=seconds)"
+	TIME="$(date +%FT%H:%M:%S%z)"
 	mkdir -p "$LOGDIR/$NUMBER"
 	printf %b "Sent SMS to $NUMBER at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUMBER/sms.txt"
 	printf "%s\tsent_txt\t%s\t%s chars\n" "$TIME" "$NUMBER" "$TEXTSIZE" >> "$LOGDIR/modemlog.tsv"

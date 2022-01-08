@@ -60,7 +60,7 @@ log_event() {
 	EVT_HANDLE="$1"
 	EVT_VID="$2"
 	NUM="$(vid_to_number "$EVT_VID")"
-	TIME="$(date --iso-8601=seconds)"
+	TIME="$(date +%FT%H:%M:%S%z)"
 	mkdir -p "$LOGDIR"
 	printf %b "$TIME\t$EVT_HANDLE\t$NUM\n" >> "$LOGDIR/modemlog.tsv"
 }

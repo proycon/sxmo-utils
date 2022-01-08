@@ -89,7 +89,7 @@ checkforfinishedcalls() {
 
 		rm -f "$CACHEDIR/${FINISHEDCALLID}.monitoredcall"
 
-		TIME="$(date --iso-8601=seconds)"
+		TIME="$(date +%FT%H:%M:%S%z)"
 		mkdir -p "$LOGDIR"
 		if [ -f "$CACHEDIR/${FINISHEDCALLID}.discardedcall" ]; then
 			#this call was discarded
@@ -154,7 +154,7 @@ checkforincomingcalls() {
 	INCOMINGNUMBER="$(cleanupnumber "$INCOMINGNUMBER")"
 	CONTACTNAME=$(sxmo_contacts.sh --name "$INCOMINGNUMBER")
 
-	TIME="$(date --iso-8601=seconds)"
+	TIME="$(date +%FT%H:%M:%S%z)"
 	if cut -f1 "$BLOCKFILE" 2>/dev/null | grep -q "^$INCOMINGNUMBER$"; then
 		stderr "BLOCKED call from number: $VOICECALLID"
 		sxmo_modemcall.sh mute "$VOICECALLID"
@@ -193,7 +193,7 @@ checkfornewtexts() {
 		# SMS with no TEXTID is an SMS WAP (I think). So skip.
 		if [ -z "$TEXTDATA" ]; then
 			stderr "Received an empty SMS (TEXTID: $TEXTID).  I will assume this is an MMS."
-			printf %b "$(date -Iseconds)\tdebug_mms\tNULL\tEMPTY (TEXTID: $TEXTID)\n" >> "$LOGDIR/modemlog.tsv"
+			printf %b "$(date +%FT%H:%M:%S%z)\tdebug_mms\tNULL\tEMPTY (TEXTID: $TEXTID)\n" >> "$LOGDIR/modemlog.tsv"
 			continue
 		fi
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
@@ -204,7 +204,7 @@ checkfornewtexts() {
 		)"
 		NUM="$(cleanupnumber "$NUM")"
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
-		TIME="$(date -Iseconds -d "$TIME")"
+		TIME="$(date +%FT%H:%M:%S%z -d "$TIME")"
 
 		# Note: this will *not* block MMS, since we have to unpack the phone numbers for an MMS
 		# later.
