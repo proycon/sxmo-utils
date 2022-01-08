@@ -60,8 +60,9 @@ defaultconfigs() {
 startsway() {
 	cleanupsway
 	[ -f "$XDG_CACHE_HOME/sxmo/sxmo.log" ] && mv -f "$XDG_CACHE_HOME/sxmo/sxmo.log" "$XDG_CACHE_HOME/sxmo/sxmo.previous.log"
+	# shellcheck disable=SC2086
 	dbus-run-session sh -c "
-		/usr/bin/sway -c ""$XDG_CONFIG_HOME"/sxmo/sway"
+		/usr/bin/sway -c "$XDG_CONFIG_HOME/sxmo/sway"
 	" 2> "$DEBUGLOG"
 }
 
