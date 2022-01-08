@@ -10,7 +10,7 @@ notify() {
 			light | grep -o "^[0-9]*" > "$XDG_RUNTIME_DIR"/sxmo.wobsock
 			;;
 		*)
-			light | xargs notify-send " Brightness"
+			light | xargs dunstify -r 888 " Brightness"
 			;;
 	esac
 }

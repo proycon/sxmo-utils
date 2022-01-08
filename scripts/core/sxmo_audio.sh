@@ -22,7 +22,7 @@ notifyvol() {
 			printf "%s\n" "$vol" > "$XDG_RUNTIME_DIR"/sxmo.wobsock
 			;;
 		*)
-			notify-send "♫ Volume" "$vol"
+			dunstify -r 999 "♫ Volume $vol"
 			;;
 	esac
 	sxmo_hooks.sh statusbar volume
