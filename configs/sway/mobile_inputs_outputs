@@ -68,6 +68,14 @@ input 1:1:gpio-keys {
     xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
 }
 
+### OnePlus 6 (oneplus-enchilada)
+# Volume buttons
+input 1:1:Volume_keys {
+    repeat_delay 200
+    repeat_rate 15
+    xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+}
+
 exec sxmo_multikey.sh clear
 
 ### PinePhone (pine64-pinephone) / PineTab (pine64-pinetab)
@@ -132,6 +140,20 @@ bindsym --input-device=1:1:gpio-keys XF86AudioRaiseVolume \
     "sxmo_inputhandler.sh volup_three"
 # Multikey handling for voldown button
 bindsym --input-device=1:1:gpio-keys XF86AudioLowerVolume \
+    exec sxmo_multikey.sh voldown \
+    "sxmo_inputhandler.sh voldown_one" \
+    "sxmo_inputhandler.sh voldown_two" \
+    "sxmo_inputhandler.sh voldown_three"
+    
+### OnePlus 6 (oneplus-enchilada)
+# Multikey handling for volup button
+bindsym --input-device=1:1:Volume_keys XF86AudioRaiseVolume \
+    exec sxmo_multikey.sh volup \
+    "sxmo_inputhandler.sh volup_one" \
+    "sxmo_inputhandler.sh volup_two" \
+    "sxmo_inputhandler.sh volup_three"
+# Multikey handling for voldown button
+bindsym --input-device=1:1:Volume_keys XF86AudioLowerVolume \
     exec sxmo_multikey.sh voldown \
     "sxmo_inputhandler.sh voldown_one" \
     "sxmo_inputhandler.sh voldown_two" \
