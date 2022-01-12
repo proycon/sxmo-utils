@@ -9,12 +9,7 @@ DESKTOPS_CACHED_MIMEAPPS="${XDG_CONFIG_HOME:-$HOME/.config}/desktops.mimeapps.li
 DESKTOP_DIRS="/usr/share/sxmo/applications/|/usr/share/applications/|/usr/local/share/applications/|${XDG_DATA_HOME:-$HOME/.local/share}/applications/"
 attached=
 debug=
-TERMCMD="${TERMCMD:-st}"
-case "$TERMCMD" in
-	"st"*)
-		TERMCMD="$TERMCMD -e"
-		;;
-esac
+TERMCMD="${TERMCMD:-st -e}"
 
 # This will convert a mimeapps.list to a parsable mapping
 # Lines with multiple mimetype will be splitted

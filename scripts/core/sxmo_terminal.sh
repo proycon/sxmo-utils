@@ -11,10 +11,10 @@ fi
 
 case "$TERMCMD" in
 	"st"*)
-		set -- "$TERMCMD" -T "$TERMNAME" -e "$@"
+		set -- $TERMCMD -T "$TERMNAME" -e "$@"
 		;;
 	"foot"*)
-		set -- "$TERMCMD" -T "$TERMNAME" "$@"
+		set -- $TERMCMD -T "$TERMNAME" "$@"
 		;;
 	"vte-2.91"*)
 		set -- ${TERMCMD% --} --title "$TERMNAME" -- "$@"
