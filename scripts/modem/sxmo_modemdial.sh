@@ -4,59 +4,67 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-fatalerr() {
-	# E.g. hangup all calls, switch back to default audio, notify user, and die
-	mmcli -m "$(mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2)" --voice-hangup-all
-	echo "$1" >&2
-	notify-send "$1"
-	(sleep 0.5; sxmo_hooks.sh statusbar call_duration) &
-	exit
+set -e
+
+err() {
+	sxmo_notify_user.sh "$1"
+	exit 1
 }
 
-modem_n() {
-	MODEMS="$(mmcli -L)"
-	echo "$MODEMS" | grep -qoE 'Modem\/([0-9]+)' || fatalerr "Couldn't find modem - is your modem enabled?"
-	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
+dialnumber() {
+	NUMBER="$1"
+
+	CLEANEDNUMBER="$(pn find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
+	if [ -n "$CLEANEDNUMBER" ] && [ "$NUMBER" != "$CLEANEDNUMBER" ]; then
+		NUMBER="$(cat <<EOF | sxmo_dmenu.sh -p "Rewrite ?"
+$NUMBER
+$CLEANEDNUMBER
+EOF
+		)"
+	fi
+
+	printf "Attempting to dial: %s\n" "$NUMBER" >&2
+	CALLID="$(
+		mmcli -m any --voice-create-call "number=$NUMBER" |
+		grep -Eo "Call/[0-9]+" |
+		grep -oE "[0-9]+"
+	)" || err "Unable to initiate call, is your modem working?"
+
+	find "$CACHEDIR" -name "$CALLID.*" -delete # we cleanup all dangling event files
+	printf "Starting call with CALLID: %s\n" "$CALLID" >&2
+	exec sxmo_modemcall.sh pickup "$CALLID"
 }
 
 dialmenu() {
-	if [ -n "$1" ]; then
-		NUMBER="$1"
-	else
-		CONTACTS="$(sxmo_contacts.sh | grep -E ": \+?[0-9]+$")"
-		NUMBER="$(
-			printf %b "Close Menu\nMore contacts\n$CONTACTS" |
-			grep . |
-			sxmo_dmenu_with_kb.sh -p Number -i
-		)"
-		echo "$NUMBER" | grep "Close Menu" && kill -9 0
+	# Initial menu with recently contacted people
+	NUMBER="$(
+		cat <<EOF | sxmo_dmenu_with_kb.sh -p Number -i
+Close Menu
+More contacts
+$(sxmo_contacts.sh)
+EOF
+	)"
 
-		echo "$NUMBER" | grep -q "More contacts" && NUMBER="$(
-			printf %b "Close Menu\n$(sxmo_contacts.sh --all)" |
-			grep . |
-			sxmo_dmenu_with_kb.sh -p Number -i
+	# Submenu with all contacts
+	if [ "$NUMBER" = "More contacts" ]; then
+		NUMBER="$(
+			cat <<EOF | sxmo_dmenu_with_kb.sh -p Number -i
+Close Menu
+$(sxmo_contacts.sh --all)
+EOF
 		)"
-		NUMBER="$(echo "$NUMBER" | cut -d: -f2 | tr -d -- '- ')"
 	fi
 
+	NUMBER="$(printf "%s\n" "$NUMBER" | cut -d: -f2 | tr -d -- '- ')"
 	if [ -z "$NUMBER" ] || [ "$NUMBER" = "CloseMenu" ]; then
-		#no number selected (probably cancelled), silently discard
 		exit 0
 	fi
 
-	echo "Attempting to dial: $NUMBER" >&2
-	CALLID="$(
-		mmcli -m "$(modem_n)" --voice-create-call "number=$NUMBER" |
-		grep -Eo "Call/[0-9]+" |
-		grep -oE "[0-9]+"
-	)"
-	find "$CACHEDIR" -name "$CALLID.*" -delete # we cleanup all dangling event files
-	echo "Starting call with CALLID: $CALLID" >&2
-	echo "$CALLID"
+	dialnumber "$NUMBER"
 }
 
-modem_n || fatalerr "Couldn't determine modem number - is modem online?"
-CREATEDCALLID="$(dialmenu "$1")"
-if [ -n "$CREATEDCALLID" ]; then
-	sxmo_modemcall.sh pickup "$CREATEDCALLID"
+if [ -n "$1" ]; then
+	dialnumber "$1"
+else
+	dialmenu
 fi
