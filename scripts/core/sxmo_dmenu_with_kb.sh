@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -n "$SXMO_WM" ]; then
+if [ -n "$WAYLAND_DISPLAY$DISPLAY" ]; then
 	if sxmo_keyboard.sh isopen; then
 		wasopen="1"
 	fi

@@ -4,8 +4,8 @@
 # It should stdout the title as the first line followed by the entries
 
 # include common definitions
-# shellcheck source=scripts/core/sxmo_common.sh
-. "$(which sxmo_common.sh)"
+# shellcheck source=scripts/core/sxmo_icons.sh
+. "$(which sxmo_icons.sh)"
 
 XPROPOUT="$(sxmo_wm.sh focusedwindow)"
 WMCLASS="${1:-$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"

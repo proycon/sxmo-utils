@@ -1,8 +1,11 @@
 #!/bin/sh
+
 ALSASTATEFILE="$XDG_CACHE_HOME"/precall.alsa.state
 trap "gracefulexit" INT TERM
 
 # include common definitions
+# shellcheck source=scripts/core/sxmo_icons.sh
+. "$(dirname "$0")/sxmo_icons.sh"
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 

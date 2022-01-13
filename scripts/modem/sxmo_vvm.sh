@@ -1,6 +1,8 @@
 #!/bin/sh
 # Main vvm (Visual Voice Mail) code.  Functions here are called from sxmo_modemmonitor.sh
 
+# shellcheck source=scripts/core/sxmo_icons.sh
+. "$(dirname "$0")/sxmo_icons.sh"
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 

@@ -111,10 +111,16 @@ swayexecwait() {
 }
 
 xorgexec() {
+	if [ -z "$DISPLAY" ]; then
+		export DISPLAY=:0
+	fi
 	"$@" &
 }
 
 xorgexecwait() {
+	if [ -z "$DISPLAY" ]; then
+		export DISPLAY=:0
+	fi
 	exec "$@"
 }
 
@@ -208,23 +214,6 @@ swaymoveworkspace() {
 xorgmoveworkspace() {
 	xdotool key --clearmodifiers "Super+shift+$1"
 }
-
-guesswm() {
-	SWAYSOCK="$(cat "$CACHEDIR"/sxmo.swaysock)"
-	export SWAYSOCK
-	if swaymsg 2>/dev/null; then
-		export SXMO_WM=sway
-		export WAYLAND_DISPLAY=wayland-1
-	else
-		unset SWAYSOCK
-		export DISPLAY=":0"
-		export SXMO_WM=dwm
-	fi
-}
-
-if [ -z "$SXMO_WM" ]; then
-	guesswm
-fi
 
 action="$1"
 shift

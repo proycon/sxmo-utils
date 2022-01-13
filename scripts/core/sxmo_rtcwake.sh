@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# shellcheck disable=SC1090
-. "$(which sxmo_common.sh)"
+# shellcheck source=configs/profile.d/sxmo_init.sh
+. /etc/profile.d/sxmo_init.sh
 
 finish() {
 	if grep -q crust "$LASTSTATE" \

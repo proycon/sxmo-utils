@@ -1,42 +1,6 @@
 #!/bin/sh
 
-# Please modify this file to your liking
-
-# Important Instructions:
-#  All processes you launch from this script must
-#  be non-blocking: launch them in the background (using &)
-#  or ensure they return quickly. Only after this script
-#  finishes will the window manager be loaded
-
 # Run actions on start
 # By default, setup audio over the main speaker
 # and set a sane default volume
 sxmo_hooks.sh start &
-
-# You will sometime get SMS or calls from not
-#  country code prefixed phone numbers. To make
-#  it easy to fixup configure the default countryu.
-#export DEFAULT_COUNTRY=FR
-
-### Configuration Parameters ###
-
-# Note that this is just a subset of all available
-# parameters, see the sxmo documentation for more.
-
-# Use firefox as default browser if installed
-command -v firefox && export BROWSER=firefox
-
-# Prepopulate Subreddits menu with custom subreddits
-#export SXMO_SUBREDDITS="postmarketos pinephoneOfficial pinephone unixporn"
-
-# Change the default terminal command
-# export TERMCMD="st -e"
-
-# When scrolling past the beginning or end of a menu, wrap it around:
-#export DMENU_WRAP_AROUND=1
-
-# Enable audio feedback on keypress
-#export KEYBOARD_ARGS="-o | clickclack -f /usr/share/sxmo/keytap.wav"
-
-# Or, enable vibration feedback on keypress
-#export KEYBOARD_ARGS="-o | clickclack -V"

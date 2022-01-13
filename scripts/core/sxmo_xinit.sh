@@ -1,39 +1,17 @@
 #!/bin/sh
 
-
 envvars() {
-	# shellcheck disable=SC1091
-	[ -f /etc/profile ] && . /etc/profile
 	export SXMO_WM=dwm
 	command -v "$TERMCMD" || export TERMCMD="st"
 	command -v "$BROWSER" || export BROWSER=surf
 	command -v "$EDITOR" || export EDITOR=vis
 	command -v "$SHELL" || export SHELL=/bin/sh
 	command -v "$KEYBOARD" || defaultkeyboard
-	# shellcheck source=/dev/null
-	[ -f "$HOME"/.profile ] && . "$HOME"/.profile
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 	[ -z "$XDG_PICTURES_DIR" ] && export XDG_PICTURES_DIR=~/Pictures
 }
 
-device_envvars() {
-	device="$(cut -d ',' -f 2 < /sys/firmware/devicetree/base/compatible)"
-	deviceprofile="$(which "sxmo_deviceprofile_$device.sh")"
-	# shellcheck disable=SC1090
-	[ -f "$deviceprofile" ] && . "$deviceprofile"
-}
-
-setupxdgdir() {
-	mkdir -p "$XDG_RUNTIME_DIR"
-	chmod 700 "$XDG_RUNTIME_DIR"
-	chown "$USER:$USER" "$XDG_RUNTIME_DIR"
-
-	mkdir -p "$XDG_CACHE_HOME/sxmo/"
-	chmod 700 "$XDG_CACHE_HOME"
-	chown "$USER:$USER" "$XDG_CACHE_HOME"
-}
-
-xdefaults() {
+defaults() {
 	alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
 	xmodmap /usr/share/sxmo/appcfg/xmodmap_caps_esc
 	xsetroot -mod 29 29 -fg '#0b3a4c' -bg '#082430'
@@ -69,22 +47,19 @@ defaultconfig() {
 }
 
 defaultconfigs() {
-	[ -r "$XDG_CONFIG_HOME/sxmo/xinit" ] && return
-
-	defaultconfig /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit" 744
+	defaultconfig /usr/share/sxmo/appcfg/profile_template "$XDG_CONFIG_HOME/sxmo/profile" 744
 	defaultconfig /usr/share/sxmo/appcfg/dunst.conf "$XDG_CONFIG_HOME/dunst/dunstrc" 744
 }
 
 customxinit() {
 	set -o allexport
-	defaultconfigs
 
 	# shellcheck disable=SC1090,SC1091
 	. "$XDG_CONFIG_HOME/sxmo/xinit"
 	set +o allexport
 }
 
-startdwm() {
+start() {
 	[ -f "$XDG_CACHE_HOME/sxmo/sxmo.log" ] && mv -f "$XDG_CACHE_HOME/sxmo/sxmo.log" "$XDG_CACHE_HOME/sxmo/sxmo.previous.log"
 	dbus-run-session sh -c "
 		set -- customxinit
@@ -99,23 +74,22 @@ cleanup() {
 	pkill dmenu
 }
 
-xinit() {
+init() {
 	envvars
-	device_envvars # set device env vars here to allow potentially overriding envvars
 
-	# include common definitions
-	# shellcheck source=scripts/core/sxmo_common.sh
-	. "$(dirname "$0")/sxmo_common.sh"
+	defaults
+	defaultconfigs
 
-	setupxdgdir
-	xdefaults
-	startdwm
+	# shellcheck disable=SC1090,SC1091
+	. "$XDG_CONFIG_HOME/sxmo/profile"
+
+	start
 	cleanup
 	sxmo_hooks.sh stop
 }
 
 if [ -z "$1" ]; then
-	xinit 2> ~/.xinit.log #hard-coded location because at this stage we're not sure the xdg dirs exist yet
+	init 2> ~/.init.log #hard-coded location because at this stage we're not sure the xdg dirs exist yet
 else
 	"$1"
 fi

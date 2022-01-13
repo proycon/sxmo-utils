@@ -7,17 +7,24 @@ SXMO_NO_ICONS=1 #just to make it a bit faster
 . "$(dirname "$0")/sxmo_common.sh"
 
 isopen() {
+	if [ -z "$KEYBOARD" ]; then
+		exit 0 # ssh/tty usage by example
+	fi
 	pidof "$KEYBOARD" > /dev/null
 }
 
 open() {
-	#Note: KEYBOARD_ARGS is not quoted by design as it may includes a pipe and further tools
-	# shellcheck disable=SC2086
-	isopen || eval "$KEYBOARD" $KEYBOARD_ARGS &
+	if [ -n "$KEYBOARD" ]; then
+		#Note: KEYBOARD_ARGS is not quoted by design as it may includes a pipe and further tools
+		# shellcheck disable=SC2086
+		isopen || eval "$KEYBOARD" $KEYBOARD_ARGS &
+	fi
 }
 
 close() {
-	pkill -f "$KEYBOARD"
+	if [ "$KEYBOARD" ]; then # avoid killing everything !
+		pkill -f "$KEYBOARD"
+	fi
 }
 
 if [ "$1" = "toggle" ]; then

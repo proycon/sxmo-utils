@@ -7,5 +7,5 @@
 . "$(which sxmo_common.sh)"
 
 pkill clickclack
-pkill -f "$KEYBOARD"
+sxmo_keyboard.sh close
 pkill mpv #if any audio/video is playing, kill it (it might stutter otherwise)
