@@ -4,10 +4,6 @@
 . "$(which sxmo_common.sh)"
 
 finish() {
-	kill "$BLINKPID"
-
-	sxmo_screenlock.sh updateLed
-
 	if grep -q crust "$LASTSTATE" \
 		&& grep -q rtc "$UNSUSPENDREASONFILE" \
 		&& [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
@@ -26,18 +22,6 @@ finish() {
 	exit 0
 }
 
-
-blink() {
-	while [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; do
-		sxmo_setled.sh red 100
-		sxmo_setled.sh blue 0
-		sleep 0.25
-		sxmo_setled.sh red 100
-		sxmo_setled.sh blue 100
-		sleep 0.25
-	done
-}
-
 if [ "$1" = "--strict" ]; then
 	shift
 	#don't run if we're not in crust or not waked by rtc
@@ -48,9 +32,6 @@ fi
 
 
 trap 'finish' TERM INT EXIT
-
-blink &
-BLINKPID=$!
 
 echo "sxmo_rtcwake: Running sxmo_rtcwake for $* ($(date))" >&2
 "$@"

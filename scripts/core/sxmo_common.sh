@@ -188,6 +188,7 @@ icon_usb="禍" # usb
 icon_ear="" # earpiece
 icon_dot="" # searching, connecting, etc.
 icon_ena="" # enabled
+icon_plk="" # phone locked
 icon_mod="" # modem
 icon_usb="" # usb
 icon_dof="" # dot off

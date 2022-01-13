@@ -11,6 +11,14 @@ set_time() {
 	date +%H:%M | head -c -1 | sxmo_status.sh add 99-time
 }
 
+set_locked() {
+	if sxmo_screenlock.sh getCurState | grep -q unlock; then
+		sxmo_status.sh del 0-locked
+	else
+		sxmo_status.sh add 0-locked "$icon_lck"
+	fi
+}
+
 set_call_duration() {
 	if ! pgrep sxmo_modemcall.sh > /dev/null; then
 		sxmo_status.sh del 0-call-duration
@@ -24,7 +32,7 @@ set_call_duration() {
 		cut -f1
 	)")"
 	CALLSECONDS="$(printf "%s - %s" "$NOWS" "$CALLSTARTS" | bc)"
-	printf "%ss " "$CALLSECONDS" | sxmo_status.sh add 0-call-duration
+	printf "%ss " "$CALLSECONDS" | sxmo_status.sh add 5-call-duration
 }
 
 _modem() {
@@ -37,7 +45,7 @@ _modem() {
 		MODEMSTATUS="$(printf %s "$MMCLI" | jq -r .modem.generic.state)"
 		case "$MODEMSTATUS" in
 			locked)
-				printf "%s" "$icon_lck"
+				printf "%s" "$icon_plk"
 				;;
 			registered|connected)
 				MODEMSIGNAL="$(printf %s "$MMCLI" | jq -r '.modem.generic."signal-quality".value')"
@@ -209,7 +217,7 @@ set_volume() {
 }
 
 case "$1" in
-	time|call_duration|modem|modem_monitor|wifi|vpn|battery|volume)
+	time|call_duration|modem|modem_monitor|wifi|vpn|battery|volume|locked)
 		set_"$1"
 		;;
 	periodics|state_change) # 55 s loop and screenlock triggers
@@ -227,6 +235,7 @@ case "$1" in
 		set_vpn
 		set_battery
 		set_volume
+		set_locked
 		;;
 	*)
 		exit # swallow it !

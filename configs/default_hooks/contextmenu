@@ -508,7 +508,7 @@ case "$WMCLASS" in
 			)
 			$(command -v megapixels >/dev/null && echo "$icon_cam Camera ^ 0 ^ GDK_SCALE=2 megapixels")
 			$icon_fll Flashlight $(
-				grep -qE '^0$' /sys/class/leds/white:flash/brightness &&
+				sxmo_led.sh get white | grep -vq ^100$ &&
 				printf %b "$icon_tof" ||  printf %b "$icon_ton";
 				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 			)

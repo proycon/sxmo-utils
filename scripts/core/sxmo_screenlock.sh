@@ -48,24 +48,6 @@ getCurState() {
 	fi
 }
 
-updateLed() {
-	#set the LED to reflect the current lock state
-	case "$(getCurState)" in
-		"off")
-			sxmo_setled.sh red 100
-			sxmo_setled.sh blue 100
-			;;
-		"lock")
-			sxmo_setled.sh red 0
-			sxmo_setled.sh blue 100
-			;;
-		"unlock")
-			sxmo_setled.sh red 0
-			sxmo_setled.sh blue 0
-			;;
-	esac
-}
-
 lock() {
 	#locked state with screen on
 	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage lock" >&2
@@ -74,11 +56,16 @@ lock() {
 	# TODO: Document LASTSTATE
 	getCurState > "$LASTSTATE"
 
+	sxmo_led.sh blink blue &
+
 	sxmo_wm.sh dpms off
 	sxmo_wm.sh inputevent off
 	killall lisgd
 
 	sxmo_hooks.sh statusbar state_change
+	sxmo_hooks.sh statusbar locked
+
+	wait
 
 	# Do we want this hook after disabling all the input devices so users can enable certain devices?
 	sxmo_hooks.sh lock
@@ -90,6 +77,9 @@ unlock() {
 
 	getCurState > "$LASTSTATE"
 
+	sxmo_led.sh blink red green &
+	LEDPID=$!
+
 	sxmo_wm.sh dpms off
 	sxmo_wm.sh inputevent on
 	sxmo_hooks.sh lisgdstart &
@@ -97,6 +87,9 @@ unlock() {
 	echo 16000 > "$NETWORKRTCSCAN"
 
 	sxmo_hooks.sh statusbar state_change
+	sxmo_hooks.sh statusbar locked
+
+	wait "$LEDPID"
 
 	sxmo_hooks.sh unlock
 }
@@ -107,11 +100,14 @@ off() {
 
 	getCurState > "$LASTSTATE"
 
+	sxmo_led.sh blink blue red &
+
 	sxmo_wm.sh dpms on
 	sxmo_wm.sh inputevent off
+	sxmo_hooks.sh statusbar locked
 	killall lisgd
 
-	updateLed
+	wait
 
 	sxmo_hooks.sh screenoff
 	exit 0
@@ -121,9 +117,7 @@ crust() {
 	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage crust" >&2
 	getCurState > "$LASTSTATE"
 
-	# TODO: is this necessary?
-	sxmo_setled.sh red 100
-	sxmo_setled.sh blue 0
+	sxmo_led.sh blink red
 
 	saveAllEventCounts
 
@@ -149,8 +143,6 @@ crust() {
 
 	echo "crust" > "$LASTSTATE"
 
-	updateLed
-
 	echo "$(date) sxmo_screenlock: woke up from crust (reason=$UNSUSPENDREASON)" >&2
 	if [ "$UNSUSPENDREASON" != "modem" ]; then
 		echo 1200 > "$NETWORKRTCSCAN"
@@ -168,12 +160,12 @@ crust() {
 }
 
 case "$1" in
-	unlock|lock|off|crust|getCurState|updateLed)
+	unlock|lock|off|crust|getCurState)
 		"$@"
 		exit 0
 		;;
 	*)
-		echo "usage: sxmo_screenlock.sh [lock|unlock|off|crust|rtc|getCurState|updateLed]">&2
+		echo "usage: sxmo_screenlock.sh [lock|unlock|off|crust|rtc|getCurState]">&2
 		exit 1
 		;;
 esac
