@@ -60,12 +60,17 @@ lock() {
 
 	sxmo_wm.sh dpms off
 	sxmo_wm.sh inputevent off
-	killall lisgd
+
+	sxmo_daemons.sh stop lisgd
 
 	sxmo_hooks.sh statusbar state_change
 	sxmo_hooks.sh statusbar locked
 
 	wait
+
+	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
+		timeout 8 'sxmo_daemons.sh start periodic_deeper sxmo_run_periodically.sh 8 sxmo_screenlock_deeper.sh --idle' \
+		resume 'sxmo_daemons.sh stop periodic_deeper'
 
 	# Do we want this hook after disabling all the input devices so users can enable certain devices?
 	sxmo_hooks.sh lock
@@ -82,7 +87,7 @@ unlock() {
 
 	sxmo_wm.sh dpms off
 	sxmo_wm.sh inputevent on
-	sxmo_hooks.sh lisgdstart &
+	sxmo_hooks.sh lisgdstart
 
 	echo 16000 > "$NETWORKRTCSCAN"
 
@@ -90,6 +95,10 @@ unlock() {
 	sxmo_hooks.sh statusbar locked
 
 	wait "$LEDPID"
+
+	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
+		timeout 120 'sxmo_daemons.sh start periodic_deeper sxmo_run_periodically.sh 10 sxmo_screenlock_deeper.sh --idle' \
+		resume 'sxmo_daemons.sh stop periodic_deeper'
 
 	sxmo_hooks.sh unlock
 }
@@ -105,9 +114,16 @@ off() {
 	sxmo_wm.sh dpms on
 	sxmo_wm.sh inputevent off
 	sxmo_hooks.sh statusbar locked
-	killall lisgd
+
+	sxmo_daemons.sh stop lisgd
 
 	wait
+
+	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
+		timeout 8 'sxmo_daemons.sh start periodic_deeper sxmo_run_periodically.sh 8 sxmo_screenlock_deeper.sh --idle' \
+		resume 'sxmo_daemons.sh stop periodic_deeper' \
+		timeout 5 'sxmo_daemons.sh start periodic_blink sxmo_run_periodically.sh 2 sxmo_led.sh blink red blue' \
+		resume 'sxmo_daemons.sh stop periodic_blink'
 
 	sxmo_hooks.sh screenoff
 	exit 0
@@ -150,10 +166,6 @@ crust() {
 
 	if [ "$UNSUSPENDREASON" = "usb power" ]; then
 		lock
-	fi
-
-	if [ "$UNSUSPENDREASON" != "rtc" ]; then
-		pkill -10 -f sxmo_lock_idle.sh
 	fi
 
 	sxmo_hooks.sh postwake "$UNSUSPENDREASON"

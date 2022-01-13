@@ -20,27 +20,58 @@ amixer set "Line Out" 75%
 # Play a funky startup tune if you want (disabled by default)
 #mpv --quiet --no-video ~/welcome.ogg &
 
-# Start the desktop widget (e.g. clock)
-sxmo_hooks.sh desktop_widget &
-
-# Enable automatic screen off and crust when phone is locked and idle
-sxmo_lock_idle.sh &
-
 if [ -f "$MMS_BASE_DIR/mms" ]; then
-	mmsdtng &
+	sxmo_daemons.sh start mmsd mmsdtng
 fi
 
 if [ -f "$VVM_BASE_DIR/vvm" ]; then
-	vvmd &
+	sxmo_daemons.sh start vvmd vvmd
 fi
+
+# Start the desktop widget (e.g. clock)
+sxmo_daemons.sh start desktop_widget sxmo_hooks.sh desktop_widget
+
+# Periodically update some status bar components
+sxmo_daemons.sh start statusbar_periodics sxmo_hooks.sh statusbar_periodics
+
+# It watch network changes and update the status bar icon by example
+sxmo_daemons.sh start network_monitor sxmo_networkmonitor.sh
+
+# The daemon that display notifications popup messages
+sxmo_daemons.sh start notification_monitor sxmo_notificationmonitor.sh
+
+# turn on modemmonitor on login
+# Note: if the modemmonitor is not on you can
+# not receive texts/calls!
+# (there is a bit of a delay to
+# give the modem some time to set up)
+sxmo_modemmonitortoggle.sh restart
 
 case "$SXMO_WM" in
 	sway)
-		useable_width="$(swaymsg -t get_outputs -r | jq '.[] | select(.focused == true) | .rect.width')"
-		wob_sock="$XDG_RUNTIME_DIR"/sxmo.wobsock
-		mkfifo "$wob_sock"
-		# cat the fifo without closing.
-		cat 0<> "$wob_sock" 2> /dev/null | \
-			wob -W "$((useable_width - 60))" -a top -a left -a right -M 10 &
+		sxmo_daemons.sh start wob sxmo_wob.sh
+		sxmo_daemons.sh start desktop_notifier mako
+		sxmo_daemons.sh start menu_mode_toggler sxmo_menumode_toggler.sh
+		;;
+	dwm)
+		sxmo_daemons.sh start desktop_notifier dunst
+
+		# Auto hide cursor with touchscreen, Show it with a mouse
+		if command -v "unclutter-xfixes" > /dev/null; then
+			set -- unclutter-xfixes
+		else
+			set -- unclutter
+		fi
+		sxmo_daemons.sh start unclutter_xfixes "$1" --hide-on-touch --start-hidden
+
+		# Set a pretty wallpaper
+		feh --bg-fill /usr/share/sxmo/background.jpg
+
+		sxmo_daemons.sh start autocutsel_1 autocutsel
+		sxmo_daemons.sh start autocutsel_2 autocutsel -selection PRIMARY
+		sxmo_daemons.sh start statusbar_xsetroot sxmo_status_xsetroot.sh
 		;;
 esac
+
+# To setup initial lock state
+sxmo_screenlock.sh unlock

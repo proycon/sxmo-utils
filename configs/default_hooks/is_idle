@@ -19,7 +19,7 @@ ongoing_call() {
 }
 
 proximity_lock_on() {
-	pgrep -f sxmo_proximitylock.sh > /dev/null && exit_not_idle "proxlock"
+	sxmo_daemons.sh running proximity_lock -q && exit_not_idle "proxlock"
 }
 
 playing_mpc() {

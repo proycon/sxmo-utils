@@ -10,11 +10,16 @@ stderr() {
 }
 
 gracefulexit() {
-	sleep 1
 	stderr "gracefully exiting (on signal or after error)"
-	kill -9 0
+	sxmo_daemons.sh stop modem_monitor_voice
+	sxmo_daemons.sh stop modem_monitor_text
+	sxmo_daemons.sh stop modem_monitor_finished_voice
+	sxmo_daemons.sh stop modem_monitor_state_change
+	sxmo_daemons.sh stop modem_monitor_check_daemons
+	sxmo_daemons.sh stop modem_monitor_mms
+	sxmo_daemons.sh stop modem_monitor_vvm
+	exit
 }
-
 statenumtoname() {
 	case "$*" in
 		"int32 -1") pnewstate="FAILED (-1)"
@@ -56,25 +61,34 @@ mainloop() {
 
 	sxmo_modem.sh initialmodemstatus
 
+	PIDS=""
+
 	# Monitor for incoming calls
-	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Voice',type='signal',member='CallAdded'" | \
+	sxmo_daemons.sh start modem_monitor_voice \
+		dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Voice',type='signal',member='CallAdded'" | \
 		while read -r line; do
 			echo "$line" | grep -E "^signal" && sxmo_modem.sh checkforincomingcalls
 		done &
+	PIDS="$PIDS $!"
 
 	# Monitor for incoming texts
-	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Messaging',type='signal',member='Added'" | \
+	sxmo_daemons.sh start modem_monitor_text \
+		dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Messaging',type='signal',member='Added'" | \
 		while read -r line; do
 			echo "$line" | grep -E "^signal" && sxmo_modem.sh checkfornewtexts
 		done &
+	PIDS="$PIDS $!"
 
 	# Monitor for finished calls
-	dbus-monitor --system "interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',arg0='org.freedesktop.ModemManager1.Call'" | \
+	sxmo_daemons.sh start modem_monitor_finished_voice \
+		dbus-monitor --system "interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',arg0='org.freedesktop.ModemManager1.Call'" | \
 		while read -r line; do
 			echo "$line" | grep -E "^signal" && sxmo_modem.sh checkforfinishedcalls
 		done &
+	PIDS="$PIDS $!"
 
-	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem',type='signal',member='StateChanged'" | \
+	sxmo_daemons.sh start modem_monitor_state_change \
+		dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem',type='signal',member='StateChanged'" | \
 		while read -r line; do
 			if echo "$line" | grep -E "^signal.*StateChanged"; then
 				read -r oldstate
@@ -99,19 +113,16 @@ mainloop() {
 				sxmo_hooks.sh statusbar modem
 			fi
 		done &
+	PIDS="$PIDS $!"
 
-	(   #check whether the modem is still alive every minute, reset the modem if not
-		while :
-		do
-			sleep 60
-			sxmo_modem.sh checkmodem
-			sxmo_mms.sh checkmmsd
-			sxmo_vvm.sh checkvvmd
-		done
-	) &
+	#check whether the modem is still alive every minute, reset the modem if not
+	sxmo_daemons.sh start modem_monitor_check_daemons \
+		sxmo_run_periodically.sh 60 \
+		sxmo_checkdaemons.sh
 
 	# monitor for mms
-	dbus-monitor "interface='org.ofono.mms.Service',type='signal',member='MessageAdded'" | \
+	sxmo_daemons.sh start modem_monitor_mms \
+		dbus-monitor "interface='org.ofono.mms.Service',type='signal',member='MessageAdded'" | \
 		while read -r line; do
 			if echo "$line" | grep -q '^object path'; then
 				MESSAGE_PATH="$(echo "$line" | cut -d'"' -f2)"
@@ -119,11 +130,13 @@ mainloop() {
 			if echo "$line" | grep -q 'string "received"'; then
 				sxmo_mms.sh processmms "$MESSAGE_PATH" "Received"
 			fi
-	done &
+		done &
+	PIDS="$PIDS $!"
 
 	# monitor for vvm (Visual Voice Mail)
 	VVM_START=0
-	dbus-monitor "interface='org.kop316.vvm.Service',type='signal',member='MessageAdded'" | \
+	sxmo_daemons.sh start modem_monitor_vvm \
+		dbus-monitor "interface='org.kop316.vvm.Service',type='signal',member='MessageAdded'" | \
 		while read -r line; do
 			if echo "$line" | grep -q '^object path'; then
 				VVM_ID="$(echo "$line" | cut -d'"' -f2 | rev | cut -d'/' -f1 | rev)"
@@ -147,15 +160,12 @@ mainloop() {
 					VVM_ATTACHMENT="$(echo "$line" | cut -d'"' -f2)"
 				fi
 			fi
-	done &
+		done &
+	PIDS="$PIDS $!"
 
-	wait
-	wait
-	wait
-	wait
-	wait
-	wait
-	wait
+	for PID in $PIDS; do
+		wait "$PID"
+	done
 }
 
 

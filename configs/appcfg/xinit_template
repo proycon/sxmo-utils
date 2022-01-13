@@ -8,9 +8,6 @@
 #  or ensure they return quickly. Only after this script
 #  finishes will the window manager be loaded
 
-# Set a pretty wallpaper
-feh --bg-fill /usr/share/sxmo/background.jpg
-
 # Run actions on start
 # By default, setup audio over the main speaker
 # and set a sane default volume
@@ -20,14 +17,6 @@ sxmo_hooks.sh start &
 #  country code prefixed phone numbers. To make
 #  it easy to fixup configure the default countryu.
 #export DEFAULT_COUNTRY=FR
-
-# turn on modemmonitor on login
-# Note: if the modemmonitor is not on you can
-# not receive texts/calls!
-# (there is a bit of a delay to
-# give the modem some time to set up)
-sxmo_modemmonitortoggle.sh restart &
-
 
 ### Configuration Parameters ###
 

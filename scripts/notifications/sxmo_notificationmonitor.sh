@@ -1,14 +1,8 @@
 #!/bin/sh
-trap gracefulexit INT TERM
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
-
-gracefulexit() {
-	echo "Gracefully exiting $0"
-	kill -9 0
-}
 
 handlenewnotiffile(){
 	NOTIFFILE="$1"
@@ -35,7 +29,7 @@ handlenewnotiffile(){
 		fi
 
 		[ -e "$NOTIFWATCHFILE" ] && (
-			inotifywait "$NOTIFWATCHFILE" && \
+			inotifywait -q "$NOTIFWATCHFILE" && \
 				rm -f "$NOTIFFILE" && \
 				syncled
 		) &
@@ -58,23 +52,30 @@ syncled() {
 }
 
 monitorforaddordelnotifs() {
-	while true; do
-		if [ ! -e "$NOTIFDIR" ]; then
-			mkdir -p "$NOTIFDIR" || sleep 10
+	mkdir -p "$NOTIFDIR"
+
+	FIFO="$(mktemp -u)"
+	mkfifo "$FIFO"
+	inotifywait -mq -e attrib,move,delete "$NOTIFDIR"  >> "$FIFO" &
+	NOTIFYPID=$!
+
+	finish() {
+		kill "$NOTIFYPID"
+		rm "$FIFO"
+		exit
+	}
+	trap 'finish' TERM INT EXIT
+
+	while read -r NOTIFFOLDER INOTIFYEVENTTYPE NOTIFFILE; do
+		if echo "$INOTIFYEVENTTYPE" | grep -E "CREATE|MOVED_TO|ATTRIB"; then
+			handlenewnotiffile "$NOTIFFOLDER/$NOTIFFILE"
 		fi
-		inotifywait -e create,attrib,moved_to,delete,delete_self,moved_from "$NOTIFDIR"/ | (
-			INOTIFYOUTPUT="$(cat)"
-			INOTIFYEVENTTYPE="$(echo "$INOTIFYOUTPUT" | cut -d" " -f2)"
-			if echo "$INOTIFYEVENTTYPE" | grep -E "CREATE|MOVED_TO|ATTRIB"; then
-				NOTIFFILE="$NOTIFDIR/$(echo "$INOTIFYOUTPUT" | cut -d" " -f3)"
-				handlenewnotiffile "$NOTIFFILE"
-			fi
-			syncled
-		) & wait
-	done
+		syncled
+	done < "$FIFO"
+
+	wait "$NOTIFYPID"
 }
 
-pgrep -f "$(command -v sxmo_notificationmonitor.sh)" | grep -Ev "^${$}$" | xargs -r kill
 rm -f "$NOTIFDIR"/incomingcall
 recreateexistingnotifs
 syncled

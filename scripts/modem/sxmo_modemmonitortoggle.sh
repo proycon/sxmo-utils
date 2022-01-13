@@ -110,17 +110,15 @@ on() {
 		sleep 5
 	done
 
-	setsid -f sxmo_modemmonitor.sh &
-
-	sleep 1
+	sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh
 }
 
 off() {
-	pkill -TERM -f sxmo_modemmonitor.sh
+	sxmo_daemons.sh stop modem_monitor
 }
 
 if [ -z "$1" ]; then
-	if pgrep -f sxmo_modemmonitor.sh; then
+	if sxmo_daemons.sh running modem_monitor -q; then
 		set -- off
 	else
 		set -- on
@@ -145,5 +143,4 @@ case "$1" in
 		;;
 esac
 
-sleep 1
 sxmo_hooks.sh statusbar modem_monitor

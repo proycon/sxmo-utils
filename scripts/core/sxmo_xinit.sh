@@ -60,44 +60,6 @@ defaultkeyboard() {
 	fi
 }
 
-daemons() {
-	autocutsel &
-	autocutsel -selection PRIMARY &
-	sxmo_hooks.sh statusbar all
-	sxmo_status.sh watch | stdbuf -o0 tr '\n' '\0' | xargs -0 -n1 xsetroot -name &
-	STATUSPID=$!
-	while : ; do
-		sleep 55 & wait
-		sxmo_hooks.sh statusbar periodics
-	done &
-	STATUSTIMEPID=$!
-	udevadm monitor -u -s power_supply | while read -r; do
-		sxmo_hooks.sh statusbar battery
-	done &
-	STATUSBATTERYPID=$!
-}
-
-stopdaemons() {
-	kill "$STATUSTIMEPID"
-	kill "$STATUSPID"
-	kill "$STATUSBATTERYPID"
-}
-
-daemonsneedingdbus() {
-	dunst -conf /usr/share/sxmo/appcfg/dunst.conf &
-	sxmo_notificationmonitor.sh &
-	sxmo_networkmonitor.sh &
-	sxmo_hooks.sh lisgdstart &
-
-	# Auto hide cursor with touchscreen, Show it with a mouse
-	if command -v "unclutter-xfixes" > /dev/null; then
-		set -- unclutter-xfixes
-	else
-		set -- unclutter
-	fi
-	"$1" --hide-on-touch --start-hidden &
-}
-
 defaultconfig() {
 	if [ ! -r "$2" ]; then
 		mkdir -p "$(dirname "$2")"
@@ -110,6 +72,7 @@ defaultconfigs() {
 	[ -r "$XDG_CONFIG_HOME/sxmo/xinit" ] && return
 
 	defaultconfig /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit" 744
+	defaultconfig /usr/share/sxmo/appcfg/dunst.conf "$XDG_CONFIG_HOME/dunst/dunstrc" 744
 }
 
 customxinit() {
@@ -126,19 +89,13 @@ startdwm() {
 	dbus-run-session sh -c "
 		set -- customxinit
 		. $0
-		$0 daemonsneedingdbus
 		dwm
 	" 2> "$DEBUGLOG"
 }
 
-stopdwm() {
-	pkill -f sxmo_rotateautotoggle.sh
-	pkill -f sxmo_notificationmonitor.sh
-	pkill -f sxmo_networkmonitor.sh
-	pkill lisgd
-
+cleanup() {
+	sxmo_daemons.sh stop all
 	pkill svkbd
-	pkill conky
 	pkill dmenu
 }
 
@@ -152,10 +109,8 @@ xinit() {
 
 	setupxdgdir
 	xdefaults
-	daemons
 	startdwm
-	stopdwm
-	stopdaemons
+	cleanup
 	sxmo_hooks.sh stop
 }
 

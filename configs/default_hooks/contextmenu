@@ -33,11 +33,11 @@ case "$WMCLASS" in
 			$icon_aru Brightness               ^ 1 ^ sxmo_brightness.sh up
 			$icon_ard Brightness               ^ 1 ^ sxmo_brightness.sh down
 			$icon_cfg Gestures $(
-				pgrep -f lisgd > /dev/null &&
-				printf %b "$icon_ton ^ 1 ^ pkill -9 lisgd" || printf %b "$icon_tof ^ 1 ^ sxmo_hooks.sh lisgdstart &"
-			)
+				sxmo_daemons.sh running lisgd -q > /dev/null &&
+				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
+			) ^ 1 ^ toggle_daemon 'Lisgd' lisgd sxmo_hooks.sh lisgdstart
 			$icon_phn Modem Monitor $(
-				pgrep -f sxmo_modemmonitor.sh > /dev/null &&
+				sxmo_daemons.sh running modem_monitor -q > /dev/null &&
 				printf %b "$icon_ton ^ 1 ^ sxmo_modemmonitortoggle.sh off" || printf %b "$icon_tof ^ 1 ^ sxmo_modemmonitortoggle.sh on"
 			)
 			$icon_phn Modem Daemons $(
@@ -58,20 +58,16 @@ case "$WMCLASS" in
 				printf %b "$icon_ton" ||  printf %b "$icon_tof";
 				printf %b "^ 1 ^ doas sxmo_wifitoggle.sh && sxmo_hooks.sh statusbar wifi"
 			)
-			$icon_cfg Idle Monitor $(
-				pgrep -f sxmo_lock_idle.sh > /dev/null &&
-				printf %b "$icon_ton ^ 1 ^ pkill -f sxmo_lock_idle.sh" || printf %b "$icon_tof ^ 1 ^ setsid -f sxmo_lock_idle.sh"
-			)
 			$(test "$SXMO_WM" = dwm && printf %b "$icon_cfg Invert Colors ^ 1 ^ xcalib -a -invert")
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			$icon_ror Autorotate $(
-				pgrep -f "$(command -v sxmo_rotateautotoggle.sh)" > /dev/null &&
-				printf %b "$icon_ton ^ 1 ^ sxmo_rotateautotoggle.sh &" ||  printf %b "$icon_tof ^ 1 ^ sxmo_rotateautotoggle.sh &"
-			)
+				sxmo_daemons.sh running autorotate -q &&
+				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
+			) ^ 1 ^ toggle_daemon 'Autorotate' autorotate sxmo_autorotate.sh
 			$icon_lck Proximity Lock $(
-				pgrep -f "$(command -v sxmo_proximitylock.sh)" > /dev/null &&
-				printf %b "$icon_ton ^ 1 ^ sxmo_proximitylocktoggle.sh &" ||  printf %b "$icon_tof ^ 1 ^ sxmo_proximitylocktoggle.sh &"
-			)
+				sxmo_daemons.sh running proximity_lock -q &&
+				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
+			) ^ 1 ^ toggle_daemon 'Proximity Lock' proximity_lock sxmo_proximitylock.sh
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
 			$icon_upc Upgrade Pkgs               ^ 0 ^ sxmo_terminal.sh sxmo_upgrade.sh
 			$icon_cfg Edit configuration         ^ 0 ^ sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/$(test "$SXMO_WM" = sway && printf sway || printf xinit)

@@ -98,7 +98,7 @@ set_modem() {
 }
 
 set_modem_monitor() {
-	if pgrep -f sxmo_modemmonitor.sh > /dev/null; then
+	if sxmo_daemons.sh running modem_monitor -q; then
 		sxmo_status.sh add 20-modem-monitor-status "$icon_mod"
 	else
 		sxmo_status.sh del 20-modem-monitor-status

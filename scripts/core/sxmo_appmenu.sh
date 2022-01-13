@@ -1,14 +1,8 @@
 #!/bin/sh
-trap gracefulexit INT TERM
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
-
-gracefulexit() {
-	printf "Gracefully exiting %s\n" "$0">&2
-	kill -9 0
-}
 
 confirm() {
 	PICKED="$(printf "Yes\nNo\n" | sxmo_dmenu.sh -p "Confirm $1")"
@@ -17,6 +11,19 @@ confirm() {
 		return 0
 	else
 		return 1
+	fi
+}
+
+toggle_daemon() {
+	name="$1"
+	shift
+
+	if sxmo_daemons.sh running "$1" -q; then
+		sxmo_daemons.sh stop "$@"
+		notify-send "$name Stopped"
+	else
+		sxmo_daemons.sh start "$@" &
+		notify-send "$name Started"
 	fi
 }
 

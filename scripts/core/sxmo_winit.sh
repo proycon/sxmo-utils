@@ -58,41 +58,16 @@ defaultconfigs() {
 }
 
 startsway() {
-	cleanupsway
 	[ -f "$XDG_CACHE_HOME/sxmo/sxmo.log" ] && mv -f "$XDG_CACHE_HOME/sxmo/sxmo.log" "$XDG_CACHE_HOME/sxmo/sxmo.previous.log"
 	dbus-run-session sh -c "
 		/usr/bin/sway -c \"$XDG_CONFIG_HOME/sxmo/sway\"
 	" 2> "$DEBUGLOG"
 }
 
-daemons() {
-	sxmo_hooks.sh statusbar all
-	while : ; do
-		sleep 55 & wait
-		sxmo_hooks.sh statusbar periodics
-	done &
-	STATUSTIMEPID=$!
-	udevadm monitor -u -s power_supply | while read -r; do
-		sxmo_hooks.sh statusbar battery
-	done &
-	STATUSBATTERYPID=$!
-}
-
-stopdaemons() {
-	kill "$STATUSTIMEPID"
-	kill "$STATUSBATTERYPID"
-}
-
-cleanupsway() {
-	pkill -f sxmo_modemmonitor.sh
-	pkill -f sxmo_networkmonitor.sh
-	pkill -f sxmo_notificationmonitor.sh
-	pkill -f sxmo_rotateautotoggle.sh
+cleanup() {
+	sxmo_daemons.sh stop all
 	pkill bemenu
-	pkill lisgd
-	pkill wayout
 	pkill wvkbd
-	pkill -f "tail.*run/sxmo.wobsock"
 }
 
 init() {
@@ -106,9 +81,8 @@ init() {
 	setupxdgdir
 	defaults
 	defaultconfigs
-	daemons
 	startsway
-	stopdaemons
+	cleanup
 	sxmo_hooks.sh stop
 }
 

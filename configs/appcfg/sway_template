@@ -222,10 +222,4 @@ include /etc/sway/config.d/*
 
 exec 'printf %s "$SWAYSOCK" > "$CACHEDIR"/sxmo.swaysock'
 
-exec sxmo_networkmonitor.sh
-exec sxmo_modemmonitortoggle.sh restart
-exec sxmo_notificationmonitor.sh
-exec mako
-exec sxmo_hooks.sh lisgdstart
 exec sxmo_hooks.sh start
-exec sxmo_menumode_toggler.sh

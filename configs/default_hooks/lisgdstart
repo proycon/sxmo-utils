@@ -1,10 +1,8 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(which sxmo_common.sh)"
-
-pkill -9 lisgd
 
 if [ -z "$LISGD_THRESHOLD" ]; then
 	LISGD_THRESHOLD=125
@@ -25,7 +23,7 @@ fi
 #-g format:
 #   fingers,swipe,edge,distance,command
 #order matters, only the first match gets executed
-lisgd "$@" ${orientation:+-o $orientation} \
+sxmo_daemons.sh start lisgd lisgd "$@" ${orientation:+-o $orientation} \
 	-t "$LISGD_THRESHOLD" -T "$LISGD_THRESHOLD_PRESSED" \
 	-g '1,DRUL,BR,*,sxmo_inputhandler.sh bottomrightcorner' \
 	-g '1,DLUR,BL,*,sxmo_inputhandler.sh bottomleftcorner' \
@@ -68,5 +66,4 @@ lisgd "$@" ${orientation:+-o $orientation} \
 	-g '2,RL,*,*,sxmo_inputhandler.sh twoleft' \
 	-g '2,LR,*,*,sxmo_inputhandler.sh tworight' \
 	-g '2,DU,*,*,sxmo_inputhandler.sh twoup' \
-	-g '2,UD,*,*,sxmo_inputhandler.sh twodown' \
-	>"$CACHEDIR/lisgd.log" 2>&1
+	-g '2,UD,*,*,sxmo_inputhandler.sh twodown'

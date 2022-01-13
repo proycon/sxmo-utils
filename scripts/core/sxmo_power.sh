@@ -6,13 +6,13 @@ usage() {
 
 case "$1" in
 	reboot)
-		pkill -f sxmo_lock_idle.sh
 		sxmo_hooks.sh reboot
+		sxmo_daemons.sh stop all
 		doas reboot
 		;;
 	poweroff)
-		pkill -f sxmo_lock_idle.sh
 		sxmo_hooks.sh poweroff
+		sxmo_daemons.sh stop all
 		doas poweroff
 		;;
 	*)

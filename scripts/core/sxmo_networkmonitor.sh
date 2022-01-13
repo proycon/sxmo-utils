@@ -12,7 +12,8 @@ gracefulexit() {
 	sxmo_hooks.sh statusbar wifi
 	sleep 1
 	stderr "gracefully exiting (on signal or after error)"
-	kill -9 0
+	kill "$MONITORPID"
+	exit
 }
 
 trap "gracefulexit" INT TERM
@@ -53,5 +54,6 @@ dbus-monitor --system "interface='org.freedesktop.NetworkManager.Device',type='s
 			fi
 		fi
 	done &
+MONITORPID=$!
 
-wait
+wait "$MONITORPID"

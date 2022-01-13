@@ -9,10 +9,10 @@ stderr() {
 
 checkmmsd() {
 	if [ -f "$MMS_BASE_DIR/mms" ]; then
-		pgrep mmsdtng > /dev/null && return
+		sxmo_daemons.sh running mmsd -q && return
 		pgrep -f sxmo_mmsdconfig.sh && return
 		stderr "mmsdtng not found, attempting to start it." >&2
-		setsid -f mmsdtng
+		sxmo_daemons.sh start mmsd mmsdtng
 	fi
 }
 

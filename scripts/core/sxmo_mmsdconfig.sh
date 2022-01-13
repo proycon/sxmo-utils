@@ -70,12 +70,10 @@ newfile() {
 
 mkdir -p "$MMS_BASE_DIR"
 
-if pgrep mmsdtng > /dev/null; then
-	pkill mmsdtng
-fi
+sxmo_daemons.sh stop mmsd
 
 finish() {
-	setsid -f mmsdtng
+	sxmo_daemons.sh start mmsd mmsdtng
 }
 trap 'finish' EXIT
 

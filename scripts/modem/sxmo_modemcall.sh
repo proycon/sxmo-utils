@@ -29,7 +29,9 @@ finish() {
 		stderr "$1"
 		notify-send Call "$1"
 	fi
-	[ -n "$LOCKPID" ] && kill "$LOCKPID"
+	if [ -z "$LOCKALREADYRUNNING" ]; then
+		sxmo_daemons.sh stop proximity_lock
+	fi
 	sxmo_dmenu.sh close
 	exit 1
 }
@@ -238,9 +240,10 @@ incomingcallmenu() {
 modem_n || finish "Couldn't determine modem number - is modem online?"
 
 # do not duplicate proximity lock if already running
-if ! pgrep -f sxmo_proximitylock.sh > /dev/null; then
-	sxmo_proximitylock.sh &
-	LOCKPID="$!"
+if sxmo_daemons.sh running proximity_lock -q; then
+	LOCKALREADYRUNNING=1
+else
+	sxmo_daemons.sh start proximity_lock sxmo_proximitylock.sh
 fi
 
 "$@" &

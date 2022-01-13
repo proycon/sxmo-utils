@@ -9,7 +9,12 @@ fi
 initial_state="$(sxmo_screenlock.sh getCurState)"
 case "$initial_state" in
 	unlock)
-		exit # We only manage locked target_state
+		target_state=lock
+		case "$SXMO_WM" in
+			sway)
+				swaymsg mode default -q
+				;;
+			esac
 		;;
 	lock)
 		target_state=off

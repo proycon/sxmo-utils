@@ -60,12 +60,10 @@ newfile() {
 
 mkdir -p "$VVM_BASE_DIR"
 
-if pgrep ^vvmd; then
-	pkill ^vvmd
-fi
+sxmo_daemons.sh stop vvmd
 
 finish() {
-	setsid -f vvmd
+	sxmo_daemons.sh start vvmd vvmd
 }
 trap 'finish' EXIT
 

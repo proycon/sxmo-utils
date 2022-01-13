@@ -10,10 +10,10 @@ stderr() {
 
 checkvvmd() {
 	if [ -f "$VVM_BASE_DIR/vvm" ]; then
-		pgrep vvmd > /dev/null && return
+		sxmo_daemons.sh running vvmd -q && return
 		pgrep -f sxmo_vvmdconfig && return
 		stderr "vvmd not found, attempting to start it: $DBUS_SESSION_BUS_ADDRESS."
-		setsid -f vvmd
+		sxmo_daemons.sh start vvmd vvmd
 	fi
 }
 
