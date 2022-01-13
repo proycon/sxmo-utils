@@ -9,7 +9,7 @@ stderr() {
 }
 
 gracefulexit() {
-	sxmo_statusbarupdate.sh
+	sxmo_hooks.sh statusbar wifi
 	sleep 1
 	stderr "gracefully exiting (on signal or after error)"
 	kill -9 0
@@ -34,22 +34,22 @@ dbus-monitor --system "interface='org.freedesktop.NetworkManager.Device',type='s
 				# 100=NM_DEVICE_STATE_ACTIVATED
 				stderr "network up."
 				sxmo_hooks.sh network-up &
-				sxmo_statusbarupdate.sh network-up
+				sxmo_hooks.sh statusbar wifi
 			elif echo "$newstate" | grep "uint32 30"; then
 				# 30=NM_DEVICE_STATE_DISCONNECTED 
 				stderr "network down."
 				sxmo_hooks.sh network-down &
-				sxmo_statusbarupdate.sh network-down
+				sxmo_hooks.sh statusbar wifi
 			elif echo "$newstate" | grep "uint32 110"; then
 				# 110=NM_DEVICE_STATE_DEACTIVATING
 				stderr "network pre-down"
 				sxmo_hooks.sh network-pre-down &
-				sxmo_statusbarupdate.sh network-pre-down
+				sxmo_hooks.sh statusbar wifi
 			elif echo "$newstate" | grep "uint32 90"; then
 				# 90=NM_DEVICE_STATE_SECONDARIES
 				stderr "network pre-up"
 				sxmo_hooks.sh network-pre-up &
-				sxmo_statusbarupdate.sh network-pre-up
+				sxmo_hooks.sh statusbar wifi
 			fi
 		fi
 	done &

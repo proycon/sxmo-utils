@@ -146,4 +146,4 @@ case "$1" in
 esac
 
 sleep 1
-sxmo_statusbarupdate.sh modemmonitortoggle
+sxmo_hooks.sh statusbar modem_monitor

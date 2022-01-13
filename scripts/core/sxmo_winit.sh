@@ -65,6 +65,24 @@ startsway() {
 	" 2> "$DEBUGLOG"
 }
 
+daemons() {
+	sxmo_hooks.sh statusbar all
+	while : ; do
+		sleep 55 & wait
+		sxmo_hooks.sh statusbar periodics
+	done &
+	STATUSTIMEPID=$!
+	udevadm monitor -u -s power_supply | while read -r; do
+		sxmo_hooks.sh statusbar battery
+	done &
+	STATUSBATTERYPID=$!
+}
+
+stopdaemons() {
+	kill "$STATUSTIMEPID"
+	kill "$STATUSBATTERYPID"
+}
+
 cleanupsway() {
 	pkill -f sxmo_modemmonitor.sh
 	pkill -f sxmo_networkmonitor.sh
@@ -88,8 +106,9 @@ init() {
 	setupxdgdir
 	defaults
 	defaultconfigs
+	daemons
 	startsway
-	cleanupsway
+	stopdaemons
 	sxmo_hooks.sh stop
 }
 

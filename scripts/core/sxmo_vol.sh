@@ -20,7 +20,7 @@ notify() {
 			notify-send "♫ Volume" "$VOL"
 			;;
 	esac
-	sxmo_statusbarupdate.sh vol
+	sxmo_hooks.sh statusbar volume
 }
 
 up() {

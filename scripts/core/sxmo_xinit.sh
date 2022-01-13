@@ -63,7 +63,24 @@ defaultkeyboard() {
 daemons() {
 	autocutsel &
 	autocutsel -selection PRIMARY &
-	sxmo_statusbar.sh &
+	sxmo_hooks.sh statusbar all
+	sxmo_status.sh watch | stdbuf -o0 tr '\n' '\0' | xargs -0 -n1 xsetroot -name &
+	STATUSPID=$!
+	while : ; do
+		sleep 55 & wait
+		sxmo_hooks.sh statusbar periodics
+	done &
+	STATUSTIMEPID=$!
+	udevadm monitor -u -s power_supply | while read -r; do
+		sxmo_hooks.sh statusbar battery
+	done &
+	STATUSBATTERYPID=$!
+}
+
+stopdaemons() {
+	kill "$STATUSTIMEPID"
+	kill "$STATUSPID"
+	kill "$STATUSBATTERYPID"
 }
 
 daemonsneedingdbus() {
@@ -138,6 +155,7 @@ xinit() {
 	daemons
 	startdwm
 	stopdwm
+	stopdaemons
 	sxmo_hooks.sh stop
 }
 

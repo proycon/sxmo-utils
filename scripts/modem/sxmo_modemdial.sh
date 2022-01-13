@@ -10,7 +10,7 @@ fatalerr() {
 	mmcli -m "$(mmcli -L | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2)" --voice-hangup-all
 	echo "$1" >&2
 	notify-send "$1"
-	(sleep 0.5; sxmo_statusbarupdate.sh modemdial) &
+	(sleep 0.5; sxmo_hooks.sh statusbar call_duration) &
 	kill -9 0
 }
 

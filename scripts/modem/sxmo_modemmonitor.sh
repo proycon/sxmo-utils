@@ -96,7 +96,7 @@ mainloop() {
 					sxmo_modem.sh checkfornewtexts
 					sxmo_mms.sh checkforlostmms
 				fi
-				sxmo_statusbarupdate.sh "modemmonitor"
+				sxmo_hooks.sh statusbar modem
 			fi
 		done &
 

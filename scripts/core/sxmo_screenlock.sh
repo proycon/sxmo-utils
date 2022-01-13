@@ -78,7 +78,7 @@ lock() {
 	sxmo_wm.sh inputevent off
 	killall lisgd
 
-	updateLed
+	sxmo_hooks.sh statusbar state_change
 
 	# Do we want this hook after disabling all the input devices so users can enable certain devices?
 	sxmo_hooks.sh lock
@@ -96,7 +96,7 @@ unlock() {
 
 	echo 16000 > "$NETWORKRTCSCAN"
 
-	updateLed
+	sxmo_hooks.sh statusbar state_change
 
 	sxmo_hooks.sh unlock
 }

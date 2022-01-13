@@ -24,7 +24,7 @@ finish() {
 	else
 		alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
 	fi
-	setsid -f sh -c 'sleep 2; sxmo_statusbarupdate.sh modemcall'
+	setsid -f sh -c 'sleep 2; sxmo_hooks.sh statusbar call_duration'
 	if [ -n "$1" ]; then
 		stderr "$1"
 		notify-send Call "$1"

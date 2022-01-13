@@ -1,6 +1,3 @@
-SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", RUN+="/usr/bin/sxmo_statusbarupdate.sh"
-SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="0", RUN+="/usr/bin/sxmo_statusbarupdate.sh"
-
 ACTION=="add", SUBSYSTEM=="input", KERNEL=="event[0-9]*", ENV{ID_INPUT_TOUCHSCREEN}=="1", MODE:="0666", SYMLINK+="input/touchscreen"
 ACTION=="add", SUBSYSTEM=="input", ENV{ID_PATH}=="platform-vibrator", MODE:="0666"
 
