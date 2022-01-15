@@ -7,6 +7,7 @@
 
 set -e
 
+VVM_BASE_DIR="${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}"
 VVMCONFIG="$VVM_BASE_DIR/vvm"
 
 defaultconfig() {

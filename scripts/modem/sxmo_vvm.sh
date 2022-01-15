@@ -11,11 +11,11 @@ stderr() {
 }
 
 checkvvmd() {
-	if [ -f "$VVM_BASE_DIR/vvm" ]; then
+	if [ -d "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}" ]; then
 		sxmo_daemons.sh running vvmd -q && return
 		pgrep -f sxmo_vvmdconfig && return
 		stderr "vvmd not found, attempting to start it: $DBUS_SESSION_BUS_ADDRESS."
-		sxmo_daemons.sh start vvmd vvmd
+		sxmo_daemons.sh start vvmd vvmd "$SXMO_VVMD_ARGS"
 	fi
 }
 
@@ -50,14 +50,10 @@ processvvm() {
 
 	sxmo_hooks.sh vvm "$VVM_SENDER" "$VVM_ID"
 
-	# VVM_AUTO_DELETE and VVM_AUTO_MARKREAD are defined in sxmo_common.sh based on
-	# SXMO_VVM_AUTO_DELETE and SXMO_VVM_AUTO_MARKREAD variables that users can set
-	# in profile.
-	# Default is DELETE=1 and MARKREAD=0
-	if [ "$VVM_AUTO_DELETE" -eq 1 ]; then
+	if [ "${SXMO_VVM_AUTO_DELETE:-1}" -eq 1 ]; then
 		dbus-send --dest=org.kop316.vvm --print-reply /org/kop316/vvm/modemmanager/"$VVM_ID" org.kop316.vvm.Message.Delete
 	fi
-	if [ "$VVM_AUTO_MARKREAD" -eq 1 ]; then
+	if [ "${SXMO_VVM_AUTO_MARKREAD:-0}" -eq 1 ]; then
 		dbus-send --dest=org.kop316.vvm --print-reply /org/kop316/vvm/modemmanager/"$VVM_ID" org.kop316.vvm.Message.MarkRead
 	fi
 }

@@ -7,6 +7,7 @@
 
 set -e
 
+MMS_BASE_DIR="${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}"
 MMSCONFIG="$MMS_BASE_DIR/mms"
 
 defaultconfig() {
@@ -75,7 +76,7 @@ mkdir -p "$MMS_BASE_DIR"
 sxmo_daemons.sh stop mmsd
 
 finish() {
-	sxmo_daemons.sh start mmsd mmsdtng
+	sxmo_daemons.sh start mmsd mmsdtng "$SXMO_MMSD_ARGS"
 }
 trap 'finish' EXIT
 

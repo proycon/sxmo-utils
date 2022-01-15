@@ -11,30 +11,94 @@ stderr() {
 }
 
 checkmmsd() {
-	if [ -f "$MMS_BASE_DIR/mms" ]; then
+	if [ -d "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}" ]; then
 		sxmo_daemons.sh running mmsd -q && return
 		pgrep -f sxmo_mmsdconfig.sh && return
 		stderr "mmsdtng not found, attempting to start it." >&2
-		sxmo_daemons.sh start mmsd mmsdtng
+		sxmo_daemons.sh start mmsd mmsdtng "$SXMO_MMSD_ARGS"
 	fi
 }
 
-# if SXMO_MMS_AUTO_DELETE=1, then SXMO will delete each mms from the server
-# once it is processed.  However, sometimes things don't always go as planned.
-# This function checks to see if there are mms on the server and processes
-# them.
+# This function checks to see if there are orphaned mms messages on the server.
+# This shouldn't happen if SXMO_MMS_AUTO_DELETE is set to 1 (default).
+# However, it sometimes will, for instance, during a crash.  This function run
+# whenever the modem is REGISTERED in sxmo_modemmonitor.sh.  If the argument
+# "--force" is passed then it will *actually* process these files, otherwise it
+# will just report them.  I do not recommend automatically running these, since
+# there might be a race condition.  Hence, to manually process these files,
+# run: sxmo_mms.sh checkforlostmms --force
+#
 checkforlostmms() {
-	[ "$MMS_AUTO_DELETE" -eq 0 ] && return
+	# only run if SXMO_MMS_AUTO_DELETE is set to 1 (default)
+	[ "${SXMO_MMS_AUTO_DELETE:-1}" -eq 1 ] || exit
+
+	if [ "$1" = "--force" ]; then
+		FORCE=1
+	else
+		FORCE=0
+	fi
+
+	# generate a list of all messages on the server
+	ALL_MMS_TEMP="$(mktemp)"
+	dbus-send --dest=org.ofono.mms --print-reply /org/ofono/mms/modemmanager org.ofono.mms.Service.GetMessages | grep "object path" | cut -d'"' -f2 | rev | cut -d'/' -f1 | rev | sort -u > "$ALL_MMS_TEMP"
+	count="$(wc -l < "$ALL_MMS_TEMP")"
+
+	# loop through messages and report (or process if FORCE=1) them
+	# we delete messages with status draft, and process those with sent 
+	# and received
+	if [ "$count" -gt 0 ]; then
+		stderr "WARNING! Found $count unprocessed mms messages."
+		while read -r line; do
+			stderr "... mms $line"
+			MESSAGE_STATUS="$(mmsctl -M -o "/org/ofono/mms/modemmanager/$line" | jq -r '.attrs.Status')"
+			case "$MESSAGE_STATUS" in
+				sent)
+					stderr "This mms is status:sent."
+					[ "$FORCE" -eq 1 ] && processmms "/org/ofono/mms/modemmanager/$line" "Sent"
+					;;
+				draft)
+					stderr "This mms is status:draft."
+					[ "$FORCE" -eq 1 ] && dbus-send --dest=org.ofono.mms --print-reply "/org/ofono/mms/modemmanager/$line" org.ofono.mms.Message.Delete
+					;;
+				received)
+					stderr "This mms is status:received."
+					[ "$FORCE" -eq 1 ] && processmms "/org/ofono/mms/modemmanager/$line" "Received"
+
+					;;
+				*)
+					stderr "This mms has a bad message type: '$MESSAGE_STATUS'. Bailing."
+					;;
+			esac
+		done < "$ALL_MMS_TEMP"
+		stderr "Done."
+		if [ "$FORCE" -eq 1 ]; then
+			stderr "Processed."
+		else 
+			stderr "Did not process anything. Run \"sxmo_mms.sh checkforlostmms --force\" to process, if you are sure."
+		fi
+	else
+		stderr "No unprocessed mms messages found.  Good job."
+	fi
+	rm "$ALL_MMS_TEMP"
+}
+
+# called from sxmo_modemsendsms.sh, deletes *all* drafts
+deletedrafts() {
+	# generate a list of all messages
 	ALL_MMS_TEMP="$(mktemp)"
 	dbus-send --dest=org.ofono.mms --print-reply /org/ofono/mms/modemmanager org.ofono.mms.Service.GetMessages | grep "object path" | cut -d'"' -f2 | rev | cut -d'/' -f1 | rev | sort -u > "$ALL_MMS_TEMP"
 	count="$(wc -l < "$ALL_MMS_TEMP")"
 	if [ "$count" -gt 0 ]; then
-		stderr "Found $count unprocessed mms messages! Processing them."
+		stderr "Found $count unprocessed mms messages. Deleting all drafts, if any."
 		while read -r line; do
-			stderr "Processing $line..."
-			processmms "/org/ofono/mms/modemmanager/$line" "Unknown"
+			if mmsctl -M -o "/org/ofono/mms/modemmanager/$line" | jq -r '.attrs.Status' | grep -q "draft"; then
+				stderr "This mms ($line) is a draft. Deleting it."
+				dbus-send --dest=org.ofono.mms --print-reply "/org/ofono/mms/modemmanager/$line" org.ofono.mms.Message.Delete
+			fi
 		done < "$ALL_MMS_TEMP"
-		stderr "Done!"
+		stderr "Done"
+	else
+		stderr "No unprocessed mms messages found. Doing nothing."
 	fi
 	rm "$ALL_MMS_TEMP"
 }
@@ -66,6 +130,7 @@ extractmmsattachement() {
 				;;
 		esac
 
+		MMS_BASE_DIR="${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}" 
 		if [ -f "$MMS_BASE_DIR/$MMS_FILE" ]; then
 			OUTFILE="$MMS_FILE.$DATA_EXT"
 			count=0
@@ -91,7 +156,7 @@ extractmmsattachement() {
 
 processmms() {
 	MESSAGE_PATH="$1"
-	MESSAGE_TYPE="$2" # Sent or Received or Unknown
+	MESSAGE_TYPE="$2" # Sent or Received
 	MESSAGE="$(mmsctl -M -o "$MESSAGE_PATH")"
 	stderr "Processing mms ($MESSAGE_PATH)."
 
@@ -101,28 +166,6 @@ processmms() {
 		dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
 		printf "%s\tdebug_mms\t%s\t%s\n" "$(date +%FT%H:%M:%S%z)" "NULL" "ERROR: Message not found." >> "$LOGDIR/modemlog.tsv"
 		return
-	fi
-
-	# Unknown is what checkforlostmms() sends.
-	if [ "$MESSAGE_TYPE" = "Unknown" ]; then
-		MESSAGE_STATUS="$(printf %s "$MESSAGE" | jq -r '.attrs.Status')"
-		case "$MESSAGE_STATUS" in
-			sent)
-				MESSAGE_TYPE="Sent"
-				;;
-			draft)
-				stderr "The mms ($MESSAGE_PATH) is a draft. Deleting."
-				dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
-				return
-				;;
-			received)
-				MESSAGE_TYPE="Received"
-				;;
-			*)
-				stderr "The mms ($MESSAGE_PATH) has a bad message type: '$MESSAGE_TYPE'. Bailing."
-				return
-				;;
-		esac
 	fi
 
 	MMS_FILE="$(printf %s "$MESSAGE_PATH" | rev | cut -d'/' -f1 | rev)"
@@ -183,7 +226,7 @@ processmms() {
 	elif [ "$MESSAGE_TYPE" = "Sent" ]; then
 		printf "%s\tsent_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> "$LOGDIR/modemlog.tsv"
 	else
-		printf "%s\tdebug_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "ERROR UNKNOWN: $MMS_FILE" >> "$LOGDIR/modemlog.tsv"
+		stderr "Unknown message type: $MESSAGE_TYPE for $MMS_FILE"
 	fi
 
 	# process 'content' of mms payload
@@ -215,10 +258,10 @@ processmms() {
 		fi
 	fi
 
-	# system defeaults are MMS_AUTO_DELETE=1 and MMS_KEEP_MMSFILE=1
-	if [ "$MMS_AUTO_DELETE" -eq 1 ]; then
+	if [ "${SXMO_MMS_AUTO_DELETE:-1}" -eq 1 ]; then
 		# keep the mms payload file (useful for debugging)
-		if [ "$MMS_KEEP_MMSFILE" -eq 1 ]; then
+		if [ "${SXMO_MMS_KEEP_MMSFILE:-1}" -eq 1 ]; then
+			MMS_BASE_DIR="${SXMO_MMS_BASE_DIR-"$HOME"/.mms/modemmanager}" 
 			mkdir -p "$MMS_BASE_DIR/bak"
 			cp "$MMS_BASE_DIR/$MMS_FILE" "$MMS_BASE_DIR/bak/$MMS_FILE"
 		fi

@@ -48,9 +48,8 @@ fi
 # if multiple recipients or attachment, then send via mmsctl
 if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ]; then
 
-	if ! [ -f "$MMS_BASE_DIR/mms" ]; then
-		err "MMS ($MMS_BASE_DIR) not configured."
-	fi
+	MMS_BASE_DIR="${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}"
+	[ -d "$MMS_BASE_DIR" ] || err "MMS not configured."
 
 	# generate mmsctl args for attachments found in draft.attachments.txt (one per line)
 	count=0
@@ -152,8 +151,8 @@ if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$
 
 	# we failed to send!
 	if [ -z "$SENT_SUCCESS" ]; then
-		# Delete all drafts.  checkforlostmms will try to do this.
-		sxmo_mms.sh checkforlostmms
+		# Delete all drafts.
+		sxmo_mms.sh deletedrafts
 		err "Couldn't send text message.  Check mmsd log for errors."
 	fi
 

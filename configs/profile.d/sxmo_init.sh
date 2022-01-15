@@ -30,12 +30,6 @@ export CONTACTFILE="$XDG_CONFIG_HOME/sxmo/contacts.tsv"
 export BLOCKFILE="$XDG_CONFIG_HOME/sxmo/block.tsv"
 export UNSUSPENDREASONFILE="$XDG_RUNTIME_DIR/sxmo.suspend.reason"
 export LASTSTATE="$XDG_RUNTIME_DIR/sxmo.suspend.laststate"
-export MMS_BASE_DIR="$HOME/.mms/modemmanager"
-export MMS_AUTO_DELETE="${SXMO_MMS_AUTO_DELETE:-1}"
-export MMS_KEEP_MMSFILE="${SXMO_MMS_KEEP_MMSFILE:-1}"
-export VVM_AUTO_DELETE="${SXMO_VVM_AUTO_DELETE:-1}"
-export VVM_AUTO_MARKREAD="${SXMO_VVM_AUTO_MARKREAD:-0}"
-export VVM_BASE_DIR="$HOME/.vvm/modemmanager"
 
 export BEMENU_OPTS='--fn "Monospace 14" --scrollbar autohide -s -n -w -c -l8 -M 40 -H 20'
 

@@ -46,12 +46,12 @@ case "$SXMO_WM" in
 		;;
 esac
 
-if [ -f "$MMS_BASE_DIR/mms" ]; then
-	sxmo_daemons.sh start mmsd mmsdtng
+if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
+	sxmo_daemons.sh start mmsd mmsdtng "$SXMO_MMSD_ARGS"
 fi
 
-if [ -f "$VVM_BASE_DIR/vvm" ]; then
-	sxmo_daemons.sh start vvmd vvmd
+if [ -f "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" ]; then
+	sxmo_daemons.sh start vvmd vvmd "$SXMO_VVMD_ARGS"
 fi
 
 # Start the desktop widget (e.g. clock)
