@@ -18,38 +18,46 @@ gracefulexit() {
 
 trap "gracefulexit" INT TERM
 
+_getdevicename() {
+	dbus-send --system --print-reply --dest=org.freedesktop.NetworkManager \
+		/org/freedesktop/NetworkManager/Devices/"$1" \
+		org.freedesktop.DBus.Properties.Get \
+		string:"org.freedesktop.NetworkManager.Device" \
+		string:"Interface" | grep variant | cut -d'"' -f2
+}
+
 # see https://people.freedesktop.org/~lkundrak/nm-docs/nm-dbus-types.html
 # from my tests, when you disconnect wifi network it goes: 100 -> 110 -> 30
 # when you connect wifi network: 30 -> 40 -> 50 -> 60 -> 40 -> 50 -> 70 -> 80 -> 90 -> 100
 dbus-monitor --system "interface='org.freedesktop.NetworkManager.Device',type='signal',member='StateChanged'" | \
 	while read -r line; do
 		if echo "$line" | grep -qE "^signal.*StateChanged"; then
-			# shellcheck disable=SC2034
+			device="$(printf "%s\n" "$line" | cut -d'/' -f 6 | cut -d';' -f1)"
 			read -r newstate
-			# shellcheck disable=SC2034
 			read -r oldstate
-			# shellcheck disable=SC2034
 			read -r reason
-			stderr "oldstate: $oldstate newstate: $newstate reason: $reason"
+			stderr "DEBUG: $device ($oldstate -> $newstate) [$reason]"
+
+			devicename="$(_getdevicename "$device")"
 			if echo "$newstate" | grep "uint32 100"; then
 				# 100=NM_DEVICE_STATE_ACTIVATED
-				stderr "network up."
-				sxmo_hooks.sh network-up &
+				stderr "$devicename up."
+				sxmo_hooks.sh network-up "$devicename"
 				sxmo_hooks.sh statusbar wifi
 			elif echo "$newstate" | grep "uint32 30"; then
 				# 30=NM_DEVICE_STATE_DISCONNECTED 
-				stderr "network down."
-				sxmo_hooks.sh network-down &
+				stderr "$devicename down."
+				sxmo_hooks.sh network-down "$devicename"
 				sxmo_hooks.sh statusbar wifi
 			elif echo "$newstate" | grep "uint32 110"; then
 				# 110=NM_DEVICE_STATE_DEACTIVATING
-				stderr "network pre-down"
-				sxmo_hooks.sh network-pre-down &
+				stderr "$devicename pre-down"
+				sxmo_hooks.sh network-pre-down "$devicename"
 				sxmo_hooks.sh statusbar wifi
 			elif echo "$newstate" | grep "uint32 90"; then
 				# 90=NM_DEVICE_STATE_SECONDARIES
-				stderr "network pre-up"
-				sxmo_hooks.sh network-pre-up &
+				stderr "$devicename pre-up"
+				sxmo_hooks.sh network-pre-up "$devicename"
 				sxmo_hooks.sh statusbar wifi
 			fi
 		fi
