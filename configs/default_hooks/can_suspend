@@ -34,8 +34,8 @@ playing_mpc() {
 }
 
 modem_use
-active_ssh
 playing_mpc
 screenlock
+active_ssh
 
 exit 0
