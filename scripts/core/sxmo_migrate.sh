@@ -55,6 +55,11 @@ checkhooks() {
 						rm "$hook"
 					fi
 				fi
+			else
+				(
+					printf "\e[31mThe file \e[32m%s\e[31m is unknown\e[0m\n" "$hook"
+					smartdiff -ud "/dev/null" "$hook"
+				) | more
 			fi
 		done
 	fi
