@@ -22,7 +22,7 @@ open() {
 }
 
 close() {
-	if [ "$KEYBOARD" ]; then # avoid killing everything !
+	if [ -n "$KEYBOARD" ]; then # avoid killing everything !
 		pkill -f "$KEYBOARD"
 	fi
 }
