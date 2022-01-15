@@ -97,8 +97,7 @@ mainloop() {
 		eval "$CMD"
 		mainloop "$@"
 	else
-		eval "$CMD" &
-		wait
+		eval "$CMD"
 		quit
 	fi
 }
