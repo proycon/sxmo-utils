@@ -20,6 +20,32 @@ amixer set "Line Out" 75%
 # Play a funky startup tune if you want (disabled by default)
 #mpv --quiet --no-video ~/welcome.ogg &
 
+case "$SXMO_WM" in
+	sway)
+		sxmo_daemons.sh start desktop_notifier mako
+		sxmo_daemons.sh start wob sxmo_wob.sh
+		sxmo_daemons.sh start menu_mode_toggler sxmo_menumode_toggler.sh
+		;;
+	dwm)
+		sxmo_daemons.sh start desktop_notifier dunst
+
+		# Auto hide cursor with touchscreen, Show it with a mouse
+		if command -v "unclutter-xfixes" > /dev/null; then
+			set -- unclutter-xfixes
+		else
+			set -- unclutter
+		fi
+		sxmo_daemons.sh start unclutter_xfixes "$1" --hide-on-touch --start-hidden
+
+		# Set a pretty wallpaper
+		feh --bg-fill /usr/share/sxmo/background.jpg
+
+		sxmo_daemons.sh start autocutsel_1 autocutsel
+		sxmo_daemons.sh start autocutsel_2 autocutsel -selection PRIMARY
+		sxmo_daemons.sh start statusbar_xsetroot sxmo_status_xsetroot.sh
+		;;
+esac
+
 if [ -f "$MMS_BASE_DIR/mms" ]; then
 	sxmo_daemons.sh start mmsd mmsdtng
 fi
@@ -46,32 +72,6 @@ sxmo_daemons.sh start notification_monitor sxmo_notificationmonitor.sh
 # (there is a bit of a delay to
 # give the modem some time to set up)
 sxmo_modemmonitortoggle.sh restart
-
-case "$SXMO_WM" in
-	sway)
-		sxmo_daemons.sh start wob sxmo_wob.sh
-		sxmo_daemons.sh start desktop_notifier mako
-		sxmo_daemons.sh start menu_mode_toggler sxmo_menumode_toggler.sh
-		;;
-	dwm)
-		sxmo_daemons.sh start desktop_notifier dunst
-
-		# Auto hide cursor with touchscreen, Show it with a mouse
-		if command -v "unclutter-xfixes" > /dev/null; then
-			set -- unclutter-xfixes
-		else
-			set -- unclutter
-		fi
-		sxmo_daemons.sh start unclutter_xfixes "$1" --hide-on-touch --start-hidden
-
-		# Set a pretty wallpaper
-		feh --bg-fill /usr/share/sxmo/background.jpg
-
-		sxmo_daemons.sh start autocutsel_1 autocutsel
-		sxmo_daemons.sh start autocutsel_2 autocutsel -selection PRIMARY
-		sxmo_daemons.sh start statusbar_xsetroot sxmo_status_xsetroot.sh
-		;;
-esac
 
 # To setup initial lock state
 sxmo_screenlock.sh unlock
