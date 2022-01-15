@@ -30,6 +30,7 @@ stop() {
 			;;
 		*)
 			if [ -f "$ROOT/$id" ]; then
+				printf "%s sxmo_daemons: stop %s\n" "$(date)" "$id" >&2
 				xargs kill ${force:+-9} < "$ROOT"/"$id"
 				rm "$ROOT"/"$id"
 			fi
@@ -61,6 +62,7 @@ start() {
 		fi
 	fi
 
+	printf "%s sxmo_daemons: start %s\n" "$(date)" "$id" >&2
 	"$@" &
 	printf "%s\n" "$!" > "$ROOT"/"$id"
 }
