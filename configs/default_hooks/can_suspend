@@ -27,8 +27,15 @@ screenlock() {
 	pgrep -f sxmo_screenlock.sh >/dev/null && exit_should_wait "screenlock"
 }
 
+playing_mpc() {
+	command -v mpc > /dev/null || return # no mpc installed
+
+	(mpc status | grep -q '\[playing\]') && exit_should_wait "mpc"
+}
+
 modem_use
 active_ssh
+playing_mpc
 screenlock
 
 exit 0

@@ -22,12 +22,6 @@ proximity_lock_on() {
 	sxmo_daemons.sh running proximity_lock -q && exit_not_idle "proxlock"
 }
 
-playing_mpc() {
-	command -v mpc > /dev/null || return # no mpc installed
-
-	(mpc status | grep -q '\[playing\]') && exit_not_idle "mpc"
-}
-
 waiting_rtcwake() {
 	if grep -q crust "$LASTSTATE" && \
 		grep -q rtc "$UNSUSPENDREASONFILE"; then
@@ -37,7 +31,6 @@ waiting_rtcwake() {
 
 ongoing_call
 proximity_lock_on
-playing_mpc
 waiting_rtcwake
 
 exit 0
