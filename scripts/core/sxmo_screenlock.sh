@@ -68,10 +68,6 @@ lock() {
 
 	wait
 
-	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
-		timeout 8 'sxmo_daemons.sh start periodic_deeper sxmo_run_periodically.sh 8 sxmo_screenlock_deeper.sh --idle' \
-		resume 'sxmo_daemons.sh stop periodic_deeper'
-
 	# Do we want this hook after disabling all the input devices so users can enable certain devices?
 	sxmo_hooks.sh lock
 }
@@ -96,10 +92,6 @@ unlock() {
 
 	wait "$LEDPID"
 
-	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
-		timeout 120 'sxmo_daemons.sh start periodic_deeper sxmo_run_periodically.sh 10 sxmo_screenlock_deeper.sh --idle' \
-		resume 'sxmo_daemons.sh stop periodic_deeper'
-
 	sxmo_hooks.sh unlock
 }
 
@@ -119,14 +111,7 @@ off() {
 
 	wait
 
-	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
-		timeout 8 'sxmo_daemons.sh start periodic_deeper sxmo_run_periodically.sh 8 sxmo_screenlock_deeper.sh --idle' \
-		resume 'sxmo_daemons.sh stop periodic_deeper' \
-		timeout 5 'sxmo_daemons.sh start periodic_blink sxmo_run_periodically.sh 2 sxmo_led.sh blink red blue' \
-		resume 'sxmo_daemons.sh stop periodic_blink'
-
 	sxmo_hooks.sh screenoff
-	exit 0
 }
 
 crust() {
