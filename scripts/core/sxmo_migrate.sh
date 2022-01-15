@@ -28,6 +28,7 @@ resolvedifference() {
 	elif [ "e" = "$reply" ]; then
 		$EDITOR "$userfile" "$defaultfile"
 	fi
+	printf "\n"
 }
 
 defaultconfig() {
@@ -60,6 +61,7 @@ checkhooks() {
 					printf "\e[31mThe file \e[32m%s\e[31m is unknown\e[0m\n" "$hook"
 					smartdiff -ud "/dev/null" "$hook"
 				) | more
+				printf "\n"
 			fi
 		done
 	fi
