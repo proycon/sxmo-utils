@@ -219,7 +219,10 @@ set_volume() {
 }
 
 case "$1" in
-	time|call_duration|modem|modem_monitor|wifi|vpn|battery|volume|locked)
+	network_wlan0)
+		set_wifi
+		;;
+	time|call_duration|modem|modem_monitor|vpn|battery|volume|locked)
 		set_"$1"
 		;;
 	periodics|state_change) # 55 s loop and screenlock triggers
