@@ -164,10 +164,6 @@ crust() {
 		echo 1200 > "$NETWORKRTCSCAN"
 	fi
 
-	if [ "$UNSUSPENDREASON" = "usb power" ]; then
-		lock
-	fi
-
 	sxmo_hooks.sh postwake "$UNSUSPENDREASON"
 }
 
