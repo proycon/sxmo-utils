@@ -45,8 +45,11 @@ sxmo_setup_wm() {
 		if ! dbus-send --dest=org.freedesktop.DBus \
 			/org/freedesktop/DBus org.freedesktop.DBus.ListNames \
 			2> /dev/null; then
+				printf "dbus (%s) failed, unsetting...\n" "$DBUS_SESSION_BUS_ADDRESS" >&2
 				unset DBUS_SESSION_BUS_ADDRESS
 		fi
+	else
+		printf "no dbus cache file: %s/dbus.bus...\n" "$CACHEDIR" >&2
 	fi
 
 	if [ -f "$CACHEDIR"/sxmo.swaysock ]; then
