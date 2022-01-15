@@ -2,7 +2,7 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. "$(which sxmo_common.sh)"
 
 info() {
 	echo "$(date) $*" >> /dev/stderr
