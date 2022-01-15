@@ -75,6 +75,7 @@ icon_mus=""
 icon_mut="" #mute
 icon_mvi="" #movie
 icon_net=""
+icon_nto="" #no touch
 icon_nxt="" #next
 icon_out="" #logout
 icon_pau=""
