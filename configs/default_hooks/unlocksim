@@ -27,7 +27,7 @@ while [ $retry -eq 1 ]; do
 		retry=0
 		mmcli -i "$(sim_n)" --pin "$PICKED" > /tmp/unlockmsg 2>&1 || retry=1
 		MSG=$(cat /tmp/unlockmsg)
-		[ -n "$MSG" ] && notify-send "$MSG"
+		[ -n "$MSG" ] && sxmo_notify_user.sh "$MSG"
 		if echo "$MSG" | grep -q "not SIM-PIN locked"; then
 			retry=0
 		fi

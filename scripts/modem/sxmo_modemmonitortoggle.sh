@@ -11,7 +11,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 daemon_start() {
-	notify-send "Starting modem daemons. This may take a minute..."
+	sxmo_notify_user.sh "Starting modem daemons. This may take a minute..."
 	case "$OS" in
 		alpine|postmarketos)
 			doas rc-service "$1" start
@@ -24,7 +24,7 @@ daemon_start() {
 }
 
 daemon_stop() {
-	notify-send "Stopping modem daemons. This may take a minute..."
+	sxmo_notify_user.sh "Stopping modem daemons. This may take a minute..."
 	case "$OS" in
 		alpine|postmarketos)
 			doas rc-service "$1" stop
@@ -78,8 +78,7 @@ ensure_daemons() {
 		return
 	fi
 
-	echo "sxmo_modemmonitortoggle: forcing modem restart" >&2
-	notify-send "Resetting modem daemons, this may take a minute..."
+	sxmo_notify_user.sh "Resetting modem daemons, this may take a minute..."
 
 	restart_daemons || return 1
 }
@@ -91,7 +90,7 @@ restart_daemons() {
 
 	if ! (ensure_daemon eg25-manager && ensure_daemon modemmanager); then
 		printf "failed\n" > "$MODEMSTATEFILE"
-		notify-send --urgency=critical "We failed to start the modem daemons. We may need hard reboot."
+		sxmo_notify_user.sh --urgency=critical "We failed to start the modem daemons. We may need hard reboot."
 		return 1
 	fi
 
@@ -105,7 +104,7 @@ on() {
 	while ! printf %s "$(mmcli -L)" 2> /dev/null | grep -qoE 'Modem\/([0-9]+)'; do
 		TRIES=$((TRIES+1))
 		if [ "$TRIES" -eq 10 ]; then
-			notify-send --urgency=critical "We failed to start the modem monitor. We may need hard reboot."
+			sxmo_notify_user.sh --urgency=critical "We failed to start the modem monitor. We may need hard reboot."
 		fi
 		sleep 5
 	done
