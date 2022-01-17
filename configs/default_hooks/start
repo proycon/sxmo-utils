@@ -66,12 +66,11 @@ sxmo_daemons.sh start network_monitor sxmo_networkmonitor.sh
 # The daemon that display notifications popup messages
 sxmo_daemons.sh start notification_monitor sxmo_notificationmonitor.sh
 
+# To setup initial lock state
+sxmo_screenlock.sh unlock
+
 # turn on modemmonitor on login
 # Note: if the modemmonitor is not on you can
 # not receive texts/calls!
-# (there is a bit of a delay to
-# give the modem some time to set up)
+# (This can take up to 60 seconds)
 sxmo_modemmonitortoggle.sh restart
-
-# To setup initial lock state
-sxmo_screenlock.sh unlock

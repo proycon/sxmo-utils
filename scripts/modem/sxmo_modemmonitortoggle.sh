@@ -105,6 +105,7 @@ on() {
 		TRIES=$((TRIES+1))
 		if [ "$TRIES" -eq 10 ]; then
 			sxmo_notify_user.sh --urgency=critical "We failed to start the modem monitor. We may need hard reboot."
+			exit 1
 		fi
 		sleep 5
 	done
