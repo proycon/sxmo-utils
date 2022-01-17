@@ -15,7 +15,7 @@ gracefulexit() {
 	exit
 }
 
-trap "gracefulexit" INT TERM
+trap "gracefulexit" INT TERM EXIT
 
 _getdevicename() {
 	dbus-send --system --print-reply --dest=org.freedesktop.NetworkManager \
