@@ -43,10 +43,6 @@ dialmenu() {
 	if [ -z "$NUMBER" ] || [ "$NUMBER" = "CloseMenu" ]; then
 		#no number selected (probably cancelled), silently discard
 		exit 0
-	elif [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ]; then
-		fatalerr "$NUMBER is a group number"
-	else
-		echo "$NUMBER" | grep -qE '^[+0-9]+$' || fatalerr "$NUMBER is not a number"
 	fi
 
 	echo "Attempting to dial: $NUMBER" >&2
