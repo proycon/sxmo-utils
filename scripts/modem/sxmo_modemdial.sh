@@ -1,5 +1,4 @@
 #!/bin/sh
-trap "gracefulexit" INT TERM
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
@@ -11,7 +10,7 @@ fatalerr() {
 	echo "$1" >&2
 	notify-send "$1"
 	(sleep 0.5; sxmo_hooks.sh statusbar call_duration) &
-	kill -9 0
+	exit
 }
 
 modem_n() {
