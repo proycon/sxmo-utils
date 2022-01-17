@@ -10,9 +10,8 @@ stderr() {
 
 gracefulexit() {
 	sxmo_hooks.sh statusbar wifi
-	sleep 1
 	stderr "gracefully exiting (on signal or after error)"
-	kill "$MONITORPID"
+	sxmo_daemons.sh stop network_monitor_device
 	exit
 }
 
@@ -29,7 +28,8 @@ _getdevicename() {
 # see https://people.freedesktop.org/~lkundrak/nm-docs/nm-dbus-types.html
 # from my tests, when you disconnect wifi network it goes: 100 -> 110 -> 30
 # when you connect wifi network: 30 -> 40 -> 50 -> 60 -> 40 -> 50 -> 70 -> 80 -> 90 -> 100
-dbus-monitor --system "interface='org.freedesktop.NetworkManager.Device',type='signal',member='StateChanged'" | \
+sxmo_daemons.sh start network_monitor_device \
+	dbus-monitor --system "interface='org.freedesktop.NetworkManager.Device',type='signal',member='StateChanged'" | \
 	while read -r line; do
 		if echo "$line" | grep -qE "^signal.*StateChanged"; then
 			device="$(printf "%s\n" "$line" | cut -d'/' -f 6 | cut -d';' -f1)"
@@ -61,7 +61,4 @@ dbus-monitor --system "interface='org.freedesktop.NetworkManager.Device',type='s
 				sxmo_hooks.sh statusbar wifi
 			fi
 		fi
-	done &
-MONITORPID=$!
-
-wait "$MONITORPID"
+	done
