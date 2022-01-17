@@ -43,22 +43,22 @@ sxmo_daemons.sh start network_monitor_device \
 				# 100=NM_DEVICE_STATE_ACTIVATED
 				stderr "$devicename up."
 				sxmo_hooks.sh network-up "$devicename"
-				sxmo_hooks.sh statusbar network_$devicename
+				sxmo_hooks.sh statusbar "network_$devicename"
 			elif echo "$newstate" | grep "uint32 30"; then
 				# 30=NM_DEVICE_STATE_DISCONNECTED 
 				stderr "$devicename down."
 				sxmo_hooks.sh network-down "$devicename"
-				sxmo_hooks.sh statusbar network_$devicename
+				sxmo_hooks.sh statusbar "network_$devicename"
 			elif echo "$newstate" | grep "uint32 110"; then
 				# 110=NM_DEVICE_STATE_DEACTIVATING
 				stderr "$devicename pre-down"
 				sxmo_hooks.sh network-pre-down "$devicename"
-				sxmo_hooks.sh statusbar network_$devicename
+				sxmo_hooks.sh statusbar "network_$devicename"
 			elif echo "$newstate" | grep "uint32 90"; then
 				# 90=NM_DEVICE_STATE_SECONDARIES
 				stderr "$devicename pre-up"
 				sxmo_hooks.sh network-pre-up "$devicename"
-				sxmo_hooks.sh statusbar network_$devicename
+				sxmo_hooks.sh statusbar "network_$devicename"
 			fi
 		fi
 	done
