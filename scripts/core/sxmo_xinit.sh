@@ -3,7 +3,7 @@
 envvars() {
 	export SXMO_WM=dwm
 	# shellcheck disable=SC2086
-	command -v $TERMCMD || export TERMCMD="st"
+	command -v $TERMCMD "" || export TERMCMD="st"
 	command -v "$BROWSER" || export BROWSER=surf
 	command -v "$EDITOR" || export EDITOR=vis
 	command -v "$SHELL" || export SHELL=/bin/sh
