@@ -21,7 +21,9 @@ writenotification() {
 		NOTIFFILEPATHTOWRITE="$NOTIFDIR/$NOTIFRANDOM"
 	fi
 	touch "$NOTIFFILEPATHTOWRITE"
-	printf %b "rm -f $NOTIFFILEPATHTOWRITE; $ACTION\n$WATCHFILE\n$NOTIFMSG\n" > "$NOTIFFILEPATHTOWRITE"
+	printf "%s\n%s\n%b\n" \
+		"$ACTION" "$WATCHFILE" "$NOTIFMSG" \
+		> "$NOTIFFILEPATHTOWRITE"
 }
 
 [ "$#" -lt 4 ] && echo "Need >=4 args to create a notification" && exit 1

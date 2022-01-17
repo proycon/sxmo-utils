@@ -18,8 +18,8 @@ handlenewnotiffile(){
 
 		(
 			dunstify --action="2,open" "$NOTIFMSG" | grep 2 && (
-				setsid -f sh -c "$NOTIFACTION" &
 				rm -f "$NOTIFFILE"
+				eval "$NOTIFACTION"
 			)
 		) &
 
