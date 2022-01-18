@@ -47,8 +47,8 @@ signal() {
 	shift
 
 	if [ -f "$ROOT/$id" ]; then
-		printf "%s sxmo_daemons: signal %s %s\n" "$(date)" "$id" "$*" >&2
-		xargs -t kill "$@" < "$ROOT"/"$id"
+		sxmo_log "signal $id $*"
+		xargs kill "$@" < "$ROOT"/"$id"
 	fi
 }
 
