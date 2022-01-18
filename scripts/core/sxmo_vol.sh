@@ -35,7 +35,7 @@ notify() {
 			notify-send "♫ Volume" "$VOL"
 			;;
 	esac
-	sxmo_hooks.sh statusbar volume
+	sxmo_hooks.sh statusbar volume &
 }
 
 up() {
