@@ -42,6 +42,16 @@ stop() {
 	esac
 }
 
+signal() {
+	id="$1"
+	shift
+
+	if [ -f "$ROOT/$id" ]; then
+		printf "%s sxmo_daemons: signal %s %s\n" "$(date)" "$id" "$*" >&2
+		xargs -t kill "$@" < "$ROOT"/"$id"
+	fi
+}
+
 start() {
 	while [ "$#" -gt 0 ]; do
 		case "$1" in
