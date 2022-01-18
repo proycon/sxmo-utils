@@ -42,7 +42,7 @@ getprogchoices() {
 
 	# For the Sys menu decorate at top with notifications if >1 notification
 	if [ "$WINNAME" = "Sys" ]; then
-		NNOTIFICATIONS="$(find "$NOTIFDIR" -type f | wc -l)"
+		NNOTIFICATIONS="$(find "$SXMO_NOTIFDIR" -type f | wc -l)"
 		if [ "$NNOTIFICATIONS" -gt 0 ]; then
 			CHOICES="
 				$icon_bel Notifications ($NNOTIFICATIONS) ^ 0 ^ sxmo_notificationsmenu.sh
@@ -52,7 +52,7 @@ getprogchoices() {
 	fi
 
 	#shellcheck disable=SC2044
-	for NOTIFFILE in $(find "$NOTIFDIR" -name 'incomingcall*_notification'); do
+	for NOTIFFILE in $(find "$SXMO_NOTIFDIR" -name 'incomingcall*_notification'); do
 		NOTIFACTION="$(head -n1 "$NOTIFFILE")"
 		MESSAGE="$(tail -1 "$NOTIFFILE")"
 		CHOICES="

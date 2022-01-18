@@ -16,7 +16,7 @@ checkmodem() {
 		MODEMS="$(mmcli -L)"
 		if echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' > /dev/null; then
 			break
-		elif grep -q rtc "$UNSUSPENDREASONFILE"; then
+		elif grep -q rtc "$SXMO_UNSUSPENDREASONFILE"; then
 			#don't bother checking in rtc-wake situations
 			TRIES=0
 			break
@@ -88,43 +88,43 @@ checkforfinishedcalls() {
 		FINISHEDNUMBER="$(lookupnumberfromcallid "$FINISHEDCALLID")"
 		FINISHEDNUMBER="$(cleanupnumber "$FINISHEDNUMBER")"
 		mmcli -m "$(modem_n)" --voice-delete-call "$FINISHEDCALLID"
-		rm -f "$NOTIFDIR/incomingcall_${FINISHEDCALLID}_notification"* #there may be multiple actionable notification for one call
+		rm -f "$SXMO_NOTIFDIR/incomingcall_${FINISHEDCALLID}_notification"* #there may be multiple actionable notification for one call
 
-		rm -f "$CACHEDIR/${FINISHEDCALLID}.monitoredcall"
+		rm -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.monitoredcall"
 
 		TIME="$(date +%FT%H:%M:%S%z)"
-		mkdir -p "$LOGDIR"
-		if [ -f "$CACHEDIR/${FINISHEDCALLID}.discardedcall" ]; then
+		mkdir -p "$SXMO_LOGDIR"
+		if [ -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.discardedcall" ]; then
 			#this call was discarded
 			stderr "Discarded call from $FINISHEDNUMBER"
-			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
-		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall" ]; then
+			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
+		elif [ -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
 			pkill -f sxmo_modemcall.sh
 			sxmo_hooks.sh statusbar volume
 			stderr "Finished call from $FINISHEDNUMBER"
-			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
-		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.hangedupcall" ]; then
+			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
+		elif [ -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.hangedupcall" ]; then
 			#this call was hung up by the user
 			stderr "Finished call from $FINISHEDNUMBER"
-			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
-		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.initiatedcall" ]; then
+			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
+		elif [ -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.initiatedcall" ]; then
 			#this call was hung up by the contact
 			pkill -f sxmo_modemcall.sh
 			sxmo_hooks.sh statusbar volume
 			stderr "Finished call from $FINISHEDNUMBER"
-			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
-		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.mutedring" ]; then
+			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
+		elif [ -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.mutedring" ]; then
 			#this ring was muted up
 			stderr "Muted ring from $FINISHEDNUMBER"
-			printf %b "$TIME\tring_muted\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+			printf %b "$TIME\tring_muted\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		else
 			#this is a missed call
 			# Add a notification for every missed call
 			pkill -f sxmo_modemcall.sh
 			sxmo_hooks.sh statusbar volume
 			stderr "Missed call from $FINISHEDNUMBER"
-			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 
 			CONTACT="$(sxmo_contacts.sh --name "$FINISHEDNUMBER")"
 			stderr "Invoking missed call hook (async)"
@@ -148,11 +148,11 @@ checkforincomingcalls() {
 	)"
 	[ -z "$VOICECALLID" ] && return
 
-	[ -f "$CACHEDIR/${VOICECALLID}.monitoredcall" ] && return # prevent multiple rings
-	find "$CACHEDIR" -name "$VOICECALLID.*" -delete # we cleanup all dangling event files
-	touch "$CACHEDIR/${VOICECALLID}.monitoredcall" #this signals that we handled the call
+	[ -f "$SXMO_CACHEDIR/${VOICECALLID}.monitoredcall" ] && return # prevent multiple rings
+	find "$SXMO_CACHEDIR" -name "$VOICECALLID.*" -delete # we cleanup all dangling event files
+	touch "$SXMO_CACHEDIR/${VOICECALLID}.monitoredcall" #this signals that we handled the call
 
-	cat "$LASTSTATE" > "$CACHEDIR/${VOICECALLID}.laststate"
+	cat "$SXMO_LASTSTATE" > "$SXMO_CACHEDIR/${VOICECALLID}.laststate"
 
 	# Determine the incoming phone number
 	stderr "Incoming Call..."
@@ -161,21 +161,21 @@ checkforincomingcalls() {
 	CONTACTNAME=$(sxmo_contacts.sh --name "$INCOMINGNUMBER")
 
 	TIME="$(date +%FT%H:%M:%S%z)"
-	if cut -f1 "$BLOCKFILE" 2>/dev/null | grep -q "^$INCOMINGNUMBER$"; then
+	if cut -f1 "$SXMO_BLOCKFILE" 2>/dev/null | grep -q "^$INCOMINGNUMBER$"; then
 		stderr "BLOCKED call from number: $VOICECALLID"
 		sxmo_modemcall.sh mute "$VOICECALLID"
-		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$BLOCKDIR/modemlog.tsv"
-		rm -f "$NOTIFDIR/incomingcall_${VOICECALLID}_notification"*
+		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$SXMO_BLOCKDIR/modemlog.tsv"
+		rm -f "$SXMO_NOTIFDIR/incomingcall_${VOICECALLID}_notification"*
 	else
 		stderr "Invoking ring hook (async)"
 		[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$INCOMINGNUMBER"
 		sxmo_hooks.sh ring "$CONTACTNAME" &
 
-		mkdir -p "$LOGDIR"
-		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$LOGDIR/modemlog.tsv"
+		mkdir -p "$SXMO_LOGDIR"
+		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 
 		sxmo_notificationwrite.sh \
-			"$NOTIFDIR/incomingcall_${VOICECALLID}_notification" \
+			"$SXMO_NOTIFDIR/incomingcall_${VOICECALLID}_notification" \
 			"sxmo_modemcall.sh incomingcallmenu '$VOICECALLID'" \
 			none \
 			"Incoming $icon_phn $CONTACTNAME" &
@@ -199,7 +199,7 @@ checkfornewtexts() {
 		# SMS with no TEXTID is an SMS WAP (I think). So skip.
 		if [ -z "$TEXTDATA" ]; then
 			stderr "Received an empty SMS (TEXTID: $TEXTID).  I will assume this is an MMS."
-			printf %b "$(date +%FT%H:%M:%S%z)\tdebug_mms\tNULL\tEMPTY (TEXTID: $TEXTID)\n" >> "$LOGDIR/modemlog.tsv"
+			printf %b "$(date +%FT%H:%M:%S%z)\tdebug_mms\tNULL\tEMPTY (TEXTID: $TEXTID)\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 			continue
 		fi
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
@@ -218,25 +218,25 @@ checkfornewtexts() {
 		# TODO: a user *could* block the sms wap number (which would be user error).  But then
 		# the mms would not be processed.  So probably give a warning here if the user has blocked 
 		# the sms wap number?
-		if cut -f1 "$BLOCKFILE" 2>/dev/null | grep -q "^$NUM$"; then
-			mkdir -p "$BLOCKDIR/$NUM"
+		if cut -f1 "$SXMO_BLOCKFILE" 2>/dev/null | grep -q "^$NUM$"; then
+			mkdir -p "$SXMO_BLOCKDIR/$NUM"
 			stderr "BLOCKED text from number: $NUM (TEXTID: $TEXTID)"
-			printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$BLOCKDIR/$NUM/sms.txt"
-			printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$BLOCKDIR/modemlog.tsv"
+			printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$SXMO_BLOCKDIR/$NUM/sms.txt"
+			printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$SXMO_BLOCKDIR/modemlog.tsv"
 			mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
 			continue
 		fi
 
 		if [ "$TEXT" = "--" ]; then
 			stderr "Text from $NUM (TEXTID: $TEXTID) with '--'.  I will assume this is an MMS."
-			printf %b "$TIME\tdebug_mms\t$NUM\t$TEXT\n" >> "$LOGDIR/modemlog.tsv"
+			printf %b "$TIME\tdebug_mms\t$NUM\t$TEXT\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 			continue
 		fi
 
-		mkdir -p "$LOGDIR/$NUM"
+		mkdir -p "$SXMO_LOGDIR/$NUM"
 		stderr "Text from number: $NUM (TEXTID: $TEXTID)"
-		printf %b "Received SMS from $NUM at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUM/sms.txt"
-		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$LOGDIR/modemlog.tsv"
+		printf %b "Received SMS from $NUM at $TIME:\n$TEXT\n\n" >> "$SXMO_LOGDIR/$NUM/sms.txt"
+		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
 		CONTACTNAME=$(sxmo_contacts.sh --name "$NUM")
 		[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$NUM"
@@ -244,7 +244,7 @@ checkfornewtexts() {
 		sxmo_notificationwrite.sh \
 			random \
 			"sxmo_modemtext.sh tailtextlog '$NUM'" \
-			"$LOGDIR/$NUM/sms.txt" \
+			"$SXMO_LOGDIR/$NUM/sms.txt" \
 			"$CONTACTNAME: $TEXT"
 
 		sxmo_hooks.sh sms "$CONTACTNAME" "$TEXT"

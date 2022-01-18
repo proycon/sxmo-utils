@@ -134,22 +134,22 @@ extractmmsattachement() {
 		if [ -f "$MMS_BASE_DIR/$MMS_FILE" ]; then
 			OUTFILE="$MMS_FILE.$DATA_EXT"
 			count=0
-			while [ -f "$LOGDIR/$LOGDIRNUM/attachments/$OUTFILE" ]; do
+			while [ -f "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$OUTFILE" ]; do
 				OUTFILE="$MMS_FILE-$count.$DATA_EXT"
 				count="$((count+1))"
 			done
 			dd skip="$AOFFSET" count="$ASIZE" \
 				if="$MMS_BASE_DIR/$MMS_FILE" \
-				of="$LOGDIR/$LOGDIRNUM/attachments/$OUTFILE" \
+				of="$SXMO_LOGDIR/$LOGDIRNUM/attachments/$OUTFILE" \
 				bs=1 >/dev/null 2>&1
 		fi
 
 		if [ "$ACTYPE" != "text/plain" ]; then
 			printf "$icon_att %s\n" \
-				"$(basename "$LOGDIR/$LOGDIRNUM/attachments/$OUTFILE")" \
-				>> "$LOGDIR/$LOGDIRNUM/sms.txt"
+				"$(basename "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$OUTFILE")" \
+				>> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
 
-			printf "%s\0" "$LOGDIR/$LOGDIRNUM/attachments/$OUTFILE"
+			printf "%s\0" "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$OUTFILE"
 		fi
 	done
 }
@@ -164,7 +164,7 @@ processmms() {
 	if printf %s "$MESSAGE" | grep -q "Accept-Charset (deprecated): Message not found"; then
 		stderr "The mms ($MESSAGE_PATH) states: 'Message not found'. Deleting."
 		dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
-		printf "%s\tdebug_mms\t%s\t%s\n" "$(date +%FT%H:%M:%S%z)" "NULL" "ERROR: Message not found." >> "$LOGDIR/modemlog.tsv"
+		printf "%s\tdebug_mms\t%s\t%s\n" "$(date +%FT%H:%M:%S%z)" "NULL" "ERROR: Message not found." >> "$SXMO_LOGDIR/modemlog.tsv"
 		return
 	fi
 
@@ -198,8 +198,8 @@ processmms() {
 	if [ "$count" -gt 0 ]; then
 		# a group chat.  LOGDIRNUM = all numbers except one's own, sorted numerically
 		LOGDIRNUM="$(printf "%b\n%s\n" "$TO_NUMS" "$FROM_NUM" | grep -v "^$MYNUM$" | sort -u | grep . | xargs printf %s)"
-		mkdir -p "$LOGDIR/$LOGDIRNUM"
-		printf "%s Group MMS from %s to %s at %s:\n" "$MESSAGE_TYPE" "$FROM_NAME" "$TO_NAMES" "$DATE" >> "$LOGDIR/$LOGDIRNUM/sms.txt"
+		mkdir -p "$SXMO_LOGDIR/$LOGDIRNUM"
+		printf "%s Group MMS from %s to %s at %s:\n" "$MESSAGE_TYPE" "$FROM_NAME" "$TO_NAMES" "$DATE" >> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
 	else
 		# not a group chat
 		if [ "$MESSAGE_TYPE" = "Sent" ]; then
@@ -207,38 +207,38 @@ processmms() {
 		elif [ "$MESSAGE_TYPE" = "Received" ]; then
 			LOGDIRNUM="$FROM_NUM"
 		fi
-		mkdir -p "$LOGDIR/$LOGDIRNUM"
-		printf "%s MMS from %s at %s:\n" "$MESSAGE_TYPE" "$FROM_NAME" "$DATE" >> "$LOGDIR/$LOGDIRNUM/sms.txt"
+		mkdir -p "$SXMO_LOGDIR/$LOGDIRNUM"
+		printf "%s MMS from %s at %s:\n" "$MESSAGE_TYPE" "$FROM_NAME" "$DATE" >> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
 	fi
 
 	stderr "$MESSAGE_TYPE MMS ($MMS_FILE) from number $LOGDIRNUM"
 
-	if cut -f1 "$BLOCKFILE" 2>/dev/null | grep -q "^$LOGDIRNUM$"; then
-		mkdir -p "$BLOCKDIR/$LOGDIRNUM"
+	if cut -f1 "$SXMO_BLOCKFILE" 2>/dev/null | grep -q "^$LOGDIRNUM$"; then
+		mkdir -p "$SXMO_BLOCKDIR/$LOGDIRNUM"
 		stderr "BLOCKED mms from number: $LOGDIRNUM ($MMS_FILE)."
-		LOGDIR="$BLOCKDIR"
+		SXMO_LOGDIR="$SXMO_BLOCKDIR"
 	fi
 
-	mkdir -p "$LOGDIR/$LOGDIRNUM/attachments"
+	mkdir -p "$SXMO_LOGDIR/$LOGDIRNUM/attachments"
 
 	if [ "$MESSAGE_TYPE" = "Received" ]; then
-		printf "%s\trecv_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> "$LOGDIR/modemlog.tsv"
+		printf "%s\trecv_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> "$SXMO_LOGDIR/modemlog.tsv"
 	elif [ "$MESSAGE_TYPE" = "Sent" ]; then
-		printf "%s\tsent_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> "$LOGDIR/modemlog.tsv"
+		printf "%s\tsent_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> "$SXMO_LOGDIR/modemlog.tsv"
 	else
 		stderr "Unknown message type: $MESSAGE_TYPE for $MMS_FILE"
 	fi
 
 	# process 'content' of mms payload
 	OPEN_ATTACHMENTS_CMD="$(printf %s "$MESSAGE" | extractmmsattachement | xargs -0 printf "sxmo_open.sh '%s'; " | sed "s/sxmo_open.sh ''; //")"
-	if [ -f "$LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.txt" ]; then
-		TEXT="$(cat "$LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.txt")"
-		rm -f "$LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.txt"
+	if [ -f "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.txt" ]; then
+		TEXT="$(cat "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.txt")"
+		rm -f "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.txt"
 	else
 		TEXT="<Empty>"
 	fi
 
-	printf "%b\n\n" "$TEXT" >> "$LOGDIR/$LOGDIRNUM/sms.txt"
+	printf "%b\n\n" "$TEXT" >> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
 
 	if [ "$MESSAGE_TYPE" = "Received" ]; then
 		[ -n "$OPEN_ATTACHMENTS_CMD" ] && TEXT="$icon_att $TEXT"
@@ -246,7 +246,7 @@ processmms() {
 		sxmo_notificationwrite.sh \
 			random \
 			"${OPEN_ATTACHMENTS_CMD}sxmo_modemtext.sh tailtextlog \"$LOGDIRNUM\"" \
-			"$LOGDIR/$LOGDIRNUM/sms.txt" \
+			"$SXMO_LOGDIR/$LOGDIRNUM/sms.txt" \
 			"$FROM_NAME: $TEXT ($MMS_FILE)"
 
 		if [ "$count" -gt 0 ]; then

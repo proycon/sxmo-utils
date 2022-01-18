@@ -15,10 +15,10 @@ WATCHFILE="$3"
 NOTIFMSG="$4"
 
 writenotification() {
-	mkdir -p "$NOTIFDIR"
+	mkdir -p "$SXMO_NOTIFDIR"
 	if [ "$NOTIFFILEPATHTOWRITE" = "random" ]; then
 		NOTIFRANDOM="$(tr -dc 'a-zA-Z0-9' < /dev/urandom 2>/dev/null | head -c 10)"
-		NOTIFFILEPATHTOWRITE="$NOTIFDIR/$NOTIFRANDOM"
+		NOTIFFILEPATHTOWRITE="$SXMO_NOTIFDIR/$NOTIFRANDOM"
 	fi
 	touch "$NOTIFFILEPATHTOWRITE"
 	printf "%s\n%s\n%b\n" \

@@ -52,7 +52,7 @@ sendtextmenu() {
 
 	[ -z "$NUMBER" ] && exit 1
 
-	DRAFT="$LOGDIR/$NUMBER/draft.txt"
+	DRAFT="$SXMO_LOGDIR/$NUMBER/draft.txt"
 	if [ ! -f "$DRAFT" ]; then
 		mkdir -p "$(dirname "$DRAFT")"
 		echo 'Enter text message here' > "$DRAFT"
@@ -63,9 +63,9 @@ sendtextmenu() {
 	while true
 	do
 		ATTACHMENTS=
-		if [ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ]; then
+		if [ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ]; then
 			# shellcheck disable=SC2016
-			ATTACHMENTS="$(tr '\n' '\0' < "$LOGDIR/$NUMBER/draft.attachments.txt" | xargs -0 -I{} sh -c 'printf " 📎 "$(basename {})" :: {}\n"')"
+			ATTACHMENTS="$(tr '\n' '\0' < "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" | xargs -0 -I{} sh -c 'printf " 📎 "$(basename {})" :: {}\n"')"
 		fi
 
 		RECIPIENTS=
@@ -76,7 +76,7 @@ sendtextmenu() {
 
 		CHOICES="$(printf "%s Send to %s (%s)\n%b\n%s Add Recipient\n%b\n%s Add Attachment\n%s Edit '%s'\n%s Cancel\n" \
 			"$icon_snd" "$(sxmo_contacts.sh --name "$NUMBER")" "$NUMBER" "$RECIPIENTS" "$icon_usr" "$ATTACHMENTS" "$icon_att" "$icon_edt" \
-			"$(cat "$LOGDIR/$NUMBER/draft.txt")" "$icon_cls" \
+			"$(cat "$SXMO_LOGDIR/$NUMBER/draft.txt")" "$icon_cls" \
 			| awk NF
 		)"
 
@@ -94,9 +94,9 @@ sendtextmenu() {
 			# Remove Attachment
 			" 📎"*)
 				FILE="$(printf %s "$CONFIRM" | awk -F' :: ' '{print $2}')"  
-				sed -i "\|$FILE|d" "$LOGDIR/$NUMBER/draft.attachments.txt"
-				if [ ! -s "$LOGDIR/$NUMBER/draft.attachments.txt" ] ; then
-					rm "$LOGDIR/$NUMBER/draft.attachments.txt"
+				sed -i "\|$FILE|d" "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
+				if [ ! -s "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ] ; then
+					rm "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 				fi
 				;;
 			# Remove Recipient
@@ -105,18 +105,18 @@ sendtextmenu() {
 					OLDNUMBER="$NUMBER"
 					RECIPIENT="$(printf %s "$CONFIRM" | awk -F' :: ' '{print $2}')"
 					NUMBER="$(printf %s "$OLDNUMBER" | sed "s/$RECIPIENT//")"
-					mkdir -p "$LOGDIR/$NUMBER"
-					DRAFT="$LOGDIR/$NUMBER/draft.txt"
-					if [ -f "$LOGDIR/$OLDNUMBER/draft.txt" ]; then
+					mkdir -p "$SXMO_LOGDIR/$NUMBER"
+					DRAFT="$SXMO_LOGDIR/$NUMBER/draft.txt"
+					if [ -f "$SXMO_LOGDIR/$OLDNUMBER/draft.txt" ]; then
 						# TODO: if there is already a DRAFT warn the user?
-						mv "$LOGDIR/$OLDNUMBER/draft.txt" "$DRAFT"
+						mv "$SXMO_LOGDIR/$OLDNUMBER/draft.txt" "$DRAFT"
 					fi
-					if [ -f "$LOGDIR/$OLDNUMBER/draft.attachments.txt" ]; then
-						mv "$LOGDIR/$OLDNUMBER/draft.attachments.txt" \
-							"$LOGDIR/$NUMBER/draft.attachments.txt"
+					if [ -f "$SXMO_LOGDIR/$OLDNUMBER/draft.attachments.txt" ]; then
+						mv "$SXMO_LOGDIR/$OLDNUMBER/draft.attachments.txt" \
+							"$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 					fi
 					kill "$(lsof | grep "/$OLDNUMBER/sms.txt" | cut -f1)"
-					[ -e "$LOGDIR/$NUMBER/sms.txt" ] || touch "$LOGDIR/$NUMBER/sms.txt"
+					[ -e "$SXMO_LOGDIR/$NUMBER/sms.txt" ] || touch "$SXMO_LOGDIR/$NUMBER/sms.txt"
 					tailtextlog "$NUMBER" &
 				fi
 				;;
@@ -126,7 +126,7 @@ sendtextmenu() {
 			*"Add Attachment")
 				ATTACHMENT="$(sxmo_files.sh "$HOME" --select-only)"
 				if [ -f "$ATTACHMENT" ]; then
-					printf "%s\n" "$ATTACHMENT" >> "$LOGDIR/$NUMBER/draft.attachments.txt"
+					printf "%s\n" "$ATTACHMENT" >> "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 				fi
 				;;
 			*"Add Recipient")
@@ -139,18 +139,18 @@ sendtextmenu() {
 					echo "Number already a recipient."
 				else
 					NUMBER="$(printf %s%s "$NUMBER" "$ADDEDNUMBER" | xargs pn find | sort -u | tr -d '\n')"
-					mkdir -p "$LOGDIR/$NUMBER"
-					DRAFT="$LOGDIR/$NUMBER/draft.txt"
-					if [ -f "$LOGDIR/$OLDNUMBER/draft.txt" ]; then
+					mkdir -p "$SXMO_LOGDIR/$NUMBER"
+					DRAFT="$SXMO_LOGDIR/$NUMBER/draft.txt"
+					if [ -f "$SXMO_LOGDIR/$OLDNUMBER/draft.txt" ]; then
 						# TODO: if there is already a DRAFT warn the user?
-						mv "$LOGDIR/$OLDNUMBER/draft.txt" "$DRAFT"
+						mv "$SXMO_LOGDIR/$OLDNUMBER/draft.txt" "$DRAFT"
 					fi
-					if [ -f "$LOGDIR/$OLDNUMBER/draft.attachments.txt" ]; then
-						mv "$LOGDIR/$OLDNUMBER/draft.attachments.txt" \
-						"$LOGDIR/$NUMBER/draft.attachments.txt"
+					if [ -f "$SXMO_LOGDIR/$OLDNUMBER/draft.attachments.txt" ]; then
+						mv "$SXMO_LOGDIR/$OLDNUMBER/draft.attachments.txt" \
+						"$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 					fi
 					kill "$(lsof | grep "/$OLDNUMBER/sms.txt" | cut -f1)"
-					[ -e "$LOGDIR/$NUMBER/sms.txt" ] || touch "$LOGDIR/$NUMBER/sms.txt"
+					[ -e "$SXMO_LOGDIR/$NUMBER/sms.txt" ] || touch "$SXMO_LOGDIR/$NUMBER/sms.txt"
 					tailtextlog "$NUMBER" &
 				fi
 				;;
@@ -170,10 +170,10 @@ conversationloop() {
 
 	set -e
 
-	sxmo_keyboard.sh open 2>> "$DEBUGLOG"
+	sxmo_keyboard.sh open 2>> "$SXMO_DEBUGLOG"
 
 	while true; do
-		DRAFT="$LOGDIR/$NUMBER/draft.txt"
+		DRAFT="$SXMO_LOGDIR/$NUMBER/draft.txt"
 		if [ ! -f "$DRAFT" ]; then
 			mkdir -p "$(dirname "$DRAFT")"
 			touch "$DRAFT"
@@ -190,7 +190,7 @@ tailtextlog() {
 	CONTACTNAME="$(sxmo_contacts.sh | grep ": ${NUMBER}$" | cut -d: -f1)"
 	[ "???" = "$CONTACTNAME" ] && CONTACTNAME="$CONTACTNAME ($NUMBER)"
 
-	TERMNAME="$NUMBER SMS" sxmo_terminal.sh sh -c "tail -n9999 -f \"$LOGDIR/$NUMBER/sms.txt\" | sed \"s|$NUMBER|$CONTACTNAME|g\""
+	TERMNAME="$NUMBER SMS" sxmo_terminal.sh sh -c "tail -n9999 -f \"$SXMO_LOGDIR/$NUMBER/sms.txt\" | sed \"s|$NUMBER|$CONTACTNAME|g\""
 }
 
 readtextmenu() {

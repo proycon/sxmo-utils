@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# shellcheck source=scripts/core/sxmo_common.sh
+. /etc/profile.d/sxmo_init.sh
+
 envvars() {
 	export SXMO_WM=sway
 	export MOZ_ENABLE_WAYLAND=1
@@ -38,7 +41,7 @@ start() {
 	[ -f "$XDG_CACHE_HOME/sxmo/sxmo.log" ] && mv -f "$XDG_CACHE_HOME/sxmo/sxmo.log" "$XDG_CACHE_HOME/sxmo/sxmo.previous.log"
 	dbus-run-session sh -c "
 		/usr/bin/sway -c \"$XDG_CONFIG_HOME/sxmo/sway\"
-	" 2> "$DEBUGLOG"
+	" 2> "$SXMO_DEBUGLOG"
 }
 
 cleanup() {
@@ -48,6 +51,8 @@ cleanup() {
 }
 
 init() {
+	_sxmo_load_environments
+	_sxmo_prepare_dirs
 	envvars
 
 	defaults

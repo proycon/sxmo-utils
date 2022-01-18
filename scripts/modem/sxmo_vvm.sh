@@ -25,13 +25,13 @@ processvvm() {
 	VVM_SENDER="$2" # number the voice mail is from
 	VVM_ID="$3" # unique id assigned to voice mail from vvmd
 	VVM_ATTACHMENT="$4" # full path + filename of amr file
-	VVM_FILE="$LOGDIR/$VVM_SENDER/attachments/$(basename "$VVM_ATTACHMENT")"
+	VVM_FILE="$SXMO_LOGDIR/$VVM_SENDER/attachments/$(basename "$VVM_ATTACHMENT")"
 	VVM_SENDER_NAME="$(sxmo_contacts.sh --name "$VVM_SENDER")"
 	[ "$VVM_SENDER_NAME" = "???" ] && VVM_SENDER_NAME="$VVM_SENDER"
 
-	mkdir -p "$LOGDIR/$VVM_SENDER/attachments"
+	mkdir -p "$SXMO_LOGDIR/$VVM_SENDER/attachments"
 
-	printf "%s\trecv_vvm\t%s\t%s\n" "$VVM_DATE" "$VVM_SENDER" "$VVM_ID" >> "$LOGDIR/modemlog.tsv"
+	printf "%s\trecv_vvm\t%s\t%s\n" "$VVM_DATE" "$VVM_SENDER" "$VVM_ID" >> "$SXMO_LOGDIR/modemlog.tsv"
 
 	if [ -f "$VVM_ATTACHMENT" ]; then
 		cp "$VVM_ATTACHMENT" "$VVM_FILE"
@@ -40,12 +40,12 @@ processvvm() {
 		exit 1
 	fi
 
-	printf "Received Voice Mail from %s at %s:\n%s %s\n\n" "$VVM_SENDER_NAME" "$VVM_DATE" "$icon_att" "$(basename "$VVM_FILE")" >> "$LOGDIR/$VVM_SENDER/sms.txt"
+	printf "Received Voice Mail from %s at %s:\n%s %s\n\n" "$VVM_SENDER_NAME" "$VVM_DATE" "$icon_att" "$(basename "$VVM_FILE")" >> "$SXMO_LOGDIR/$VVM_SENDER/sms.txt"
 
 	sxmo_notificationwrite.sh \
 		random \
 		"sxmo_open.sh '$VVM_FILE'" \
-		"$LOGDIR/$VVM_SENDER/sms.txt" \
+		"$SXMO_LOGDIR/$VVM_SENDER/sms.txt" \
 		"VM: $VVM_SENDER_NAME ($VVM_ID)"
 
 	sxmo_hooks.sh vvm "$VVM_SENDER" "$VVM_ID"

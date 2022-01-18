@@ -30,7 +30,7 @@ EOF
 		grep -oE "[0-9]+"
 	)" || err "Unable to initiate call, is your modem working?"
 
-	find "$CACHEDIR" -name "$CALLID.*" -delete # we cleanup all dangling event files
+	find "$SXMO_CACHEDIR" -name "$CALLID.*" -delete # we cleanup all dangling event files
 	printf "Starting call with CALLID: %s\n" "$CALLID" >&2
 	exec sxmo_modemcall.sh pickup "$CALLID"
 }

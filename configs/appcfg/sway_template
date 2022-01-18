@@ -222,6 +222,6 @@ hide_edge_borders smart
 
 include /etc/sway/config.d/*
 
-exec 'printf %s "$SWAYSOCK" > "$CACHEDIR"/sxmo.swaysock'
+exec 'printf %s "$SWAYSOCK" > "$SXMO_CACHEDIR"/sxmo.swaysock'
 
 exec sxmo_hooks.sh start

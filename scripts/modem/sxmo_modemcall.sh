@@ -66,8 +66,8 @@ log_event() {
 	EVT_VID="$2"
 	NUM="$(vid_to_number "$EVT_VID")"
 	TIME="$(date +%FT%H:%M:%S%z)"
-	mkdir -p "$LOGDIR"
-	printf %b "$TIME\t$EVT_HANDLE\t$NUM\n" >> "$LOGDIR/modemlog.tsv"
+	mkdir -p "$SXMO_LOGDIR"
+	printf %b "$TIME\t$EVT_HANDLE\t$NUM\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 }
 
 toggleflag() {
@@ -102,13 +102,13 @@ acceptcall() {
 	)"
 	if [ "$DIRECTION" = "outgoing" ]; then
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --start
-		touch "$CACHEDIR/${CALLID}.initiatedcall" #this signals that we started this call
+		touch "$SXMO_CACHEDIR/${CALLID}.initiatedcall" #this signals that we started this call
 		log_event "call_start" "$CALLID"
 		stderr "Started call $CALLID"
 	elif [ "$DIRECTION" = "incoming" ]; then
 		stderr "Invoking pickup hook (async)"
 		sxmo_hooks.sh pickup &
-		touch "$CACHEDIR/${CALLID}.pickedupcall" #this signals that we picked this call up
+		touch "$SXMO_CACHEDIR/${CALLID}.pickedupcall" #this signals that we picked this call up
 											     #to other asynchronously running processes
 		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --accept
 		log_event "call_pickup" "$CALLID"
@@ -121,13 +121,13 @@ acceptcall() {
 
 hangup() {
 	CALLID="$1"
-	if [ -f "$CACHEDIR/${CALLID}.pickedupcall" ]; then
-		rm -f "$CACHEDIR/${CALLID}.pickedupcall"
-		touch "$CACHEDIR/${CALLID}.hangedupcall" #this signals that we hanged up this call to other asynchronously running processes
+	if [ -f "$SXMO_CACHEDIR/${CALLID}.pickedupcall" ]; then
+		rm -f "$SXMO_CACHEDIR/${CALLID}.pickedupcall"
+		touch "$SXMO_CACHEDIR/${CALLID}.hangedupcall" #this signals that we hanged up this call to other asynchronously running processes
 		log_event "call_hangup" "$CALLID"
 	else
 		#this call was never picked up and hung up immediately, so it is a discarded call
-		touch "$CACHEDIR/${CALLID}.discardedcall" #this signals that we discarded this call to other asynchronously running processes
+		touch "$SXMO_CACHEDIR/${CALLID}.discardedcall" #this signals that we discarded this call to other asynchronously running processes
 		stderr "sxmo_modemcall: Invoking discard hook (async)"
 		sxmo_hooks.sh discard &
 		log_event "call_discard" "$CALLID"
@@ -207,7 +207,7 @@ pickup() {
 
 mute() {
 	CALLID="$1"
-	touch "$CACHEDIR/${CALLID}.mutedring" #this signals that we muted this ring
+	touch "$SXMO_CACHEDIR/${CALLID}.mutedring" #this signals that we muted this ring
 	stderr "Invoking mute_ring hook (async)"
 	sxmo_hooks.sh mute_ring "$CONTACTNAME" &
 	log_event "ring_mute" "$1"
@@ -237,7 +237,7 @@ incomingcallmenu() {
 	elif echo "$PICKED" | grep -q "Mute"; then
 		mute "$1"
 	fi
-	rm -f "$NOTIFDIR/incomingcall_${1}_notification"* #there may be multiple actionable notification for one call
+	rm -f "$SXMO_NOTIFDIR/incomingcall_${1}_notification"* #there may be multiple actionable notification for one call
 }
 
 modem_n || finish "Couldn't determine modem number - is modem online?"

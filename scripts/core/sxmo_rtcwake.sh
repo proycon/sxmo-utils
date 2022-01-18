@@ -4,8 +4,8 @@
 . /etc/profile.d/sxmo_init.sh
 
 finish() {
-	if grep -q crust "$LASTSTATE" \
-		&& grep -q rtc "$UNSUSPENDREASONFILE" \
+	if grep -q crust "$SXMO_LASTSTATE" \
+		&& grep -q rtc "$SXMO_UNSUSPENDREASONFILE" \
 		&& [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
 		WAKEPROCS=$(pgrep -f sxmo_rtcwake.sh | wc -l)
 		if [ "$WAKEPROCS" -gt 2 ]; then
@@ -25,7 +25,7 @@ finish() {
 if [ "$1" = "--strict" ]; then
 	shift
 	#don't run if we're not in crust or not waked by rtc
-	if ! grep -q crust "$LASTSTATE" || ! grep -q rtc "$UNSUSPENDREASONFILE"; then
+	if ! grep -q crust "$SXMO_LASTSTATE" || ! grep -q rtc "$SXMO_UNSUSPENDREASONFILE"; then
 		exit 0
 	fi
 fi

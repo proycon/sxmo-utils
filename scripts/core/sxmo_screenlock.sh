@@ -53,8 +53,8 @@ lock() {
 	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage lock" >&2
 
 	# always echo last state first so that user can use it in their hooks
-	# TODO: Document LASTSTATE
-	getCurState > "$LASTSTATE"
+	# TODO: Document SXMO_LASTSTATE
+	getCurState > "$SXMO_LASTSTATE"
 
 	sxmo_led.sh blink blue &
 
@@ -76,7 +76,7 @@ unlock() {
 	#normal unlocked state, screen on
 	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage unlock" >&2
 
-	getCurState > "$LASTSTATE"
+	getCurState > "$SXMO_LASTSTATE"
 
 	sxmo_led.sh blink red green &
 	LEDPID=$!
@@ -99,7 +99,7 @@ off() {
 	#locked state with screen off
 	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage off" >&2
 
-	getCurState > "$LASTSTATE"
+	getCurState > "$SXMO_LASTSTATE"
 
 	sxmo_led.sh blink blue red &
 
@@ -116,7 +116,7 @@ off() {
 
 crust() {
 	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage crust" >&2
-	getCurState > "$LASTSTATE"
+	getCurState > "$SXMO_LASTSTATE"
 
 	sxmo_led.sh blink red
 
@@ -140,9 +140,9 @@ crust() {
 	else
 		UNSUSPENDREASON=rtc # we fake the crust for those seconds
 	fi
-	echo "$UNSUSPENDREASON" > "$UNSUSPENDREASONFILE"
+	echo "$UNSUSPENDREASON" > "$SXMO_UNSUSPENDREASONFILE"
 
-	echo "crust" > "$LASTSTATE"
+	echo "crust" > "$SXMO_LASTSTATE"
 
 	echo "$(date) sxmo_screenlock: woke up from crust (reason=$UNSUSPENDREASON)" >&2
 	if [ "$UNSUSPENDREASON" != "modem" ]; then

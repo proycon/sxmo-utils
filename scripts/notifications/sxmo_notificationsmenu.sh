@@ -9,12 +9,12 @@
 notificationmenu() {
 	CHOICES="$icon_cls Close Menu\n$icon_del Clear Notifications"
 	# shellcheck disable=SC2045
-	for NOTIFFILE in $(ls -tr "$NOTIFDIR"); do
-		NOTIFMSG="$(tail -n+3 "$NOTIFDIR/$NOTIFFILE" | tr "\n^" " ")"
-		NOTIFHRANDMIN="$(stat --printf %y "$NOTIFDIR/$NOTIFFILE" | grep -oE '[0-9]{2}:[0-9]{2}')"
+	for NOTIFFILE in $(ls -tr "$SXMO_NOTIFDIR"); do
+		NOTIFMSG="$(tail -n+3 "$SXMO_NOTIFDIR/$NOTIFFILE" | tr "\n^" " ")"
+		NOTIFHRANDMIN="$(stat --printf %y "$SXMO_NOTIFDIR/$NOTIFFILE" | grep -oE '[0-9]{2}:[0-9]{2}')"
 		CHOICES="
 			$CHOICES
-			$NOTIFHRANDMIN $NOTIFMSG ^ $NOTIFDIR/$NOTIFFILE
+			$NOTIFHRANDMIN $NOTIFMSG ^ $SXMO_NOTIFDIR/$NOTIFFILE
 		"
 	done
 
@@ -33,14 +33,14 @@ notificationmenu() {
 		# merely removing the notifs won't remove
 		# the inotifywait notifwatchfile. so to handle that 
 		# we need to open each notifwatchfile
-		find "$NOTIFDIR" -type f | \
+		find "$SXMO_NOTIFDIR" -type f | \
 			while read -r line; do
 				NOTIFWATCHFILE="$(awk NR==2 "$line")"
 				if [ -e "$NOTIFWATCHFILE" ]; then
 					cat "$NOTIFWATCHFILE" >/dev/null
 				fi
 			done
-		rm "$NOTIFDIR"/*
+		rm "$SXMO_NOTIFDIR"/*
 		exit 1
 	fi
 

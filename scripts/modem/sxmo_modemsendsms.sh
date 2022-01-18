@@ -46,7 +46,7 @@ else
 fi
 
 # if multiple recipients or attachment, then send via mmsctl
-if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ]; then
+if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ]; then
 
 	MMS_BASE_DIR="${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}"
 	[ -d "$MMS_BASE_DIR" ] || err "MMS not configured."
@@ -55,7 +55,7 @@ if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$
 	count=0
 	total_size=0
 	ATTACHMENTS=
-	if [ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ]; then
+	if [ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ]; then
 		# shellcheck disable=SC2141
 		IFS='\n'
 		while read -r line; do
@@ -71,7 +71,7 @@ if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$
 			ATTACHMENTS="$(printf "%s -a '%s' -c '%s'" "$ATTACHMENTS" "$line" "$CTYPE")" # argument for mmsctl
 			count="$((count+1))"
 			total_size="$((total_size+$(wc -c < "$line")))"
-		done < "$LOGDIR/$NUMBER/draft.attachments.txt"
+		done < "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 	fi
 
 	# basic mms error checking (since mmsctl does not do it)
@@ -158,7 +158,7 @@ if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$LOGDIR/$
 
 	# we sent!  process it and cleanup
 	sxmo_mms.sh processmms "$MESSAGE_PATH" "Sent"
-	[ -f "$LOGDIR/$NUMBER/draft.attachments.txt" ] && rm "$LOGDIR/$NUMBER/draft.attachments.txt"
+	[ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ] && rm "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 
 # we are dealing with a normal sms, so use mmcli
 else
@@ -181,9 +181,9 @@ else
 	done
 
 	TIME="$(date +%FT%H:%M:%S%z)"
-	mkdir -p "$LOGDIR/$NUMBER"
-	printf %b "Sent SMS to $NUMBER at $TIME:\n$TEXT\n\n" >> "$LOGDIR/$NUMBER/sms.txt"
-	printf "%s\tsent_txt\t%s\t%s chars\n" "$TIME" "$NUMBER" "$TEXTSIZE" >> "$LOGDIR/modemlog.tsv"
+	mkdir -p "$SXMO_LOGDIR/$NUMBER"
+	printf %b "Sent SMS to $NUMBER at $TIME:\n$TEXT\n\n" >> "$SXMO_LOGDIR/$NUMBER/sms.txt"
+	printf "%s\tsent_txt\t%s\t%s chars\n" "$TIME" "$NUMBER" "$TEXTSIZE" >> "$SXMO_LOGDIR/modemlog.tsv"
 
 fi
 

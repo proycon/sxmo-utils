@@ -170,6 +170,6 @@ mainloop() {
 
 
 stderr "starting"
-rm -f "$CACHEDIR"/*.pickedupcall 2>/dev/null #new session, forget all calls we picked up previously
+rm -f "$SXMO_CACHEDIR"/*.pickedupcall 2>/dev/null #new session, forget all calls we picked up previously
 mainloop
 stderr "exiting"

@@ -27,8 +27,8 @@ camera_open() {
 }
 
 waiting_rtcwake() {
-	if grep -q crust "$LASTSTATE" && \
-		grep -q rtc "$UNSUSPENDREASONFILE"; then
+	if grep -q crust "$SXMO_LASTSTATE" && \
+		grep -q rtc "$SXMO_UNSUSPENDREASONFILE"; then
 			exit_not_idle "rtcwake"
 	fi
 }

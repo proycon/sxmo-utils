@@ -22,7 +22,7 @@ newcontact() {
 	done
 
 	# we store as NUMBER\tNAME but display as NAME\tNUMBER
-	printf "%s\n" "$number	$name" >> "$CONTACTFILE"
+	printf "%s\n" "$number	$name" >> "$SXMO_CONTACTFILE"
 	PICKED="$name	$number"
 }
 
@@ -38,7 +38,7 @@ editcontactname() {
 
 	if ! printf %s "$PICKED" | grep -q "^Old name: "; then
 		newcontact="$oldnumber	$PICKED"
-		sed -i "s/^$oldnumber	$oldname$/$newcontact/" "$CONTACTFILE"
+		sed -i "s/^$oldnumber	$oldname$/$newcontact/" "$SXMO_CONTACTFILE"
 		set -- "$newcontact"
 	fi
 
@@ -66,7 +66,7 @@ editcontactnumber() {
 	newcontact="$PICKED	$oldname"
 
 	# reverse them
-	sed -i "s/^$number	$name$/$newcontact/" "$CONTACTFILE"
+	sed -i "s/^$number	$name$/$newcontact/" "$SXMO_CONTACTFILE"
 	editcontact "$oldname	$PICKED"
 }
 
@@ -82,7 +82,7 @@ deletecontact() {
 	)"
 
 	# reverse them
-	printf %s "$PICKED" | grep -q "Yes" && sed -i "/^$number	$name$/d" "$CONTACTFILE"
+	printf %s "$PICKED" | grep -q "Yes" && sed -i "/^$number	$name$/d" "$SXMO_CONTACTFILE"
 }
 
 editcontact() {

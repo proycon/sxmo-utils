@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# shellcheck source=scripts/core/sxmo_common.sh
+. /etc/profile.d/sxmo_init.sh
+
 envvars() {
 	export SXMO_WM=dwm
 	# shellcheck disable=SC2086
@@ -66,7 +69,7 @@ start() {
 		set -- customxinit
 		. $0
 		dwm
-	" 2> "$DEBUGLOG"
+	" 2> "$SXMO_DEBUGLOG"
 }
 
 cleanup() {
@@ -76,6 +79,8 @@ cleanup() {
 }
 
 init() {
+	_sxmo_load_environments
+	_sxmo_prepare_dirs
 	envvars
 
 	defaults

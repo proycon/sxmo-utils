@@ -98,7 +98,7 @@ restart_daemons() {
 }
 
 on() {
-	rm "$NOTIFDIR"/incomingcall* 2>/dev/null
+	rm "$SXMO_NOTIFDIR"/incomingcall* 2>/dev/null
 
 	TRIES=0
 	while ! printf %s "$(mmcli -L)" 2> /dev/null | grep -qoE 'Modem\/([0-9]+)'; do

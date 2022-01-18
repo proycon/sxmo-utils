@@ -37,14 +37,14 @@ handlenewnotiffile(){
 }
 
 recreateexistingnotifs() {
-	for NOTIF in "$NOTIFDIR"/*; do
+	for NOTIF in "$SXMO_NOTIFDIR"/*; do
 		[ -f "$NOTIF" ] || continue
 		handlenewnotiffile "$NOTIF"
 	done
 }
 
 syncled() {
-	if [ "$(find "$NOTIFDIR"/ -type f | wc -l)" -gt 0 ]; then
+	if [ "$(find "$SXMO_NOTIFDIR"/ -type f | wc -l)" -gt 0 ]; then
 		sxmo_led.sh set green 100
 	else
 		sxmo_led.sh set green 0
@@ -52,11 +52,11 @@ syncled() {
 }
 
 monitorforaddordelnotifs() {
-	mkdir -p "$NOTIFDIR"
+	mkdir -p "$SXMO_NOTIFDIR"
 
 	FIFO="$(mktemp -u)"
 	mkfifo "$FIFO"
-	inotifywait -mq -e attrib,move,delete "$NOTIFDIR"  >> "$FIFO" &
+	inotifywait -mq -e attrib,move,delete "$SXMO_NOTIFDIR"  >> "$FIFO" &
 	NOTIFYPID=$!
 
 	finish() {
@@ -76,7 +76,7 @@ monitorforaddordelnotifs() {
 	wait "$NOTIFYPID"
 }
 
-rm -f "$NOTIFDIR"/incomingcall
+rm -f "$SXMO_NOTIFDIR"/incomingcall
 recreateexistingnotifs
 syncled
 monitorforaddordelnotifs
