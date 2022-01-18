@@ -9,11 +9,14 @@ SPEAKER="${SPEAKER:-"Line Out"}"
 HEADPHONE="${HEADPHONE:-"Headphone"}"
 EARPIECE="${EARPIECE:-"Earpiece"}"
 
+amixer set "Master" mute
 amixer set "$SPEAKER" mute
 amixer set "$HEADPHONE" mute
 amixer set "$EARPIECE" mute
 
-if [ "$ARG" = "Speaker" ]; then
+if [ "$ARG" = "Master" ]; then
+	amixer set "Master" unmute
+elif [ "$ARG" = "Speaker" ]; then
 	amixer set "$SPEAKER" unmute
 elif [ "$ARG" = "Headphones" ]; then
 	amixer set "$HEADPHONE" unmute

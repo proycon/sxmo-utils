@@ -4,6 +4,21 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+detect_device() {
+	amixer sget "Master" | grep -qE '\[on\]' && printf "Master" && return
+	amixer sget "$EARPIECE" | grep -qE '\[on\]' && printf "%s" "$EARPIECE" && return
+	amixer sget "$HEADPHONE" | grep -qE '\[on\]' && printf "%s" "$HEADPHONE" && return
+	amixer sget "$SPEAKER" | grep -qE '\[on\]' && printf "%s" "$SPEAKER" && return
+}
+
+current_device() {
+	if ! [ -f "$XDG_RUNTIME_DIR"/sxmo.audiocurrentdevice ]; then
+		detect_device > "$XDG_RUNTIME_DIR"/sxmo.audiocurrentdevice
+	fi
+
+	cat "$XDG_RUNTIME_DIR"/sxmo.audiocurrentdevice
+}
+
 notify() {
 	VOL="$(
 		amixer get "$(sxmo_audiocurrentdevice.sh)" |
@@ -24,15 +39,15 @@ notify() {
 }
 
 up() {
-	amixer set "$(sxmo_audiocurrentdevice.sh)" 1%+
+	amixer set "$(current_device)" 1%+
 	notify
 }
 down() {
-	amixer set "$(sxmo_audiocurrentdevice.sh)" 1%-
+	amixer set "$(current_device)" 1%-
 	notify
 }
 setvol() {
-	amixer set "$(sxmo_audiocurrentdevice.sh)" "$1"%
+	amixer set "$(current_device)" "$1"%
 	notify
 }
 mute() {
