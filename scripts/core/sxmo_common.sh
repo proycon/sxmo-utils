@@ -20,6 +20,7 @@ if busybox pkill -l > /dev/null; then
 	alias pkill="busybox pkill"
 	alias pgrep="busybox pgrep"
 fi
+alias bc="busybox bc"
 alias find="busybox find"
 alias grep="busybox grep"
 alias less="busybox less"

@@ -1,4 +1,6 @@
 #!/bin/sh
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(which sxmo_common.sh)"
 
 free_mutex() {
 	rmdir "$XDG_RUNTIME_DIR"/sxmo.led.lock

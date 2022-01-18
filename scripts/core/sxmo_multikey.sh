@@ -1,4 +1,6 @@
 #!/bin/sh
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(which sxmo_common.sh)"
 
 if [ "$1" = clear ]; then
 	rm -f "$XDG_RUNTIME_DIR"/sxmo.multikey.count.*
