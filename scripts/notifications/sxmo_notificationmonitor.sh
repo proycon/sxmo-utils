@@ -45,9 +45,9 @@ recreateexistingnotifs() {
 
 syncled() {
 	if [ "$(find "$NOTIFDIR"/ -type f | wc -l)" -gt 0 ]; then
-		sxmo_setled.sh green 100
+		sxmo_led.sh set green 100
 	else
-		sxmo_setled.sh green 0
+		sxmo_led.sh set green 0
 	fi
 }
 
