@@ -214,6 +214,8 @@ bar {
     }
 }
 
+for_window [app_id="foot" title=".*sxmo/modem/.*/draft.txt.*"] resize set height 25
+
 default_border pixel 3
 titlebar_border_thickness 3
 hide_edge_borders smart

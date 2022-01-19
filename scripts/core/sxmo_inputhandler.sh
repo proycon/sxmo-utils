@@ -59,6 +59,15 @@ case "$WMCLASS" in
 	*"foot"*|*"st"*)
 		# First we try to handle the app running inside st:
 		case "$WMNAME" in
+			*" sms")
+				case "$ACTION" in
+					*"upbottomedge")
+						number="$(printf %s "$WMNAME" | sed -e 's|^\"||' -e 's|\"$||' | cut -f1 -d' ')"
+						sxmo_terminal.sh sxmo_modemtext.sh conversationloop "$number" &
+						exit 0
+						;;
+				esac
+				;;
 			*"tuir"*)
 				if [ "$ACTION" = "rightbottomedge" ]; then
 					sxmo_type.sh o
