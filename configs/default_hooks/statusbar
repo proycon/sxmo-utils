@@ -184,7 +184,7 @@ set_battery() {
 }
 
 _volume() {
-	AUDIODEV="$(sxmo_audiocurrentdevice.sh 2>/dev/null)"
+	AUDIODEV="$(cat "$XDG_RUNTIME_DIR/sxmo.audiocurrentdevice")"
 	AUDIOSYMBOL="$(printf %s "$AUDIODEV" | cut -c1)"
 	if [ "$AUDIOSYMBOL" = "L" ] || [ "$AUDIOSYMBOL" = "N" ] || [ "$AUDIOSYMBOL" = "M" ]; then
 		printf "" #pipewire or speakers or none, use no special symbol
@@ -194,14 +194,14 @@ _volume() {
 		printf "%s " "$icon_ear" #earpiece
 	fi
 	VOL=0
-	[ "$AUDIODEV" = "None" ] || VOL="$(
+	[ "$AUDIODEV" = "" ] || VOL="$(
 		amixer sget "$AUDIODEV" |
 		grep -oE '([0-9]+)%' |
 		tr -d ' %' |
 		awk '{ s += $1; c++ } END { print s/c }'  |
 		xargs printf %.0f
 	)"
-	if [ "$AUDIODEV" != "None" ]; then
+	if [ "$AUDIODEV" != "" ]; then
 		if [ "$VOL" -gt 66 ]; then
 			printf "%s" "$icon_spk"
 		elif [ "$VOL" -gt 33 ]; then
