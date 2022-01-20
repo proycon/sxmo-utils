@@ -9,19 +9,26 @@ SPEAKER="${SPEAKER:-"Line Out"}"
 HEADPHONE="${HEADPHONE:-"Headphone"}"
 EARPIECE="${EARPIECE:-"Earpiece"}"
 
-amixer set "Master" mute
-amixer set "$SPEAKER" mute
-amixer set "$HEADPHONE" mute
-amixer set "$EARPIECE" mute
+amixer set "Master" mute >/dev/null 2>/dev/null
+amixer set "$SPEAKER" mute >/dev/null
+amixer set "$HEADPHONE" mute >/dev/null
+amixer set "$EARPIECE" mute >/dev/null
 
 if [ "$ARG" = "Master" ]; then
-	amixer set "Master" unmute
+	DEV="Master"
 elif [ "$ARG" = "Speaker" ]; then
-	amixer set "$SPEAKER" unmute
+	DEV="$SPEAKER"
 elif [ "$ARG" = "Headphones" ]; then
-	amixer set "$HEADPHONE" unmute
+	DEV="$HEADPHONE"
 elif [ "$ARG" = "Earpiece" ]; then
-	amixer set "$EARPIECE" unmute
+	DEV="$EARPIECE"
+else
+	# Mute/None
+	DEV=""
 fi
+if [ "$DEV" ]; then
+	amixer set "$DEV" unmute
+fi
+printf '%s' "$DEV" > "$XDG_RUNTIME_DIR/sxmo.audiocurrentdevice"
 
 sxmo_hooks.sh statusbar volume
