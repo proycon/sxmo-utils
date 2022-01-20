@@ -3,6 +3,8 @@
 # This script will output the content of the scripts menu
 
 # include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(which sxmo_common.sh)"
 # shellcheck source=scripts/core/sxmo_icons.sh
 . "$(which sxmo_icons.sh)"
 
@@ -13,8 +15,9 @@ write_line() {
 if [ -f "$XDG_CONFIG_HOME/sxmo/userscripts" ]; then
 	cat "$XDG_CONFIG_HOME/sxmo/userscripts"
 elif [ -d "$XDG_CONFIG_HOME/sxmo/userscripts" ]; then
-	find "$XDG_CONFIG_HOME/sxmo/userscripts" \( -type f -o -type l \) -print0 | \
-		xargs -IF basename F | \
+	find "$XDG_CONFIG_HOME/sxmo/userscripts" -type f -o -type l | \
+		tr '\n' '\0' | \
+		xargs -0 -n1 basename | \
 		awk "{printf \"$icon_itm %s ^ 0 ^ $XDG_CONFIG_HOME/sxmo/userscripts/%s \\n\", \$0, \$0}" | \
 		sort -f
 fi
