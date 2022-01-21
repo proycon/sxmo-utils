@@ -16,6 +16,10 @@ stderr() {
 	printf "%s sxmo_networks.sh: %s.\n" "$(date)" "$*" >&2
 }
 
+menu() {
+	dmenu -i "$@"
+}
+
 connections() {
 	nmcli -c no -f device,type,name -t c show | \
 		sed "s/802-11-wireless:/$icon_wif /" | \
@@ -50,7 +54,7 @@ toggleconnection() {
 deletenetworkmenu() {
 	CHOICE="$(
 		printf %b "$icon_cls Close Menu\n$(connections)" |
-			dmenu -p "Delete Network"
+			menu -p "Delete Network"
 	)"
 	[ -z "$CHOICE" ] && return
 	echo "$CHOICE" | grep -q "Close Menu" && return
@@ -225,7 +229,7 @@ networksmenu() {
 				$icon_mnu System Menu
 				$icon_cls Close Menu
 			" |
-			awk '{$1=$1};1' | grep '\w' | dmenu -p 'Networks'
+			awk '{$1=$1};1' | grep '\w' | menu -p 'Networks'
 		)"
 		[ -z "$CHOICE" ] && exit
 		case "$CHOICE" in
