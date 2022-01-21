@@ -86,12 +86,34 @@ addnetworkgsmmenu() {
 	[ -z "$APN" ] && return
 	echo "$APN" | grep -q "Close Menu" && return
 
-	# TODO: Support gsm bearer username & password
+	USERNAME="$(printf "None\n%s Close Menu\n" "$icon_cls" | menu -p "Username")"
+	case "$USERNAME" in
+		""|"$icon_cls Close Menu")
+			return
+			;;
+		None)
+			unset USERNAME
+			;;
+	esac
+
+	PASSWORD="$(printf "None\n%s Close Menu\n" "$icon_cls" | menu -p "Password")"
+	case "$PASSWORD" in
+		""|"$icon_cls Close Menu")
+			return
+			;;
+		None)
+			unset PASSWORD
+			;;
+	esac
+
 	RES="$(nofail nmcli c add \
 		type gsm \
 		ifname "$(getifname gsm)" \
 		con-name "$CONNNAME" \
-		apn "$APN" 2>&1)"
+		apn "$APN" \
+		${PASSWORD:+gsm.password "$PASSWORD"} \
+		${USERNAME:+gsm.username "$USERNAME"} \
+		2>&1)"
 	stderr "$RES"
 	notify-send "$RES"
 }
