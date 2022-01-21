@@ -37,10 +37,15 @@ photos_processing() {
 	pgrep -f postprocess.sh > /dev/null && exit_should_wait "photos processing"
 }
 
+auto_suspend() {
+	[ -e "$XDG_RUNTIME_DIR/sxmo.nosuspend" ] && exit_should_wait "auto_suspend_off"
+}
+
 modem_use
 playing_mpc
 screenlock
 photos_processing
+auto_suspend
 active_ssh
 
 exit 0

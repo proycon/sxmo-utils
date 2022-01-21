@@ -33,9 +33,14 @@ waiting_rtcwake() {
 	fi
 }
 
+auto_screenoff() {
+	[ -e "$XDG_RUNTIME_DIR/sxmo.noidle" ] && exit_not_idle "auto_screenoff_off"
+}
+
 ongoing_call
 proximity_lock_on
 waiting_rtcwake
 camera_open
+auto_screenoff
 
 exit 0
