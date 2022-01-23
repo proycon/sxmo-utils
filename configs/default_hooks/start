@@ -10,7 +10,7 @@ echo "unlock" > "$SXMO_LASTSTATE"
 
 # Force audio over the main speaker
 # and set a sane default volume
-sxmo_audioout.sh Speaker
+sxmo_audio.sh device set Speaker
 amixer sset 'Line Out Source' 'Mono Differential','Mono Differential'
 amixer set "Line Out" 75%
 

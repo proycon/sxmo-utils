@@ -209,33 +209,27 @@ set_battery() {
 }
 
 _volume() {
-	AUDIODEV="$(cat "$XDG_RUNTIME_DIR/sxmo.audiocurrentdevice")"
-	AUDIOSYMBOL="$(printf %s "$AUDIODEV" | cut -c1)"
-	if [ "$AUDIOSYMBOL" = "L" ] || [ "$AUDIOSYMBOL" = "N" ] || [ "$AUDIOSYMBOL" = "M" ]; then
-		printf "" #pipewire or speakers or none, use no special symbol
-	elif [ "$AUDIOSYMBOL" = "H" ]; then
-		printf "%s " "$icon_hdp"
-	elif [ "$AUDIOSYMBOL" = "E" ]; then
-		printf "%s " "$icon_ear" #earpiece
-	fi
-	VOL=0
-	[ "$AUDIODEV" = "" ] || VOL="$(
-		amixer sget "$AUDIODEV" |
-		grep -oE '([0-9]+)%' |
-		tr -d ' %' |
-		awk '{ s += $1; c++ } END { print s/c }'  |
-		xargs printf %.0f
-	)"
-	if [ "$AUDIODEV" != "" ]; then
-		if [ "$VOL" -gt 66 ]; then
-			printf "%s" "$icon_spk"
-		elif [ "$VOL" -gt 33 ]; then
-			printf "%s" "$icon_spm"
-		elif [ "$VOL" -gt 0 ]; then
-			printf "%s" "$icon_spl"
-		elif [ "$VOL" -eq 0 ]; then
-			printf "%s" "$icon_mut"
-		fi
+	case "$(sxmo_audio.sh device get 2>/dev/null)" in
+		Speaker|"")
+			# nothing for default or pulse devices
+			;;
+		Headphones)
+			printf "%s " "$icon_hdp"
+			;;
+		Earpiece)
+			printf "%s " "$icon_ear"
+			;;
+	esac
+
+	VOL="$(sxmo_audio.sh vol get)"
+	if [ -z "$VOL" ] || [ "$VOL" -eq 0 ]; then
+		printf "%s" "$icon_mut"
+	elif [ "$VOL" -gt 66 ]; then
+		printf "%s" "$icon_spk"
+	elif [ "$VOL" -gt 33 ]; then
+		printf "%s" "$icon_spm"
+	elif [ "$VOL" -gt 0 ]; then
+		printf "%s" "$icon_spl"
 	fi
 }
 

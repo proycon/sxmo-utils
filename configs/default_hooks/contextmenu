@@ -84,19 +84,6 @@ case "$WMCLASS" in
 		"
 		WINNAME=Config
 		;;
-	audioout)
-		# Audio Out menu
-		CURRENTDEV="$(cat "$XDG_RUNTIME_DIR/sxmo.audiocurrentdevice")"
-		CHOICES="
-			$icon_hdp Headphones $([ "$CURRENTDEV" = "Headphone" ] && echo "$icon_chk") ^ 1 ^ sxmo_audioout.sh Headphones
-			$icon_spk Speaker $([ "$CURRENTDEV" = "Line Out" ] && echo "$icon_chk")     ^ 1 ^ sxmo_audioout.sh Speaker
-			$icon_phn Earpiece $([ "$CURRENTDEV" = "Earpiece" ] && echo "$icon_chk")    ^ 1 ^ sxmo_audioout.sh Earpiece
-			$icon_mut None $([ "$CURRENTDEV" = "" ] && echo "$icon_chk")            ^ 1 ^ sxmo_audioout.sh ''
-			$icon_aru Volume up                                       ^ 1 ^ sxmo_vol.sh up
-			$icon_ard Volume down                                     ^ 1 ^ sxmo_vol.sh down
-		"
-		WINNAME=Audio
-		;;
 	power)
 		# Power menu
 		CHOICES="
@@ -517,7 +504,7 @@ case "$WMCLASS" in
 				printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 			)
 			$icon_net Networks                                           ^ 0 ^ sxmo_networks.sh
-			$icon_mus Audio                                              ^ 0 ^ sxmo_appmenu.sh audioout
+			$icon_mus Audio                                              ^ 0 ^ sxmo_audio.sh
 			$icon_cfg Config                                             ^ 0 ^ sxmo_appmenu.sh config
 			$icon_pwr Power                                              ^ 0 ^ sxmo_appmenu.sh power
 		"

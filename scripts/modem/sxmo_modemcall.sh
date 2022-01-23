@@ -147,8 +147,8 @@ incallsetup() {
 incallmenuloop() {
 	stderr "Current flags are $FLAGS"
 	CHOICES="
-		$icon_aru Volume up                                                          ^ sxmo_vol.sh up
-		$icon_ard Volume down                                                          ^ sxmo_vol.sh down
+		$icon_aru Volume up                                                          ^ sxmo_audio.sh vol up
+		$icon_ard Volume down                                                          ^ sxmo_audio.sh vol down
 		$icon_phn Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo "$icon_chk")            ^ toggleflagset -e
 		$icon_mic Mic $(echo -- "$FLAGS" | grep -q -- -m && echo "$icon_chk")                 ^ toggleflagset -m
 		$icon_itm Linejack $(echo -- "$FLAGS" | grep -q -- -h && echo "$icon_chk")            ^ toggleflagset -h
