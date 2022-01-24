@@ -10,50 +10,6 @@ stderr() {
 	sxmo_log "$*"
 }
 
-checkmodem() {
-	TRIES=0
-	while [ "$TRIES" -lt 10 ]; do
-		MODEMS="$(mmcli -L)"
-		if echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' > /dev/null; then
-			break
-		elif grep -q rtc "$SXMO_UNSUSPENDREASONFILE"; then
-			#don't bother checking in rtc-wake situations
-			TRIES=0
-			break
-		else
-			TRIES=$((TRIES+1))
-			notify-send "Modem not found. Waiting for modem (try #$TRIES)..."
-			stderr "Modem not found. Waiting for modem (try #$TRIES)..."
-			sleep 3
-			if [ "$TRIES" -eq 10 ]; then
-				notify-send "ERROR! Modem could not be found after 10 tries. Calling sxmo_modemmonitortoggle.sh ensure."
-				stderr "ERROR! checkmodem couldn't find modem. Calling sxmo_modemonitortoggle.sh ensure"
-				sxmo_modemmonitortoggle.sh ensure
-				break
-			fi
-		fi
-	done
-}
-
-modem_n() {
-	TRIES=0
-	while [ "$TRIES" -lt 10 ]; do
-		MODEMS="$(mmcli -L)"
-		if ! echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' > /dev/null; then
-			TRIES=$((TRIES+1))
-			stderr "modem not found, waiting for modem... (try #$TRIES)"
-			sleep 1
-		else
-			echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
-			return
-		fi
-	done
-	stderr "ERROR! modem_n couldn't find modem. Calling sxmo_modemmonitortoggle.sh off"
-	notify-send "Couldn't find modem - is your modem enabled? Disabling modem monitor."
-	sleep 1
-	sxmo_modemmonitortoggle.sh off
-}
-
 cleanupnumber() {
 	if pn valid "$1"; then
 		echo "$1"
@@ -71,7 +27,7 @@ cleanupnumber() {
 
 lookupnumberfromcallid() {
 	VOICECALLID=$1
-	mmcli -m "$(modem_n)" --voice-list-calls -o "$VOICECALLID" -K |
+	mmcli -m any --voice-list-calls -o "$VOICECALLID" -K |
 		grep call.properties.number |
 		cut -d ':' -f 2 |
 		tr -d ' '
@@ -80,14 +36,14 @@ lookupnumberfromcallid() {
 checkforfinishedcalls() {
 	#find all finished calls
 	for FINISHEDCALLID in $(
-		mmcli -m "$(modem_n)" --voice-list-calls |
+		mmcli -m any --voice-list-calls |
 		grep terminated |
 		grep -oE "Call\/[0-9]+" |
 		cut -d'/' -f2
 	); do
 		FINISHEDNUMBER="$(lookupnumberfromcallid "$FINISHEDCALLID")"
 		FINISHEDNUMBER="$(cleanupnumber "$FINISHEDNUMBER")"
-		mmcli -m "$(modem_n)" --voice-delete-call "$FINISHEDCALLID"
+		mmcli -m any --voice-delete-call "$FINISHEDCALLID"
 		rm -f "$SXMO_NOTIFDIR/incomingcall_${FINISHEDCALLID}_notification"* #there may be multiple actionable notification for one call
 
 		rm -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.monitoredcall"
@@ -142,7 +98,7 @@ checkforfinishedcalls() {
 
 checkforincomingcalls() {
 	VOICECALLID="$(
-		mmcli -m "$(modem_n)" --voice-list-calls -a |
+		mmcli -m any --voice-list-calls -a |
 		grep -Eo '[0-9]+ incoming \(ringing-in\)' |
 		grep -Eo '[0-9]+'
 	)"
@@ -187,7 +143,7 @@ checkforincomingcalls() {
 
 checkfornewtexts() {
 	TEXTIDS="$(
-		mmcli -m "$(modem_n)" --messaging-list-sms |
+		mmcli -m any --messaging-list-sms |
 		grep -Eo '/SMS/[0-9]+ \(received\)' |
 		grep -Eo '[0-9]+'
 	)"
@@ -195,7 +151,7 @@ checkfornewtexts() {
 
 	# Loop each textid received and read out the data into appropriate logfile
 	for TEXTID in $TEXTIDS; do
-		TEXTDATA="$(mmcli -m "$(modem_n)" -s "$TEXTID" -K)"
+		TEXTDATA="$(mmcli -m any -s "$TEXTID" -K)"
 		# SMS with no TEXTID is an SMS WAP (I think). So skip.
 		if [ -z "$TEXTDATA" ]; then
 			stderr "Received an empty SMS (TEXTID: $TEXTID).  I will assume this is an MMS."
@@ -254,7 +210,7 @@ checkfornewtexts() {
 			stderr "BLOCKED text from number: $NUM (TEXTID: $TEXTID)"
 			printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$SXMO_BLOCKDIR/$NUM/sms.txt"
 			printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$SXMO_BLOCKDIR/modemlog.tsv"
-			mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
+			mmcli -m any --messaging-delete-sms="$TEXTID"
 			continue
 		fi
 
@@ -283,7 +239,7 @@ checkfornewtexts() {
 		stderr "Text from number: $NUM (TEXTID: $TEXTID)"
 		printf %b "Received SMS from $NUM at $TIME:\n$TEXT\n\n" >> "$SXMO_LOGDIR/$NUM/sms.txt"
 		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$SXMO_LOGDIR/modemlog.tsv"
-		mmcli -m "$(modem_n)" --messaging-delete-sms="$TEXTID"
+		mmcli -m any --messaging-delete-sms="$TEXTID"
 		CONTACTNAME=$(sxmo_contacts.sh --name "$NUM")
 		[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$NUM"
 
@@ -298,7 +254,7 @@ checkfornewtexts() {
 }
 
 initialmodemstatus() {
-	state=$(mmcli -m "$(modem_n)")
+	state=$(mmcli -m any)
 	if echo "$state" | grep -q -E "^.*state:.*locked.*$"; then
 		pidof unlocksim || sxmo_hooks.sh unlocksim &
 	fi

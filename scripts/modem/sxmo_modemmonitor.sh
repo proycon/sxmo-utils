@@ -115,11 +115,6 @@ mainloop() {
 		done &
 	PIDS="$PIDS $!"
 
-	#check whether the modem is still alive every minute, reset the modem if not
-	sxmo_daemons.sh start modem_monitor_check_daemons \
-		sxmo_run_periodically.sh 60 \
-		sxmo_checkdaemons.sh
-
 	# monitor for mms
 	sxmo_daemons.sh start modem_monitor_mms \
 		dbus-monitor "interface='org.ofono.mms.Service',type='signal',member='MessageAdded'" | \
