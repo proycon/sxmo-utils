@@ -72,7 +72,7 @@ contacts() {
 }
 
 texted_contacts() {
-	grep "\(recv\|sent\)_\(txt\|mms\)" "$LOGFILE" | prepare_contacts_list
+	grep "\(recv\|sent\)_\(txt\|mms\|vvm\)" "$LOGFILE" | prepare_contacts_list
 }
 
 called_contacts() {
