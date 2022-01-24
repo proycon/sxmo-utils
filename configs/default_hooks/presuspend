@@ -9,3 +9,9 @@
 pkill clickclack
 sxmo_keyboard.sh close
 pkill mpv #if any audio/video is playing, kill it (it might stutter otherwise)
+
+case "$SXMO_WM" in
+	dwm)
+		sxmo_dmenu.sh close
+		;;
+esac
