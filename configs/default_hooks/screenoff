@@ -7,6 +7,7 @@ case "$SXMO_WM" in
 		# dmenu will grab input focus (i.e. power button) so kill it before going to
 		# screenoff unless proximity lock is running (i.e. there's a phone call).
 		sxmo_daemons.sh running proximit_lock -q || sxmo_dmenu.sh close
+		;;
 esac
 
 # Start a periodic daemon (8s) "try to go to crust" after 8 seconds
