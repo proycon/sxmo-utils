@@ -101,6 +101,7 @@ checkforfinishedcalls() {
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
 			pkill -f sxmo_modemcall.sh
+			sxmo_hooks.sh statusbar volume
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.hangedupcall" ]; then
@@ -110,6 +111,7 @@ checkforfinishedcalls() {
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.initiatedcall" ]; then
 			#this call was hung up by the contact
 			pkill -f sxmo_modemcall.sh
+			sxmo_hooks.sh statusbar volume
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 		elif [ -f "$CACHEDIR/${FINISHEDCALLID}.mutedring" ]; then
@@ -120,6 +122,7 @@ checkforfinishedcalls() {
 			#this is a missed call
 			# Add a notification for every missed call
 			pkill -f sxmo_modemcall.sh
+			sxmo_hooks.sh statusbar volume
 			stderr "Missed call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$LOGDIR/modemlog.tsv"
 
