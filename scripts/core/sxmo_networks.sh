@@ -13,7 +13,7 @@ nofail() {
 }
 
 stderr() {
-	printf "%s sxmo_networks.sh: %s.\n" "$(date)" "$*" >&2
+	sxmo_log "$*"
 }
 
 menu() {

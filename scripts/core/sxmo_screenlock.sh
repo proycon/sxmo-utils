@@ -50,7 +50,7 @@ getCurState() {
 
 lock() {
 	#locked state with screen on
-	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage lock" >&2
+	sxmo_log "transitioning from $(getCurState) to stage lock"
 
 	# always echo last state first so that user can use it in their hooks
 	# TODO: Document SXMO_LASTSTATE
@@ -74,7 +74,7 @@ lock() {
 
 unlock() {
 	#normal unlocked state, screen on
-	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage unlock" >&2
+	sxmo_log "transitioning from $(getCurState) to stage unlock"
 
 	getCurState > "$SXMO_LASTSTATE"
 
@@ -97,7 +97,7 @@ unlock() {
 
 off() {
 	#locked state with screen off
-	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage off" >&2
+	sxmo_log "transitioning from $(getCurState) to stage off"
 
 	getCurState > "$SXMO_LASTSTATE"
 
@@ -115,7 +115,8 @@ off() {
 }
 
 crust() {
-	echo "$(date) sxmo_screenlock: transitioning from $(getCurState) to stage crust" >&2
+	sxmo_log "transitioning from $(getCurState) to stage crust"
+
 	getCurState > "$SXMO_LASTSTATE"
 
 	sxmo_led.sh blink red
@@ -133,18 +134,19 @@ crust() {
 		suspend_time="$YEARS8_TO_SEC"
 	fi
 	if [ "$suspend_time" -gt 0 ]; then
-		#The actual suspension to crust happens here, mediated by rtcwake
-		rtcwake -m mem -s "$suspend_time"
+		sxmo_log "real crusting now (suspendtime=$suspend_time)"
+		rtcwake -m mem -s "$suspend_time" >&2
 		#We woke up again
 		UNSUSPENDREASON="$(whichWake)"
 	else
+		sxmo_log "fake crusting now (suspendtime=$suspend_time)"
 		UNSUSPENDREASON=rtc # we fake the crust for those seconds
 	fi
 	echo "$UNSUSPENDREASON" > "$SXMO_UNSUSPENDREASONFILE"
 
 	echo "crust" > "$SXMO_LASTSTATE"
 
-	echo "$(date) sxmo_screenlock: woke up from crust (reason=$UNSUSPENDREASON)" >&2
+	sxmo_log "woke up from crust (reason=$UNSUSPENDREASON)"
 	if [ "$UNSUSPENDREASON" != "modem" ]; then
 		echo 1200 > "$NETWORKRTCSCAN"
 	fi

@@ -6,7 +6,7 @@ trap "gracefulexit" INT TERM
 . "$(dirname "$0")/sxmo_common.sh"
 
 stderr() {
-	printf "%s modemmonitor: %s.\n" "$(date)" "$*" >&2
+	sxmo_log "$*"
 }
 
 gracefulexit() {

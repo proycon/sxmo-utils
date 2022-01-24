@@ -7,7 +7,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 stderr() {
-	printf "%s sxmo_modem: %s\n" "$(date)" "$*" >&2
+	sxmo_log "$*"
 }
 
 checkmodem() {

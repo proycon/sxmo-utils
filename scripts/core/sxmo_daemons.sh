@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 ROOT="$XDG_RUNTIME_DIR/sxmo_daemons"
 mkdir -p "$ROOT"
 
@@ -30,7 +34,7 @@ stop() {
 			;;
 		*)
 			if [ -f "$ROOT/$id" ]; then
-				printf "%s sxmo_daemons: stop %s\n" "$(date)" "$id" >&2
+				sxmo_log "stop $id"
 				xargs kill ${force:+-9} < "$ROOT"/"$id"
 				rm "$ROOT"/"$id"
 			fi
@@ -55,14 +59,14 @@ start() {
 
 	if [ -f "$ROOT/$id" ]; then
 		if [ -n "$no_restart" ]; then
-			printf "%s already running\n" "$id"
+			sxmo_log "$id already running"
 			exit 1
 		else
 			stop "$id"
 		fi
 	fi
 
-	printf "%s sxmo_daemons: start %s\n" "$(date)" "$id" >&2
+	sxmo_log "start $id"
 	"$@" &
 	printf "%s\n" "$!" > "$ROOT"/"$id"
 }

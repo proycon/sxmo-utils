@@ -10,7 +10,7 @@ trap "gracefulexit" INT TERM
 . "$(dirname "$0")/sxmo_common.sh"
 
 stderr() {
-	printf "%s modemcall: %s\n" "$(date)" "$*" >&2
+	sxmo_log "$*"
 }
 
 modem_n() {

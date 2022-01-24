@@ -7,7 +7,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 stderr() {
-	printf "%s sxmo_mms: %s\n" "$(date)" "$*" >&2
+	sxmo_log "$*"
 }
 
 checkmmsd() {

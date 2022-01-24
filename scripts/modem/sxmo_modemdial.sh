@@ -23,7 +23,7 @@ EOF
 		)"
 	fi
 
-	printf "Attempting to dial: %s\n" "$NUMBER" >&2
+	sxmo_log "Attempting to dial: %s\n" "$NUMBER"
 	CALLID="$(
 		mmcli -m any --voice-create-call "number=$NUMBER" |
 		grep -Eo "Call/[0-9]+" |
@@ -31,7 +31,7 @@ EOF
 	)" || err "Unable to initiate call, is your modem working?"
 
 	find "$SXMO_CACHEDIR" -name "$CALLID.*" -delete # we cleanup all dangling event files
-	printf "Starting call with CALLID: %s\n" "$CALLID" >&2
+	sxmo_log "Starting call with CALLID: %s\n" "$CALLID"
 	exec sxmo_modemcall.sh pickup "$CALLID"
 }
 

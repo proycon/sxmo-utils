@@ -7,7 +7,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 stderr() {
-	printf "%s sxmo_vvm: %s.\n" "$(date)" "$*" >&2
+	sxmo_log "$*"
 }
 
 checkvvmd() {

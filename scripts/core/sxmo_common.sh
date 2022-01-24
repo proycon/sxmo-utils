@@ -34,3 +34,11 @@ confirm_menu() {
 		dmenu "$@" | \
 		grep -q "Yes"
 }
+
+sxmo_log() {
+	printf "%s %s: %s\n" "$(date +%H:%M:%S)" "${0##*/}" "$*" >&2
+}
+
+sxmo_debug() {
+	printf "%s %s DEBUG: %s\n" "$(date +%H:%M:%S)" "${0##*/}" "$*" >&2
+}

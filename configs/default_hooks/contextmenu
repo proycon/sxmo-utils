@@ -11,9 +11,9 @@ XPROPOUT="$(sxmo_wm.sh focusedwindow)"
 WMCLASS="${1:-$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
 
 if [ -z "$XPROPOUT" ]; then
-	printf "sxmo_appmenu: detected no active window, no problem, opening system menu\n" >&2
+	sxmo_log "detected no active window, no problem, opening system menu"
 else
-	printf "sxmo_appmenu: opening menu for wmclass %s\n" "$WMCLASS" >&2
+	sxmo_log "opening menu for wmclass $WMCLASS"
 fi
 
 case "$WMCLASS" in

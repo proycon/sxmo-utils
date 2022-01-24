@@ -5,7 +5,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 stderr() {
-	printf "%s sxmo_networkmonitor: %s\n" "$(date)" "$*" >&2
+	sxmo_log "$*"
 }
 
 gracefulexit() {
@@ -36,7 +36,7 @@ sxmo_daemons.sh start network_monitor_device \
 			read -r newstate
 			read -r oldstate
 			read -r reason
-			stderr "DEBUG: $device ($oldstate -> $newstate) [$reason]"
+			sxmo_debug "$device ($oldstate -> $newstate) [$reason]"
 
 			devicename="$(_getdevicename "$device")"
 			if echo "$newstate" | grep "uint32 100"; then
