@@ -10,15 +10,6 @@ stderr() {
 	sxmo_log "$*"
 }
 
-checkmmsd() {
-	if [ -d "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}" ]; then
-		sxmo_daemons.sh running mmsd -q && return
-		pgrep -f sxmo_mmsdconfig.sh && return
-		stderr "mmsdtng not found, attempting to start it." >&2
-		sxmo_daemons.sh start mmsd mmsdtng "$SXMO_MMSD_ARGS"
-	fi
-}
-
 # This function checks to see if there are orphaned mms messages on the server.
 # This shouldn't happen if SXMO_MMS_AUTO_DELETE is set to 1 (default).
 # However, it sometimes will, for instance, during a crash.  This function run

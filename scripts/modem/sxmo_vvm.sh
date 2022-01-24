@@ -10,15 +10,6 @@ stderr() {
 	sxmo_log "$*"
 }
 
-checkvvmd() {
-	if [ -d "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}" ]; then
-		sxmo_daemons.sh running vvmd -q && return
-		pgrep -f sxmo_vvmdconfig && return
-		stderr "vvmd not found, attempting to start it: $DBUS_SESSION_BUS_ADDRESS."
-		sxmo_daemons.sh start vvmd vvmd "$SXMO_VVMD_ARGS"
-	fi
-}
-
 # usually invoked from sxmo_modemmonitor.sh once a dbus signal is received
 processvvm() {
 	VVM_DATE="$(date +%FT%H:%M:%S%z -d "$1")" # date of voice mail

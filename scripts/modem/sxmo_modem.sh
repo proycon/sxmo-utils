@@ -200,7 +200,22 @@ checkfornewtexts() {
 		if [ -z "$TEXTDATA" ]; then
 			stderr "Received an empty SMS (TEXTID: $TEXTID).  I will assume this is an MMS."
 			printf %b "$(date +%FT%H:%M:%S%z)\tdebug_mms\tNULL\tEMPTY (TEXTID: $TEXTID)\n" >> "$SXMO_LOGDIR/modemlog.tsv"
-			continue
+			if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then 
+				if sxmo_daemons.sh running mmsd -q; then
+					continue
+				else
+					stderr "mmsd not running."
+					if pgrep -f sxmo_mmsdconfig.sh; then
+						stderr "mmsdconfig running."
+						continue
+					fi
+					stderr "restarting mmsd."
+					sxmo_daemons.sh start mmsd mmsdtng "$SXMO_MMSD_ARGS"
+					continue
+				fi
+			else
+				stderr "WARNING: mmsdtng not found or unconfigured, treating as normal sms."
+			fi
 		fi
 		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
 		NUM="$(
@@ -209,6 +224,22 @@ checkfornewtexts() {
 			sed -E 's/^sms\.content\.number\s+:\s+//'
 		)"
 		NUM="$(cleanupnumber "$NUM")"
+
+		# vvmd will mormally swallow sms numbers from VVMDestinationNumber, so if we receive an sms
+		# from that number, we know vvmd is either not configured or it is crashed.
+		if [ -f "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" ]; then
+			VVM_NUM="$(grep "^VVMDestinationNumber" "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" | cut -d'=' -f2)"
+			if [ "$NUM" = "$VVM_NUM" ]; then
+				stderr "WARNING: number ($NUM) is VVMDestinationNumber ($VVM_NUM). Vvmd must be down."
+				if pgrep -f sxmo_vvmdconfig; then
+					stderr "vvmdconfig running, doing nothing."
+				else
+					stderr "starting vvmd."
+					sxmo_daemons.sh start vvmd vvmd "$SXMO_VVMD_ARGS"
+				fi
+			fi
+		fi
+
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 		TIME="$(date +%FT%H:%M:%S%z -d "$TIME")"
 
@@ -230,7 +261,22 @@ checkfornewtexts() {
 		if [ "$TEXT" = "--" ]; then
 			stderr "Text from $NUM (TEXTID: $TEXTID) with '--'.  I will assume this is an MMS."
 			printf %b "$TIME\tdebug_mms\t$NUM\t$TEXT\n" >> "$SXMO_LOGDIR/modemlog.tsv"
-			continue
+			if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
+				if sxmo_daemons.sh running mmsd -q; then
+					continue
+				else
+					stderr "mmsd not running."
+					if pgrep -f sxmo_mmsdconfig.sh; then
+						stderr "mmsdconfig running."
+						continue
+					fi
+					stderr "restarting mmsd."
+					sxmo_daemons.sh start mmsd mmsdtng "$SXMO_MMSD_ARGS"
+					continue
+				fi
+			else
+				stderr "WARNING: mmsdtng not found or unconfigured, treating as normal sms."
+			fi
 		fi
 
 		mkdir -p "$SXMO_LOGDIR/$NUM"
