@@ -66,6 +66,7 @@ icon_lck=""
 icon_lnk=""
 icon_lst="" #list
 icon_map=""
+icon_mdd="" # modem disabled state
 icon_mic=""
 icon_mmc=""
 icon_mnu=""

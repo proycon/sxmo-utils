@@ -49,7 +49,22 @@ _modem() {
 			locked)
 				printf "%s" "$icon_plk"
 				;;
-			registered|connected)
+			disabled) # low power state
+				printf "%s" "$icon_mdd"
+				;;
+			disabling)
+				printf ">%s" "$icon_mdd"
+				;;
+			enabling) # modem enabled but neither registered (cell) nor connected (data)
+				printf ">%s" "$icon_ena"
+				;;
+			enabled)
+				printf "%s" "$icon_ena"
+				;;
+			searching) # i.e. registering
+				printf "%s" "$icon_dot"
+				;;
+			registered|connected) # we distinguish these below with USEDTECHS
 				MODEMSIGNAL="$(printf %s "$MMCLI" | jq -r '.modem.generic."signal-quality".value')"
 				if [ "$MODEMSIGNAL" -lt 20 ]; then
 					printf ""
@@ -63,11 +78,17 @@ _modem() {
 					printf ""
 				fi
 				;;
-			enabled)
-				printf "%s" "$icon_ena"
+			disconnecting)
+				printf "<<"
 				;;
-			connecting|searching)
-				printf "%s" "$icon_dot"
+			connecting)
+				printf ">>"
+				;;
+			*)
+				# FAILED, UNKNOWN, INITIALIZING
+				# see https://www.freedesktop.org/software/ModemManager/doc/latest/ModemManager/ModemManager-Flags-and-Enumerations.html#MMModemState
+				sxmo_log "WARNING: MODEMSTATUS: $MODEMSTATUS"
+				printf "<$MODEMSTATUS>"
 				;;
 		esac
 	fi
@@ -90,6 +111,10 @@ _modem() {
 				;;
 			*pots*|*gsm*|*gprs*)
 				printf 2g # ﰐ is in the bad range
+				;;
+			*)
+				sxmo_log "WARNING: USEDTECHS: $USEDTECHS"
+				printf "<$USEDTECHS>"
 				;;
 		esac
 	fi
