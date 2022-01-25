@@ -9,7 +9,7 @@
 set -e
 
 err() {
-	echo "$1">&2
+	sxmo_log "$1"
 	echo "$1" | dmenu
 	kill $$
 }
@@ -85,7 +85,7 @@ sendtextmenu() {
 			*"Send"*)
 				if sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT"; then
 					rm "$DRAFT"
-					echo "Sent text to $NUMBER">&2
+					sxmo_log "Sent text to $NUMBER"
 					exit 0
 				else
 					err "Failed to send txt to $NUMBER"

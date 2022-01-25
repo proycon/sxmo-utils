@@ -8,7 +8,7 @@ handlenewnotiffile(){
 	NOTIFFILE="$1"
 
 	if [ "$(wc -l "$NOTIFFILE" | cut -d' ' -f1)" -lt 3 ]; then
-		echo "Invalid notification file $NOTIFFILE found (<3 lines -- see notif spec in sxmo_notifwrite.sh), deleting!" >&2
+		sxmo_log "Invalid notification file $NOTIFFILE found (<3 lines -- see notif spec in sxmo_notifwrite.sh), deleting!"
 		rm -f "$NOTIFFILE"
 	else
 		sxmo_hooks.sh notification "$NOTIFFILE" &
