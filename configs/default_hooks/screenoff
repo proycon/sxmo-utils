@@ -6,7 +6,7 @@ case "$SXMO_WM" in
 	dwm)
 		# dmenu will grab input focus (i.e. power button) so kill it before going to
 		# screenoff unless proximity lock is running (i.e. there's a phone call).
-		sxmo_daemons.sh running proximit_lock -q || sxmo_dmenu.sh close
+		sxmo_daemons.sh running proximity_lock -q || sxmo_dmenu.sh close
 		;;
 esac
 
