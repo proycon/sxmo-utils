@@ -33,10 +33,10 @@ _device_list() {
 _restart_bluetooth() {
 	case "$OS" in
 		alpine|postmarketos)
-			_can_fail sxmo_terminal.sh doas rc-service bluetooth restart
+			doas rc-service bluetooth restart
 			;;
 		arch|archarm)
-			_can_fail sxmo_terminal.sh doas systemctl restart bluetooth
+			doas systemctl restart bluetooth
 			;;
 	esac
 }
