@@ -38,7 +38,7 @@ set_call_duration() {
 }
 
 _modem() {
-	MMCLI="$(mmcli -m any -J)"
+	MMCLI="$(mmcli -m any -J 2>/dev/null)"
 	MODEMSTATUS=""
 
 	if [ -z "$MMCLI" ]; then
