@@ -17,12 +17,6 @@ usage() {
 	err "Usage: $(basename "$0") number or contact [-|message]"
 }
 
-modem_n() {
-	MODEMS="$(mmcli -L)"
-	echo "$MODEMS" | grep -qoE 'Modem\/([0-9]+)' || err "Couldn't find modem - is your modem enabled?"
-	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
-}
-
 [ 0 -eq $# ] && usage
 NUMBER="$1"
 
@@ -163,8 +157,6 @@ if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$SXMO_LOG
 # we are dealing with a normal sms, so use mmcli
 else
 
-	MODEM="$(modem_n)"
-
 	TEXTSIZE="${#TEXT}"
 
 	#mmcli doesn't appear to be able to interpret a proper escape
@@ -172,12 +164,12 @@ else
 	SAFE_TEXT=$(echo "$TEXT" | sed "s/\"/''/g")
 
 	SMSNO="$(
-		mmcli -m "$MODEM" --messaging-create-sms="text=\"$SAFE_TEXT\",number=$NUMBER" |
+		mmcli -m any --messaging-create-sms="text=\"$SAFE_TEXT\",number=$NUMBER" |
 		grep -o "[0-9]*$"
 	)"
 	mmcli -s "${SMSNO}" --send || err "Couldn't send text message"
-	for i in $(mmcli -m "$MODEM" --messaging-list-sms | grep " (sent)" | cut -f5 -d' ') ; do
-		mmcli -m "$MODEM" --messaging-delete-sms="$i"
+	for i in $(mmcli -m any --messaging-list-sms | grep " (sent)" | cut -f5 -d' ') ; do
+		mmcli -m any --messaging-delete-sms="$i"
 	done
 
 	TIME="$(date +%FT%H:%M:%S%z)"

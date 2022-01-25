@@ -13,13 +13,6 @@ stderr() {
 	sxmo_log "$*"
 }
 
-modem_n() {
-	MODEMS="$(mmcli -L)"
-	echo "$MODEMS" | grep -qoE 'Modem\/([0-9]+)' || finish "Couldn't find modem - is your modem enabled?"
-	echo "$MODEMS" | grep -oE 'Modem\/([0-9]+)' | cut -d'/' -f2
-}
-
-
 finish() {
 	sxmo_vibratepine 1000 &
 	if [ -f "$ALSASTATEFILE" ]; then
@@ -55,7 +48,7 @@ modem_cmd_errcheck() {
 }
 
 vid_to_number() {
-	mmcli -m "$(modem_n)" -o "$1" -K |
+	mmcli -m any -o "$1" -K |
 	grep call.properties.number |
 	cut -d ':' -f2 |
 	tr -d  ' '
@@ -101,7 +94,7 @@ acceptcall() {
 		tr -d " "
 	)"
 	if [ "$DIRECTION" = "outgoing" ]; then
-		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --start
+		modem_cmd_errcheck -m any -o "$CALLID" --start
 		touch "$SXMO_CACHEDIR/${CALLID}.initiatedcall" #this signals that we started this call
 		log_event "call_start" "$CALLID"
 		stderr "Started call $CALLID"
@@ -110,7 +103,7 @@ acceptcall() {
 		sxmo_hooks.sh pickup &
 		touch "$SXMO_CACHEDIR/${CALLID}.pickedupcall" #this signals that we picked this call up
 											     #to other asynchronously running processes
-		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --accept
+		modem_cmd_errcheck -m any -o "$CALLID" --accept
 		log_event "call_pickup" "$CALLID"
 		stderr "Picked up call $CALLID"
 	else
@@ -132,7 +125,7 @@ hangup() {
 		sxmo_hooks.sh discard &
 		log_event "call_discard" "$CALLID"
 	fi
-	modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --hangup
+	modem_cmd_errcheck -m any -o "$CALLID" --hangup
 	finish "Call with $NUMBER terminated"
 	exit 0
 }
@@ -195,7 +188,7 @@ dtmfmenu() {
 			dmenu -p "DTMF Tone"
 		)" || return
 		echo "$PICKED" | grep -q "Return to Call Menu" && return
-		modem_cmd_errcheck -m "$(modem_n)" -o "$CALLID" --send-dtmf="$PICKED"
+		modem_cmd_errcheck -m any -o "$CALLID" --send-dtmf="$PICKED"
 	done
 }
 
@@ -239,8 +232,6 @@ incomingcallmenu() {
 	fi
 	rm -f "$SXMO_NOTIFDIR/incomingcall_${1}_notification"* #there may be multiple actionable notification for one call
 }
-
-modem_n || finish "Couldn't determine modem number - is modem online?"
 
 # do not duplicate proximity lock if already running
 if sxmo_daemons.sh running proximity_lock -q; then
