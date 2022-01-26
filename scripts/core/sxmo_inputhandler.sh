@@ -263,9 +263,9 @@ case "$ACTION" in
 		;;
 	"uptopedge")
 		sxmo_dmenu.sh close
-		if pgrep mako; then
+		if pgrep mako >/dev/null; then
 			makoctl dismiss --all
-		elif pgrep dunst; then
+		elif pgrep dunst >/dev/null; then
 			dunstctl close-all
 		fi
 		exit 0

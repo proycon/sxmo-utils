@@ -37,7 +37,7 @@ mainloop() {
 	sxmo_daemons.sh start modem_monitor_voice \
 		dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Voice',type='signal',member='CallAdded'" | \
 		while read -r line; do
-			echo "$line" | grep -E "^signal" && sxmo_modem.sh checkforincomingcalls
+			echo "$line" | grep -qE "^signal" && sxmo_modem.sh checkforincomingcalls
 		done &
 	PIDS="$PIDS $!"
 
@@ -45,7 +45,7 @@ mainloop() {
 	sxmo_daemons.sh start modem_monitor_text \
 		dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Messaging',type='signal',member='Added'" | \
 		while read -r line; do
-			echo "$line" | grep -E "^signal" && sxmo_modem.sh checkfornewtexts
+			echo "$line" | grep -qE "^signal" && sxmo_modem.sh checkfornewtexts
 		done &
 	PIDS="$PIDS $!"
 
@@ -53,7 +53,7 @@ mainloop() {
 	sxmo_daemons.sh start modem_monitor_finished_voice \
 		dbus-monitor --system "interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',arg0='org.freedesktop.ModemManager1.Call'" | \
 		while read -r line; do
-			echo "$line" | grep -E "^signal" && sxmo_modem.sh checkforfinishedcalls
+			echo "$line" | grep -qE "^signal" && sxmo_modem.sh checkforfinishedcalls
 		done &
 	PIDS="$PIDS $!"
 
@@ -61,7 +61,7 @@ mainloop() {
 	sxmo_daemons.sh start modem_monitor_state_change \
 		dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem',type='signal',member='StateChanged'" | \
 		while read -r line; do
-			if echo "$line" | grep -E "^signal.*StateChanged"; then
+			if echo "$line" | grep -qE "^signal.*StateChanged"; then
 				read -r oldstate
 				read -r newstate
 				read -r reason

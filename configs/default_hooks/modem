@@ -44,11 +44,11 @@ statenumtoname() {
 sxmo_log "modem hook: $(statenumtoname "$oldstate") -> $(statenumtoname "$newstate") [reason: $(echo "$reason" | cut -d' ' -f2)]"
 
 # 2=MM_MODEM_STATE_LOCKED
-if echo "$newstate" | grep "int32 2"; then
+if echo "$newstate" | grep -q "int32 2"; then
 	sxmo_log "modem hook: calling unlocksim"
 	pidof unlocksim || sxmo_hooks.sh unlocksim &
 # 8=MM_MODEM_STATE_REGISTERED
-elif echo "$newstate" | grep "int32 8"; then
+elif echo "$newstate" | grep -q "int32 8"; then
 	sxmo_log "modem hook: reloading checks"
 	#if there is a PIN entry menu open, kill it:
 	# shellcheck disable=SC2009

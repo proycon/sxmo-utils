@@ -159,7 +159,7 @@ checkfornewtexts() {
 					continue
 				else
 					stderr "mmsd not running."
-					if pgrep -f sxmo_mmsdconfig.sh; then
+					if pgrep -f sxmo_mmsdconfig.sh >/dev/null; then
 						stderr "mmsdconfig running."
 						continue
 					fi
@@ -185,7 +185,7 @@ checkfornewtexts() {
 			VVM_NUM="$(grep "^VVMDestinationNumber" "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" | cut -d'=' -f2)"
 			if [ "$NUM" = "$VVM_NUM" ]; then
 				stderr "WARNING: number ($NUM) is VVMDestinationNumber ($VVM_NUM). Vvmd must be down."
-				if pgrep -f sxmo_vvmdconfig; then
+				if pgrep -f sxmo_vvmdconfig.sh >/dev/null; then
 					stderr "vvmdconfig running, doing nothing."
 				else
 					stderr "starting vvmd."
@@ -220,7 +220,7 @@ checkfornewtexts() {
 					continue
 				else
 					stderr "mmsd not running."
-					if pgrep -f sxmo_mmsdconfig.sh; then
+					if pgrep -f sxmo_mmsdconfig.sh >/dev/null; then
 						stderr "mmsdconfig running."
 						continue
 					fi
