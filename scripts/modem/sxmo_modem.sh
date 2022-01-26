@@ -46,31 +46,31 @@ checkforfinishedcalls() {
 		mmcli -m any --voice-delete-call "$FINISHEDCALLID"
 		rm -f "$SXMO_NOTIFDIR/incomingcall_${FINISHEDCALLID}_notification"* #there may be multiple actionable notification for one call
 
-		rm -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.monitoredcall"
+		rm -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.monitoredcall"
 
 		TIME="$(date +%FT%H:%M:%S%z)"
 		mkdir -p "$SXMO_LOGDIR"
-		if [ -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.discardedcall" ]; then
+		if [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.discardedcall" ]; then
 			#this call was discarded
 			stderr "Discarded call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
-		elif [ -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.pickedupcall" ]; then
+		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
 			pkill -f sxmo_modemcall.sh
 			sxmo_hooks.sh statusbar volume
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
-		elif [ -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.hangedupcall" ]; then
+		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.hangedupcall" ]; then
 			#this call was hung up by the user
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
-		elif [ -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.initiatedcall" ]; then
+		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.initiatedcall" ]; then
 			#this call was hung up by the contact
 			pkill -f sxmo_modemcall.sh
 			sxmo_hooks.sh statusbar volume
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
-		elif [ -f "$SXMO_CACHEDIR/${FINISHEDCALLID}.mutedring" ]; then
+		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.mutedring" ]; then
 			#this ring was muted up
 			stderr "Muted ring from $FINISHEDNUMBER"
 			printf %b "$TIME\tring_muted\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
@@ -104,11 +104,11 @@ checkforincomingcalls() {
 	)"
 	[ -z "$VOICECALLID" ] && return
 
-	[ -f "$SXMO_CACHEDIR/${VOICECALLID}.monitoredcall" ] && return # prevent multiple rings
-	find "$SXMO_CACHEDIR" -name "$VOICECALLID.*" -delete # we cleanup all dangling event files
-	touch "$SXMO_CACHEDIR/${VOICECALLID}.monitoredcall" #this signals that we handled the call
+	[ -f "$XDG_RUNTIME_DIR/${VOICECALLID}.monitoredcall" ] && return # prevent multiple rings
+	find "$XDG_RUNTIME_DIR" -name "$VOICECALLID.*" -delete 2>/dev/null # we cleanup all dangling event files
+	touch "$XDG_RUNTIME_DIR/${VOICECALLID}.monitoredcall" #this signals that we handled the call
 
-	cat "$SXMO_LASTSTATE" > "$SXMO_CACHEDIR/${VOICECALLID}.laststate"
+	cat "$SXMO_LASTSTATE" > "$XDG_RUNTIME_DIR/${VOICECALLID}.laststate"
 
 	# Determine the incoming phone number
 	stderr "Incoming Call..."

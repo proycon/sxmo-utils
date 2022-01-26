@@ -95,13 +95,13 @@ acceptcall() {
 	)"
 	if [ "$DIRECTION" = "outgoing" ]; then
 		modem_cmd_errcheck -m any -o "$CALLID" --start
-		touch "$SXMO_CACHEDIR/${CALLID}.initiatedcall" #this signals that we started this call
+		touch "$XDG_RUNTIME_DIR/${CALLID}.initiatedcall" #this signals that we started this call
 		log_event "call_start" "$CALLID"
 		stderr "Started call $CALLID"
 	elif [ "$DIRECTION" = "incoming" ]; then
 		stderr "Invoking pickup hook (async)"
 		sxmo_hooks.sh pickup &
-		touch "$SXMO_CACHEDIR/${CALLID}.pickedupcall" #this signals that we picked this call up
+		touch "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall" #this signals that we picked this call up
 											     #to other asynchronously running processes
 		modem_cmd_errcheck -m any -o "$CALLID" --accept
 		log_event "call_pickup" "$CALLID"
@@ -114,13 +114,13 @@ acceptcall() {
 
 hangup() {
 	CALLID="$1"
-	if [ -f "$SXMO_CACHEDIR/${CALLID}.pickedupcall" ]; then
-		rm -f "$SXMO_CACHEDIR/${CALLID}.pickedupcall"
-		touch "$SXMO_CACHEDIR/${CALLID}.hangedupcall" #this signals that we hanged up this call to other asynchronously running processes
+	if [ -f "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall" ]; then
+		rm -f "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall"
+		touch "$XDG_RUNTIME_DIR/${CALLID}.hangedupcall" #this signals that we hanged up this call to other asynchronously running processes
 		log_event "call_hangup" "$CALLID"
 	else
 		#this call was never picked up and hung up immediately, so it is a discarded call
-		touch "$SXMO_CACHEDIR/${CALLID}.discardedcall" #this signals that we discarded this call to other asynchronously running processes
+		touch "$XDG_RUNTIME_DIR/${CALLID}.discardedcall" #this signals that we discarded this call to other asynchronously running processes
 		stderr "sxmo_modemcall: Invoking discard hook (async)"
 		sxmo_hooks.sh discard &
 		log_event "call_discard" "$CALLID"
@@ -200,7 +200,7 @@ pickup() {
 
 mute() {
 	CALLID="$1"
-	touch "$SXMO_CACHEDIR/${CALLID}.mutedring" #this signals that we muted this ring
+	touch "$XDG_RUNTIME_DIR/${CALLID}.mutedring" #this signals that we muted this ring
 	stderr "Invoking mute_ring hook (async)"
 	sxmo_hooks.sh mute_ring "$CONTACTNAME" &
 	log_event "ring_mute" "$1"
