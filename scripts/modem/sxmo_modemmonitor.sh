@@ -123,5 +123,12 @@ mainloop() {
 	done
 }
 
-rm -f "$SXMO_CACHEDIR"/*.pickedupcall 2>/dev/null #new session, forget all calls we picked up previously
+# new session, clean up all phone related files
+rm -f "$XDG_RUNTIME_DIR"/*.monitoredcall 2>/dev/null
+rm -f "$XDG_RUNTIME_DIR"/*.mutedring 2>/dev/null
+rm -f "$XDG_RUNTIME_DIR"/*.hangedupcall 2>/dev/null
+rm -f "$XDG_RUNTIME_DIR"/*.discardedcall 2>/dev/null
+rm -f "$XDG_RUNTIME_DIR"/*.initiatedcall 2>/dev/null
+rm -f "$XDG_RUNTIME_DIR"/*.pickedupcall 2>/dev/null
+rm -f "$SXMO_NOTIFDIR"/incomingcall* 2>/dev/null
 mainloop
