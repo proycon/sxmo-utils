@@ -30,8 +30,15 @@ checkforlostmms() {
 	fi
 
 	# generate a list of all messages on the server
+	if ! RES="$(dbus-send --dest=org.ofono.mms --print-reply /org/ofono/mms/modemmanager org.ofono.mms.Service.GetMessages)"; then
+		stderr "dbus-send to org.ofono.mms failed."
+		stderr "mmsdtng is busy or something is broken."
+		return 1
+	fi
+
 	ALL_MMS_TEMP="$(mktemp)"
-	dbus-send --dest=org.ofono.mms --print-reply /org/ofono/mms/modemmanager org.ofono.mms.Service.GetMessages | grep "object path" | cut -d'"' -f2 | rev | cut -d'/' -f1 | rev | sort -u > "$ALL_MMS_TEMP"
+	printf "%s\n" "$RES" | grep "object path" | cut -d'"' -f2 | rev | cut -d'/' -f1 | rev | sort -u > "$ALL_MMS_TEMP"
+
 	count="$(wc -l < "$ALL_MMS_TEMP")"
 
 	# loop through messages and report (or process if FORCE=1) them

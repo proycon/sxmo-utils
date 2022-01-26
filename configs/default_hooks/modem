@@ -56,7 +56,9 @@ elif echo "$newstate" | grep "int32 8"; then
 	sxmo_modem.sh checkforfinishedcalls
 	sxmo_modem.sh checkforincomingcalls
 	sxmo_modem.sh checkfornewtexts
-	sxmo_mms.sh checkforlostmms
+	if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
+		sxmo_mms.sh checkforlostmms
+	fi
 
 	#if ! ping -Iwwan0 -q -c 1 -W 10 www.google.com; then
 	#	sxmo_log "modem hook: restarting cdc-wdm0"
