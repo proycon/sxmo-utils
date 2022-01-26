@@ -42,7 +42,7 @@ _sxmo_load_environments() {
 	export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/dev/shm/user/$(id -u)}"
 
 	export SXMO_CACHEDIR="$XDG_CACHE_HOME"/sxmo
-	export SXMO_DEBUGLOG="$SXMO_CACHEDIR/sxmo.log"
+	export SXMO_DEBUGLOG="${XDG_STATE_HOME:-$HOME/.local/state}/tinydm.log"
 
 	export SXMO_BLOCKDIR="$XDG_DATA_HOME/sxmo/block"
 	export SXMO_BLOCKFILE="$XDG_CONFIG_HOME/sxmo/block.tsv"

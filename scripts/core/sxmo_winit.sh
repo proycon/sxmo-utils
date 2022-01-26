@@ -38,12 +38,11 @@ defaultconfigs() {
 }
 
 start() {
-	[ -f "$XDG_CACHE_HOME/sxmo/sxmo.log" ] && mv -f "$XDG_CACHE_HOME/sxmo/sxmo.log" "$XDG_CACHE_HOME/sxmo/sxmo.previous.log"
 	# shellcheck disable=SC2016
 	dbus-run-session sh -c '
 		echo "$DBUS_SESSION_BUS_ADDRESS" > "$XDG_RUNTIME_DIR"/dbus.bus
 		/usr/bin/sway -c "$XDG_CONFIG_HOME/sxmo/sway"
-	' 2> "$SXMO_DEBUGLOG"
+	'
 }
 
 cleanup() {
@@ -69,7 +68,7 @@ init() {
 }
 
 if [ -z "$1" ]; then
-	init 2> ~/.init.log #hard-coded location because at this stage we're not sure the xdg dirs exist yet
+	init
 else
 	"$1"
 fi
