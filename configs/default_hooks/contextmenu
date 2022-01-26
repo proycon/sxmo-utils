@@ -4,6 +4,8 @@
 # It should stdout the title as the first line followed by the entries
 
 # include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(which sxmo_common.sh)"
 # shellcheck source=scripts/core/sxmo_icons.sh
 . "$(which sxmo_icons.sh)"
 
