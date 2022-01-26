@@ -134,7 +134,7 @@ xorgtogglelayout() {
 }
 
 swayswitchfocus() {
-	sxmo_sws.sh
+	sxmo_wmmenu.sh swaywindowswitcher
 }
 
 xorgswitchfocus() {

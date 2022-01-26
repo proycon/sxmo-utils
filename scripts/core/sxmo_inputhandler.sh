@@ -210,7 +210,7 @@ case "$ACTION" in
 		exit
 		;;
 	"volup_three")
-		sxmo_wm.sh switchfocus
+		sxmo_wmmenu.sh
 		exit
 		;;
 	"rightleftedge")
