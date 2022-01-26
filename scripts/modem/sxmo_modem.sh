@@ -108,8 +108,6 @@ checkforincomingcalls() {
 	find "$XDG_RUNTIME_DIR" -name "$VOICECALLID.*" -delete 2>/dev/null # we cleanup all dangling event files
 	touch "$XDG_RUNTIME_DIR/${VOICECALLID}.monitoredcall" #this signals that we handled the call
 
-	cat "$SXMO_LASTSTATE" > "$XDG_RUNTIME_DIR/${VOICECALLID}.laststate"
-
 	# Determine the incoming phone number
 	stderr "Incoming Call..."
 	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
