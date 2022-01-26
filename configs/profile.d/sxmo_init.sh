@@ -5,8 +5,8 @@
 _sxmo_is_running() {
 	unset SXMO_WM
 
-	if [ -f "${XDG_CACHE_HOME:-$HOME/.cache}/sxmo/sxmo.swaysock" ]; then
-		if SWAYSOCK="$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/sxmo/sxmo.swaysock")" \
+	if [ -f "${XDG_RUNTIME_DIR:-/dev/shm/user/$(id -u)}"/sxmo.swaysock ]; then
+		if SWAYSOCK="$(cat "${XDG_RUNTIME_DIR:-/dev/shm/user/$(id -u)}"/sxmo.swaysock)" \
 			swaymsg 2>/dev/null; then
 			printf "Detected the Sway environment\n" >&2
 			export SXMO_WM=sway
@@ -68,24 +68,24 @@ _sxmo_grab_session() {
 
 	_sxmo_load_environments
 
-	if [ -f "$SXMO_CACHEDIR"/dbus.bus ]; then
-		DBUS_SESSION_BUS_ADDRESS="$(cat "$SXMO_CACHEDIR"/dbus.bus)"
+	if [ -f "$XDG_RUNTIME_DIR"/dbus.bus ]; then
+		DBUS_SESSION_BUS_ADDRESS="$(cat "$XDG_RUNTIME_DIR"/dbus.bus)"
 		export DBUS_SESSION_BUS_ADDRESS
 		if ! dbus-send --dest=org.freedesktop.DBus \
 			/org/freedesktop/DBus org.freedesktop.DBus.ListNames \
 			2> /dev/null; then
-				printf "dbus (%s) failed, unsetting...\n" "$DBUS_SESSION_BUS_ADDRESS" >&2
+				printf "WARNING: The dbus-send test failed with DBUS_SESSION_BUS_ADDRESS=%s. Unsetting...\n" "$DBUS_SESSION_BUS_ADDRESS" >&2
 				unset DBUS_SESSION_BUS_ADDRESS
 		fi
 	else
-		printf "no dbus cache file: %s/dbus.bus...\n" "$SXMO_CACHEDIR" >&2
+		printf "WARNING: No dbus cache file found at %s/dbus.bus.\n" "$XDG_RUNTIME_DIR" >&2
 	fi
 
 	# We dont export DISPLAY and WAYLAND_DISPLAY on purpose
 	case "$SXMO_WM" in
 		sway)
-			if [ -f "$SXMO_CACHEDIR"/sxmo.swaysock ]; then
-				SWAYSOCK="$(cat "$SXMO_CACHEDIR"/sxmo.swaysock)"
+			if [ -f "$XDG_RUNTIME_DIR"/sxmo.swaysock ]; then
+				SWAYSOCK="$(cat "$XDG_RUNTIME_DIR"/sxmo.swaysock)"
 				export SWAYSOCK
 			fi
 			;;
