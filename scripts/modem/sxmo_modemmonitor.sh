@@ -130,5 +130,6 @@ rm -f "$XDG_RUNTIME_DIR"/*.hangedupcall 2>/dev/null
 rm -f "$XDG_RUNTIME_DIR"/*.discardedcall 2>/dev/null
 rm -f "$XDG_RUNTIME_DIR"/*.initiatedcall 2>/dev/null
 rm -f "$XDG_RUNTIME_DIR"/*.pickedupcall 2>/dev/null
+rm -f "$XDG_RUNTIME_DIR"/sxmo.ring.pid 2>/dev/null
 rm -f "$SXMO_NOTIFDIR"/incomingcall* 2>/dev/null
 mainloop
