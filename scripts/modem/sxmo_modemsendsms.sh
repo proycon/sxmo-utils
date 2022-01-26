@@ -5,7 +5,7 @@
 . "$(which sxmo_common.sh)"
 
 info() {
-	echo "$(date) $*" >> /dev/stderr
+	sxmo_log "$*"
 }
 
 err() {
