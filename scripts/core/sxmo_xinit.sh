@@ -55,21 +55,13 @@ defaultconfigs() {
 	defaultconfig /usr/share/sxmo/appcfg/dunst.conf "$XDG_CONFIG_HOME/dunst/dunstrc" 644
 }
 
-customxinit() {
-	set -o allexport
-
-	# shellcheck disable=SC1090,SC1091
-	. "$XDG_CONFIG_HOME/sxmo/xinit"
-	set +o allexport
-}
-
 start() {
 	[ -f "$XDG_CACHE_HOME/sxmo/sxmo.log" ] && mv -f "$XDG_CACHE_HOME/sxmo/sxmo.log" "$XDG_CACHE_HOME/sxmo/sxmo.previous.log"
-	dbus-run-session sh -c "
-		set -- customxinit
-		. $0
+	dbus-run-session sh -c '
+		echo "$DBUS_SESSION_BUS_ADDRESS" > "$SXMO_CACHEDIR"/dbus.bus
+		. "$XDG_CONFIG_HOME"/sxmo/xinit
 		dwm
-	" 2> "$SXMO_DEBUGLOG"
+	' 2> "$SXMO_DEBUGLOG"
 }
 
 cleanup() {

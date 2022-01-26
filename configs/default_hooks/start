@@ -4,9 +4,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(which sxmo_common.sh)"
 
-#Make dbus session available
-echo "$DBUS_SESSION_BUS_ADDRESS" > "$SXMO_CACHEDIR"/dbus.bus
-
 # in case of weird crash
 echo "unlock" > "$SXMO_LASTSTATE"
 [ -f "$SXMO_UNSUSPENDREASONFILE" ] && rm -f "$SXMO_UNSUSPENDREASONFILE"

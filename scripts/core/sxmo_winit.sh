@@ -39,9 +39,10 @@ defaultconfigs() {
 
 start() {
 	[ -f "$XDG_CACHE_HOME/sxmo/sxmo.log" ] && mv -f "$XDG_CACHE_HOME/sxmo/sxmo.log" "$XDG_CACHE_HOME/sxmo/sxmo.previous.log"
-	dbus-run-session sh -c "
-		/usr/bin/sway -c \"$XDG_CONFIG_HOME/sxmo/sway\"
-	" 2> "$SXMO_DEBUGLOG"
+	dbus-run-session sh -c '
+		echo "$DBUS_SESSION_BUS_ADDRESS" > "$SXMO_CACHEDIR"/dbus.bus
+		/usr/bin/sway -c "$XDG_CONFIG_HOME/sxmo/sway"
+	' 2> "$SXMO_DEBUGLOG"
 }
 
 cleanup() {
