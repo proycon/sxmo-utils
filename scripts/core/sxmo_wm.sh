@@ -130,6 +130,9 @@ swaytogglelayout() {
 }
 
 xorgtogglelayout() {
+	if [ -z "$DISPLAY" ]; then
+		export DISPLAY=:0
+	fi
 	xdotool key --clearmodifiers key Super+space
 }
 
@@ -138,6 +141,9 @@ swayswitchfocus() {
 }
 
 xorgswitchfocus() {
+	if [ -z "$DISPLAY" ]; then
+		export DISPLAY=:0
+	fi
 	xdotool key --clearmodifiers Super+x
 }
 
@@ -173,6 +179,9 @@ swaynextworkspace() {
 }
 
 xorgnextworkspace() {
+	if [ -z "$DISPLAY" ]; then
+		export DISPLAY=:0
+	fi
 	xdotool key --clearmodifiers Super+Shift+r
 }
 
@@ -181,6 +190,9 @@ swaypreviousworkspace() {
 }
 
 xorgpreviousworkspace() {
+	if [ -z "$DISPLAY" ]; then
+		export DISPLAY=:0
+	fi
 	xdotool key --clearmodifiers Super+Shift+e
 }
 
@@ -189,6 +201,9 @@ swaymovenextworkspace() {
 }
 
 xorgmovenextworkspace() {
+	if [ -z "$DISPLAY" ]; then
+		export DISPLAY=:0
+	fi
 	xdotool key --clearmodifiers Super+r
 }
 
@@ -197,6 +212,9 @@ swaymovepreviousworkspace() {
 }
 
 xorgmovepreviousworkspace() {
+	if [ -z "$DISPLAY" ]; then
+		export DISPLAY=:0
+	fi
 	xdotool key --clearmodifiers Super+e
 }
 
@@ -205,6 +223,9 @@ swayworkspace() {
 }
 
 xorgworkspace() {
+	if [ -z "$DISPLAY" ]; then
+		export DISPLAY=:0
+	fi
 	xdotool key --clearmodifiers "Super+$1"
 }
 
@@ -213,6 +234,9 @@ swaymoveworkspace() {
 }
 
 xorgmoveworkspace() {
+	if [ -z "$DISPLAY" ]; then
+		export DISPLAY=:0
+	fi
 	xdotool key --clearmodifiers "Super+shift+$1"
 }
 
