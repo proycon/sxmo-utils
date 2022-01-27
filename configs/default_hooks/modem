@@ -5,66 +5,40 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(which sxmo_common.sh)"
 
+# see networkmanager documentation for state names
 oldstate="$1"
 newstate="$2"
-reason="$3"
+reason="$3" # 0 or 1
 
-statenumtoname() {
-	case "$*" in
-		"int32 -1") pnewstate="FAILED (-1)"
-			;;
-		"int32 0") pnewstate="UNKNOWN (0)"
-			;;
-		"int32 1") pnewstate="INITIALIZING (1)"
-			;;
-		"int32 2") pnewstate="LOCKED (2)"
-			;;
-		"int32 3") pnewstate="DISABLED (3)"
-			;;
-		"int32 4") pnewstate="DISABLING (4)"
-			;;
-		"int32 5") pnewstate="ENABLING (5)"
-			;;
-		"int32 6") pnewstate="ENABLED (6)"
-			;;
-		"int32 7") pnewstate="SEARCHING (7)"
-			;;
-		"int32 8") pnewstate="REGISTERED (8)"
-			;;
-		"int32 9") pnewstate="DISCONNECTING (9)"
-			;;
-		"int32 10") pnewstate="CONNECTING (10)"
-			;;
-		"int32 11") pnewstate="CONNECTED (11)"
-			;;
-	esac
-	printf %s "$pnewstate"
-}
+sxmo_debug "$oldstate -> $newstate [reason: $reason]"
 
-sxmo_log "modem hook: $(statenumtoname "$oldstate") -> $(statenumtoname "$newstate") [reason: $(echo "$reason" | cut -d' ' -f2)]"
+case "$newstate" in
+	"locked")
+		sxmo_log "State is locked.  Attempting to unlock."
+		if ! pgrep -f "sxmo_unlocksim.sh" >/dev/null; then
+			sxmo_unlocksim.sh
+		fi
+		;;
+	"registered")
+		sxmo_log "State is registered.  Checking for calls and messages."
 
-# 2=MM_MODEM_STATE_LOCKED
-if echo "$newstate" | grep -q "int32 2"; then
-	sxmo_log "modem hook: calling unlocksim"
-	pidof unlocksim || sxmo_hooks.sh unlocksim &
-# 8=MM_MODEM_STATE_REGISTERED
-elif echo "$newstate" | grep -q "int32 8"; then
-	sxmo_log "modem hook: reloading checks"
-	#if there is a PIN entry menu open, kill it:
-	# shellcheck disable=SC2009
-	ps aux | grep dmenu | grep PIN | gawk '{ print $1 }' | xargs kill 2>/dev/null
-	sxmo_modem.sh checkforfinishedcalls
-	sxmo_modem.sh checkforincomingcalls
-	sxmo_modem.sh checkfornewtexts
-	if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
-		sxmo_mms.sh checkforlostmms
-	fi
+		# kill the pin-entry dmenu if still open
+		pkill -f sxmo_unlocksim.sh
 
-	#if ! ping -Iwwan0 -q -c 1 -W 10 www.google.com; then
-	#	sxmo_log "modem hook: restarting cdc-wdm0"
-	#	nmcli c down "MINTY"
-	#	nmcli c up "MINTY"
-	#else
-	#	sxmo_log "modem hook: ping ok."
-	#fi
-fi
+		sxmo_modem.sh checkforfinishedcalls
+		sxmo_modem.sh checkforincomingcalls
+		sxmo_modem.sh checkfornewtexts
+		if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
+			sxmo_mms.sh checkforlostmms
+		fi
+
+		# An example of something else to do here!
+		#if ! ping -Iwwan0 -q -c 1 -W 10 www.google.com >/dev/null; then
+		#	sxmo_log "ping failed."
+		#	nmcli c down "MINTY"
+		#	nmcli c up "MINTY"
+		#else
+		#	sxmo_log "ping ok."
+		#fi
+		;;
+esac

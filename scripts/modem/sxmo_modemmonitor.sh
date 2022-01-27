@@ -21,6 +21,39 @@ gracefulexit() {
 	exit
 }
 
+# see networkmananger documentation for these state names
+statenumtoname() {
+	case "$1" in
+		"int32 -1") printf "failed"
+			;;
+		"int32 0") printf "unknown"
+			;;
+		"int32 1") printf "initializing"
+			;;
+		"int32 2") printf "locked"
+			;;
+		"int32 3") printf "disabled"
+			;;
+		"int32 4") printf "disabling"
+			;;
+		"int32 5") printf "enabling"
+			;;
+		"int32 6") printf "enabled"
+			;;
+		"int32 7") printf "searching"
+			;;
+		"int32 8") printf "registered"
+			;;
+		"int32 9") printf "disconnecting"
+			;;
+		"int32 10") printf "connecting"
+			;;
+		"int32 11") printf "connected"
+			;;
+		*) printf "ERROR"
+			;;
+	esac
+}
 
 mainloop() {
 	#these may be premature and return nothing yet (because modem/sim might not be ready yet)
@@ -29,7 +62,11 @@ mainloop() {
 	sxmo_modem.sh checkfornewtexts
 	sxmo_mms.sh checkforlostmms
 
-	sxmo_modem.sh initialmodemstatus
+	# get initial modem state
+	newstate="$(mmcli -m any -K | grep "^modem.generic.state " | cut -d':' -f2 | sed 's/^ //')"
+	# fake oldstate (boot) and reason (0)
+	sxmo_hooks.sh modem "boot" "$newstate" "0"
+	sxmo_hooks.sh statusbar modem
 
 	PIDS=""
 
@@ -65,7 +102,9 @@ mainloop() {
 				read -r oldstate
 				read -r newstate
 				read -r reason
-				sxmo_hooks.sh modem "$oldstate" "$newstate" "$reason"
+				sxmo_hooks.sh modem "$(statenumtoname "$oldstate")" \
+					"$(statenumtoname "$newstate")" \
+					"$(echo "$reason" | sed 's/uint32 //')"
 				sxmo_hooks.sh statusbar modem
 			fi
 		done &

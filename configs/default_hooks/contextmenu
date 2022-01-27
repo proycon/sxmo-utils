@@ -38,6 +38,7 @@ case "$WMCLASS" in
 				sxmo_daemons.sh running lisgd -q > /dev/null &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
 			) ^ 1 ^ toggle_daemon 'Lisgd' lisgd sxmo_hooks.sh lisgdstart
+			$icon_plk Modem PIN                ^ 0 ^ sxmo_unlocksim.sh
 			$icon_phn Modem Monitor $(
 				sxmo_daemons.sh running modem_monitor -q > /dev/null &&
 				printf %b "$icon_ton ^ 1 ^ sxmo_modemmonitortoggle.sh off" || printf %b "$icon_tof ^ 1 ^ sxmo_modemmonitortoggle.sh on"

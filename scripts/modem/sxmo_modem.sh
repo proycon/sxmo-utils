@@ -251,11 +251,4 @@ checkfornewtexts() {
 	done
 }
 
-initialmodemstatus() {
-	state=$(mmcli -m any)
-	if echo "$state" | grep -q -E "^.*state:.*locked.*$"; then
-		pidof unlocksim || sxmo_hooks.sh unlocksim &
-	fi
-}
-
 "$@"
