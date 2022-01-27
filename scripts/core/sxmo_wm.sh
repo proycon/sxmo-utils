@@ -12,14 +12,14 @@ xorgdpms() {
 		STATE=on
 	fi
 
-	if [ "$1" = on ] && [ "$STATE" != on ]; then
+	if [ -z "$1" ]; then
+		printf %s "$STATE"
+	elif [ "$1" = on ] && [ "$STATE" != on ]; then
 		xset dpms 0 0 3
 		xset dpms force off
-	elif [ "$1" = off ] && [ "$STATE" != off ] ; then
+	elif [ "$1" = off ] && [ "$STATE" != off ]; then
 		xset dpms 0 0 0
 		xset dpms force on
-	else
-		printf %s "$STATE"
 	fi
 }
 
@@ -31,13 +31,14 @@ swaydpms() {
 		STATE=on
 	fi
 
-	if [ "$1" = on ] && [ "$STATE" != on ]; then
+	if [ -z "$1" ]; then
+		printf %s "$STATE"
+	elif [ "$1" = on ] && [ "$STATE" != on ]; then
 		swaymsg -- output DSI-1 dpms false
 	elif [ "$1" = off ] && [ "$STATE" != off ] ; then
 		swaymsg -- output DSI-1 dpms true
-	else
-		printf %s "$STATE"
 	fi
+
 }
 
 xorginputevent() {
@@ -48,12 +49,12 @@ xorginputevent() {
 		STATE=on
 	fi
 
-	if [ "$1" = on ] && [ "$STATE" != on ]; then
+	if [ -z "$1" ]; then
+		printf %s "$STATE"
+	elif [ "$1" = on ] && [ "$STATE" != on ]; then
 		xinput enable "$TOUCH_POINTER_ID"
 	elif [ "$1" = off ] && [ "$STATE" != off ] ; then
 		xinput disable "$TOUCH_POINTER_ID"
-	else
-		printf %s "$STATE"
 	fi
 }
 
@@ -65,12 +66,12 @@ swayinputevent() {
 		STATE=off
 	fi
 
-	if [ "$1" = on ] && [ "$STATE" != on ]; then
+	if [ -z "$1" ]; then
+		printf %s "$STATE"
+	elif [ "$1" = on ] && [ "$STATE" != on ]; then
 		swaymsg -- input type:touch events enabled
 	elif [ "$1" = off ] && [ "$STATE" != off ] ; then
 		swaymsg -- input type:touch events disabled
-	else
-		printf %s "$STATE"
 	fi
 }
 
