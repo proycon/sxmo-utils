@@ -3,7 +3,7 @@
 # this script goal is to move the screen lock state from lock to off then crust
 
 if [ "$1" = "--idle" ]; then
-	sxmo_hooks.sh is_idle || exit
+	sxmo_hooks.sh is_idle >/dev/null || exit
 fi
 
 initial_state="$(sxmo_screenlock.sh getCurState)"
@@ -24,7 +24,7 @@ case "$initial_state" in
 		;;
 esac
 
-if [ "crust" = "$target_state" ] && ! sxmo_hooks.sh can_suspend; then
+if [ "crust" = "$target_state" ] && ! sxmo_hooks.sh can_suspend >/dev/null; then
 	exit
 fi
 
