@@ -158,50 +158,50 @@ _battery() {
 		if [ "$(cat "$power_supply"/type)" = "Battery" ]; then
 			PCT="$(cat "$power_supply"/capacity)"
 			BATSTATUS="$(cut -c1 "$power_supply"/status)"
-		fi
-	done
 
-	if [ "$BATSTATUS" = "C" ]; then
-		if [ "$PCT" -lt 20 ]; then
-			printf ""
-		elif [ "$PCT" -lt 30 ]; then
-			printf ""
-		elif [ "$PCT" -lt 40 ]; then
-			printf ""
-		elif [ "$PCT" -lt 60 ]; then
-			printf ""
-		elif [ "$PCT" -lt 80 ]; then
-			printf ""
-		elif [ "$PCT" -lt 90 ]; then
-			printf ""
-		else
-			printf ""
+			if [ "$BATSTATUS" = "C" ]; then
+				if [ "$PCT" -lt 20 ]; then
+					printf ""
+				elif [ "$PCT" -lt 30 ]; then
+					printf ""
+				elif [ "$PCT" -lt 40 ]; then
+					printf ""
+				elif [ "$PCT" -lt 60 ]; then
+					printf ""
+				elif [ "$PCT" -lt 80 ]; then
+					printf ""
+				elif [ "$PCT" -lt 90 ]; then
+					printf ""
+				else
+					printf ""
+				fi
+			else
+				if [ "$PCT" -lt 10 ]; then
+					printf ""
+				elif [ "$PCT" -lt 20 ]; then
+					printf ""
+				elif [ "$PCT" -lt 30 ]; then
+					printf ""
+				elif [ "$PCT" -lt 40 ]; then
+					printf ""
+				elif [ "$PCT" -lt 50 ]; then
+					printf ""
+				elif [ "$PCT" -lt 60 ]; then
+					printf ""
+				elif [ "$PCT" -lt 70 ]; then
+					printf ""
+				elif [ "$PCT" -lt 80 ]; then
+					printf ""
+				elif [ "$PCT" -lt 90 ]; then
+					printf ""
+				else
+					printf ""
+			fi
 		fi
-	else
-		if [ "$PCT" -lt 10 ]; then
-			printf ""
-		elif [ "$PCT" -lt 20 ]; then
-			printf ""
-		elif [ "$PCT" -lt 30 ]; then
-			printf ""
-		elif [ "$PCT" -lt 40 ]; then
-			printf ""
-		elif [ "$PCT" -lt 50 ]; then
-			printf ""
-		elif [ "$PCT" -lt 60 ]; then
-			printf ""
-		elif [ "$PCT" -lt 70 ]; then
-			printf ""
-		elif [ "$PCT" -lt 80 ]; then
-			printf ""
-		elif [ "$PCT" -lt 90 ]; then
-			printf ""
-		else
-			printf ""
-		fi
+
+		[ -z "$SXMO_BAR_HIDE_BAT_PER" ] && printf " %s%%" "$PCT"
 	fi
-
-	[ -z "$SXMO_BAR_HIDE_BAT_PER" ] && printf " %s%%" "$PCT"
+done
 }
 
 set_battery() {
