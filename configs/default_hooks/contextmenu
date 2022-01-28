@@ -176,6 +176,8 @@ case "$WMCLASS" in
 				$icon_pst Paste Selection  ^ 0 ^ sxmo_type -k Escape -s 300 -k quotedbl -k asterisk -k p
 				$icon_pst Paste Clipboard  ^ 0 ^ wl-paste
 				$icon_fnd Search           ^ 0 ^ sxmo_type -k Escape -s 300 /
+				$icon_arr Next buffer      ^ 1 ^ sxmo_type -k Escape -s 300 ':bn' -k Return
+				$icon_arl Previous buffer  ^ 1 ^ sxmo_type -k Escape -s 300 ':bp' -k Return
 				$icon_zmi Zoom in          ^ 1 ^ sxmo_type -k Prior
 				$icon_zmo Zoom out         ^ 1 ^ sxmo_type -k Next
 				$icon_mnu Terminal menu    ^ 0 ^ sxmo_appmenu.sh $WMCLASS
