@@ -16,7 +16,9 @@ modem_use() {
 		pgrep -f sxmo_mms.sh > /dev/null || \
 		pgrep -f mmcli > /dev/null || \
 		pgrep -f mmsctl > /dev/null || \
-		pgrep -f sxmo_modemsendsms.sh > /dev/null) && exit_should_wait "modem"
+		pgrep -f sxmo_modemsendsms.sh > /dev/null || \
+		sxmo_daemons.sh running modem_nocrust || \
+		pgrep -f sxmo_modemdaemons.sh >/dev/null) && exit_should_wait "modem"
 }
 
 active_ssh() {

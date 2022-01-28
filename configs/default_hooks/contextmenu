@@ -35,18 +35,18 @@ case "$WMCLASS" in
 			$icon_aru Brightness               ^ 1 ^ sxmo_brightness.sh up
 			$icon_ard Brightness               ^ 1 ^ sxmo_brightness.sh down
 			$icon_cfg Gestures $(
-				sxmo_daemons.sh running lisgd -q > /dev/null &&
+				sxmo_daemons.sh running lisgd -q &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
 			) ^ 1 ^ toggle_daemon 'Lisgd' lisgd sxmo_hooks.sh lisgdstart
 			$icon_plk Modem PIN                ^ 0 ^ sxmo_unlocksim.sh
 			$icon_phn Modem Monitor $(
-				sxmo_daemons.sh running modem_monitor -q > /dev/null &&
-				printf %b "$icon_ton ^ 1 ^ sxmo_modemmonitortoggle.sh off" || printf %b "$icon_tof ^ 1 ^ sxmo_modemmonitortoggle.sh on"
-			)
+				sxmo_daemons.sh running modem_monitor -q &&
+				printf %b "$icon_ton ^ 1 ^ sxmo_daemons.sh stop modem_monitor" || printf %b "$icon_tof ^ 1 ^ sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh"
+			) && sxmo_hooks.sh statusbar modem_monitor
 			$icon_phn Modem Daemons $(
-				sxmo_modemmonitortoggle.sh daemons_status > /dev/null &&
-				printf %b "$icon_ton ^ 1 ^ sxmo_modemmonitortoggle.sh stop_daemons" || printf %b "$icon_tof ^ 1 ^ sxmo_modemmonitortoggle.sh start_daemons"
-			)
+				sxmo_modemdaemons.sh status > /dev/null &&
+				printf %b "$icon_ton ^ 1 ^ sxmo_modemdaemons.sh stop" || printf %b "$icon_tof ^ 1 ^ sxmo_modemdaemons.sh start"
+			) && sxmo_hooks.sh statusbar modem
 			$icon_inf Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
 			$icon_phl Modem Log                  ^ 0 ^ sxmo_modemlog.sh
 			$icon_img Config MMS                 ^ 1 ^ sxmo_mmsdconfig.sh
