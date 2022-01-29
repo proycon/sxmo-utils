@@ -8,7 +8,8 @@ GITVERSION:=$(shell git describe --tags)
 
 PROGRAMS = \
 	programs/sxmo_megiaudioroute \
-	programs/sxmo_vibratepine
+	programs/sxmo_vibratepine \
+	programs/sxmo_splitchar
 
 all: $(PROGRAMS)
 
