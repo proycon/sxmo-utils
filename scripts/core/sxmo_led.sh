@@ -3,10 +3,13 @@
 . "$(which sxmo_common.sh)"
 
 free_mutex() {
+	MUTEX_NAME=can_suspend sxmo_mutex.sh free "Playing with leds"
 	rmdir "$XDG_RUNTIME_DIR"/sxmo.led.lock
 }
 
-check_mutex() {
+ensure_mutex() {
+	MUTEX_NAME=can_suspend sxmo_mutex.sh lock "Playing with leds"
+
 	while ! mkdir "$XDG_RUNTIME_DIR"/sxmo.led.lock 2> /dev/null; do
 		sleep 0.1
 	done
@@ -118,11 +121,11 @@ cmd="$1"
 shift
 case "$cmd" in
 	"set")
-		check_mutex
+		ensure_mutex
 		set_leds "$@"
 		;;
 	get|blink)
-		check_mutex
+		ensure_mutex
 
 		"$cmd"_led "$@"
 		;;

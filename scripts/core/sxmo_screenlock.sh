@@ -85,8 +85,6 @@ crust() {
 
 	getCurState > "$SXMO_LASTSTATE"
 
-	sxmo_led.sh blink red
-
 	saveAllEventCounts
 
 	sxmo_hooks.sh presuspend
@@ -99,6 +97,9 @@ crust() {
 	if [ -z "$suspend_time" ] || [ "$suspend_time" -gt "$YEARS8_TO_SEC" ]; then
 		suspend_time="$YEARS8_TO_SEC"
 	fi
+
+	sxmo_led.sh blink red
+
 	if [ "$suspend_time" -gt 0 ]; then
 		sxmo_log "real crusting now (suspendtime=$suspend_time)"
 		rtcwake -m mem -s "$suspend_time" >&2
@@ -113,6 +114,10 @@ crust() {
 	echo "crust" > "$SXMO_LASTSTATE"
 
 	sxmo_log "woke up from crust (reason=$UNSUSPENDREASON)"
+
+	if [ "$UNSUSPENDREASON" = "rtc" ]; then
+		MUTEX_NAME=can_suspend sxmo_mutex.sh lock "Waiting for cronjob"
+	fi
 
 	sxmo_hooks.sh postwake "$UNSUSPENDREASON"
 }

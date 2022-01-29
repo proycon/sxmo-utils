@@ -1,0 +1,106 @@
+#!/bin/sh
+
+# This hook goal is to setup mutexes if the device must be considered
+# as idle or not, if it can go to crust or not
+
+. "$(which sxmo_common.sh)"
+
+lock_suspend_mutex() {
+	if ! MUTEX_NAME=can_suspend sxmo_mutex.sh lockedby "$1"; then
+		MUTEX_NAME=can_suspend sxmo_mutex.sh lock "$1"
+	fi
+}
+
+free_suspend_mutex() {
+	MUTEX_NAME=can_suspend sxmo_mutex.sh free "$1"
+}
+
+lock_idle_mutex() {
+	if ! MUTEX_NAME=is_idle sxmo_mutex.sh lockedby "$1"; then
+		MUTEX_NAME=is_idle sxmo_mutex.sh lock "$1"
+	fi
+
+	lock_suspend_mutex "$1" # not idle also mean not suspending
+}
+
+free_idle_mutex() {
+	MUTEX_NAME=is_idle sxmo_mutex.sh free "$1"
+
+	free_suspend_mutex "$1"
+}
+
+PIDS=""
+
+# ongoing_call
+if pgrep -f sxmo_modemcall.sh > /dev/null; then
+	lock_idle_mutex "Ongoing call"
+else
+	free_idle_mutex "Ongoing call"
+fi &
+PIDS="$PIDS $!"
+
+# camera_open
+if pgrep -f megapixels > /dev/null; then
+	lock_idle_mutex "Megapixels is open"
+else
+	free_idle_mutex "Megapixels is open"
+fi &
+PIDS="$PIDS $!"
+
+# auto_screenoff
+if [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
+	lock_idle_mutex "Manually disabled"
+else
+	free_idle_mutex "Manually disabled"
+fi &
+PIDS="$PIDS $!"
+
+# modem_use
+if pgrep -f sxmo_modem.sh > /dev/null || \
+	pgrep -f sxmo_mms.sh > /dev/null || \
+	pgrep -f mmcli > /dev/null || \
+	pgrep -f mmsctl > /dev/null || \
+	pgrep -f sxmo_modemsendsms.sh > /dev/null || \
+	sxmo_daemons.sh running modem_nocrust -q || \
+	pgrep -f sxmo_modemdaemons.sh >/dev/null; then
+	lock_suspend_mutex "Modem is used"
+else
+	free_suspend_mutex "Modem is used"
+fi &
+PIDS="$PIDS $!"
+
+# active_ssh
+if netstat | grep ESTABLISHED | grep -q ssh; then
+	lock_suspend_mutex "SSH is connected"
+else
+	free_suspend_mutex "SSH is connected"
+fi &
+PIDS="$PIDS $!"
+
+# playing_mpc
+if command -v mpc > /dev/null && mpc status | grep -q '\[playing\]'; then
+	lock_suspend_mutex "MPD is playing music"
+else
+	free_suspend_mutex "MPD is playing music"
+fi &
+PIDS="$PIDS $!"
+
+# photos_processing
+if pgrep -f postprocess.sh > /dev/null; then
+	lock_suspend_mutex "Camera postprocessing"
+else
+	free_suspend_mutex "Camera postprocessing"
+fi &
+PIDS="$PIDS $!"
+
+# auto_suspend
+if [ -e "$XDG_CACHE_HOME/sxmo/sxmo.nosuspend" ]; then
+	lock_suspend_mutex "Manually disabled"
+else
+	free_suspend_mutex "Manually disabled"
+fi &
+PIDS="$PIDS $!"
+
+for PID in $PIDS; do
+	wait "$PID"
+done

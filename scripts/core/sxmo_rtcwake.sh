@@ -3,22 +3,12 @@
 # shellcheck source=configs/profile.d/sxmo_init.sh
 . /etc/profile.d/sxmo_init.sh
 
-finish() {
-	if grep -q crust "$SXMO_LASTSTATE" \
-		&& grep -q rtc "$SXMO_UNSUSPENDREASONFILE" \
-		&& [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
-		WAKEPROCS=$(pgrep -f sxmo_rtcwake.sh | wc -l)
-		if [ "$WAKEPROCS" -gt 2 ]; then
-			#each process also spawns a blink subprocess, so we check if there are more than two rather than one:
-			echo "sxmo_rtcwake: returning without crust, other sxmo_rtcwake process is still running ($(date))" >&2
-		else
-			echo "sxmo_rtcwake: going back to crust ($(date))" >&2
-			sxmo_screenlock.sh crust
-		fi
-	else
-		echo "sxmo_rtcwake: returning without crust ($(date))" >&2
-	fi
+# We can have multiple cronjobs at the same time
+MUTEX_NAME=can_suspend sxmo_mutex.sh lock "Executing cronjob"
+MUTEX_NAME=can_suspend sxmo_mutex.sh free "Waiting for cronjob"
 
+finish() {
+	MUTEX_NAME=can_suspend sxmo_mutex.sh free "Executing cronjob"
 	exit 0
 }
 
