@@ -144,7 +144,8 @@ alsadeviceset() {
 	sxmo_hooks.sh statusbar volume
 }
 
-alsamenu() {
+alsamenuchoices() {
+	CURRENTDEV="$(alsacurrentdevice)"
 	cat <<EOF
 $icon_cls Close Menu                                                        ^ exit
 $icon_hdp Headphones $([ "$CURRENTDEV" = "Headphone" ] && echo "$icon_chk") ^ alsadeviceset Headphones
