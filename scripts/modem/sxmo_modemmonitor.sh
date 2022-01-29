@@ -116,7 +116,7 @@ mainloop() {
 			dbus-monitor "interface='org.ofono.mms.Service',type='signal',member='MessageAdded'" | \
 			while read -r line; do
 				if echo "$line" | grep -q '^object path'; then
-					MESSAGE_PATH="$(echo "$line" | cut -d'"' -f2)"
+					MESSAGE_PATH="$(echo "$line" | cut -d\" -f2)"
 				fi
 				if echo "$line" | grep -q 'string "received"'; then
 					sxmo_mms.sh processmms "$MESSAGE_PATH" "Received"
@@ -132,7 +132,7 @@ mainloop() {
 			dbus-monitor "interface='org.kop316.vvm.Service',type='signal',member='MessageAdded'" | \
 			while read -r line; do
 				if echo "$line" | grep -q '^object path'; then
-					VVM_ID="$(echo "$line" | cut -d'"' -f2 | rev | cut -d'/' -f1 | rev)"
+					VVM_ID="$(echo "$line" | cut -d\" -f2 | rev | cut -d'/' -f1 | rev)"
 					VVM_START=1
 				fi
 
@@ -144,13 +144,13 @@ mainloop() {
 				if [ "$VVM_START" -eq 1 ]; then
 					if echo "$line" | grep -q '^string "Date"'; then
 						read -r line
-						VVM_DATE="$(echo "$line" | cut -d'"' -f2)"
+						VVM_DATE="$(echo "$line" | cut -d\" -f2)"
 					elif echo "$line" | grep -q '^string "Sender"'; then
 						read -r line
-						VVM_SENDER="$(echo "$line" | cut -d'"' -f2)"
+						VVM_SENDER="$(echo "$line" | cut -d\" -f2)"
 					elif echo "$line" | grep -q '^string "Attachments"'; then
 						read -r line
-						VVM_ATTACHMENT="$(echo "$line" | cut -d'"' -f2)"
+						VVM_ATTACHMENT="$(echo "$line" | cut -d\" -f2)"
 					fi
 				fi
 			done &
