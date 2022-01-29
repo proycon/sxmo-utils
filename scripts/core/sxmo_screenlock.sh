@@ -6,7 +6,6 @@
 
 WAKEUPRTC="/sys/class/wakeup/wakeup1/active_count"
 MODEMUPRTC="/sys/class/wakeup/wakeup10/active_count"
-NETWORKRTCSCAN="/sys/module/8723cs/parameters/rtw_scan_interval_thr"
 POWERRTC="/sys/class/wakeup/wakeup5/active_count"
 WOWLAN_LAST_WAKE_REASON="/proc/net/rtl8723cs/wlan0/wowlan_last_wake_reason"
 
@@ -85,8 +84,6 @@ unlock() {
 	sxmo_wm.sh inputevent on
 	sxmo_hooks.sh lisgdstart
 
-	echo 16000 > "$NETWORKRTCSCAN"
-
 	sxmo_hooks.sh statusbar state_change
 	sxmo_hooks.sh statusbar locked
 
@@ -147,9 +144,6 @@ crust() {
 	echo "crust" > "$SXMO_LASTSTATE"
 
 	sxmo_log "woke up from crust (reason=$UNSUSPENDREASON)"
-	if [ "$UNSUSPENDREASON" != "modem" ]; then
-		echo 1200 > "$NETWORKRTCSCAN"
-	fi
 
 	sxmo_hooks.sh postwake "$UNSUSPENDREASON"
 }
