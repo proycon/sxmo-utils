@@ -5,7 +5,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 applyptrmatrix() {
-	TOUCH_POINTER_ID="${TOUCH_POINTER_ID:-8}"
+	TOUCH_POINTER_ID="${SXMO_TOUCH_POINTER_ID:-8}"
 	xinput set-prop "$TOUCH_POINTER_ID" --type=float --type=float "Coordinate Transformation Matrix" "$@"
 }
 

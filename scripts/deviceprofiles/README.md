@@ -24,4 +24,4 @@ Supported variables used by sxmo are:
 | SPEAKER            | Audio device name for the main speaker                                                       | `export SPEAKER="Speaker"`                                                       |
 | EARPIECE           | Audio device name for the earpiece speaker                                                   | `export EARPIECE="Earpiece"`                                                     |
 | HEADPHONE          | Audio device name for the headphones                                                         | `export HEADPHONE="Headphone"`                                                   |
-| TOUCH_POINTER_ID   | ID (from xinput) for the touchscreen device                                                  | `export TOUCH_POINTER_ID="10"`                                                   |
+| SXMO_TOUCH_POINTER_ID   | ID (from xinput) for the touchscreen device                                                  | `export SXMO_TOUCH_POINTER_ID="10"`                                         |

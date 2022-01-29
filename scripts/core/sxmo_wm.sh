@@ -4,7 +4,7 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-TOUCH_POINTER_ID="${TOUCH_POINTER_ID:-"8"}"
+TOUCH_POINTER_ID="${SXMO_TOUCH_POINTER_ID:-"8"}"
 
 xorgdpms() {
 	STATE=off
