@@ -29,15 +29,9 @@ case "$WMCLASS" in
 		CHOICES="$(sxmo_hooks.sh apps)"
 		WINNAME=Apps
 		;;
-	config)
-		# System Control menu
+	modem)
+		# modem related
 		CHOICES="
-			$icon_aru Brightness               ^ 1 ^ sxmo_brightness.sh up
-			$icon_ard Brightness               ^ 1 ^ sxmo_brightness.sh down
-			$icon_cfg Gestures $(
-				sxmo_daemons.sh running lisgd -q &&
-				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
-			) ^ 1 ^ toggle_daemon 'Lisgd' lisgd sxmo_hooks.sh lisgdstart
 			$icon_plk Modem PIN                ^ 0 ^ sxmo_unlocksim.sh
 			$icon_phn Modem Monitor $(
 				sxmo_daemons.sh running modem_monitor -q &&
@@ -51,6 +45,18 @@ case "$WMCLASS" in
 			$icon_phl Modem Log                  ^ 0 ^ sxmo_modemlog.sh
 			$icon_img Config MMS                 ^ 1 ^ sxmo_mmsdconfig.sh
 			$icon_img Config VVM                 ^ 1 ^ sxmo_vvmdconfig.sh
+		"
+		WINNAME=Modem
+		;;
+	config)
+		# System Control menu
+		CHOICES="
+			$icon_aru Brightness               ^ 1 ^ sxmo_brightness.sh up
+			$icon_ard Brightness               ^ 1 ^ sxmo_brightness.sh down
+			$icon_cfg Gestures $(
+				sxmo_daemons.sh running lisgd -q &&
+				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
+			) ^ 1 ^ toggle_daemon 'Lisgd' lisgd sxmo_hooks.sh lisgdstart
 			$icon_bth Bluetooth $(
 				rfkill -rn | grep bluetooth | grep -qE "unblocked unblocked" &&
 				printf %b "$icon_ton" ||  printf %b "$icon_tof";
@@ -508,6 +514,7 @@ case "$WMCLASS" in
 			)
 			$icon_net Networks                                           ^ 0 ^ sxmo_networks.sh
 			$icon_mus Audio                                              ^ 0 ^ sxmo_audio.sh
+			$icon_phn Modem                                              ^ 0 ^ sxmo_appmenu.sh modem
 			$icon_cfg Config                                             ^ 0 ^ sxmo_appmenu.sh config
 			$icon_pwr Power                                              ^ 0 ^ sxmo_appmenu.sh power
 		"
