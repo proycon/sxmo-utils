@@ -14,8 +14,8 @@ set -e
 swaymovemenu() {
 	CHOICES="$(cat <<EOF
 $icon_cls Close Menu
-$icon_arl $icon_aru Move Up
-$icon_arr $icon_ard Move Down
+$icon_aru Move Up
+$icon_ard Move Down
 $icon_arl Move Left
 $icon_arr Move Right
 $icon_wn2 Toggle Floating
@@ -73,15 +73,13 @@ swaywmmenu() {
 				else select(.nodes[].focused).layout end'
 		)"
 		if [ -n "$CURRENT_LAYOUT" ]; then
-			LAYOUTS="$(
-				printf "%s" "splith splitv tabbed" |
-					sed "s/\ $CURRENT_LAYOUT\ /\./"
-			)"
-			LAYOUT_LINE="$(
-				printf "%s → %s → %s" "$CURRENT_LAYOUT" \
-				"$(printf "%s" "$LAYOUTS" | cut -f2 -d".")" \
-				"$(printf "%s" "$LAYOUTS" | cut -f1 -d".")"
-			)"
+			if [ "$CURRENT_LAYOUT" = "splith" ]; then
+				LAYOUT_LINE="splith → splitv → tabbed"
+			elif [ "$CURRENT_LAYOUT" = "tabbed" ] ; then
+				LAYOUT_LINE="tabbed → splith → splitv"
+			else
+				LAYOUT_LINE="splitv → tabbed → splith"
+			fi
 		fi
 		CHOICES="$(cat <<EOF
 $icon_cls Close Menu
@@ -182,7 +180,7 @@ $WINDOWSLIST
 EOF
 		)"
 
-		PICKED="$(printf "%s" "$CHOICES" | dmenu -I "$SWITCHINDEX" "Window Switcher")"
+		PICKED="$(printf "%s" "$CHOICES" | dmenu -p "Switch menu" -I "$SWITCHINDEX")"
 		SWITCHINDEX="$(($(printf "%s" "$CHOICES" | grep -nm1 "^$PICKED$" | cut -d: -f1) -1))"
 
 		case "$PICKED" in
