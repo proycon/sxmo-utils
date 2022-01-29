@@ -39,7 +39,7 @@ processvvm() {
 		"$SXMO_LOGDIR/$VVM_SENDER/sms.txt" \
 		"VM: $VVM_SENDER_NAME ($VVM_ID)"
 
-	sxmo_hooks.sh vvm "$VVM_SENDER" "$VVM_ID"
+	sxmo_hooks.sh sms "$VVM_SENDER" "VVM" "$VVM_ID"
 
 	if [ "${SXMO_VVM_AUTO_DELETE:-1}" -eq 1 ]; then
 		dbus-send --dest=org.kop316.vvm --print-reply /org/kop316/vvm/modemmanager/"$VVM_ID" org.kop316.vvm.Message.Delete
