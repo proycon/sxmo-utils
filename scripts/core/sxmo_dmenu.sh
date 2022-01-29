@@ -7,24 +7,24 @@ case "$1" in
 	isopen)
 		case "$SXMO_WM" in
 			sway)
-				exec pgrep bemenu
+				exec pgrep bemenu >/dev/null
 				;;
 			dwm)
-				exec pgrep dmenu
+				exec pgrep dmenu >/dev/null
 				;;
 		esac
 		;;
 	close)
 		case "$SXMO_WM" in
 			sway)
-				exec pkill bemenu
+				exec pkill bemenu >/dev/null
 				;;
 			dwm)
-				exec pkill dmenu
+				exec pkill dmenu >/dev/null
 				;;
 		esac
 		;;
-esac > /dev/null
+esac
 
 if [ -n "$WAYLAND_DISPLAY" ]; then
 	swaymsg mode menu -q # disable default button inputs
@@ -33,7 +33,9 @@ if [ -n "$WAYLAND_DISPLAY" ]; then
 	}
 	trap 'cleanmode' TERM INT
 
-	bemenu -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 8 ||  printf 15)" "$@"
+	bemenu -l "$(sxmo_rotate.sh isrotated > /dev/null && \
+		printf "${SXMO_BMENU_LANDSCAPE_LINES:-8}" || \
+		printf "${SXMO_BMENU_PORTRAIT_LINES:-15}")" "$@"
 	returned=$?
 
 	cleanmode
@@ -41,10 +43,17 @@ if [ -n "$WAYLAND_DISPLAY" ]; then
 fi
 
 if [ -n "$DISPLAY" ]; then
+
+	# TODO: kill dmenu?
+
 	if sxmo_keyboard.sh isopen; then
-		exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 5 || printf 12)" "$@"
+		exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && \
+			printf "${SXMO_DMENU_WITH_KB_LANDSCAPE_LINES:-5}" || \
+			printf "${SXMO_DMENU_WITH_KB_PORTRAIT_LINES:-12}")" "$@"
 	else
-		exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && printf 7 || printf 15)" "$@"
+		exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && \
+			printf "${SXMO_DMENU_LANDSCAPE_LINES:-7}" || \
+			printf "${SXMO_DMENU_PORTRAIT_LINES:-15}")" "$@"
 	fi
 	exit
 fi
