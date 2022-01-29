@@ -49,6 +49,9 @@ _modem() {
 			locked)
 				printf "%s" "$icon_plk"
 				;;
+			initializing)
+				printf "I"
+				;;
 			disabled) # low power state
 				printf "%s" "$icon_mdd"
 				;;
@@ -85,7 +88,7 @@ _modem() {
 				printf ">>"
 				;;
 			*)
-				# FAILED, UNKNOWN, INITIALIZING
+				# FAILED, UNKNOWN
 				# see https://www.freedesktop.org/software/ModemManager/doc/latest/ModemManager/ModemManager-Flags-and-Enumerations.html#MMModemState
 				sxmo_log "WARNING: MODEMSTATUS: $MODEMSTATUS"
 				printf "<$MODEMSTATUS>"
