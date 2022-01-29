@@ -19,7 +19,7 @@ daemon_start() {
 		alpine|postmarketos)
 			doas rc-service "$1" start
 			;;
-		arch|archarm)
+		arch|archarm|debian)
 			[ "$1" = "modemmanager" ] && set -- ModemManager
 			doas systemctl start "$1"
 			;;
@@ -49,13 +49,13 @@ daemon_stop() {
 daemon_isrunning() {
 	if ! daemon_exists "$1"; then
 		sxmo_log "$1 does not exist on the system"
-		return 0
+		return 1
 	fi
 	case "$OS" in
 		alpine|postmarketos)
 			rc-service "$1" status | grep -q started
 			;;
-		arch|archarm)
+		arch|archarm|debian)
 			[ "$1" = "modemmanager" ] && set -- ModemManager
 			systemctl is-active --quiet "$1"
 			;;
@@ -67,7 +67,7 @@ daemon_exists() {
 		alpine|postmarketos)
 			[ -f /etc/init.d/"$1" ]
 			;;
-		arch|archarm)
+		arch|archarm|debian)
 			[ "$1" = "modemmanager" ] && set -- ModemManager
 			systemctl status "$1" > /dev/null 2>&1
 			[ $? -ne 4 ]
