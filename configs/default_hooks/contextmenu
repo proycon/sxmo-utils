@@ -165,7 +165,7 @@ case "$WMCLASS" in
 	*foot*|*st*|*terminal*)
 		# First we try to handle the app running inside the terminal:
 		WMNAME="${1:-$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
-		if printf %s "$WMNAME" | grep -qi -E "(vi|vim|vis|nvim|neovim|kakoune)"; then
+		if printf %s "$WMNAME" | grep -qi -E -w "(vi|vim|vis|nvim|neovim|kakoune)"; then
 			#Vim in foot
 			CHOICES="
 				$icon_cls Save and Quit    ^ 0 ^ sxmo_type -k Escape -s 300 ':wq' -k Return
