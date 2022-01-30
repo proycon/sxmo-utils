@@ -58,6 +58,9 @@ include /usr/share/sxmo/sway/mobile_inputs_outputs
     # Launch appmenu
     bindsym $mod+p exec sxmo_appmenu.sh
 
+    # Launch scripts menu
+    bindsym $mod+i exec sxmo_appmenu.sh scripts
+
     # Kill focused window
     bindsym $mod+Shift+q kill
 
