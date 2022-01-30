@@ -49,6 +49,30 @@ if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
 		"powerbutton_two"|"powerbutton_three")
 			lock_screen_action 2
 			;;
+		"voldown_one")
+			sxmo_audio.sh vol down 5
+			exit
+			;;
+		"voldown_two")
+			sxmo_audio.sh vol down 10
+			exit
+			;;
+		"voldown_three")
+			sxmo_audio.sh vol down 15
+			exit
+			;;
+		"volup_one")
+			sxmo_audio.sh vol up 5
+			exit
+			;;
+		"volup_two")
+			sxmo_audio.sh vol up 10
+			exit
+			;;
+		"volup_three")
+			sxmo_audio.sh vol up 15
+			exit
+			;;
 	esac
 	#we're locked, don't process the rest of the script
 	exit 0

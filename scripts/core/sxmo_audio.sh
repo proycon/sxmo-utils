@@ -29,11 +29,11 @@ notifyvol() {
 }
 
 pulsevolup() {
-	pamixer -i 5 --get-volume | notifyvol -
+	pamixer -i "${1:-5}" --get-volume | notifyvol -
 }
 
 pulsevoldown() {
-	pamixer -d 5 --get-volume | notifyvol -
+	pamixer -d "${1:-5}" --get-volume | notifyvol -
 }
 
 pulsevolget() {
@@ -86,11 +86,11 @@ amixerextractvol() {
 }
 
 alsavolup() {
-	amixer -c 0 set "$(alsacurrentdevice)" "5%+" | amixerextractvol | notifyvol -
+	amixer -c 0 set "$(alsacurrentdevice)" "${1:-5}%+" | amixerextractvol | notifyvol -
 }
 
 alsavoldown() {
-	amixer -c 0 set "$(alsacurrentdevice)" "5%-" | amixerextractvol | notifyvol -
+	amixer -c 0 set "$(alsacurrentdevice)" "${1:-5}%-" | amixerextractvol | notifyvol -
 }
 
 alsavolset() {
