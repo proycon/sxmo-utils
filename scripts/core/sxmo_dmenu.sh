@@ -34,8 +34,8 @@ if [ -n "$WAYLAND_DISPLAY" ]; then
 	trap 'cleanmode' TERM INT
 
 	bemenu -l "$(sxmo_rotate.sh isrotated > /dev/null && \
-		printf "${SXMO_BMENU_LANDSCAPE_LINES:-8}" || \
-		printf "${SXMO_BMENU_PORTRAIT_LINES:-15}")" "$@"
+		printf %s "${SXMO_BMENU_LANDSCAPE_LINES:-8}" || \
+		printf %s "${SXMO_BMENU_PORTRAIT_LINES:-15}")" "$@"
 	returned=$?
 
 	cleanmode
@@ -48,12 +48,12 @@ if [ -n "$DISPLAY" ]; then
 
 	if sxmo_keyboard.sh isopen; then
 		exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && \
-			printf "${SXMO_DMENU_WITH_KB_LANDSCAPE_LINES:-5}" || \
-			printf "${SXMO_DMENU_WITH_KB_PORTRAIT_LINES:-12}")" "$@"
+			printf %s "${SXMO_DMENU_WITH_KB_LANDSCAPE_LINES:-5}" || \
+			printf %s "${SXMO_DMENU_WITH_KB_PORTRAIT_LINES:-12}")" "$@"
 	else
 		exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && \
-			printf "${SXMO_DMENU_LANDSCAPE_LINES:-7}" || \
-			printf "${SXMO_DMENU_PORTRAIT_LINES:-15}")" "$@"
+			printf %s "${SXMO_DMENU_LANDSCAPE_LINES:-7}" || \
+			printf %s "${SXMO_DMENU_PORTRAIT_LINES:-15}")" "$@"
 	fi
 	exit
 fi
