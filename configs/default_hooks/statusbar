@@ -67,7 +67,7 @@ _modem() {
 			searching) # i.e. registering
 				printf "%s" "$icon_dot"
 				;;
-			registered|connected) # we distinguish these below with USEDTECHS
+			registered|connected|connecting|disconnecting)
 				MODEMSIGNAL="$(printf %s "$MMCLI" | jq -r '.modem.generic."signal-quality".value')"
 				if [ "$MODEMSIGNAL" -lt 20 ]; then
 					printf ""
@@ -80,12 +80,6 @@ _modem() {
 				else
 					printf ""
 				fi
-				;;
-			disconnecting)
-				printf "<<"
-				;;
-			connecting)
-				printf ">>"
 				;;
 			*)
 				# FAILED, UNKNOWN
@@ -120,6 +114,10 @@ _modem() {
 				printf "<$USEDTECHS>"
 				;;
 		esac
+	elif [ "$MODEMSTATUS" = "connecting" ]; then
+		printf " >>"
+	elif [ "$MODEMSTATUS" = "disconnecting" ]; then
+		printf " <<"
 	fi
 }
 
