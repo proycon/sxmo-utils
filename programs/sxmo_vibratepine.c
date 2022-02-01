@@ -21,11 +21,11 @@ void syscall_error(int is_err, const char* fmt, ...)
 	if (!is_err)
 		return;
 
-	printf("ERROR: ");
+	fprintf(stderr, "ERROR: ");
 	va_start(ap, fmt);
-	vprintf(fmt, ap);
+	vfprintf(stderr, fmt, ap);
 	va_end(ap);
-	printf(": %s\n", strerror(errno));
+	fprintf(stderr, ": %s\n", strerror(errno));
 
 	exit(1);
 }
@@ -51,9 +51,9 @@ int main(int argc, char* argv[])
 	durationMs = strtol(argv[1], &endptr, 10);
 	if (errno || *endptr != '\0' || durationMs <= 0) {
 		if (durationMs == LONG_MAX)
-			printf("%s: duration is too big\n", argv[0]);
+			fprintf(stderr, "%s: duration is too big\n", argv[0]);
 		else
-			printf("%s: expected positive integer for duration\n", argv[0]);
+			fprintf(stderr, "%s: expected positive integer for duration\n", argv[0]);
 
 		return 1;
 	}
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 		errno = 0;
 		strength = strtol(argv[2], &endptr, 10);
 		if (errno || *endptr != '\0' || strength <= 0 || strength > 65535) {
-			printf("%s: expected integer between 1 and 65535 (inclusive) for strength\n", argv[0]);
+			fprintf(stderr, "%s: expected integer between 1 and 65535 (inclusive) for strength\n", argv[0]);
 			return 1;
 		}
 	}
