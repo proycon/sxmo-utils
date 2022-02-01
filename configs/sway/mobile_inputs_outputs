@@ -27,6 +27,12 @@ input 1:1:gpio-key-power {
     repeat_rate 15
     xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
 }
+# Volume buttons
+input 1:1:adc-keys {
+    repeat_delay 200
+    repeat_rate 15
+    xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+}
 
 ### BQ Aquaris X5 (bq-paella)
 # Power button
@@ -105,6 +111,18 @@ bindsym --input-device=1:1:gpio-key-power XF86PowerOff \
     "sxmo_inputhandler.sh powerbutton_one" \
     "sxmo_inputhandler.sh powerbutton_two" \
     "sxmo_inputhandler.sh powerbutton_three"
+# Multikey handling for volup button
+bindsym --input-device=1:1:adc-keys XF86AudioRaiseVolume \
+    exec sxmo_multikey.sh volup \
+    "sxmo_inputhandler.sh volup_one" \
+    "sxmo_inputhandler.sh volup_two" \
+    "sxmo_inputhandler.sh volup_three"
+# Multikey handling for voldown button
+bindsym --input-device=1:1:adc-keys XF86AudioLowerVolume \
+    exec sxmo_multikey.sh voldown \
+    "sxmo_inputhandler.sh voldown_one" \
+    "sxmo_inputhandler.sh voldown_two" \
+    "sxmo_inputhandler.sh voldown_three"
 
 ### BQ Aquaris X5 (bq-paella)
 bindsym --input-device=0:0:pm8941_pwrkey XF86PowerOff \
