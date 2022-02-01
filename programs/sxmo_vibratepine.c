@@ -35,9 +35,7 @@ void usage() {
 
 int main(int argc, char* argv[])
 {
-	int fd, ret;
-	struct pollfd pfds[1];
-	int effects;
+	int fd, ret, effects;
 
 	int durationMs, strength;
 
