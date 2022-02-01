@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <errno.h>
+#include <limits.h>
 #include <fcntl.h>
 #include <poll.h>
 #include <unistd.h>
@@ -37,21 +38,33 @@ int main(int argc, char* argv[])
 {
 	int fd, ret, effects;
 
-	int durationMs, strength;
+	long durationMs, strength = 1;
+	char *endptr;
 
-	if (argc < 2) {
+	if (argc < 2 || argc > 3) {
 		usage();
 		return 1;
 	}
-	argc--;
 
-	if (argc > 1) {
-		strength = atoi(argv[argc--]);
-	} else {
-		strength = 4000;
+	errno = 0;
+	durationMs = strtol(argv[1], &endptr, 10);
+	if (errno || *endptr != '\0' || durationMs <= 0) {
+		if (durationMs == LONG_MAX)
+			printf("%s: duration is too big\n", argv[0]);
+		else
+			printf("%s: expected positive integer for duration\n", argv[0]);
+
+		return 1;
 	}
 
-	durationMs = atoi(argv[argc--]);
+	if (argc == 3) {
+		errno = 0;
+		strength = strtol(argv[2], &endptr, 10);
+		if (errno || *endptr != '\0' || strength <= 0 || strength > 65535) {
+			printf("%s: expected integer between 1 and 65535 (inclusive) for strength\n", argv[0]);
+			return 1;
+		}
+	}
 
 	fd = open("/dev/input/by-path/platform-vibrator-event", O_RDWR | O_CLOEXEC);
 	syscall_error(fd < 0, "Can't open vibrator event device");
