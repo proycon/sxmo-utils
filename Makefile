@@ -8,7 +8,7 @@ GITVERSION:=$(shell git describe --tags)
 
 PROGRAMS = \
 	programs/sxmo_megiaudioroute \
-	programs/sxmo_vibratepine \
+	programs/sxmo_vibrate \
 	programs/sxmo_splitchar
 
 all: $(PROGRAMS)
@@ -21,14 +21,14 @@ shellcheck:
 programs/sxmo_megiaudioroute: programs/sxmo_megiaudioroute.c
 	gcc -o programs/sxmo_megiaudioroute programs/sxmo_megiaudioroute.c
 
-programs/sxmo_vibratepine: programs/sxmo_vibratepine.c
-	gcc -o programs/sxmo_vibratepine programs/sxmo_vibratepine.c
+programs/sxmo_vibrate: programs/sxmo_vibrate.c
+	gcc -o programs/sxmo_vibrate programs/sxmo_vibrate.c
 
 programs/sxmo_splitchar: programs/sxmo_splitchar.c
 	gcc -o programs/sxmo_splitchar programs/sxmo_splitchar.c
 
 clean:
-	rm -f programs/sxmo_megiaudioroute programs/sxmo_vibratepine
+	rm -f programs/sxmo_megiaudioroute programs/sxmo_vibrate
 
 install: $(PROGRAMS)
 	cd configs && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
@@ -63,7 +63,7 @@ install: $(PROGRAMS)
 	install -D -t $(DESTDIR)$(PREFIX)/bin scripts/*/*
 
 	install -D programs/sxmo_megiaudioroute $(DESTDIR)$(PREFIX)/bin/
-	install -D programs/sxmo_vibratepine $(DESTDIR)$(PREFIX)/bin/
+	install -D programs/sxmo_vibrate $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_splitchar $(DESTDIR)$(PREFIX)/bin/
 	@echo "-------------------------------------------------------------------">&2
 	@echo "NOTICE 1: Do not forget to add sxmo-setpermissions to your init system, e.g. for openrc: rc-update add sxmo-setpermissions default && rc-service sxmo-setpermissions start" >&2

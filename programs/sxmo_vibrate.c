@@ -31,8 +31,8 @@ void syscall_error(int is_err, const char* fmt, ...)
 }
 
 void usage() {
-	fprintf(stderr, "Usage: sxmo_vibratepine duration_ms\n");
-	fprintf(stderr, "       sxmo_vibratepine duration_ms strength_number\n");
+	fprintf(stderr, "Usage: sxmo_vibrate duration_ms\n");
+	fprintf(stderr, "       sxmo_vibrate duration_ms strength_number\n");
 }
 
 int main(int argc, char* argv[])

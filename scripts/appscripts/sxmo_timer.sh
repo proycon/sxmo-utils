@@ -23,7 +23,7 @@ timerrun() {
 
 	while :;
 		do notify-send  "Done with $*";
-		sxmo_vibratepine 1000
+		sxmo_vibrate 1000
 		sleep 0.5
 	done
 }

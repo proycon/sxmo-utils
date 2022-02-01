@@ -12,6 +12,6 @@ echo "$MPVID" > "$XDG_RUNTIME_DIR/sxmo.ring.pid"
 
 # Vibrate while mpv is running
 while kill -0 $MPVID; do
-		sxmo_vibratepine 1500
+		sxmo_vibrate 1500
 		sleep 0.5
 done

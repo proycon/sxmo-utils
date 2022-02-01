@@ -14,7 +14,7 @@ stderr() {
 }
 
 finish() {
-	sxmo_vibratepine 1000 &
+	sxmo_vibrate 1000 &
 	if [ -f "$ALSASTATEFILE" ]; then
 		alsactl --file "$ALSASTATEFILE" restore
 	else
