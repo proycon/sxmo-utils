@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <time.h>
 #include <errno.h>
 #include <limits.h>
 #include <fcntl.h>
@@ -37,7 +38,7 @@ void usage() {
 int main(int argc, char* argv[])
 {
 	int fd, ret, effects;
-
+	struct timespec time;
 	long durationMs, strength = 1;
 	char *endptr;
 
@@ -56,6 +57,8 @@ int main(int argc, char* argv[])
 
 		return 1;
 	}
+	time.tv_sec = durationMs / 1000;
+	time.tv_nsec = (durationMs % 1000) * 1000 * 1000;
 
 	if (argc == 3) {
 		errno = 0;
@@ -84,7 +87,7 @@ int main(int argc, char* argv[])
 	ret = write(fd, &play, sizeof play);
 	syscall_error(ret < 0, "write failed");
 
-	usleep(durationMs * 1000);
+	nanosleep(&time, &time);
 
 	ret = ioctl(fd, EVIOCRMFF, e.id);
 	syscall_error(ret < 0, "EVIOCRMFF failed");
