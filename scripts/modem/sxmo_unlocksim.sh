@@ -7,8 +7,6 @@
 # shellcheck source=scripts/core/sxmo_icons.sh
 . "$(which sxmo_icons.sh)"
 
-set -e
-
 # in dwm, close any dmenus.  We don't need to do this in sway.
 [ "$SXMO_WM" = "dwm" ] && sxmo_dmenu.sh close
 
@@ -26,9 +24,12 @@ EOF
 			;;
 		*)
 			SIM="$(mmcli -m any | grep -oE 'SIM\/([0-9]+)' | cut -d'/' -f2)"
-			MSG="$(mmcli -i "$SIM" --pin "$PICKED" 2>&1)" || continue
+			MSG="$(mmcli -i "$SIM" --pin "$PICKED" 2>&1)"
 			[ -n "$MSG" ] && sxmo_notify_user.sh "$MSG"
 			if printf "%s\n" "$MSG" | grep -q "not SIM-PIN locked"; then
+				exit
+			fi
+			if printf "%s\n" "$MSG" | grep -q "successfully sent PIN code to the SIM"; then
 				exit
 			fi
 			;;
