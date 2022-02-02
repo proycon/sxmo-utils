@@ -112,6 +112,8 @@ blink_led() {
 	eval set_leds green '$'old_green blue '$'old_blue red '$'old_red ${white:+white '$'old_white}
 }
 
+[ -z "$SXMO_DISABLE_LEDS" ] || exit 1
+
 cmd="$1"
 shift
 case "$cmd" in
