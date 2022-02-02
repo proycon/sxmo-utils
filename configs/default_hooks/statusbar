@@ -85,40 +85,44 @@ _modem() {
 				# FAILED, UNKNOWN
 				# see https://www.freedesktop.org/software/ModemManager/doc/latest/ModemManager/ModemManager-Flags-and-Enumerations.html#MMModemState
 				sxmo_log "WARNING: MODEMSTATUS: $MODEMSTATUS"
-				printf "<$MODEMSTATUS>"
+				printf "<%s>" "$MODEMSTATUS"
 				;;
 		esac
 	fi
 
-	if [ "$MODEMSTATUS" = "connected" ]; then
-		printf " "
-		USEDTECHS="$(printf %s "$MMCLI" | jq -r '.modem.generic."access-technologies"[]')"
-		case "$USEDTECHS" in
-			*5gnr*)
-				printf 5g # no icon yet
-				;;
-			*lte*)
-				printf 4g # ﰒ is in the bad range
-				;;
-			*umts*|*hsdpa*|*hsupa*|*hspa*|*1xrtt*|*evdo0*|*evdoa*|*evdob*)
-				printf 3g # ﰑ is in the bad range
-				;;
-			*edge*)
-				printf E
-				;;
-			*pots*|*gsm*|*gprs*)
-				printf 2g # ﰐ is in the bad range
-				;;
-			*)
-				sxmo_log "WARNING: USEDTECHS: $USEDTECHS"
-				printf "<$USEDTECHS>"
-				;;
-		esac
-	elif [ "$MODEMSTATUS" = "connecting" ]; then
-		printf " >>"
-	elif [ "$MODEMSTATUS" = "disconnecting" ]; then
-		printf " <<"
-	fi
+	case "$MODEMSTATUS" in
+		"connected")
+			printf " "
+			USEDTECHS="$(printf %s "$MMCLI" | jq -r '.modem.generic."access-technologies"[]')"
+			case "$USEDTECHS" in
+				*5gnr*)
+					printf 5g # no icon yet
+					;;
+				*lte*)
+					printf 4g # ﰒ is in the bad range
+					;;
+				*umts*|*hsdpa*|*hsupa*|*hspa*|*1xrtt*|*evdo0*|*evdoa*|*evdob*)
+					printf 3g # ﰑ is in the bad range
+					;;
+				*edge*)
+					printf E
+					;;
+				*pots*|*gsm*|*gprs*)
+					printf 2g # ﰐ is in the bad range
+					;;
+				*)
+					sxmo_log "WARNING: USEDTECHS: $USEDTECHS"
+					printf "<%s>" "$USEDTECHS"
+					;;
+			esac
+			;;
+		"connecting")
+			printf " >>"
+			;;
+		"disconnecting")
+			printf " <<"
+			;;
+	esac
 }
 
 set_modem() {
