@@ -80,6 +80,5 @@ else
 fi
 
 if ls "$XDG_CONFIG_HOME"/sxmo.old-* 1> /dev/null 2>&1; then
-	sxmo_notify_user.sh --urgency=critical "Your configs are out of date - using defaults."
-	sxmo_notify_user.sh --urgency=critical "Please see the latest postmarketOS blog post regarding this release on how to migrate your configs."
+	sxmo_notify_user.sh --urgency=critical "Config has been migrated" "Your configs are out of date - using defaults."
 fi
