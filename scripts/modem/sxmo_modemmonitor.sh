@@ -62,13 +62,21 @@ mainloop() {
 	sxmo_modem.sh checkfornewtexts
 	sxmo_mms.sh checkforlostmms
 
-	# get initial modem state
-	newstate="$(mmcli -m any -K | grep "^modem.generic.state " | cut -d':' -f2 | sed 's/^ //')"
-	# fake oldstate (boot) and reason (0)
-	sxmo_hooks.sh modem "boot" "$newstate" "0"
-	sxmo_hooks.sh statusbar modem
-
 	PIDS=""
+
+	# get initial modem state
+	while : ; do
+		while ! newstate="$(mmcli -m any -K | grep "^modem.generic.state " | cut -d':' -f2 | sed 's/^ //')"; do
+			sleep 5
+		done
+
+		# fake oldstate (boot) and reason (0)
+		sxmo_hooks.sh modem "boot" "$newstate" "0"
+		sxmo_hooks.sh statusbar modem
+
+		break
+	done &
+	PIDS="$PIDS $!"
 
 	# Monitor for incoming calls
 	sxmo_daemons.sh start modem_monitor_voice \
