@@ -65,7 +65,7 @@ mainloop() {
 	PIDS=""
 
 	# get initial modem state
-	while : ; do
+	(
 		while ! newstate="$(mmcli -m any -K | grep "^modem.generic.state " | cut -d':' -f2 | sed 's/^ //')"; do
 			sleep 5
 		done
@@ -73,9 +73,7 @@ mainloop() {
 		# fake oldstate (boot) and reason (0)
 		sxmo_hooks.sh modem "boot" "$newstate" "0"
 		sxmo_hooks.sh statusbar modem
-
-		break
-	done &
+	) &
 	PIDS="$PIDS $!"
 
 	# Monitor for incoming calls
