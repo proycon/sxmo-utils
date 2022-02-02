@@ -4,9 +4,10 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-WAKEUPRTC="/sys/class/wakeup/wakeup1/active_count"
-MODEMUPRTC="/sys/class/wakeup/wakeup10/active_count"
-POWERRTC="/sys/class/wakeup/wakeup5/active_count"
+# define these in deviceprofile, or default to pinephone
+WAKEUPRTC="/sys/class/wakeup/wakeup${SXMO_WAKEUPRTC:-1}/active_count"
+MODEMUPRTC="/sys/class/wakeup/wakeup${SXMO_MODEMRTC:-10}/active_count"
+POWERRTC="/sys/class/wakeup/wakeup${SXMO_POWERRTC:-10}/active_count"
 
 OLD_RTC_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.rtc.count"
 OLD_MODEM_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.modem.count"
