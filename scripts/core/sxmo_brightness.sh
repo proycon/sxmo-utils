@@ -24,7 +24,7 @@ up() {
 }
 
 down() {
-	light -N 5
+	light -N "${SXMO_MIN_BRIGHTNESS:-5}"
 	light -U 5
 }
 
