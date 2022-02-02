@@ -17,9 +17,15 @@ case "$1" in
 	close)
 		case "$SXMO_WM" in
 			sway)
+				if ! pgrep bemenu >/dev/null; then
+					exit
+				fi
 				exec pkill bemenu >/dev/null
 				;;
 			dwm)
+				if ! pgrep dmenu >/dev/null; then
+					exit
+				fi
 				exec pkill dmenu >/dev/null
 				;;
 		esac
