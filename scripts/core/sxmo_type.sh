@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(dirname "$0")/sxmo_common.sh"
+
 wtype_to_xdotool() {
 	if [ "$#" -eq 0 ]; then
 		exit
