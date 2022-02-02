@@ -85,6 +85,7 @@ case "$WMCLASS" in
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
 			) ^ 1 ^ toggle_daemon 'Proximity Lock' proximity_lock sxmo_proximitylock.sh
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
+			$icon_trm Hooks                      ^ 0 ^ sxmo_hookmenu.sh
 			$icon_upc Upgrade Pkgs               ^ 0 ^ sxmo_terminal.sh sxmo_upgrade.sh
 			$icon_cfg Edit configuration         ^ 0 ^ sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/$(test "$SXMO_WM" = sway && printf sway || printf xinit)
 			$(command -v pmos-tweaks >/dev/null && echo "$icon_cfg PostmarketOS Tweaks	     ^ 0 ^ GDK_SCALE=1 pmos-tweaks")
