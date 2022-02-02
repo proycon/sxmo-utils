@@ -73,6 +73,7 @@ cleanup() {
 init() {
 	_sxmo_load_environments
 	_sxmo_prepare_dirs
+	_sxmo_check_and_move_config
 	envvars
 
 	defaults
