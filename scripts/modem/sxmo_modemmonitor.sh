@@ -56,6 +56,9 @@ statenumtoname() {
 }
 
 mainloop() {
+	# Display the icon
+	sxmo_hooks.sh statusbar modem_monitor
+
 	#these may be premature and return nothing yet (because modem/sim might not be ready yet)
 	sxmo_modem.sh checkforfinishedcalls
 	sxmo_modem.sh checkforincomingcalls
