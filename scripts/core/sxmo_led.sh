@@ -16,8 +16,8 @@ check_mutex() {
 
 get_type() {
 	# Get type from variable name created dynamically from the color,
-	# e.g. $LED_RED_TYPE
-	eval type='$'LED_"$(echo "$1" | tr '[:lower:]' '[:upper:]')"_TYPE
+	# e.g. $SXMO_LED_RED_TYPE
+	eval type='$'SXMO_LED_"$(echo "$1" | tr '[:lower:]' '[:upper:]')"_TYPE
 
 	# Defaults
 	if [ -z "$type" ]; then
