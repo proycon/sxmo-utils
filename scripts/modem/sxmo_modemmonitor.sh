@@ -59,17 +59,11 @@ mainloop() {
 	# Display the icon
 	sxmo_hooks.sh statusbar modem_monitor
 
-	#these may be premature and return nothing yet (because modem/sim might not be ready yet)
-	sxmo_modem.sh checkforfinishedcalls
-	sxmo_modem.sh checkforincomingcalls
-	sxmo_modem.sh checkfornewtexts
-	sxmo_mms.sh checkforlostmms
-
 	PIDS=""
 
 	# get initial modem state
 	(
-		while ! newstate="$(mmcli -m any -K | grep "^modem.generic.state " | cut -d':' -f2 | sed 's/^ //')"; do
+		while ! newstate="$(mmcli -m any -K | grep "^modem.generic.state " | cut -d':' -f2 | sed 's/^ //')" || [ -z "$newstate" ]; do
 			sleep 5
 		done
 
