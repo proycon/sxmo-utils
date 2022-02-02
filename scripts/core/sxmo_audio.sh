@@ -5,9 +5,9 @@
 
 set -e
 
-SPEAKER="${SPEAKER:-"Line Out"}"
-HEADPHONE="${HEADPHONE:-"Headphone"}"
-EARPIECE="${EARPIECE:-"Earpiece"}"
+SPEAKER="${SXMO_SPEAKER:-"Line Out"}"
+HEADPHONE="${SXMO_HEADPHONE:-"Headphone"}"
+EARPIECE="${SXMO_EARPIECE:-"Earpiece"}"
 
 notifyvol() {
 	vol="$1"

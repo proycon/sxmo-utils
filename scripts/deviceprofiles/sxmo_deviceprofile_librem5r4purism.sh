@@ -1,8 +1,8 @@
 #!/bin/sh
 
-export SPEAKER="Speaker"
-export HEADPHONE="Headphone"
-export EARPIECE="Earpiece"
+export SXMO_SPEAKER="Speaker"
+export SXMO_HEADPHONE="Headphone"
+export SXMO_EARPIECE="Earpiece"
 export BACKLIGHT="/sys/devices/platform/backlight-dsi/backlight/backlight-dsi"
 export FLASH_LED="/sys/class/leds/white:torch"
 export LED_RED_TYPE="status"
