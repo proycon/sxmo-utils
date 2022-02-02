@@ -15,6 +15,7 @@ usage() {
 DIR="$HOME"
 SORT=
 REVERSE=
+SELECTONLY=0
 
 while [ -n "$1" ]; do
 	case "$1" in
