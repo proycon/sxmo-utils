@@ -10,7 +10,7 @@
 set -e
 
 # in dwm, close any dmenus.  We don't need to do this in sway.
-[ "$SXMO_WM" = "dwm" ] && sxmo_dmenu.sh close
+[ "$SXMO_WM" = "dwm" ] && (sxmo_dmenu.sh close || true)
 
 while : ; do
 	PICKED="$(
