@@ -3,6 +3,10 @@
 # We still use dmenu in dwm|worgs cause pointer/touch events
 # are not implemented yet in the X11 library of bemenu
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(which sxmo_common.sh)"
+
 case "$1" in
 	isopen)
 		case "$SXMO_WM" in
