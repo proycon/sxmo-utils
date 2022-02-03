@@ -3,7 +3,7 @@ PREFIX:=/usr
 .PHONY: install shellcheck
 
 VERSION:=1.8.1
-CONFIGVERSION:=1.8.0 # only bump if manual intervention required with new version of Sxmo
+CONFIGVERSION:=1.8.0
 
 GITVERSION:=$(shell git describe --tags)
 

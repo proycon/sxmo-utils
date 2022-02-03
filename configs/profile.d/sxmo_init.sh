@@ -76,7 +76,7 @@ _sxmo_check_and_move_config() {
 	if [ -f "$XDG_CONFIG_HOME/sxmo/.configversion" ]; then
 		CUR_VER="$(cat $XDG_CONFIG_HOME/sxmo/.configversion)"
 	else
-		CUR_VER=""
+		CUR_VER="UNKNOWN"
 	fi
 
 	if [ "$REQUIRED_VER" != "$CUR_VER" ]; then
