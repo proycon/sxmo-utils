@@ -1,4 +1,5 @@
 #!/bin/sh
+# configversion: 1
 
 # This script will output the content of the contextual menu
 # It should stdout the title as the first line followed by the entries

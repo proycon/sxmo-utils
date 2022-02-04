@@ -1,4 +1,5 @@
 #!/bin/sh
+# configversion: 1
 
 # This hook goal is to return a non zero exit code if the device
 # should wait before going to suspension

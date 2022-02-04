@@ -1,4 +1,5 @@
 #!/bin/sh
+# configversion: 1
 
 WMCLASS="$1"
 WMNAME="$2"

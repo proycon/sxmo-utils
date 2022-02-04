@@ -1,4 +1,5 @@
 #!/bin/sh
+# configversion: 1
 
 # This script is executed (asynchronously) when you missed a call
 # You can use it to play a ring tone

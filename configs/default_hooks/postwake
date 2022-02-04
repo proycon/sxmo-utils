@@ -1,4 +1,5 @@
 #!/bin/sh
+# configversion: 1
 
 UNSUSPENDREASON="$1"
 

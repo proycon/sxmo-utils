@@ -1,4 +1,5 @@
 #!/bin/sh
+# configversion: 1
 
 # This hook launches a desktop widget (e.g. a clock) (blocking)
 

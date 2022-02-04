@@ -1,4 +1,5 @@
 # Default config for sway
+# configversion: 1
 #
 # Copy this to ~/.config/sway/config and edit it to your liking.
 #
