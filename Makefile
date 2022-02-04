@@ -28,7 +28,7 @@ programs/sxmo_splitchar: programs/sxmo_splitchar.c
 	gcc -o programs/sxmo_splitchar programs/sxmo_splitchar.c
 
 clean:
-	rm -f programs/sxmo_megiaudioroute programs/sxmo_vibrate
+	rm -f programs/sxmo_megiaudioroute programs/sxmo_vibrate programs/sxmo_splitchar
 
 install: $(PROGRAMS)
 	cd configs && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
