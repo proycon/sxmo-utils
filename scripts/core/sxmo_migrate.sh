@@ -76,7 +76,7 @@ defaultconfig() {
 		cp "$defaultfile" "$userfile"
 		chmod "$filemode" "$userfile"
 	elif [ "$MODE" = "reset" ]; then
-		mv -f "$userfile" "$userfile.backup"
+		[ ! -e "$userfile.needs-migration" ] && mv "$userfile" "$userfile.needs-migration"
 		cp "$defaultfile" "$userfile"
 		chmod "$filemode" "$userfile"
 	elif ! checkconfigversion "$userfile" "$defaultfile" || [ "$MODE" = "all" ]; then
@@ -99,7 +99,11 @@ checkhooks() {
 	if [ -e "$XDG_CONFIG_HOME/sxmo/hooks/" ]; then
 		for hook in "$XDG_CONFIG_HOME/sxmo/hooks/"*; do
 			if [ "$MODE" = "reset" ]; then
-				mv -f "$hook" "$hook.backup" #move the hook away
+				if [ ! -e "$hook.needs-migration" ]; then
+					mv "$hook" "$hook.needs-migration" #move the hook away
+				else
+					rm "$hook"
+				fi
 				continue
 			fi
 			case "$hook" in
