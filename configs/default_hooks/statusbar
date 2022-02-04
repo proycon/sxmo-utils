@@ -1,5 +1,5 @@
 #!/bin/sh
-# configversion: 2
+# configversion: 3
 
 # we disable shellcheck SC2154 (unreferenced variable used)
 # shellcheck disable=SC2154
@@ -9,6 +9,8 @@
 . "$(which sxmo_icons.sh)"
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(which sxmo_common.sh)"
+
+VPNDEVICE="$(nmcli con show | grep -E 'wireguard|vpn' | awk '{ print $1 }')"
 
 set_time() {
 	date +%H:%M | head -c -1 | sxmo_status.sh add 99-time
@@ -148,11 +150,8 @@ set_wifi() {
 }
 
 set_vpn() {
-	VPNDEVICE="$(nmcli con show | grep vpn | awk '{ print $4 }')"
-	WGDEVICE="$(nmcli con show | grep wireguard | awk '{ print $4 }')"
-	if [ -n "$VPNDEVICE" ] && [ "$VPNDEVICE" != "--" ]; then
-		sxmo_status.sh add 30-vpn-status "$icon_key"
-	elif [ -n "$WGDEVICE" ] && [ "$WGDEVICE" != "--" ]; then
+	VPNSTATE="$(nmcli device status | grep -E 'wireguard|vpn' | awk '{ print $3 }')"
+	if [ "$VPNDEVICE" != "--" ] && [ "$VPNSTATE" = "connected" ]; then
 		sxmo_status.sh add 30-vpn-status "$icon_key"
 	else
 		sxmo_status.sh del 30-vpn-status
@@ -255,7 +254,10 @@ case "$1" in
 	network_wlan0)
 		set_wifi
 		;;
-	time|call_duration|modem|modem_monitor|vpn|battery|volume|locked)
+	network_$VPNDEVICE)
+		set_vpn
+		;;
+	time|call_duration|modem|modem_monitor|battery|volume|locked)
 		set_"$1"
 		;;
 	periodics|state_change) # 55 s loop and screenlock triggers
