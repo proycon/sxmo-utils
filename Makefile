@@ -3,7 +3,6 @@ PREFIX:=/usr
 .PHONY: install shellcheck
 
 VERSION:=1.8.1
-CONFIGVERSION:=1.8.0
 
 GITVERSION:=$(shell git describe --tags)
 
@@ -36,7 +35,6 @@ install: $(PROGRAMS)
 	cd configs && find default_hooks -type f -exec install -D -m 0755 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
 	[ -n "$(GITVERSION)" ] && echo "$(GITVERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version" || echo "$(VERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version"
-	echo "$(CONFIGVERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/configversion"
 
 	cd resources && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 

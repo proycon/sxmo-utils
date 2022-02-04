@@ -22,21 +22,6 @@ defaults() {
 	[ -e "$HOME"/.Xresources ] && xrdb -merge "$HOME"/.Xresources
 }
 
-defaultconfig() {
-	if [ ! -r "$2" ]; then
-		mkdir -p "$(dirname "$2")"
-		cp "$1" "$2"
-		chmod "$3" "$2"
-	fi
-}
-
-defaultconfigs() {
-	defaultconfig /usr/share/sxmo/appcfg/profile_template "$XDG_CONFIG_HOME/sxmo/profile" 644
-	defaultconfig /usr/share/sxmo/appcfg/sway_template "$XDG_CONFIG_HOME/sxmo/sway" 644
-	defaultconfig /usr/share/sxmo/appcfg/mako.conf "$XDG_CONFIG_HOME/mako/config" 644
-	defaultconfig /usr/share/sxmo/appcfg/foot.ini "$XDG_CONFIG_HOME/foot/foot.ini" 644
-}
-
 start() {
 	# shellcheck disable=SC2016
 	dbus-run-session sh -c '
@@ -54,11 +39,10 @@ cleanup() {
 init() {
 	_sxmo_load_environments
 	_sxmo_prepare_dirs
-	_sxmo_check_and_move_config
 	envvars
+	sxmo_migrate.sh sync
 
 	defaults
-	defaultconfigs
 
 	# shellcheck disable=SC1090,SC1091
 	. "$XDG_CONFIG_HOME/sxmo/profile"

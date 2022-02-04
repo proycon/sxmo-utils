@@ -79,6 +79,6 @@ else
 	fi
 fi
 
-if ls "$XDG_CONFIG_HOME"/sxmo.old-* 1> /dev/null 2>&1; then
-	sxmo_notify_user.sh --urgency=critical "Config has been migrated" "Your configs are out of date - using defaults."
+if ! sxmo_migrate.sh state; then
+	sxmo_notify_user.sh --urgency=critical "Config needs migration" "$? file(s) in your sxmo configuration are out of date and disabled - using defaults until you migrate"
 fi

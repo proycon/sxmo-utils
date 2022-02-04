@@ -42,19 +42,6 @@ defaultkeyboard() {
 	fi
 }
 
-defaultconfig() {
-	if [ ! -r "$2" ]; then
-		mkdir -p "$(dirname "$2")"
-		cp "$1" "$2"
-		chmod "$3" "$2"
-	fi
-}
-
-defaultconfigs() {
-	defaultconfig /usr/share/sxmo/appcfg/profile_template "$XDG_CONFIG_HOME/sxmo/profile" 644
-	defaultconfig /usr/share/sxmo/appcfg/dunst.conf "$XDG_CONFIG_HOME/dunst/dunstrc" 644
-	defaultconfig /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit" 644
-}
 
 start() {
 	# shellcheck disable=SC2016
@@ -74,11 +61,10 @@ cleanup() {
 init() {
 	_sxmo_load_environments
 	_sxmo_prepare_dirs
-	_sxmo_check_and_move_config
 	envvars
+	sxmo_migrate.sh sync
 
 	defaults
-	defaultconfigs
 
 	# shellcheck disable=SC1090,SC1091
 	. "$XDG_CONFIG_HOME/sxmo/profile"
