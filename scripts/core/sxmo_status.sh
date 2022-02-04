@@ -9,7 +9,7 @@ ROOT="${XDG_RUNTIME_DIR:-$HOME/.local/run}/sxmo_status/${SXMO_STATUS_NAME:-defau
 mkdir -p "$ROOT"
 
 _sorted_components_name() {
-	find "$ROOT" -exec 'basename' '{}' ';' -mindepth 1 | sort -h
+	find "$ROOT" -exec 'basename' '{}' ';' -mindepth 1 | sort -n
 }
 
 usage() {
