@@ -67,7 +67,7 @@ defaultconfig() {
 	defaultfile="$1"
 	userfile="$2"
 	filemode="$3"
-	if [ -e "$userfile.needs-migration" ] && ([ "$MODE" = "interactive" ] || [ "$MODE" = "all" ]); then
+	if [ -e "$userfile.needs-migration" ] && { [ "$MODE" = "interactive" ] || [ "$MODE" = "all" ]; }; then
 		resolvedifference "$userfile.needs-migration" "$defaultfile"
 		chmod "$filemode" "$userfile" 2> /dev/null
 	elif [ ! -r "$userfile" ]; then
