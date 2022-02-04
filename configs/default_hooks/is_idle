@@ -35,7 +35,7 @@ waiting_rtcwake() {
 }
 
 auto_screenoff() {
-	[ -e "$XDG_RUNTIME_DIR/sxmo.noidle" ] && exit_not_idle "auto_screenoff_off"
+	[ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ] && exit_not_idle "auto_screenoff_off"
 }
 
 ongoing_call

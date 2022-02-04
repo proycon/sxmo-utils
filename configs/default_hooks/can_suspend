@@ -41,7 +41,7 @@ photos_processing() {
 }
 
 auto_suspend() {
-	[ -e "$XDG_RUNTIME_DIR/sxmo.nosuspend" ] && exit_should_wait "auto_suspend_off"
+	[ -e "$XDG_CACHE_HOME/sxmo/sxmo.nosuspend" ] && exit_should_wait "auto_suspend_off"
 }
 
 modem_use
