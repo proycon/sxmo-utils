@@ -119,7 +119,11 @@ defaultconfig() {
 		cp "$defaultfile" "$userfile"
 		chmod "$filemode" "$userfile"
 	elif [ "$MODE" = "reset" ]; then
-		[ ! -e "$userfile.needs-migration" ] && mv "$userfile" "$userfile.needs-migration"
+		if [ ! -e "$userfile.needs-migration" ]; then
+			mv "$userfile" "$userfile.needs-migration"
+		else
+			sxmo_log "$userfile was already flagged for needing migration; not overwriting the older one"
+		fi
 		cp "$defaultfile" "$userfile"
 		chmod "$filemode" "$userfile"
 	elif ! checkconfigversion "$userfile" "$defaultfile" || [ "$MODE" = "all" ]; then
@@ -146,6 +150,7 @@ checkhooks() {
 				if [ ! -e "$hook.needs-migration" ]; then
 					mv "$hook" "$hook.needs-migration" #move the hook away
 				else
+					sxmo_log "$hook was already flagged for needing migration; not overwriting the older one"
 					rm "$hook"
 				fi
 				continue
