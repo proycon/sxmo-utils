@@ -54,7 +54,7 @@ _sxmo_load_environments() {
 
 	export BEMENU_OPTS="${BEMENU_OPTS:---fn 'Monospace 14' --scrollbar autohide -s -n -w -c -l8 -M 40 -H 20}"
 
-	export EDITOR="${EDITOR:-vis}"
+	export EDITOR="${EDITOR:-vim}"
 
 	device="$(cut -d ',' -f 2 < /sys/firmware/devicetree/base/compatible | tr -d '\0')"
 	deviceprofile="$(which "sxmo_deviceprofile_$device.sh")"
