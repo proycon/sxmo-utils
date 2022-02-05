@@ -197,11 +197,11 @@ checkhooks() {
 				(
 					smartdiff -ud "/dev/null" "$hook"
 					printf "\e[31mThe hook \e[32m%s\e[31m does not exist (anymore), remove it? [Y/n] \e[0m\n" "$hook"
-					read -r reply < /dev/tty
-					if [ "n" != "$reply" ]; then
-						rm "$hook"
-					fi
 				) | more
+				read -r reply < /dev/tty
+				if [ "n" != "$reply" ]; then
+					rm "$hook"
+				fi
 				printf "\n"
 			fi
 		done
