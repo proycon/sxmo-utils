@@ -250,7 +250,7 @@ for MODE in "$@"; do
 			checkhooks
 			;;
 		"state")
-			NEED_MIGRATION="$(find "$XDG_CONFIG_HOME/sxmo/" -name "*.needs-migration")"
+			NEED_MIGRATION="$(find "$XDG_CONFIG_HOME/" -name "*.needs-migration")"
 			if [ -n "$NEED_MIGRATION" ]; then
 				sxmo_log "The following configuration files need migration: $NEED_MIGRATION"
 				exit "$(echo "$NEED_MIGRATION" | wc -l)" #exit code represents number of files needing migration
