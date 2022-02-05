@@ -136,7 +136,8 @@ defaultconfig() {
 
 checkhooks() {
 	if [ -e "$XDG_CONFIG_HOME/sxmo/hooks/" ]; then
-		for hook in "$XDG_CONFIG_HOME/sxmo/hooks/"*; do
+		find "$XDG_CONFIG_HOME/sxmo/hooks/" -mindepth 1 |  while read -r hook; do
+			[ -d "$hook" ] && continue #exclude directories
 			if [ "$MODE" = "reset" ]; then
 				if [ ! -e "$hook.needs-migration" ]; then
 					mv "$hook" "$hook.needs-migration" #move the hook away
