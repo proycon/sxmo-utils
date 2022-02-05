@@ -172,9 +172,9 @@ checkhooks() {
 			esac
 			if [ -f "$defaulthook" ]; then
 				if diff "$hook" "$defaulthook" > /dev/null && [ "$MODE" != "sync" ]; then
-					printf "\e[33mHook %s is identical to the default, so you don't need a custom hook, remove it? [Y/n]\e[0m" "$hook"
+					printf "\e[33mHook %s is identical to the default, so you don't need a custom hook, remove it? [y/N]\e[0m" "$hook"
 					read -r reply < /dev/tty
-					if [ "n" != "$reply" ]; then
+					if [ "y" = "$reply" ]; then
 						rm "$hook"
 					fi
 				elif ! checkconfigversion "$hook" "$defaulthook" || [ "$MODE" = "all" ]; then
@@ -196,10 +196,10 @@ checkhooks() {
 			elif [ "$MODE" != "sync" ]; then
 				(
 					smartdiff -ud "/dev/null" "$hook"
-					printf "\e[31mThe hook \e[32m%s\e[31m does not exist (anymore), remove it? [Y/n] \e[0m\n" "$hook"
+					printf "\e[31mThe hook \e[32m%s\e[31m does not exist (anymore), remove it? [y/N] \e[0m\n" "$hook"
 				) | more
 				read -r reply < /dev/tty
-				if [ "n" != "$reply" ]; then
+				if [ "y" = "$reply" ]; then
 					rm "$hook"
 				fi
 				printf "\n"
