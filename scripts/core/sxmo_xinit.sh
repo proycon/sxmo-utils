@@ -7,9 +7,6 @@ envvars() {
 	export SXMO_WM=dwm
 	# shellcheck disable=SC2086
 	command -v $TERMCMD "" >/dev/null || export TERMCMD="st"
-	command -v "$BROWSER" >/dev/null || export BROWSER=surf
-	command -v "$EDITOR" >/dev/null || export EDITOR=vis
-	command -v "$SHELL" >/dev/null || export SHELL=/bin/sh
 	command -v "$KEYBOARD" >/dev/null || defaultkeyboard
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 	[ -z "$XDG_PICTURES_DIR" ] && export XDG_PICTURES_DIR=~/Pictures

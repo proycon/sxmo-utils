@@ -55,6 +55,13 @@ _sxmo_load_environments() {
 	export BEMENU_OPTS="${BEMENU_OPTS:---fn 'Monospace 14' --scrollbar autohide -s -n -w -c -l8 -M 40 -H 20}"
 
 	export EDITOR="${EDITOR:-vim}"
+	export BROWSER="${BROWSER:-firefox}"
+	export SHELL="${SHELL:-/bin/sh}"
+
+	#also fall back if user set something that doesn't exist:
+	command -v "$BROWSER" >/dev/null || export BROWSER=firefox
+	command -v "$EDITOR" >/dev/null || export EDITOR=vim
+	command -v "$SHELL" >/dev/null || export SHELL=/bin/sh
 
 	device="$(cut -d ',' -f 2 < /sys/firmware/devicetree/base/compatible | tr -d '\0')"
 	deviceprofile="$(which "sxmo_deviceprofile_$device.sh")"

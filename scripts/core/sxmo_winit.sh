@@ -9,9 +9,6 @@ envvars() {
 	export SDL_VIDEODRIVER=wayland
 	# shellcheck disable=SC2086
 	command -v $TERMCMD "" >/dev/null || export TERMCMD="foot"
-	command -v "$BROWSER" >/dev/null || export BROWSER=firefox
-	command -v "$EDITOR" >/dev/null || export EDITOR=vis
-	command -v "$SHELL" >/dev/null || export SHELL=/bin/sh
 	command -v "$KEYBOARD" >/dev/null || export KEYBOARD=wvkbd-mobintl
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 	[ -z "$XDG_PICTURES_DIR" ] && export XDG_PICTURES_DIR=~/Pictures
