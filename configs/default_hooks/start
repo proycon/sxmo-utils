@@ -1,5 +1,5 @@
 #!/bin/sh
-# configversion: 1
+# configversion: 2
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
@@ -81,4 +81,4 @@ else
 fi
 
 sxmo_migrate.sh state || sxmo_notify_user.sh --urgency=critical \
-	"Config needs migration" "$? file(s) in your sxmo configuration are out of date and disabled - using defaults until you migrate"
+	"Config needs migration" "$? file(s) in your sxmo configuration are out of date and disabled - using defaults until you migrate (run sxmo_migrate.sh)"
