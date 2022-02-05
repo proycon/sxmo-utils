@@ -39,7 +39,7 @@ choosenumbermenu() {
 	elif NUMBER="$(sxmo_validnumber.sh "$NUMBER")"; then
 		printf %s "$NUMBER"
 	else
-		notify-send "That doesn't seem like a valid number"
+		sxmo_notify_user.sh "That doesn't seem like a valid number"
 	fi
 }
 
