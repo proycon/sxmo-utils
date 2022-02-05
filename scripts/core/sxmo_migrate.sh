@@ -214,40 +214,43 @@ xorg() {
 }
 
 
-MODE="interactive" #default mode
-[ -n "$1" ] && MODE="$1"
+#set default mode
+[ -z "$*" ] && set -- interactive
 
-case "$MODE" in
-	"interactive"|"all"|"sync"|"reset")
-		case "$SXMO_WM" in
-			sway)
-				common
-				sway
-				;;
-			dwm)
-				common
-				xorg
-				;;
-			*)
-				common
-				sway
-				xorg
-				;;
-		esac
+#modes may be chained
+for MODE in "$@"; do
+	case "$MODE" in
+		"interactive"|"all"|"sync"|"reset")
+			case "$SXMO_WM" in
+				sway)
+					common
+					sway
+					;;
+				dwm)
+					common
+					xorg
+					;;
+				*)
+					common
+					sway
+					xorg
+					;;
+			esac
 
-		checkhooks
-		;;
-	"state")
-		NEED_MIGRATION="$(find "$XDG_CONFIG_HOME/sxmo/" -name "*.needs-migration")"
-		if [ -n "$NEED_MIGRATION" ]; then
-			sxmo_log "The following configuration files need migration: $NEED_MIGRATION"
-			exit "$(echo "$NEED_MIGRATION" | wc -l)" #exit code represents number of files needing migration
-		else
-			sxmo_log "All configuration files are up to date"
-		fi
-		;;
-	*)
-		sxmo_log "Invalid mode: $MODE"
-		exit 2
-		;;
-esac
+			checkhooks
+			;;
+		"state")
+			NEED_MIGRATION="$(find "$XDG_CONFIG_HOME/sxmo/" -name "*.needs-migration")"
+			if [ -n "$NEED_MIGRATION" ]; then
+				sxmo_log "The following configuration files need migration: $NEED_MIGRATION"
+				exit "$(echo "$NEED_MIGRATION" | wc -l)" #exit code represents number of files needing migration
+			else
+				sxmo_log "All configuration files are up to date"
+			fi
+			;;
+		*)
+			sxmo_log "Invalid mode: $MODE"
+			exit 2
+			;;
+	esac
+done
