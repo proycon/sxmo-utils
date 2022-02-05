@@ -58,8 +58,12 @@ resolvedifference() {
 		[3uU]*)
 			#update configversion automatically
 			refversion="$(grep -e "^[#;]\\s*configversion\\s*[:=]" "$defaultfile" |  tr -d "\n")"
-			sed -i "s/^[#;]\\s*configversion\\s*[:=].*/$refversion/" "$userfile" 2> /dev/null || sed -i "2i$refversion" "$userfile" || abort=1
-			# ... second clause is a fall back in case the userfile doesn't contain a configversion at all yet --^
+			if grep -qe "^[#;]\\s*configversion\\s*[:=].*" "$userfile"; then
+				sed -i "s/^[#;]\\s*configversion\\s*[:=].*/$refversion/" "$userfile" || abort=1
+			else
+				# fall back in case the userfile doesn't contain a configversion at all yet
+				sed -i "2i$refversion" "$userfile" || abort=1
+			fi
 			;;
 		*)
 			abort=1
