@@ -166,10 +166,13 @@ if [ -z "$*" ]; then
 	set -- menu
 fi
 
-if ispulse; then
-	backend=pulse
-else
-	backend=alsa
+backend="$AUDIO_BACKEND"
+if [ -z "$backend" ]; then
+	if ispulse; then
+		backend=pulse
+	else
+		backend=alsa
+	fi
 fi
 
 cmd="$1"

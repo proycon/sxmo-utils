@@ -1,6 +1,5 @@
 #!/bin/sh
 
-ALSASTATEFILE="$XDG_CACHE_HOME"/precall.alsa.state
 trap "gracefulexit" INT TERM
 
 # include common definitions
@@ -9,17 +8,16 @@ trap "gracefulexit" INT TERM
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+AUDIO_MODE=
+ENABLED_SPEAKER=
+MUTED_MIC=
+
 stderr() {
 	sxmo_log "$*"
 }
 
 finish() {
 	sxmo_vibrate 1000 &
-	if [ -f "$ALSASTATEFILE" ]; then
-		alsactl --file "$ALSASTATEFILE" restore
-	else
-		alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
-	fi
 	setsid -f sh -c 'sleep 2; sxmo_hooks.sh statusbar call_duration'
 	if [ -n "$1" ]; then
 		stderr "$1"
@@ -48,10 +46,10 @@ modem_cmd_errcheck() {
 }
 
 vid_to_number() {
-	mmcli -m any -o "$1" -K |
-	grep call.properties.number |
-	cut -d ':' -f2 |
-	tr -d  ' '
+	mmcli -m any -o "$1" -K | \
+		grep call.properties.number | \
+		cut -d ':' -f2 | \
+		tr -d  ' '
 }
 
 log_event() {
@@ -63,27 +61,6 @@ log_event() {
 	printf %b "$TIME\t$EVT_HANDLE\t$NUM\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 }
 
-toggleflag() {
-	TOGGLEFLAG=$1
-	shift
-	FLAGS="$*"
-
-	# TODO: why >&2 here?
-	echo -- "$FLAGS" | grep -- "$TOGGLEFLAG" >&2 &&
-		NEWFLAGS="$(echo -- "$FLAGS" | sed "s/$TOGGLEFLAG//g")" ||
-		NEWFLAGS="$(echo -- "$FLAGS $TOGGLEFLAG")"
-
-	NEWFLAGS="$(echo -- "$NEWFLAGS" | sed "s/--//g; s/  / /g")"
-
-	# shellcheck disable=SC2086
-	sxmo_megiaudioroute $NEWFLAGS
-	echo -- "$NEWFLAGS"
-}
-
-toggleflagset() {
-	FLAGS="$(toggleflag "$1" "$FLAGS")"
-}
-
 acceptcall() {
 	CALLID="$1"
 	stderr "Attempting to initialize CALLID $CALLID"
@@ -93,27 +70,38 @@ acceptcall() {
 		cut -d: -f2 |
 		tr -d " "
 	)"
-	if [ "$DIRECTION" = "outgoing" ]; then
-		modem_cmd_errcheck -m any -o "$CALLID" --start
-		touch "$XDG_RUNTIME_DIR/${CALLID}.initiatedcall" #this signals that we started this call
-		log_event "call_start" "$CALLID"
-		stderr "Started call $CALLID"
-	elif [ "$DIRECTION" = "incoming" ]; then
-		stderr "Invoking pickup hook (async)"
-		sxmo_hooks.sh pickup &
-		touch "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall" #this signals that we picked this call up
-											     #to other asynchronously running processes
-		modem_cmd_errcheck -m any -o "$CALLID" --accept
-		log_event "call_pickup" "$CALLID"
-		stderr "Picked up call $CALLID"
-	else
-		finish "Couldn't initialize call with callid <$CALLID>; unknown direction <$DIRECTION>"
-	fi
-	alsactl --file "$ALSASTATEFILE" store
+	case "$DIRECTION" in
+		outgoing)
+			modem_cmd_errcheck -m any -o "$CALLID" --start
+			touch "$XDG_RUNTIME_DIR/${CALLID}.initiatedcall" #this signals that we started this call
+			log_event "call_start" "$CALLID"
+			stderr "Started call $CALLID"
+			;;
+		incoming)
+			stderr "Invoking pickup hook (async)"
+			sxmo_hooks.sh pickup &
+			touch "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall" #this signals that we picked this call up
+												     #to other asynchronously running processes
+			modem_cmd_errcheck -m any -o "$CALLID" --accept
+			log_event "call_pickup" "$CALLID"
+			stderr "Picked up call $CALLID"
+			;;
+		*)
+			finish "Couldn't initialize call with callid <$CALLID>; unknown direction <$DIRECTION>"
+			;;
+	esac
+
+	unmute_mic
+	enable_call_audio_mode
+	disable_speaker
 }
 
 hangup() {
 	CALLID="$1"
+
+	disable_call_audio_mode
+	enable_speaker
+
 	if [ -f "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall" ]; then
 		rm -f "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall"
 		touch "$XDG_RUNTIME_DIR/${CALLID}.hangedupcall" #this signals that we hanged up this call to other asynchronously running processes
@@ -130,52 +118,84 @@ hangup() {
 	exit 0
 }
 
-incallsetup() {
-	DMENUIDX=0
-	CALLID="$1"
-	NUMBER="$(vid_to_number "$CALLID")"
-	# E.g. There's some bug with the modem that' requires us to toggle the
-	# DAI a few times before starting the call for it to kick in
-	FLAGS=" "
-	toggleflagset "-e"
-	toggleflagset "-m"
-	toggleflagset "-2"
-	toggleflagset "-2"
-	toggleflagset "-2"
+muted_mic() {
+	[ "$MUTED_MIC" -eq 1 ]
+}
+
+mute_mic() {
+	callaudiocli -u 0
+	MUTED_MIC=1
+}
+
+unmute_mic() {
+	callaudiocli -u 1
+	MUTED_MIC=0
+}
+
+is_call_audio_mode() {
+	[ call = "$AUDIO_MODE" ]
+}
+
+enable_call_audio_mode() {
+	callaudiocli -m 1
+	AUDIO_MODE=call
+}
+
+disable_call_audio_mode() {
+	callaudiocli -m 0
+	AUDIO_MODE=default
+}
+
+enabled_speaker() {
+	[ "$ENABLED_SPEAKER" -eq 1 ]
+}
+
+enable_speaker() {
+	callaudiocli -s 1
+	ENABLED_SPEAKER=1
+}
+
+disable_speaker() {
+	callaudiocli -s 0
+	ENABLED_SPEAKER=0
 }
 
 incallmenuloop() {
-	stderr "Current flags are $FLAGS"
-	CHOICES="
-		$icon_aru Volume up                                                          ^ sxmo_audio.sh vol up
-		$icon_ard Volume down                                                          ^ sxmo_audio.sh vol down
-		$icon_phn Earpiece $(echo -- "$FLAGS" | grep -q -- -e && echo "$icon_chk")            ^ toggleflagset -e
-		$icon_mic Mic $(echo -- "$FLAGS" | grep -q -- -m && echo "$icon_chk")                 ^ toggleflagset -m
-		$icon_itm Linejack $(echo -- "$FLAGS" | grep -q -- -h && echo "$icon_chk")            ^ toggleflagset -h
-		$icon_itm Linemic  $(echo -- "$FLAGS" | grep -q -- -l && echo "$icon_chk")            ^ toggleflagset -l
-		$icon_spk Speakerphone $(echo -- "$FLAGS" | grep -q -- -s && echo "$icon_chk")        ^ toggleflagset -s
-		$icon_itm Echomic $(echo -- "$FLAGS" | grep -q -- -z && echo "$icon_chk")             ^ toggleflagset -z
-		$icon_mus DTMF Tones                                                        ^ dtmfmenu $CALLID
-		$icon_phx Hangup                                                            ^ hangup $CALLID
-	"
+	DMENUIDX=0
+	NUMBER="$(vid_to_number "$1")"
+	export AUDIO_BACKEND=alsa # We cant control volume with pulse
+	while : ; do
+		CHOICES="$(cat <<EOF
+$icon_aru Volume up                                          ^ sxmo_audio.sh vol up
+$icon_ard Volume down                                        ^ sxmo_audio.sh vol down
+$(enabled_speaker \
+	&& printf "%s Earpiece ^ disable_speaker" "$icon_phn" \
+	|| printf "%s Speakerphone ^ enable_speaker" "$icon_spk"
+)
+$icon_mus DTMF Tones                                         ^ dtmfmenu $CALLID
+$icon_phx Hangup                                             ^ hangup $CALLID
+EOF
+	)"
 
-	PICKED="$(
-		echo "$CHOICES" |
-			xargs -0 echo |
-			cut -d'^' -f1 |
-			sed '/^[[:space:]]*$/d' |
-			awk '{$1=$1};1' |
-			dmenu --index "$DMENUIDX" -p "$NUMBER"
-	)" || hangup "$CALLID" # in case the menu is closed
+		# Disable cause doesnt have effect o_O
+		# $(muted_mic \
+		# 	&& printf "%s Unmute mic ^ unmute_mic" "$icon_spk" \
+		# 	|| printf "%s Mute mic ^ mute_mic" "$icon_phn"
+		# )
 
-	stderr "Picked is $PICKED"
-	echo "$PICKED" | grep -Ev "."
+		PICKED="$(
+			printf "%s\n" "$CHOICES" |
+				cut -d'^' -f1 |
+				dmenu --index "$DMENUIDX" -p "$NUMBER"
+		)" || hangup "$CALLID" # in case the menu is closed
 
-	CMD="$(echo "$CHOICES" | grep "$PICKED" | cut -d'^' -f2)"
-	DMENUIDX="$(printf "%s - 2" "$(echo "$CHOICES" | grep -n "$PICKED" | cut -d ':' -f1)" | bc)"
-	stderr "Eval in call context: $CMD"
-	eval "$CMD"
-	incallmenuloop
+		stderr "Picked is $PICKED"
+
+		CMD="$(printf "%s\n" "$CHOICES" | grep "$PICKED" | cut -d'^' -f2)"
+		DMENUIDX="$(($(printf "%s\n" "$CHOICES" | grep -n "^$PICKED" | head -n+1 | cut -d: -f1) -1))"
+		stderr "Eval in call context: $CMD"
+		eval "$CMD"
+	done
 }
 
 dtmfmenu() {
@@ -193,7 +213,6 @@ dtmfmenu() {
 
 pickup() {
 	acceptcall "$1"
-	incallsetup "$1"
 	incallmenuloop "$1"
 }
 
@@ -218,17 +237,24 @@ incomingcallmenu() {
 	fi
 
 	PICKED="$(
-		printf %b "$icon_phn Pickup\n$icon_phx Hangup\n$icon_mut Mute\n" |
-		dmenu -H "$pickup_height" -p "$CONTACTNAME"
+		cat <<EOF | dmenu -H "$pickup_height" -p "$CONTACTNAME"
+$icon_phn Pickup
+$icon_phx Hangup
+$icon_mut Mute
+EOF
 	)" || exit
 
-	if echo "$PICKED" | grep -q "Pickup"; then
-		pickup "$1"
-	elif echo "$PICKED" | grep -q "Hangup"; then
-		hangup "$1"
-	elif echo "$PICKED" | grep -q "Mute"; then
-		mute "$1"
-	fi
+	case "$PICKED" in
+		"$icon_phn Pickup")
+			pickup "$1"
+			;;
+		"$icon_phx Hangup")
+			hangup "$1"
+			;;
+		"$icon_mut Mute")
+			mute "$1"
+			;;
+	esac
 	rm -f "$SXMO_NOTIFDIR/incomingcall_${1}_notification"* #there may be multiple actionable notification for one call
 }
 
