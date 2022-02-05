@@ -61,11 +61,11 @@ if [ -n "$DISPLAY" ]; then
 	# TODO: kill dmenu?
 
 	if sxmo_keyboard.sh isopen; then
-		exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && \
+		exec dmenu -l "$(sxmo_rotate.sh isrotated > /dev/null && \
 			printf %s "${SXMO_DMENU_WITH_KB_LANDSCAPE_LINES:-5}" || \
 			printf %s "${SXMO_DMENU_WITH_KB_PORTRAIT_LINES:-12}")" "$@"
 	else
-		exec dmenu -c -l "$(sxmo_rotate.sh isrotated > /dev/null && \
+		exec dmenu -l "$(sxmo_rotate.sh isrotated > /dev/null && \
 			printf %s "${SXMO_DMENU_LANDSCAPE_LINES:-7}" || \
 			printf %s "${SXMO_DMENU_PORTRAIT_LINES:-15}")" "$@"
 	fi
