@@ -21,20 +21,59 @@ resolvedifference() {
 		smartdiff -ud "$defaultfile" "$userfile"
 	) | more
 
-	printf "\e[33mDo you want to apply the default? [y/N], or perhaps open an editor [e]?\e[0m "
-	read -r reply < /dev/tty
-	if [ "y" = "$reply" ]; then
-		cp "$defaultfile" "$userfile"
-	elif [ "e" = "$reply" ]; then
-		$EDITOR "$userfile" "$defaultfile"
-	fi
+	printf "\e[31mMigration options for \e[32m%s\e[31m:\e[0m\n" "$userfile"
 
-	#finish the migration, removing .needs-migration and moving to right place
-	case "$userfile" in
-		*needs-migration)
-			mv -f "$userfile" "${userfile%.needs-migration}"
+	printf "1 - Use [d]efault. Apply the Sxmo default, discarding all your own changes.\n"
+	printf "2 - Open [e]ditor and merge the changes yourself; take care to set the same configversion.\n"
+	printf "3 - Use your [u]ser version as-is; you verified it's compatible. (Auto-updates configversion only).\n"
+	printf "4 - [i]gnore, do not resolve and don't change anything, ask again next time. (default)\n"
+
+	printf "\e[33mHow do you want to resolve this? Choose one of the options above [1234deui]\e[0m "
+
+	read -r reply < /dev/tty
+	abort=0
+	case "$reply" in
+		[1dD]*)
+			#use default
+			case "$userfile" in
+				*hooks*)
+					#just remove the user hook, will use default automatically
+					rm "$userfile"
+					abort=1 #no need for any further cleanup
+					;;
+				*)
+					cp "$defaultfile" "$userfile" || abort=1
+					;;
+			esac
+			;;
+		[2eE]*)
+			#open editor with both files and the diff
+			diff "$defaultfile" "$userfile" > "${XDG_RUNTIME_DIR}/migrate.diff"
+			if ! $EDITOR "$userfile" "$defaultfile" "${XDG_RUNTIME_DIR}/migrate.diff"; then
+				#user may bail editor, in which case we ignore everything
+				abort=1
+			fi
+			rm "${XDG_RUNTIME_DIR}/migrate.diff"
+			;;
+		[3uU]*)
+			#update configversion automatically
+			refversion="$(grep -e "^[#;]\\s*configversion\\s*[:=]" "$defaultfile" |  tr -d "\n")"
+			sed -i "s/^[#;]\\s*configversion\\s*[:=].*/$refversion/" "$userfile" 2> /dev/null || sed -i "2i$refversion" "$userfile" || abort=1
+			# ... second clause is a fall back in case the userfile doesn't contain a configversion at all yet --^
+			;;
+		*)
+			abort=1
 			;;
 	esac
+
+	if [ "$abort" -eq 0 ]; then
+		#finish the migration, removing .needs-migration and moving to right place
+		case "$userfile" in
+			*needs-migration)
+				mv -f "$userfile" "${userfile%.needs-migration}"
+				;;
+		esac
+	fi
 	printf "\n"
 }
 
