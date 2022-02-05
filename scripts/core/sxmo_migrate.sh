@@ -48,7 +48,7 @@ resolvedifference() {
 			;;
 		[2eE]*)
 			#open editor with both files and the diff
-			diff "$defaultfile" "$userfile" > "${XDG_RUNTIME_DIR}/migrate.diff"
+			diff -u "$defaultfile" "$userfile" > "${XDG_RUNTIME_DIR}/migrate.diff"
 			if ! $EDITOR "$userfile" "$defaultfile" "${XDG_RUNTIME_DIR}/migrate.diff"; then
 				#user may bail editor, in which case we ignore everything
 				abort=1
