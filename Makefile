@@ -2,7 +2,7 @@ PREFIX:=/usr
 
 .PHONY: install shellcheck
 
-VERSION:=1.8.2
+VERSION:=1.8.3
 
 GITVERSION:=$(shell git describe --tags)
 
