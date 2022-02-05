@@ -80,6 +80,5 @@ else
 	fi
 fi
 
-if ! sxmo_migrate.sh state; then
-	sxmo_notify_user.sh --urgency=critical "Config needs migration" "$? file(s) in your sxmo configuration are out of date and disabled - using defaults until you migrate"
-fi
+sxmo_migrate.sh state || sxmo_notify_user.sh --urgency=critical \
+	"Config needs migration" "$? file(s) in your sxmo configuration are out of date and disabled - using defaults until you migrate"
