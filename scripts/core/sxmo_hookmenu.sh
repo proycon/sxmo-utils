@@ -3,6 +3,8 @@
 set -e
 
 copy() {
+	mkdir -p "$XDG_CONFIG_HOME/sxmo/hooks"
+
 	if [ ! -e "$XDG_CONFIG_HOME/sxmo/hooks/$1" ]; then
 		cp "/usr/share/sxmo/default_hooks/$1" \
 			"$XDG_CONFIG_HOME/sxmo/hooks/$1"
@@ -41,12 +43,13 @@ list_hooks() {
 	user=$(mktemp)
 	system=$(mktemp)
 
-	# dmenu can't handle itmes with newlines in them, so we don't handle them
-	find "$XDG_CONFIG_HOME/sxmo/hooks" -type f -print0 |\
-		xargs -0 basename -a | sort > "$user"
+	if [ -d "$XDG_CONFIG_HOME/sxmo/hooks" ]; then
+		find "$XDG_CONFIG_HOME/sxmo/hooks" \( -type f -o -type l \) -exec basename -a {} + |\
+			sort > "$user"
+	fi
 
-	find "/usr/share/sxmo/default_hooks" -type f -print0 |\
-		xargs -0 basename -a | sort > "$system"
+	find "/usr/share/sxmo/default_hooks" \( -type f -o -type l \) -exec basename -a {} + |\
+		sort > "$system"
 
 	# TODO: someone please find some good icons for this
 	# Present in the user directory only (not in default hooks)
