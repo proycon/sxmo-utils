@@ -16,7 +16,7 @@ set_time() {
 }
 
 set_locked() {
-	if sxmo_screenlock.sh getCurState | grep -q unlock; then
+	if grep -q unlock "$SXMO_STATE"; then
 		sxmo_status.sh del 0-locked
 	else
 		sxmo_status.sh add 0-locked "LOCK" # You can also use "$icon_nto"

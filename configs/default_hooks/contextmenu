@@ -107,9 +107,9 @@ case "$WMCLASS" in
 	power)
 		# Power menu
 		CHOICES="
-			$icon_lck Lock               ^ 0 ^ sxmo_screenlock.sh lock
-			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_screenlock.sh off
-			$icon_zzz Suspend            ^ 0 ^ sxmo_screenlock.sh off && sxmo_screenlock.sh crust
+			$icon_lck Lock               ^ 0 ^ sxmo_hooks.sh lock
+			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_hooks.sh screenoff
+			$icon_zzz Suspend            ^ 0 ^ sxmo_hooks.sh screenoff && sxmo_hooks.sh crust
 			$icon_out Logout             ^ 0 ^ confirm Logout && (pkill -9 dwm || pkill -9 sway)
 			$icon_rol Toggle WM          ^ 0 ^ confirm Toggle && sxmo_wmtoggle.sh
 			$icon_rld Reboot             ^ 0 ^ confirm Reboot && sxmo_power.sh reboot

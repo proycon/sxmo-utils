@@ -5,7 +5,7 @@
 . "$(which sxmo_common.sh)"
 
 # in case of weird crash
-echo "unlock" > "$SXMO_LASTSTATE"
+echo "unlock" > "$SXMO_STATE"
 [ -f "$SXMO_UNSUSPENDREASONFILE" ] && rm -f "$SXMO_UNSUSPENDREASONFILE"
 
 # Force audio over the main speaker
@@ -64,7 +64,7 @@ sxmo_daemons.sh start network_monitor sxmo_networkmonitor.sh
 sxmo_daemons.sh start notification_monitor sxmo_notificationmonitor.sh
 
 # To setup initial lock state
-sxmo_screenlock.sh unlock
+sxmo_hooks.sh unlock
 
 sxmo_daemons.sh start pipewire pipewire
 

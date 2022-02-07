@@ -13,13 +13,13 @@ ACTION="$1"
 lock_screen_action() {
 	count="${1:-1}"
 
-	state="$(sxmo_screenlock.sh getCurState)"
+	state="$(cat "$SXMO_STATE")"
 	while [ "$count" -gt 0 ]; do
 		case "$state" in
 			unlock)
-				state=off
+				state=screenoff
 				;;
-			off)
+			screenoff)
 				state=lock
 				;;
 			lock)
@@ -29,7 +29,7 @@ lock_screen_action() {
 		count=$((count-1))
 	done
 
-	sxmo_screenlock.sh "$state"
+	sxmo_hooks.sh "$state"
 }
 
 XPROPOUT="$(sxmo_wm.sh focusedwindow)"
@@ -41,7 +41,7 @@ if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler ]; then
 	"$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler "$WMCLASS" "$WMNAME" "$@" && exit
 fi
 
-if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
+if ! grep -q unlock "$SXMO_STATE"; then
 	case "$ACTION" in
 		"powerbutton_one")
 			lock_screen_action
@@ -333,9 +333,9 @@ case "$ACTION" in
 	"bottomleftcorner")
 		sxmo_dmenu.sh close
 		if [ -n "$WMCLASS" ]; then
-			sxmo_screenlock.sh lock
+			sxmo_hooks.sh lock
 		else
-			sxmo_screenlock.sh off
+			sxmo_hooks.sh screenoff
 		fi
 		exit 0
 		;;

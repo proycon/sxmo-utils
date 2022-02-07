@@ -47,7 +47,7 @@ _sxmo_load_environments() {
 	export SXMO_BLOCKDIR="$XDG_DATA_HOME/sxmo/block"
 	export SXMO_BLOCKFILE="$XDG_CONFIG_HOME/sxmo/block.tsv"
 	export SXMO_CONTACTFILE="$XDG_CONFIG_HOME/sxmo/contacts.tsv"
-	export SXMO_LASTSTATE="$XDG_RUNTIME_DIR/sxmo.suspend.laststate"
+	export SXMO_STATE="$XDG_RUNTIME_DIR/sxmo.state"
 	export SXMO_LOGDIR="$XDG_DATA_HOME/sxmo/modem"
 	export SXMO_NOTIFDIR="$XDG_DATA_HOME/sxmo/notifications"
 	export SXMO_UNSUSPENDREASONFILE="$XDG_RUNTIME_DIR/sxmo.suspend.reason"

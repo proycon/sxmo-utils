@@ -12,15 +12,6 @@ finish() {
 	exit 0
 }
 
-if [ "$1" = "--strict" ]; then
-	shift
-	#don't run if we're not in crust or not waked by rtc
-	if ! grep -q crust "$SXMO_LASTSTATE" || ! grep -q rtc "$SXMO_UNSUSPENDREASONFILE"; then
-		exit 0
-	fi
-fi
-
-
 trap 'finish' TERM INT EXIT
 
 echo "sxmo_rtcwake: Running sxmo_rtcwake for $* ($(date))" >&2

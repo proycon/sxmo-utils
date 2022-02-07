@@ -8,7 +8,7 @@ ACTION="$3"
 # You must exit 1 at the end in order for sxmo_inputhandler.sh to handle the
 # other behaviours.
 
-if [ "$(sxmo_screenlock.sh getCurState)" != "unlock" ]; then
+if ! grep -q unlock "$SXMO_STATE"; then
 	# Here you could override locked input handlers
 	# You must exit 1 at the end to allow defaults too
 	exit 1
