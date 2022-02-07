@@ -413,6 +413,25 @@ case "$WMCLASS" in
 			esac
 		fi
 	;;
+	*xournal*)
+		# Xournalpp
+		CHOICES="
+			$icon_cfg Touch $(
+				sxmo_wm.sh inputevent touchscreen | grep -q on && \
+				printf %b "$icon_ton ^ 0 ^ sxmo_wm.sh inputevent touchscreen off" || \
+				printf %b "$icon_tof ^ 0 ^ sxmo_wm.sh inputevent touchscreen on"
+			)
+			$icon_flt Open		^ 0 ^ sxmo_type -k Ctrl -k o
+			$icon_zmi Zoom		^ 1 ^ sxmo_type -k Ctrl -k plus
+			$icon_zmo Zoom		^ 1 ^ sxmo_type -k Ctrl -k minus
+			$icon_zmi Next Page	^ 1 ^ sxmo_type -k Next
+			$icon_zmo Prev Page	^ 1 ^ sxmo_type -k Prior
+			$icon_cfg Menubar       ^ 0 ^ sxmo_type -k F10
+			$icon_cfg Toolbars      ^ 0 ^ sxmo_type -k F9
+			$icon_cfg SXMO Bar      ^ 0 ^ sxmo_wm.sh togglebar
+		"
+		WINNAME=Xournal
+		;;
 	*zathura*)
 		# Zathura
 		CHOICES="
