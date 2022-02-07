@@ -42,14 +42,20 @@ whichWake() {
 
 getCurState() {
 	#get the current state of the lock
-	if sxmo_wm.sh inputevent touchscreen | grep -q on ; then
-		printf "unlock" #normal mode, not locked
-	elif [ -n "$SXMO_STYLUS_ID" ] && sxmo_wm.sh inputevent stylus | grep -q on; then
-		printf "unlock"
-	elif sxmo_wm.sh dpms | grep -q off; then
-		printf "lock" #locked, but screen on
+	if sxmo_wm.sh dpms | grep -q on; then
+		printf "off"
+	elif [ -n "$SXMO_TOUCHSCREEN_ID" ] && [ -n "$SXMO_STYLUS_ID" ]; then
+		if sxmo_wm.sh inputevent stylus | grep -q off && sxmo_wm.sh inputevent touchscreen | grep -q off; then
+			printf "lock"
+		else
+			printf "unlock"
+		fi
+	elif [ -n "$SXMO_TOUCHSCREEN_ID" ] && sxmo_wm.sh inputevent touchscreen | grep -q off; then
+		printf "lock"
+	elif [ -n "$SXMO_STYLUS_ID" ] && sxmo_wm.sh inputevent stylus | grep -q off; then
+		printf "lock"
 	else
-		printf "off" #locked, and screen off
+		printf "unlock"
 	fi
 }
 

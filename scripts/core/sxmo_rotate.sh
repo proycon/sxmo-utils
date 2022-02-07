@@ -7,10 +7,8 @@
 monitor="${SXMO_MONITOR:-"DSI-1"}"
 
 applyptrmatrix() {
-	xinput set-prop "${SXMO_TOUCHSCREEN_ID:-8}" --type=float --type=float "Coordinate Transformation Matrix" "$@"
-	if [ -n "$SXMO_STYLUS_ID" ]; then
-		xinput set-prop "$SXMO_STYLUS_ID" --type=float --type=float "Coordinate Transformation Matrix" "$@"
-	fi
+	[ -n "$SXMO_TOUCHSCREEN_ID" ] && xinput set-prop "$SXMO_TOUCHSCREEN_ID" --type=float --type=float "Coordinate Transformation Matrix" "$@"
+	[ -n "$SXMO_STYLUS_ID" ] && xinput set-prop "$SXMO_STYLUS_ID" --type=float --type=float "Coordinate Transformation Matrix" "$@"
 }
 
 swaytransforms() {

@@ -42,9 +42,9 @@ swaydpms() {
 
 xorginputevent() {
 	if [ "$1" = "touchscreen" ]; then
-		TOUCH_POINTER_ID="${SXMO_TOUCHSCREEN_ID:-8}"
+		TOUCH_POINTER_ID="$SXMO_TOUCHSCREEN_ID"
 	elif [ "$1" = "stylus" ]; then
-		TOUCH_POINTER_ID="${SXMO_STYLUS_ID:-0}"
+		TOUCH_POINTER_ID="$SXMO_STYLUS_ID"
 	fi
 
 	STATE=off

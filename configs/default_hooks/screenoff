@@ -1,19 +1,25 @@
 #!/bin/sh
 # configversion: 1
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(which sxmo_common.sh)"
+
 # This hook is called when the system reaches a off state (screen off)
 
 sxmo_led.sh blink blue red &
+LEDPID=$!
 
 sxmo_wm.sh dpms on
-sxmo_wm.sh inputevent touchscreen off
+[ -z "$SXMO_TOUCHSCREEN_ID" ] || sxmo_wm.sh inputevent touchscreen off
 [ -z "$SXMO_STYLUS_ID" ] || sxmo_wm.sh inputevent stylus off
+if [ -n "$SXMO_TOUCHSCREEN_ID" ] && [ -n "$SXMO_STYLUS_ID" ]; then
+	sxmo_daemons.sh stop lisgd
+fi
+
 sxmo_hooks.sh statusbar locked
 
-sxmo_daemons.sh stop lisgd
-
-wait
-
+wait "$LEDPID"
 
 case "$SXMO_WM" in
 	dwm)
