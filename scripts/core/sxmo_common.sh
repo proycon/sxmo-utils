@@ -28,6 +28,7 @@ alias more="busybox more"
 alias netstat="busybox netstat"
 alias tail="busybox tail"
 alias xargs="busybox xargs"
+alias rfkill="busybox rfkill"
 
 confirm_menu() {
 	printf "No\nYes\n" | \
