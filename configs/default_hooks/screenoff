@@ -3,6 +3,18 @@
 
 # This hook is called when the system reaches a off state (screen off)
 
+sxmo_led.sh blink blue red &
+
+sxmo_wm.sh dpms on
+sxmo_wm.sh inputevent touchscreen off
+[ -z "$SXMO_STYLUS_ID" ] || sxmo_wm.sh inputevent stylus off
+sxmo_hooks.sh statusbar locked
+
+sxmo_daemons.sh stop lisgd
+
+wait
+
+
 case "$SXMO_WM" in
 	dwm)
 		# dmenu will grab input focus (i.e. power button) so kill it before going to

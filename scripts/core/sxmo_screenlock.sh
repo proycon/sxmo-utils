@@ -50,67 +50,21 @@ getCurState() {
 lock() {
 	#locked state with screen on
 	sxmo_log "transitioning from $(getCurState) to stage lock"
-
-	# always echo last state first so that user can use it in their hooks
-	# TODO: Document SXMO_LASTSTATE
 	getCurState > "$SXMO_LASTSTATE"
-
-	sxmo_led.sh blink blue &
-
-	sxmo_wm.sh dpms off
-	sxmo_wm.sh inputevent touchscreen off
-	[ -z "$SXMO_STYLUS_ID" ] || sxmo_wm.sh inputevent stylus off
-
-	sxmo_daemons.sh stop lisgd
-
-	sxmo_hooks.sh statusbar state_change
-	sxmo_hooks.sh statusbar locked
-
-	wait
-
-	# Do we want this hook after disabling all the input devices so users can enable certain devices?
 	sxmo_hooks.sh lock
 }
 
 unlock() {
 	#normal unlocked state, screen on
 	sxmo_log "transitioning from $(getCurState) to stage unlock"
-
 	getCurState > "$SXMO_LASTSTATE"
-
-	sxmo_led.sh blink red green &
-	LEDPID=$!
-
-	sxmo_wm.sh dpms off
-	sxmo_wm.sh inputevent touchscreen on
-	[ -z "$SXMO_STYLUS_ID" ] || sxmo_wm.sh inputevent stylus on
-	sxmo_hooks.sh lisgdstart
-
-	sxmo_hooks.sh statusbar state_change
-	sxmo_hooks.sh statusbar locked
-
-	wait "$LEDPID"
-
 	sxmo_hooks.sh unlock
 }
 
 off() {
 	#locked state with screen off
 	sxmo_log "transitioning from $(getCurState) to stage off"
-
 	getCurState > "$SXMO_LASTSTATE"
-
-	sxmo_led.sh blink blue red &
-
-	sxmo_wm.sh dpms on
-	sxmo_wm.sh inputevent touchscreen off
-	[ -z "$SXMO_STYLUS_ID" ] || sxmo_wm.sh inputevent stylus off
-	sxmo_hooks.sh statusbar locked
-
-	sxmo_daemons.sh stop lisgd
-
-	wait
-
 	sxmo_hooks.sh screenoff
 }
 
