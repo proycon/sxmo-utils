@@ -7,8 +7,10 @@
 monitor="${SXMO_MONITOR:-"DSI-1"}"
 
 applyptrmatrix() {
-	TOUCH_POINTER_ID="${SXMO_TOUCHSCREEN_ID:-8}"
-	xinput set-prop "$TOUCH_POINTER_ID" --type=float --type=float "Coordinate Transformation Matrix" "$@"
+	xinput set-prop "${SXMO_TOUCHSCREEN_ID:-8}" --type=float --type=float "Coordinate Transformation Matrix" "$@"
+	if [ -n "$SXMO_STYLUS_ID" ]; then
+		xinput set-prop "$SXMO_STYLUS_ID" --type=float --type=float "Coordinate Transformation Matrix" "$@"
+	fi
 }
 
 swaytransforms() {
@@ -52,6 +54,8 @@ xorgrotnormal() {
 
 swayrotnormal() {
 	swaymsg -- output  "$monitor" transform 0
+	swaymsg -- input type:touch map_to_output "$monitor"
+	swaymsg -- input type:tablet_tool map_to_output "$monitor"
 	sxmo_hooks.sh lisgdstart &
 	exit 0
 }
@@ -66,6 +70,8 @@ xorgrotright() {
 
 swayrotright() {
 	swaymsg -- output  "$monitor" transform 90
+	swaymsg -- input type:touch map_to_output "$monitor"
+	swaymsg -- input type:tablet_tool map_to_output "$monitor"
 	sxmo_hooks.sh lisgdstart &
 	exit 0
 }
@@ -80,6 +86,8 @@ xorgrotleft() {
 
 swayrotleft() {
 	swaymsg -- output  "$monitor" transform 270
+	swaymsg -- input type:touch map_to_output "$monitor"
+	swaymsg -- input type:tablet_tool map_to_output "$monitor"
 	sxmo_hooks.sh lisgdstart &
 	exit 0
 }
