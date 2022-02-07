@@ -18,20 +18,26 @@ saveAllEventCounts() {
 	cat "$WAKEUPRTC" > "$OLD_RTC_WAKECOUNT"
 	cat "$MODEMUPRTC" > "$OLD_MODEM_WAKECOUNT"
 	cat "$POWERRTC" > "$OLD_POWER_WAKECOUNT"
-	# TODO: add logic for modem wakeup
 }
 
 whichWake() {
 	#attempt to find the reason why we woke up:
-	if [ "$(cat "$POWERRTC")" -gt "$(cat "$OLD_POWER_WAKECOUNT")" ] ; then
+	if [ -f "$POWERRTC" ] && [ "$(cat "$POWERRTC")" -gt "$(cat "$OLD_POWER_WAKECOUNT")" ] ; then
 		echo "usb power"
-	elif [ "$(cat "$MODEMUPRTC")" -gt "$(cat "$OLD_MODEM_WAKECOUNT")" ] ; then
-		echo "modem"
-	elif [ "$(cat "$WAKEUPRTC")" -gt "$(cat "$OLD_RTC_WAKECOUNT")" ] ; then
-		echo "rtc"
-	else
-		echo "button"
+		return
 	fi
+
+	if [ -f "$MODEMUPRTC" ] && [ "$(cat "$MODEMUPRTC")" -gt "$(cat "$OLD_MODEM_WAKECOUNT")" ] ; then
+		echo "modem"
+		return
+	fi
+
+	if [ -f "$WAKEUPRTC" ] && [ "$(cat "$WAKEUPRTC")" -gt "$(cat "$OLD_RTC_WAKECOUNT")" ] ; then
+		echo "rtc"
+		return
+	fi
+
+	echo "button"
 }
 
 getCurState() {
