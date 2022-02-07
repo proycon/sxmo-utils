@@ -12,7 +12,7 @@ script's execution time at a minimum and to keep things simple.
 Supported variables used by sxmo are:
 
 ### Screen-related
-SXMO_ROTATE_POLL_TIME		| Polling time for rotate in seconds (decimals allowed e.g. .1) [default: 1]
+SXMO_ROTATION_POLL_TIME		| Polling time for rotate in seconds (decimals allowed e.g. .1) [default: 1]
 SXMO_ROTATION_GRAVITY		| Override gravity for calculating rotation [default: 500]
 SXMO_ROTATION_THRESHOLD		| Threshold for detecting rotation [default: 60]
 SXMO_MIN_BRIGHTNESS		| Minimum brightness level [default: 5]

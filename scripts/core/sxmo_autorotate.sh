@@ -1,8 +1,11 @@
 #!/bin/sh
 
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(which sxmo_common.sh)"
+
 ROTATION_GRAVITY="${SXMO_ROTATION_GRAVITY:-"16374"}"
 ROTATION_THRESHOLD="${SXMO_ROTATION_THRESHOLD:-"400"}"
-POLL_TIME="${SXMO_ROTATE_POLL_TIME:-1}"
+POLL_TIME="${SXMO_ROTATION_POLL_TIME:-1}"
 RIGHT_SIDE_UP="$(echo "$ROTATION_GRAVITY - $ROTATION_THRESHOLD" | bc)"
 UPSIDE_DOWN="$(echo "-$ROTATION_GRAVITY + $ROTATION_THRESHOLD" | bc)"
 FILE_Y="$(find /sys/bus/iio/devices/iio:device*/ -iname in_accel_y_raw)"
