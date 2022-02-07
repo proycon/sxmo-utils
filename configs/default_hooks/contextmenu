@@ -68,6 +68,7 @@ case "$WMCLASS" in
 				sxmo_daemons.sh running lisgd -q &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
 			) ^ 1 ^ toggle_daemon 'Lisgd' lisgd sxmo_hooks.sh lisgdstart
+			$icon_cfg Toggle Bar ^ 0 ^ sxmo_wm.sh togglebar
 			$icon_bth Bluetooth $(
 				rfkill -rn | grep bluetooth | grep -qE "unblocked unblocked" &&
 				printf %b "$icon_ton" ||  printf %b "$icon_tof";

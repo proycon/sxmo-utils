@@ -250,6 +250,17 @@ xorgmoveworkspace() {
 	xdotool key --clearmodifiers "Super+shift+$1"
 }
 
+swaytogglebar() {
+	swaymsg bar mode toggle
+}
+
+xorgtogglebar() {
+	if [ -z "$DISPLAY" ]; then
+		export DISPLAY=:0
+	fi
+	xdotool key --clearmodifiers "Super+b"
+}
+
 action="$1"
 shift
 case "$SXMO_WM" in
