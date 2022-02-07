@@ -6,6 +6,7 @@ _sxmo_is_running() {
 	unset SXMO_WM
 
 	if [ -f "${XDG_RUNTIME_DIR:-/dev/shm/user/$(id -u)}"/sxmo.swaysock ]; then
+		unset SWAYSOCK
 		if SWAYSOCK="$(cat "${XDG_RUNTIME_DIR:-/dev/shm/user/$(id -u)}"/sxmo.swaysock)" \
 			swaymsg 2>/dev/null; then
 			printf "Detected the Sway environment\n" >&2
@@ -76,7 +77,6 @@ _sxmo_load_environments() {
 
 _sxmo_grab_session() {
 	if ! _sxmo_is_running; then
-		unset SWAYSOCK
 		return
 	fi
 
