@@ -100,4 +100,6 @@ write_line_app vlc "$icon_mvi Vlc" "vlc"
 write_line_app vte-2.91 "$icon_trm VTE 3" "vte-2.91"
 ([ "$SXMO_WM" = dwm ] && command -v xcalc >/dev/null) && \
 	write_line "$icon_clc Xcalc" "xcalc"
+write_line_app xournal "$icon_bok Xournal" "xournal"
+write_line_app xournalpp "$icon_bok Xournalpp" "xournalpp"
 write_line_app zathura "$icon_bok Zathura" "zathura"
