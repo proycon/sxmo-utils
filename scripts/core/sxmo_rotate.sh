@@ -4,6 +4,8 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
+monitor="${SXMO_MONITOR:-"DSI-1"}"
+
 applyptrmatrix() {
 	TOUCH_POINTER_ID="${SXMO_TOUCHSCREEN_ID:-8}"
 	xinput set-prop "$TOUCH_POINTER_ID" --type=float --type=float "Coordinate Transformation Matrix" "$@"
@@ -29,7 +31,7 @@ xorgisrotated() {
 swayisrotated() {
 	rotation="$(
 		swaytransforms \
-		| grep DSI-1 \
+		| grep "$monitor" \
 		| cut -d" " -f2 \
 		| sed -e s/90/right/ -e s/270/left/ -e s/180/reverse/
 	)"
@@ -49,7 +51,7 @@ xorgrotnormal() {
 }
 
 swayrotnormal() {
-	swaymsg -- output  DSI-1 transform 0
+	swaymsg -- output  "$monitor" transform 0
 	sxmo_hooks.sh lisgdstart &
 	exit 0
 }
@@ -63,7 +65,7 @@ xorgrotright() {
 }
 
 swayrotright() {
-	swaymsg -- output  DSI-1 transform 90
+	swaymsg -- output  "$monitor" transform 90
 	sxmo_hooks.sh lisgdstart &
 	exit 0
 }
@@ -77,7 +79,7 @@ xorgrotleft() {
 }
 
 swayrotleft() {
-	swaymsg -- output  DSI-1 transform 270
+	swaymsg -- output  "$monitor" transform 270
 	sxmo_hooks.sh lisgdstart &
 	exit 0
 }
