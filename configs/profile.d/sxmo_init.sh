@@ -64,14 +64,16 @@ _sxmo_load_environments() {
 	command -v "$EDITOR" >/dev/null || export EDITOR=vim
 	command -v "$SHELL" >/dev/null || export SHELL=/bin/sh
 
-	device="$(cut -d ',' -f 2 < /sys/firmware/devicetree/base/compatible | tr -d '\0')"
-	deviceprofile="$(which "sxmo_deviceprofile_$device.sh")"
-	# shellcheck disable=SC1090
-	if [ -f "$deviceprofile" ]; then
-		. "$deviceprofile"
-		printf "deviceprofile file %s loaded.\n" "$deviceprofile"
-	else
-		printf "WARNING: deviceprofile file %s not found.\n" "$deviceprofile"
+	if [ -e /sys/firmware/devicetree/base/compatible ]; then
+		device="$(cut -d ',' -f 2 < /sys/firmware/devicetree/base/compatible | tr -d '\0')"
+		deviceprofile="$(which "sxmo_deviceprofile_$device.sh")"
+		# shellcheck disable=SC1090
+		if [ -f "$deviceprofile" ]; then
+			. "$deviceprofile"
+			printf "deviceprofile file %s loaded.\n" "$deviceprofile"
+		else
+			printf "WARNING: deviceprofile file %s not found.\n" "$deviceprofile"
+		fi
 	fi
 }
 
