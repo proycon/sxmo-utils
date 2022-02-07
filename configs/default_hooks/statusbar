@@ -162,10 +162,18 @@ set_vpn() {
 _battery() {
 	for power_supply in /sys/class/power_supply/*; do
 		if [ "$(cat "$power_supply"/type)" = "Battery" ]; then
-			PCT="$(cat "$power_supply"/capacity)"
+			if [ -e "$power_supply"/capacity ]; then
+				PCT="$(cat "$power_supply"/capacity)"
+			else
+				CHARGE_NOW="$(cat "$power_supply"/charge_now)"
+				CHARGE_FULL="$(cat "$power_supply"/charge_full_design)"
+				PCT="$(printf "scale=2; %s / %s * 100\n" "$CHARGE_NOW" "$CHARGE_FULL" | bc | cut -d'.' -f1)"
+			fi
+
 			BATSTATUS="$(cut -c1 "$power_supply"/status)"
 
-			if [ "$BATSTATUS" = "C" ]; then
+			# Treat 'Full' status as same as 'Charging'
+			if [ "$BATSTATUS" = "C" ] || [ "$BATSTATUS" = "F" ]; then
 				if [ "$PCT" -lt 20 ]; then
 					printf ""
 				elif [ "$PCT" -lt 30 ]; then
