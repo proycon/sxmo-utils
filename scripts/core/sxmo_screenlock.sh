@@ -7,7 +7,7 @@
 # define these in deviceprofile, or default to pinephone
 WAKEUPRTC="/sys/class/wakeup/wakeup${SXMO_WAKEUPRTC:-1}/active_count"
 MODEMUPRTC="/sys/class/wakeup/wakeup${SXMO_MODEMRTC:-10}/active_count"
-POWERRTC="/sys/class/wakeup/wakeup${SXMO_POWERRTC:-10}/active_count"
+POWERRTC="/sys/class/wakeup/wakeup${SXMO_POWERRTC:-5}/active_count"
 
 OLD_RTC_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.rtc.count"
 OLD_MODEM_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.modem.count"
