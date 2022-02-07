@@ -1,5 +1,5 @@
 # Default config for sway
-# configversion: 2
+# configversion: 3
 #
 # Copy this to ~/.config/sway/config and edit it to your liking.
 #
@@ -21,7 +21,7 @@ set $term sxmo_terminal.sh
 # on the original workspace that the command was run on.
 set $menu bemenu-run
 
-exec sxmo_swayinitconf.sh
+exec_always sxmo_swayinitconf.sh
 
 mode "menu" {
     bindsym --input-device=1:1:1c21800.lradc XF86AudioMute exec nothing # just a placeholder for "menu" mode
