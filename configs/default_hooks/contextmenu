@@ -413,6 +413,21 @@ case "$WMCLASS" in
 			esac
 		fi
 	;;
+	*okular*)
+		# Okular
+		CHOICES="
+			$icon_cfg Touch $(
+				sxmo_wm.sh inputevent touchscreen | grep -q on && \
+				printf %b "$icon_ton ^ 0 ^ sxmo_wm.sh inputevent touchscreen off" || \
+				printf %b "$icon_tof ^ 0 ^ sxmo_wm.sh inputevent touchscreen on"
+			)
+		$icon_cfg Fullscreen    ^ 0 ^ sxmo_type -k Ctrl -k Shift -k F
+		$icon_cfg Menubar       ^ 0 ^ sxmo_type -k Ctrl -k M
+		$icon_cfg Toolbars      ^ 0 ^ sxmo_type -k F7
+		$icon_cfg SXMO Bar      ^ 0 ^ sxmo_wm.sh togglebar
+		"
+		WINNAME=Xournal
+		;;
 	*xournal*)
 		# Xournalpp
 		CHOICES="
