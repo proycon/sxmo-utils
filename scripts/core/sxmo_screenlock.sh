@@ -36,8 +36,10 @@ whichWake() {
 
 getCurState() {
 	#get the current state of the lock
-	if sxmo_wm.sh inputevent | grep -q on ; then
+	if sxmo_wm.sh inputevent touchscreen | grep -q on ; then
 		printf "unlock" #normal mode, not locked
+	elif [ -n "$SXMO_STYLUS_ID" ] && sxmo_wm.sh inputevent stylus | grep -q on; then
+		printf "unlock"
 	elif sxmo_wm.sh dpms | grep -q off; then
 		printf "lock" #locked, but screen on
 	else
@@ -56,7 +58,8 @@ lock() {
 	sxmo_led.sh blink blue &
 
 	sxmo_wm.sh dpms off
-	sxmo_wm.sh inputevent off
+	sxmo_wm.sh inputevent touchscreen off
+	[ -z "$SXMO_STYLUS_ID" ] || sxmo_wm.sh inputevent stylus off
 
 	sxmo_daemons.sh stop lisgd
 
@@ -79,7 +82,8 @@ unlock() {
 	LEDPID=$!
 
 	sxmo_wm.sh dpms off
-	sxmo_wm.sh inputevent on
+	sxmo_wm.sh inputevent touchscreen on
+	[ -z "$SXMO_STYLUS_ID" ] || sxmo_wm.sh inputevent stylus on
 	sxmo_hooks.sh lisgdstart
 
 	sxmo_hooks.sh statusbar state_change
@@ -99,7 +103,8 @@ off() {
 	sxmo_led.sh blink blue red &
 
 	sxmo_wm.sh dpms on
-	sxmo_wm.sh inputevent off
+	sxmo_wm.sh inputevent touchscreen off
+	[ -z "$SXMO_STYLUS_ID" ] || sxmo_wm.sh inputevent stylus off
 	sxmo_hooks.sh statusbar locked
 
 	sxmo_daemons.sh stop lisgd

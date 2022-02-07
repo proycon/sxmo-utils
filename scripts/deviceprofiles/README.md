@@ -19,7 +19,8 @@ Supported variables used by sxmo are:
 | SXMO_SPEAKER            | Audio device name for the main speaker                                                  | `export SXMO_SPEAKER="Speaker"`                                                  |
 | SXMO_EARPIECE           | Audio device name for the earpiece speaker                                              | `export SXMO_EARPIECE="Earpiece"`                                                |
 | SXMO_HEADPHONE          | Audio device name for the headphones                                                    | `export SXMO_HEADPHONE="Headphone"`                                              |
-| SXMO_TOUCH_POINTER_ID   | ID (from xinput) for the touchscreen device                                             | `export SXMO_TOUCH_POINTER_ID="10"`                                              |
+| SXMO_TOUCHSCREEN_ID     | ID (from xinput) for the touchscreen device [DWM-ONLY]                                  | `export SXMO_TOUCHSCREEN_ID="10"`                                                |
+| SXMO_STYLUS_ID          | ID (from xinput) for the stylus device [DWM-ONLY]                                       | `export SXMO_STYLUS_ID="10"`                                                     |
 | SXMO_SYS_FILES          | String of files for sxmo_setpermissions.sh to make +rw                                  | See sxmo_setpermissions.sh.                                                      |
 | SXMO_MIN_BRIGHTNESS     | Minimum brightness level                                                                | `export SXMO_MIN_BRIGHTNESS="5"`                                                 |
 | SXMO_WAKEUPRTC          | RTC wakeup number in /sys/class/wakeup/wakeup<number>/ (see sxmo_screenlock.sh)         | `export SXMO_WAKEUPRTC="1"`                                                      |

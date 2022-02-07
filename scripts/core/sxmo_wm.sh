@@ -4,8 +4,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 
-TOUCH_POINTER_ID="${SXMO_TOUCH_POINTER_ID:-"8"}"
-
 xorgdpms() {
 	STATE=off
 	if xset q | grep -q "Off: 3"; then
@@ -42,6 +40,12 @@ swaydpms() {
 }
 
 xorginputevent() {
+	if [ "$1" = "touchscreen" ]; then
+		TOUCH_POINTER_ID="${SXMO_TOUCHSCREEN_ID:-8}"
+	elif [ "$1" = "stylus" ]; then
+		TOUCH_POINTER_ID="${SXMO_STYLUS_ID:-0}"
+	fi
+
 	STATE=off
 	if xinput list-props "$TOUCH_POINTER_ID" | \
 		grep "Device Enabled" | \
@@ -49,29 +53,35 @@ xorginputevent() {
 		STATE=on
 	fi
 
-	if [ -z "$1" ]; then
+	if [ -z "$2" ]; then
 		printf %s "$STATE"
-	elif [ "$1" = on ] && [ "$STATE" != on ]; then
+	elif [ "$2" = on ] && [ "$STATE" != on ]; then
 		xinput enable "$TOUCH_POINTER_ID"
-	elif [ "$1" = off ] && [ "$STATE" != off ] ; then
+	elif [ "$2" = off ] && [ "$STATE" != off ] ; then
 		xinput disable "$TOUCH_POINTER_ID"
 	fi
 }
 
 swayinputevent() {
+	if [ "$1" = "touchscreen" ]; then
+		TOUCH_POINTER_ID="touch"
+	elif [ "$1" = "stylus" ]; then
+		TOUCH_POINTER_ID="tablet_tool"
+	fi
+
 	STATE=on
 	if swaymsg -t get_inputs \
-		| jq -r '.[] | select(.type == "touch" ) | .libinput.send_events' \
+		| jq -r ".[] | select(.type == \"$TOUCH_POINTER_ID\" ) | .libinput.send_events" \
 		| grep -q "disabled"; then
 		STATE=off
 	fi
 
-	if [ -z "$1" ]; then
+	if [ -z "$2" ]; then
 		printf %s "$STATE"
-	elif [ "$1" = on ] && [ "$STATE" != on ]; then
-		swaymsg -- input type:touch events enabled
-	elif [ "$1" = off ] && [ "$STATE" != off ] ; then
-		swaymsg -- input type:touch events disabled
+	elif [ "$2" = on ] && [ "$STATE" != on ]; then
+		swaymsg -- input type:"$TOUCH_POINTER_ID" events enabled
+	elif [ "$2" = off ] && [ "$STATE" != off ] ; then
+		swaymsg -- input type:"$TOUCH_POINTER_ID" events disabled
 	fi
 }
 
