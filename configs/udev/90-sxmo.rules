@@ -1,5 +1,8 @@
-ACTION=="add", SUBSYSTEM=="input", KERNEL=="event[0-9]*", ENV{ID_INPUT_TOUCHSCREEN}=="1", MODE:="0666", SYMLINK+="input/touchscreen"
+# lisgd requires /dev/input/touchscreen
+ACTION=="add|change", SUBSYSTEM=="input", KERNEL=="event[0-9]*", ENV{ID_INPUT_TOUCHSCREEN}=="1", MODE:="0666", SYMLINK+="input/touchscreen"
+
 ACTION=="add", SUBSYSTEM=="input", ENV{ID_PATH}=="platform-vibrator", MODE:="0666"
+
 # make stylus readable
 ACTION=="add|change", SUBSYSTEM=="input", KERNEL=="event[0-9]*", ENV{ID_INPUT_TABLET}=="1", MODE:="0666"
 # fix bug with pinenote touchscreen matrix

@@ -5,12 +5,9 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(which sxmo_common.sh)"
 
-if [ -z "$LISGD_THRESHOLD" ]; then
-	LISGD_THRESHOLD=125
-fi
-if [ -z "$LISGD_THRESHOLD_PRESSED" ]; then
-	LISGD_THRESHOLD_PRESSED=60
-fi
+LISGD_THRESHOLD="${SXMO_LISGD_THRESHOLD:-125}"
+LISGD_THRESHOLD_PRESSED="${SXMO_LISGD_THRESHOLD_PRESSED:-60}"
+LISGD_INPUT_DEVICE="${SXMO_LISGD_INPUT_DEVICE:-"/dev/input/touchscreen"}"
 
 if [ dwm = "$SXMO_WM" ]; then
 	case "$(xrandr | grep DSI-1 | cut -d' ' -f 5)" in
@@ -24,7 +21,7 @@ fi
 #-g format:
 #   fingers,swipe,edge,distance,command
 #order matters, only the first match gets executed
-sxmo_daemons.sh start lisgd lisgd "$@" ${orientation:+-o $orientation} \
+sxmo_daemons.sh start lisgd lisgd "$@" -d "$LISGD_INPUT_DEVICE" ${orientation:+-o $orientation} \
 	-t "$LISGD_THRESHOLD" -T "$LISGD_THRESHOLD_PRESSED" \
 	-g '1,DRUL,BR,*,sxmo_inputhandler.sh bottomrightcorner' \
 	-g '1,DLUR,BL,*,sxmo_inputhandler.sh bottomleftcorner' \
