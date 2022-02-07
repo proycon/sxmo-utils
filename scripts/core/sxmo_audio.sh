@@ -35,6 +35,18 @@ pulsevoldown() {
 	pamixer -d "${1:-5}" --get-volume | notifyvol -
 }
 
+pulsevoltogglemute() {
+	pamixer -t --get-mute --get-volume | \
+		sed -e 's/^true.*/0/' -e 's/^false //' | \
+		notifyvol -
+}
+
+pulsemictogglemute() {
+	pamixer -t --default-source --get-mute --get-volume | \
+		sed -e 's/^true.*/0/' -e 's/^false //' | \
+		notifyvol -
+}
+
 pulsevolget() {
 	pamixer --get-volume
 }
@@ -240,6 +252,11 @@ case "$cmd" in
 		verb="$1"
 		shift
 		"$backend"vol"$verb" "$@"
+		;;
+	mic)
+		verb="$1"
+		shift
+		"$backend"mic"$verb" "$@"
 		;;
 	device)
 		verb="$1"
