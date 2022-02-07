@@ -1,5 +1,5 @@
 #!/bin/sh
-# configversion: 1
+# configversion: 2
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh

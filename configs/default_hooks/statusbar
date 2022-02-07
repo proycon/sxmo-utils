@@ -1,5 +1,5 @@
 #!/bin/sh
-# configversion: 1
+# configversion: 2
 
 # we disable shellcheck SC2154 (unreferenced variable used)
 # shellcheck disable=SC2154
