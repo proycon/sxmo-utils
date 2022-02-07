@@ -21,33 +21,11 @@ set $term sxmo_terminal.sh
 # on the original workspace that the command was run on.
 set $menu bemenu-run
 
-### Output configuration
-# Set default wallpaper for all outputs
-output * bg /usr/share/sxmo/background.jpg fill
-# Set 2x scale for DSI-1 (usually a display panel)
-output "DSI-1" scale 2
+exec sxmo_swayinitconf.sh
 
-
-#
-# This will lock your screen after 300 seconds of inactivity, then turn off
-# your displays after another 300 seconds, and turn your screens back on when
-# resumed. It will also lock your screen before your computer goes to sleep.
-
-### Input configuration
-#
-# Example configuration:
-#
-#   input "2:14:SynPS/2_Synaptics_TouchPad" {
-#       dwt enabled
-#       tap enabled
-#       natural_scroll enabled
-#       middle_emulation enabled
-#   }
-#
-# You can get the names of your inputs by running: swaymsg -t get_inputs
-# Read `man 5 sway-input` for more information about this section.
-
-include /usr/share/sxmo/sway/mobile_inputs_outputs
+mode "menu" {
+    bindsym --input-device=1:1:1c21800.lradc XF86AudioMute exec nothing # just a placeholder for "menu" mode
+}
 
 ### Key bindings
 #
