@@ -1,5 +1,5 @@
 # Default config for sway
-# configversion: 3
+# configversion: 4
 #
 # Copy this to ~/.config/sway/config and edit it to your liking.
 #
@@ -205,5 +205,7 @@ hide_edge_borders smart
 include /etc/sway/config.d/*
 
 exec 'printf %s "$SWAYSOCK" > "$XDG_RUNTIME_DIR"/sxmo.swaysock'
+
+output * bg /usr/share/sxmo/background.jpg fill
 
 exec sxmo_hooks.sh start

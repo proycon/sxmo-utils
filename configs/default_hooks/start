@@ -1,5 +1,5 @@
 #!/bin/sh
-# configversion: 3
+# configversion: 4
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
@@ -20,9 +20,6 @@ amixer set "Line Out" 75% >/dev/null
 
 case "$SXMO_WM" in
 	sway)
-		monitor="${SXMO_MONITOR:-"DSI-1"}"
-		swaymsg -- output "$monitor" bg /usr/share/sxmo/background.jpg fill
-
 		sxmo_daemons.sh start desktop_notifier mako
 		sxmo_daemons.sh start wob sxmo_wob.sh
 		sxmo_daemons.sh start menu_mode_toggler sxmo_menumode_toggler.sh
