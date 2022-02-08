@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(which sxmo_common.sh)"
+
 set -e
 
 MUTEX_NAME="${MUTEX_NAME:-default}"
