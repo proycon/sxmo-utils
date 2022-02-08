@@ -13,7 +13,7 @@ LEDPID=$!
 sxmo_wm.sh dpms on
 [ -z "$SXMO_TOUCHSCREEN_ID" ] || sxmo_wm.sh inputevent touchscreen off
 [ -z "$SXMO_STYLUS_ID" ] || sxmo_wm.sh inputevent stylus off
-if [ -n "$SXMO_TOUCHSCREEN_ID" ] && [ -n "$SXMO_STYLUS_ID" ]; then
+if [ -n "$SXMO_TOUCHSCREEN_ID" ] || [ -n "$SXMO_STYLUS_ID" ]; then
 	sxmo_daemons.sh stop lisgd
 fi
 
