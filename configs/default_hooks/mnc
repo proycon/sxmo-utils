@@ -1,5 +1,4 @@
 #!/bin/sh
-# configversion: 1
 
 if ! command -v mnc > /dev/null; then
 	exit 1

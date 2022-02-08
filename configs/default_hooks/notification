@@ -1,5 +1,4 @@
 #!/bin/sh
-# configversion: 1
 
 VIBS=5
 VIBI=0

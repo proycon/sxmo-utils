@@ -65,6 +65,10 @@ install: $(PROGRAMS)
 	install -D programs/sxmo_megiaudioroute $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_vibrate $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_splitchar $(DESTDIR)$(PREFIX)/bin/
+
+	find $(DESTDIR)$(PREFIX)/share/sxmo/default_hooks/ -type f -exec ./setup_config_version.sh "{}" \;
+	find $(DESTDIR)$(PREFIX)/share/sxmo/appcfg/ -type f -exec ./setup_config_version.sh "{}" \;
+
 	@echo "-------------------------------------------------------------------">&2
 	@echo "NOTICE 1: Do not forget to add sxmo-setpermissions to your init system, e.g. for openrc: rc-update add sxmo-setpermissions default && rc-service sxmo-setpermissions start" >&2
 	@echo "-------------------------------------------------------------------">&2

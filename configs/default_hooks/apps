@@ -1,6 +1,5 @@
 #!/bin/sh
 # shellcheck disable=SC2154
-# configversion: 2
 
 # include common definitions \
 # shellcheck source=scripts/core/sxmo_icons.sh

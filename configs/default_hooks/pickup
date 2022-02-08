@@ -1,5 +1,4 @@
 #!/bin/sh
-# configversion: 1
 
 # This script is executed (asynchronously) when you pick up an incoming call
 

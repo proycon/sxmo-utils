@@ -1,5 +1,4 @@
 #!/bin/sh
-# configversion: 1
 
 sxmo_hooks.sh statusbar all
 

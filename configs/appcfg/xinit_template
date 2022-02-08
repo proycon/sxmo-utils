@@ -1,5 +1,4 @@
 #!/bin/sh
-# configversion: 1
 
 # Run actions on start
 # By default, setup audio over the main speaker

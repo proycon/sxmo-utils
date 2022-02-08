@@ -1,5 +1,4 @@
 #!/bin/sh
-# configversion: 1
 
 # This hook is called when the ModemManager1.Modem signals a StateChanged
 

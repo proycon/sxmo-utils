@@ -1,5 +1,4 @@
 #!/bin/sh
-# configversion: 1
 
 # This script is executed (asynchronously) when you get an incoming call
 # You can use it to play a ring tone
