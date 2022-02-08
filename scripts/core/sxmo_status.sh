@@ -94,7 +94,7 @@ watch() {
 }
 
 reset() {
-	find "$ROOT" -delete -mindepth 1
+	find "$ROOT" -mindepth 1 -delete
 }
 
 case "$1" in
