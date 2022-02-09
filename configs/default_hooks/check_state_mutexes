@@ -29,31 +29,26 @@ free_idle_mutex() {
 	free_suspend_mutex "$1"
 }
 
-PIDS=""
-
 # ongoing_call
 if pgrep -f sxmo_modemcall.sh > /dev/null; then
 	lock_idle_mutex "Ongoing call"
 else
 	free_idle_mutex "Ongoing call"
-fi &
-PIDS="$PIDS $!"
+fi
 
 # camera_open
 if pgrep -f megapixels > /dev/null; then
 	lock_idle_mutex "Megapixels is open"
 else
 	free_idle_mutex "Megapixels is open"
-fi &
-PIDS="$PIDS $!"
+fi
 
 # auto_screenoff
 if [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
 	lock_idle_mutex "Manually disabled"
 else
 	free_idle_mutex "Manually disabled"
-fi &
-PIDS="$PIDS $!"
+fi
 
 # modem_use
 if pgrep -f sxmo_modem.sh > /dev/null || \
@@ -66,41 +61,32 @@ if pgrep -f sxmo_modem.sh > /dev/null || \
 	lock_suspend_mutex "Modem is used"
 else
 	free_suspend_mutex "Modem is used"
-fi &
-PIDS="$PIDS $!"
+fi
 
 # active_ssh
 if netstat | grep ESTABLISHED | grep -q ssh; then
 	lock_suspend_mutex "SSH is connected"
 else
 	free_suspend_mutex "SSH is connected"
-fi &
-PIDS="$PIDS $!"
+fi
 
 # playing_mpc
 if command -v mpc > /dev/null && mpc status | grep -q '\[playing\]'; then
 	lock_suspend_mutex "MPD is playing music"
 else
 	free_suspend_mutex "MPD is playing music"
-fi &
-PIDS="$PIDS $!"
+fi
 
 # photos_processing
 if pgrep -f postprocess.sh > /dev/null; then
 	lock_suspend_mutex "Camera postprocessing"
 else
 	free_suspend_mutex "Camera postprocessing"
-fi &
-PIDS="$PIDS $!"
+fi
 
 # auto_suspend
 if [ -e "$XDG_CACHE_HOME/sxmo/sxmo.nosuspend" ]; then
 	lock_suspend_mutex "Manually disabled"
 else
 	free_suspend_mutex "Manually disabled"
-fi &
-PIDS="$PIDS $!"
-
-for PID in $PIDS; do
-	wait "$PID"
-done
+fi
