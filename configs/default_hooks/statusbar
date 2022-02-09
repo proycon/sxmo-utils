@@ -12,7 +12,7 @@
 VPNDEVICE="$(nmcli con show | grep -E 'wireguard|vpn' | awk '{ print $1 }')"
 
 set_time() {
-	date +%H:%M | head -c -1 | sxmo_status.sh add 99-time
+	date "+${SXMO_STATUS_DATE_FORMAT:-%H:%M}" | head -c -1 | sxmo_status.sh add 99-time
 }
 
 set_locked() {
