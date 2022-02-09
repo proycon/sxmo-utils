@@ -48,12 +48,22 @@ resolvedifference() {
 			;;
 		[2eE]*)
 			#open editor with both files and the diff
-			diff -u "$defaultfile" "$userfile" > "${XDG_RUNTIME_DIR}/migrate.diff"
-			if ! $EDITOR "$userfile" "$defaultfile" "${XDG_RUNTIME_DIR}/migrate.diff"; then
+
+			if [ -n "$DIFFTOOL" ]; then # ex vimdiff
+				set -- "$DIFFTOOL" "$defaultfile" "$userfile"
+			else
+				diff -u "$defaultfile" "$userfile" > "${XDG_RUNTIME_DIR}/migrate.diff"
+				set -- "$EDITOR" "$userfile" "$defaultfile" "${XDG_RUNTIME_DIR}/migrate.diff"
+			fi
+
+			if ! "$@"; then
 				#user may bail editor, in which case we ignore everything
 				abort=1
 			fi
-			rm "${XDG_RUNTIME_DIR}/migrate.diff"
+
+			if [ -z "$DIFFTOOL" ]; then
+				rm "${XDG_RUNTIME_DIR}/migrate.diff"
+			fi
 			;;
 		[3uU]*)
 			#update configversion automatically
