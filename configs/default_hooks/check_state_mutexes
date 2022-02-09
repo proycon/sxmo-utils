@@ -15,39 +15,11 @@ free_suspend_mutex() {
 	MUTEX_NAME=can_suspend sxmo_mutex.sh free "$1"
 }
 
-lock_idle_mutex() {
-	if ! MUTEX_NAME=is_idle sxmo_mutex.sh lockedby "$1"; then
-		MUTEX_NAME=is_idle sxmo_mutex.sh lock "$1"
-	fi
-
-	lock_suspend_mutex "$1" # not idle also mean not suspending
-}
-
-free_idle_mutex() {
-	MUTEX_NAME=is_idle sxmo_mutex.sh free "$1"
-
-	free_suspend_mutex "$1"
-}
-
 # ongoing_call
 if pgrep -f sxmo_modemcall.sh > /dev/null; then
-	lock_idle_mutex "Ongoing call"
+	lock_suspend_mutex "Ongoing call"
 else
-	free_idle_mutex "Ongoing call"
-fi
-
-# camera_open
-if pgrep -f megapixels > /dev/null; then
-	lock_idle_mutex "Megapixels is open"
-else
-	free_idle_mutex "Megapixels is open"
-fi
-
-# auto_screenoff
-if [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
-	lock_idle_mutex "Manually disabled"
-else
-	free_idle_mutex "Manually disabled"
+	free_suspend_mutex "Ongoing call"
 fi
 
 # modem_use
