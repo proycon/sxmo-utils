@@ -6,7 +6,9 @@
 
 set -e
 
-MUTEX_NAME="${MUTEX_NAME:-default}"
+MUTEX_NAME="$1"
+shift
+
 ROOT_DIR="${XDG_RUNTIME_DIR:-$HOME/.local/run}/sxmo_mutex"
 REASON_FILE="$ROOT_DIR/$MUTEX_NAME"
 mkdir -p "$(dirname "$REASON_FILE")"

@@ -4,11 +4,11 @@
 . /etc/profile.d/sxmo_init.sh
 
 # We can have multiple cronjobs at the same time
-MUTEX_NAME=can_suspend sxmo_mutex.sh lock "Executing cronjob"
-MUTEX_NAME=can_suspend sxmo_mutex.sh free "Waiting for cronjob"
+sxmo_mutex.sh can_suspend lock "Executing cronjob"
+sxmo_mutex.sh can_suspend free "Waiting for cronjob"
 
 finish() {
-	MUTEX_NAME=can_suspend sxmo_mutex.sh free "Executing cronjob"
+	sxmo_mutex.sh can_suspend free "Executing cronjob"
 	exit 0
 }
 

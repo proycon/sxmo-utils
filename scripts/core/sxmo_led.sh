@@ -3,12 +3,12 @@
 . "$(which sxmo_common.sh)"
 
 free_mutex() {
-	MUTEX_NAME=can_suspend sxmo_mutex.sh free "Playing with leds"
+	sxmo_mutex.sh can_suspend free "Playing with leds"
 	rmdir "$XDG_RUNTIME_DIR"/sxmo.led.lock
 }
 
 ensure_mutex() {
-	MUTEX_NAME=can_suspend sxmo_mutex.sh lock "Playing with leds"
+	sxmo_mutex.sh can_suspend lock "Playing with leds"
 
 	while ! mkdir "$XDG_RUNTIME_DIR"/sxmo.led.lock 2> /dev/null; do
 		sleep 0.1

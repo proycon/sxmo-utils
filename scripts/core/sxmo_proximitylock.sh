@@ -5,7 +5,7 @@ isLocked() {
 }
 
 finish() {
-	MUTEX_NAME=can_suspend sxmo_mutex.sh free "Proximity lock is running"
+	sxmo_mutex.sh can_suspend free "Proximity lock is running"
 	sxmo_hooks.sh "$INITIALSTATE"
 	exit 0
 }
@@ -13,7 +13,7 @@ finish() {
 INITIALSTATE="$(cat "$SXMO_STATE")"
 trap 'finish' TERM INT
 
-MUTEX_NAME=can_suspend sxmo_mutex.sh lock "Proximity lock is running"
+sxmo_mutex.sh can_suspend lock "Proximity lock is running"
 
 proximity_raw_bus="$(find /sys/devices/platform/soc -name 'in_proximity_raw')"
 distance() {

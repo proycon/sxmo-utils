@@ -71,7 +71,7 @@ echo "$UNSUSPENDREASON" > "$SXMO_UNSUSPENDREASONFILE"
 sxmo_log "woke up from crust (reason=$UNSUSPENDREASON)"
 
 if [ "$UNSUSPENDREASON" = "rtc" ]; then
-	MUTEX_NAME=can_suspend sxmo_mutex.sh lock "Waiting for cronjob"
+	sxmo_mutex.sh can_suspend lock "Waiting for cronjob"
 fi
 
 sxmo_hooks.sh postwake "$UNSUSPENDREASON"

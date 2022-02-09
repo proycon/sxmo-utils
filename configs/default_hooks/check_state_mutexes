@@ -6,13 +6,13 @@
 . "$(which sxmo_common.sh)"
 
 lock_suspend_mutex() {
-	if ! MUTEX_NAME=can_suspend sxmo_mutex.sh lockedby "$1"; then
-		MUTEX_NAME=can_suspend sxmo_mutex.sh lock "$1"
+	if ! sxmo_mutex.sh can_suspend lockedby "$1"; then
+		sxmo_mutex.sh can_suspend lock "$1"
 	fi
 }
 
 free_suspend_mutex() {
-	MUTEX_NAME=can_suspend sxmo_mutex.sh free "$1"
+	sxmo_mutex.sh can_suspend free "$1"
 }
 
 cleanup_main_mutex() {
