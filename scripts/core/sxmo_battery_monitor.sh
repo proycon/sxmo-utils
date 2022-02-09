@@ -1,13 +1,5 @@
 #!/bin/sh
 
-sxmo_hooks.sh statusbar all
-
-while : ; do
-	sleep 55 & wait
-	sxmo_hooks.sh statusbar periodics
-done &
-STATUSTIMEPID=$!
-
 udev_tmp="$(mktemp)"
 udevadm monitor -u -s power_supply >> "$udev_tmp" &
 UDEVPID=$!
@@ -17,7 +9,6 @@ done &
 STATUSBATTERYPID=$!
 
 finish() {
-	kill "$STATUSTIMEPID"
 	kill "$STATUSBATTERYPID"
 	kill "$UDEVPID"
 	rm "$udev_tmp"

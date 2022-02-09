@@ -55,7 +55,12 @@ fi
 sxmo_daemons.sh start desktop_widget sxmo_hooks.sh desktop_widget
 
 # Periodically update some status bar components
-sxmo_daemons.sh start statusbar_periodics sxmo_hooks.sh statusbar_periodics
+sxmo_hooks.sh statusbar all
+sxmo_daemons.sh start statusbar_periodics sxmo_run_periodically.sh 55 \
+	sxmo_hooks.sh statusbar periodics
+
+# Monitor the battery
+sxmo_daemons.sh start battery_monitor sxmo_battery_monitor.sh
 
 # It watch network changes and update the status bar icon by example
 sxmo_daemons.sh start network_monitor sxmo_networkmonitor.sh
