@@ -15,6 +15,14 @@ free_suspend_mutex() {
 	MUTEX_NAME=can_suspend sxmo_mutex.sh free "$1"
 }
 
+cleanup_main_mutex() {
+	free_suspend_mutex "Checking some mutexes"
+	exit 0
+}
+
+lock_suspend_mutex "Checking some mutexes"
+trap 'cleanup_main_mutex' TERM INT EXIT
+
 # ongoing_call
 if pgrep -f sxmo_modemcall.sh > /dev/null; then
 	lock_suspend_mutex "Ongoing call"
