@@ -1,7 +1,7 @@
 #! /bin/sh
 
 # shellcheck source=scripts/core/sxmo_icons.sh
-. "$(dirname "$0")/sxmo_icons.sh"
+. sxmo_icons.sh
 
 set -e
 
@@ -16,7 +16,7 @@ copy() {
 
 edit() {
 	copy "$1"
-	sxmo_terminal.sh "$EDITOR" "$XDG_CONFIG_HOME/sxmo/hooks/$1"
+	sxmo_terminal.sh "$EDITOR" "$XDG_CONFIG_HOME/sxmo/hooks/$1" || true # shallow
 }
 
 reset() {
@@ -27,18 +27,17 @@ reset() {
 
 hookmenu() {
 	opt="$(cat <<EOF | sxmo_dmenu.sh -p "$1"
-Edit
-$([ -f "$XDG_CONFIG_HOME/sxmo/hooks/$1" ] && echo "Use system hook" || echo Copy)
-Exit
+$icon_ret Return
+$icon_edt Edit
+$([ -f "$XDG_CONFIG_HOME/sxmo/hooks/$1" ] && echo "$icon_cls Use system hook" || echo "$icon_cpy Copy")
 EOF
 	)" || return
 
-
 	case "$opt" in
-		"Edit") edit "$1";;
-		"Copy") copy "$1";;
-		"Use system hook") reset "$1";;
-		"Exit") return;;
+		"$icon_edt Edit") edit "$1";;
+		"$icon_cpy Copy") copy "$1";;
+		"$icon_cls Use system hook") reset "$1";;
+		"$icon_ret Return") return;;
 	esac
 }
 
@@ -66,15 +65,22 @@ list_hooks() {
 }
 
 menu() {
-	hook="$( (echo "$icon_cls Close Menu"; list_hooks) | sxmo_dmenu.sh)" || return;
-	case "$hook" in
-		"$icon_cls Close Menu"|"")
-			return
-			;;
-		*)
-			hookmenu "${hook#* }"
-			;;
-	esac
+	while : ; do
+		hook="$(cat <<EOF | sxmo_dmenu.sh
+$icon_cls Close Menu
+$(list_hooks)
+EOF
+		)" || return;
+
+		case "$hook" in
+			"$icon_cls Close Menu")
+				return
+				;;
+			*)
+				hookmenu "${hook#* }"
+				;;
+		esac
+	done
 }
 
 if [ -z "$1" ]; then
