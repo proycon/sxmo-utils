@@ -227,6 +227,17 @@ xorg() {
 #set default mode
 [ -z "$*" ] && set -- interactive
 
+# Don't allow running with sudo, or as root 
+if [ -n "$SUDO_USER" ]; then
+	echo "$0 can't be run with sudo, it must be run as your user" >&2
+	exit 127
+fi
+
+if [ "$USER" = "root" ]; then
+	echo "$0 can't be run as root, it must be run as your user" >&2
+	exit 127
+fi
+
 #modes may be chained
 for MODE in "$@"; do
 	case "$MODE" in
