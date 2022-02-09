@@ -1,5 +1,8 @@
 #! /bin/sh
 
+# shellcheck source=scripts/core/sxmo_icons.sh
+. "$(dirname "$0")/sxmo_icons.sh"
+
 set -e
 
 copy() {
@@ -62,15 +65,16 @@ list_hooks() {
 	rm "$user" "$system"
 }
 
-
 menu() {
-	hook="$( (echo "Exit"; list_hooks) | sxmo_dmenu.sh)" || return;
-	if [ "$hook" = "Exit" ]; then
-		return
-	else
-		hook=${hook#* }
-	fi
-	hookmenu "$hook"
+	hook="$( (echo "$icon_cls Close Menu"; list_hooks) | sxmo_dmenu.sh)" || return;
+	case "$hook" in
+		"$icon_cls Close Menu"|"")
+			return
+			;;
+		*)
+			hookmenu "${hook#* }"
+			;;
+	esac
 }
 
 if [ -z "$1" ]; then
