@@ -13,12 +13,8 @@ sxmo_led.sh blink red green &
 LEDPID=$!
 
 sxmo_wm.sh dpms off
-[ -z "$SXMO_TOUCHSCREEN_ID" ] || sxmo_wm.sh inputevent touchscreen on
-[ -z "$SXMO_STYLUS_ID" ] || sxmo_wm.sh inputevent stylus on
-
-if [ -n "$SXMO_TOUCHSCREEN_ID" ] || [ -n "$SXMO_TOUCHSCREEN_ID" ]; then
-       sxmo_hook_lisgdstart.sh
-fi
+sxmo_wm.sh inputevent touchscreen on
+sxmo_hook_lisgdstart.sh
 
 sxmo_hook_statusbar.sh state_change
 sxmo_hook_statusbar.sh locked
