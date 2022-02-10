@@ -1,0 +1,1 @@
+../pinephone-1.2pine64/sxmo_hook_screenoff.sh
