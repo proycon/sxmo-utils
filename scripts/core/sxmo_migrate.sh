@@ -156,8 +156,19 @@ checkhooks() {
 	if ! [ -e "$XDG_CONFIG_HOME/sxmo/hooks/" ]; then
 		return
 	fi
-	for hook in "$XDG_CONFIG_HOME/sxmo/hooks/"*; do
-		[ -e "$hook" ] || continue #sanity check because shell enters loop even when there are no files in dir (null glob)
+	for hook in "$XDG_CONFIG_HOME/sxmo/hooks/"* "$XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME/"*; do
+		{ [ -e "$hook" ] && [ -f "$hook" ];} || continue #sanity check because shell enters loop even when there are no files in dir (null glob)
+
+		if printf %s "$hook" | grep -q "/$SXMO_DEVICE_NAME/"; then
+			# We also compare the device user hook to the system
+			# default version
+			DEFAULT_PATH="/usr/share/sxmo/default_hooks/$SXMO_DEVICE_NAME/:/usr/share/sxmo/default_hooks/"
+		else
+			# We dont want to compare a default user hook to the device
+			# system version
+			DEFAULT_PATH="/usr/share/sxmo/default_hooks/"
+		fi
+
 		if [ "$MODE" = "reset" ]; then
 			if [ ! -e "$hook.needs-migration" ]; then
 				mv "$hook" "$hook.needs-migration" #move the hook away
@@ -169,7 +180,7 @@ checkhooks() {
 		fi
 		case "$hook" in
 			*.needs-migration)
-				defaulthook="/usr/share/sxmo/default_hooks/$(basename "$hook" ".needs-migration")"
+				defaulthook="$(PATH="$DEFAULT_PATH" command -v "$(basename "$hook" ".needs-migration")")"
 				[ "$MODE" = sync ] && continue # ignore this already synced hook
 				;;
 			*.backup)
@@ -179,7 +190,7 @@ checkhooks() {
 			*)
 				#if there is already one marked as needing migration, use that one instead and skip this one
 				[ -e "$hook.needs-migration" ] && continue
-				defaulthook="/usr/share/sxmo/default_hooks/$(basename "$hook")"
+				defaulthook="$(PATH="$DEFAULT_PATH" command -v "$(basename "$hook")")"
 				;;
 		esac
 		if [ -f "$defaulthook" ]; then

@@ -67,9 +67,10 @@ _sxmo_load_environments() {
 	export PATH="$XDG_CONFIG_HOME/sxmo/hooks/:/usr/share/sxmo/default_hooks/:$PATH"
 
 	if [ -e /sys/firmware/devicetree/base/compatible ]; then
-		device="$(cut -d ',' -f 2 < /sys/firmware/devicetree/base/compatible | tr -d '\0')"
-		export PATH="$XDG_CONFIG_HOME/sxmo/hooks/$device/:/usr/share/sxmo/default_hooks/$device/:$PATH"
-		deviceprofile="$(which "sxmo_deviceprofile_$device.sh")"
+		SXMO_DEVICE_NAME="$(cut -d ',' -f 2 < /sys/firmware/devicetree/base/compatible | tr -d '\0')"
+		export SXMO_DEVICE_NAME
+		export PATH="$XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME/:/usr/share/sxmo/default_hooks/$SXMO_DEVICE_NAME/:$PATH"
+		deviceprofile="$(which "sxmo_deviceprofile_$SXMO_DEVICE_NAME.sh")"
 		# shellcheck disable=SC1090
 		if [ -f "$deviceprofile" ]; then
 			. "$deviceprofile"
