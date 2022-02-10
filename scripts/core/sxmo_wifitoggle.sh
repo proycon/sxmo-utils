@@ -2,6 +2,9 @@
 
 # Note: this script should be run as root via doas
 
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(which sxmo_common.sh)"
+
 on() {
 	rfkill unblock wlan
 }
@@ -18,9 +21,9 @@ case "$1" in
 		off
 		;;
 	*) #toggle
-		if rfkill -rn | grep wlan | grep -qE "unblocked unblocked"; then
-			off
-		else
+		if rfkill list wifi | grep -q "yes"; then
 			on
+		else
+			off
 		fi
 esac

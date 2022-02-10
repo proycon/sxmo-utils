@@ -74,8 +74,8 @@ case "$WMCLASS" in
 				printf %b "^ 1 ^ doas sxmo_bluetoothtoggle.sh && sxmo_hook_statusbar.sh bluetooth"
 			)
 			$icon_wif Wifi $(
-				rfkill -rn | grep wlan | grep -qE "unblocked unblocked" &&
-				printf %b "$icon_ton" ||  printf %b "$icon_tof";
+				rfkill list wifi | grep -q "yes" &&
+				printf %b "$icon_tof" ||  printf %b "$icon_ton";
 				printf %b "^ 1 ^ doas sxmo_wifitoggle.sh && sxmo_hook_statusbar.sh wifi"
 			)
 			$(test "$SXMO_WM" = dwm && printf %b "$icon_cfg Invert Colors ^ 1 ^ xcalib -a -invert")

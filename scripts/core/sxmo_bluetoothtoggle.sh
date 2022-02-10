@@ -2,6 +2,9 @@
 
 # Must be run as root
 
+# shellcheck source=scripts/core/sxmo_common.sh
+. "$(which sxmo_common.sh)"
+
 # see sxmo_common.sh
 if [ -e /etc/os-release ]; then
 	# shellcheck source=/dev/null
@@ -48,9 +51,9 @@ case "$1" in
 		off
 		;;
 	*) #toggle
-		if rfkill -rn | grep bluetooth | grep -qE "unblocked unblocked"; then
-			off
-		else
+		if rfkill list bluetooth | grep -q "yes"; then
 			on
+		else
+			off
 		fi
 esac
