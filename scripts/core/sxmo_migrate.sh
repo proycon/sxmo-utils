@@ -153,69 +153,70 @@ defaultconfig() {
 }
 
 checkhooks() {
-	if [ -e "$XDG_CONFIG_HOME/sxmo/hooks/" ]; then
-		for hook in "$XDG_CONFIG_HOME/sxmo/hooks/"*; do
-			[ -e "$hook" ] || continue #sanity check because shell enters loop even when there are no files in dir (null glob)
-			if [ "$MODE" = "reset" ]; then
-				if [ ! -e "$hook.needs-migration" ]; then
-					mv "$hook" "$hook.needs-migration" #move the hook away
-				else
-					sxmo_log "$hook was already flagged for needing migration; not overwriting the older one"
-					rm "$hook"
-				fi
-				continue
+	if ! [ -e "$XDG_CONFIG_HOME/sxmo/hooks/" ]; then
+		return
+	fi
+	for hook in "$XDG_CONFIG_HOME/sxmo/hooks/"*; do
+		[ -e "$hook" ] || continue #sanity check because shell enters loop even when there are no files in dir (null glob)
+		if [ "$MODE" = "reset" ]; then
+			if [ ! -e "$hook.needs-migration" ]; then
+				mv "$hook" "$hook.needs-migration" #move the hook away
+			else
+				sxmo_log "$hook was already flagged for needing migration; not overwriting the older one"
+				rm "$hook"
 			fi
-			case "$hook" in
-				*.needs-migration)
-					defaulthook="/usr/share/sxmo/default_hooks/$(basename "$hook" ".needs-migration")"
-					[ "$MODE" = sync ] && continue # ignore this already synced hook
-					;;
-				*.backup)
-					#skip
-					continue
-					;;
-				*)
-					#if there is already one marked as needing migration, use that one instead and skip this one
-					[ -e "$hook.needs-migration" ] && continue
-					defaulthook="/usr/share/sxmo/default_hooks/$(basename "$hook")"
-					;;
-			esac
-			if [ -f "$defaulthook" ]; then
-				if diff "$hook" "$defaulthook" > /dev/null && [ "$MODE" != "sync" ]; then
-					printf "\e[33mHook %s is identical to the default, so you don't need a custom hook, remove it? [y/N]\e[0m" "$hook"
-					read -r reply < /dev/tty
-					if [ "y" = "$reply" ]; then
-						rm "$hook"
-					fi
-				elif ! checkconfigversion "$hook" "$defaulthook" || [ "$MODE" = "all" ]; then
-					case "$MODE" in
-						"interactive"|"all")
-							resolvedifference "$hook" "$defaulthook"
-							;;
-						"sync")
-							sxmo_log "$hook is out of date, disabling and marked as needing migration..."
-							#never overwrite older .needs-migration files, they take precendence
-							if [ ! -e "$hook.needs-migration" ]; then
-								mv "$hook" "$hook.needs-migration"
-							else
-								rm "$hook"
-							fi
-							;;
-					esac
-				fi
-			elif [ "$MODE" != "sync" ]; then
-				(
-					smartdiff -ud "/dev/null" "$hook"
-					printf "\e[31mThe hook \e[32m%s\e[31m does not exist (anymore), remove it? [y/N] \e[0m\n" "$hook"
-				) | more
+			continue
+		fi
+		case "$hook" in
+			*.needs-migration)
+				defaulthook="/usr/share/sxmo/default_hooks/$(basename "$hook" ".needs-migration")"
+				[ "$MODE" = sync ] && continue # ignore this already synced hook
+				;;
+			*.backup)
+				#skip
+				continue
+				;;
+			*)
+				#if there is already one marked as needing migration, use that one instead and skip this one
+				[ -e "$hook.needs-migration" ] && continue
+				defaulthook="/usr/share/sxmo/default_hooks/$(basename "$hook")"
+				;;
+		esac
+		if [ -f "$defaulthook" ]; then
+			if diff "$hook" "$defaulthook" > /dev/null && [ "$MODE" != "sync" ]; then
+				printf "\e[33mHook %s is identical to the default, so you don't need a custom hook, remove it? [y/N]\e[0m" "$hook"
 				read -r reply < /dev/tty
 				if [ "y" = "$reply" ]; then
 					rm "$hook"
 				fi
-				printf "\n"
+			elif ! checkconfigversion "$hook" "$defaulthook" || [ "$MODE" = "all" ]; then
+				case "$MODE" in
+					"interactive"|"all")
+						resolvedifference "$hook" "$defaulthook"
+						;;
+					"sync")
+						sxmo_log "$hook is out of date, disabling and marked as needing migration..."
+						#never overwrite older .needs-migration files, they take precendence
+						if [ ! -e "$hook.needs-migration" ]; then
+							mv "$hook" "$hook.needs-migration"
+						else
+							rm "$hook"
+						fi
+						;;
+				esac
 			fi
-		done
-	fi
+		elif [ "$MODE" != "sync" ]; then
+			(
+				smartdiff -ud "/dev/null" "$hook"
+				printf "\e[31mThe hook \e[32m%s\e[31m does not exist (anymore), remove it? [y/N] \e[0m\n" "$hook"
+			) | more
+			read -r reply < /dev/tty
+			if [ "y" = "$reply" ]; then
+				rm "$hook"
+			fi
+			printf "\n"
+		fi
+	done
 }
 
 common() {
