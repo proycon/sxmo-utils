@@ -2,12 +2,16 @@ image: alpine/edge
 packages:
   - shellcheck
   - editorconfig-checker
+  - shellspec
 sources:
   - https://git.sr.ht/~mil/sxmo-utils
 tasks:
   - shellcheck: |
       cd sxmo-utils
       shellcheck -x scripts/*/*.sh
+  - shellspec: |
+      cd sxmo-utils
+      shellspec
   - editorconfig-check: |
       cd sxmo-utils
       ec
