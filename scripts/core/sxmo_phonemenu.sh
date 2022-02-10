@@ -21,7 +21,7 @@ case "$result" in
 		sxmo_modemdial.sh "$number"
 		;;
 	*Text*)
-		sxmo_textmenu.sh "$number"
+		sxmo_modemtext.sh sendtextmenu "$number"
 		;;
 	*Save*)
 		sxmo_contactmenu.sh newcontact "$number"
