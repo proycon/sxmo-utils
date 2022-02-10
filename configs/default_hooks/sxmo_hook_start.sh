@@ -52,12 +52,12 @@ if [ -f "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" ]; then
 fi
 
 # Start the desktop widget (e.g. clock)
-sxmo_daemons.sh start desktop_widget sxmo_hooks.sh desktop_widget
+sxmo_daemons.sh start desktop_widget sxmo_hook_desktop_widget.sh
 
 # Periodically update some status bar components
-sxmo_hooks.sh statusbar all
+sxmo_hook_statusbar.sh all
 sxmo_daemons.sh start statusbar_periodics sxmo_run_periodically.sh 55 \
-	sxmo_hooks.sh statusbar periodics
+	sxmo_hook_statusbar.sh periodics
 
 # Monitor the battery
 sxmo_daemons.sh start battery_monitor sxmo_battery_monitor.sh
@@ -69,7 +69,7 @@ sxmo_daemons.sh start network_monitor sxmo_networkmonitor.sh
 sxmo_daemons.sh start notification_monitor sxmo_notificationmonitor.sh
 
 # To setup initial lock state
-sxmo_hooks.sh unlock
+sxmo_hook_unlock.sh
 
 sxmo_daemons.sh start pipewire pipewire
 

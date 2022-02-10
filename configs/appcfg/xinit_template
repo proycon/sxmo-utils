@@ -3,4 +3,4 @@
 # Run actions on start
 # By default, setup audio over the main speaker
 # and set a sane default volume
-sxmo_hooks.sh start &
+sxmo_hook_start.sh &

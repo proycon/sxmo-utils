@@ -11,7 +11,7 @@ if [ "$UNSUSPENDREASON" != "modem" ]; then
 	echo 1200 > "$NETWORKRTCSCAN"
 fi
 
-sxmo_hooks.sh statusbar time
+sxmo_hook_statusbar.sh time
 
 if grep -q rtc "$SXMO_UNSUSPENDREASONFILE"; then
 	# We stopped it in presuspend

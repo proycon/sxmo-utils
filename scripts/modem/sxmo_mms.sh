@@ -250,9 +250,9 @@ processmms() {
 		if [ "$count" -gt 0 ]; then
 			GROUPNAME="$(sxmo_contacts.sh --name "$LOGDIRNUM")"
 			[ "$GROUPNAME" = "???" ] && GROUPNAME="$LOGDIRNUM"
-			sxmo_hooks.sh sms "$FROM_NAME" "$TEXT" "$MMS_FILE" "$GROUPNAME"
+			sxmo_hook_sms.sh "$FROM_NAME" "$TEXT" "$MMS_FILE" "$GROUPNAME"
 		else
-			sxmo_hooks.sh sms "$FROM_NAME" "$TEXT" "$MMS_FILE"
+			sxmo_hook_sms.sh "$FROM_NAME" "$TEXT" "$MMS_FILE"
 		fi
 	fi
 

@@ -34,7 +34,7 @@ sxmo_type() {
 }
 
 getprogchoices() {
-	RES="$(sxmo_hooks.sh contextmenu "$1")"
+	RES="$(sxmo_hook_contextmenu.sh "$1")"
 	if [ -n "$RES" ]; then
 		WINNAME="$(printf %s "$RES" | head -n1)"
 		CHOICES="$(printf %s "$RES" | tail -n+2)"

@@ -46,7 +46,7 @@ xorgrotnormal() {
 	sxmo_keyboard.sh close
 	xrandr -o normal
 	applyptrmatrix 0 0 0 0 0 0 0 0 0
-	sxmo_hooks.sh lisgdstart &
+	sxmo_hook_lisgdstart.sh &
 	exit 0
 }
 
@@ -54,7 +54,7 @@ swayrotnormal() {
 	swaymsg -- output  "$monitor" transform 0
 	swaymsg -- input type:touch map_to_output "$monitor"
 	swaymsg -- input type:tablet_tool map_to_output "$monitor"
-	sxmo_hooks.sh lisgdstart &
+	sxmo_hook_lisgdstart.sh &
 	exit 0
 }
 
@@ -62,7 +62,7 @@ xorgrotright() {
 	sxmo_keyboard.sh close
 	xrandr -o right
 	applyptrmatrix 0 1 0 -1 0 1 0 0 1
-	sxmo_hooks.sh lisgdstart &
+	sxmo_hook_lisgdstart.sh &
 	exit 0
 }
 
@@ -70,7 +70,7 @@ swayrotright() {
 	swaymsg -- output  "$monitor" transform 90
 	swaymsg -- input type:touch map_to_output "$monitor"
 	swaymsg -- input type:tablet_tool map_to_output "$monitor"
-	sxmo_hooks.sh lisgdstart &
+	sxmo_hook_lisgdstart.sh &
 	exit 0
 }
 
@@ -78,7 +78,7 @@ xorgrotleft() {
 	sxmo_keyboard.sh close
 	xrandr -o left
 	applyptrmatrix 0 -1 1 1 0 0 0 0 1
-	sxmo_hooks.sh lisgdstart &
+	sxmo_hook_lisgdstart.sh &
 	exit 0
 }
 
@@ -86,7 +86,7 @@ swayrotleft() {
 	swaymsg -- output  "$monitor" transform 270
 	swaymsg -- input type:touch map_to_output "$monitor"
 	swaymsg -- input type:tablet_tool map_to_output "$monitor"
-	sxmo_hooks.sh lisgdstart &
+	sxmo_hook_lisgdstart.sh &
 	exit 0
 }
 

@@ -179,6 +179,6 @@ else
 
 fi
 
-sxmo_hooks.sh sendsms "$NUMBER" "$TEXT"
+sxmo_hook_sendsms.sh "$NUMBER" "$TEXT"
 info "Sent text to $NUMBER message ok"
 

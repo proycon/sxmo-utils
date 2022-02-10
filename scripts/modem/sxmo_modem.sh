@@ -57,7 +57,7 @@ checkforfinishedcalls() {
 		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
 			pkill -f sxmo_modemcall.sh
-			sxmo_hooks.sh statusbar volume
+			sxmo_hook_statusbar.sh volume
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.hangedupcall" ]; then
@@ -67,7 +67,7 @@ checkforfinishedcalls() {
 		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.initiatedcall" ]; then
 			#this call was hung up by the contact
 			pkill -f sxmo_modemcall.sh
-			sxmo_hooks.sh statusbar volume
+			sxmo_hook_statusbar.sh volume
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.mutedring" ]; then
@@ -78,14 +78,14 @@ checkforfinishedcalls() {
 			#this is a missed call
 			# Add a notification for every missed call
 			pkill -f sxmo_modemcall.sh
-			sxmo_hooks.sh statusbar volume
+			sxmo_hook_statusbar.sh volume
 			stderr "Missed call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 
 			CONTACT="$(sxmo_contacts.sh --name "$FINISHEDNUMBER")"
 			stderr "Invoking missed call hook (async)"
 			[ "$CONTACT" = "???" ] && CONTACT="$FINISHEDNUMBER"
-			sxmo_hooks.sh missed_call "$CONTACT" &
+			sxmo_hook_missed_call.sh "$CONTACT" &
 
 			sxmo_notificationwrite.sh \
 				random \
@@ -123,7 +123,7 @@ checkforincomingcalls() {
 	else
 		stderr "Invoking ring hook (async)"
 		[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$INCOMINGNUMBER"
-		sxmo_hooks.sh ring "$CONTACTNAME" &
+		sxmo_hook_ring.sh "$CONTACTNAME" &
 
 		mkdir -p "$SXMO_LOGDIR"
 		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
@@ -247,7 +247,7 @@ checkfornewtexts() {
 			"$SXMO_LOGDIR/$NUM/sms.txt" \
 			"$CONTACTNAME: $TEXT"
 
-		sxmo_hooks.sh sms "$CONTACTNAME" "$TEXT"
+		sxmo_hook_sms.sh "$CONTACTNAME" "$TEXT"
 	done
 }
 

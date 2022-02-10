@@ -44,10 +44,10 @@ sxmo_log "going to suspend to crust"
 
 saveAllEventCounts
 
-sxmo_hooks.sh presuspend
+sxmo_hook_presuspend.sh
 
 YEARS8_TO_SEC=268435455
-if mnc="$(sxmo_hooks.sh mnc)"; then
+if mnc="$(sxmo_hook_mnc.sh)"; then
 	#wake up 10 seconds before the next cron event
 	suspend_time="$((mnc-10))"
 fi
@@ -74,4 +74,4 @@ if [ "$UNSUSPENDREASON" = "rtc" ]; then
 	sxmo_mutex.sh can_suspend lock "Waiting for cronjob"
 fi
 
-sxmo_hooks.sh postwake "$UNSUSPENDREASON"
+sxmo_hook_postwake.sh "$UNSUSPENDREASON"

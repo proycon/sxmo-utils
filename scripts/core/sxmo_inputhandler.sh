@@ -29,7 +29,7 @@ lock_screen_action() {
 		count=$((count-1))
 	done
 
-	sxmo_hooks.sh "$state"
+	sxmo_hook_"$state".sh
 }
 
 XPROPOUT="$(sxmo_wm.sh focusedwindow)"
@@ -333,9 +333,9 @@ case "$ACTION" in
 	"bottomleftcorner")
 		sxmo_dmenu.sh close
 		if [ -n "$WMCLASS" ]; then
-			sxmo_hooks.sh lock
+			sxmo_hook_lock.sh
 		else
-			sxmo_hooks.sh screenoff
+			sxmo_hook_screenoff.sh
 		fi
 		exit 0
 		;;

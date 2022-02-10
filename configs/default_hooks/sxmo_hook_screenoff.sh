@@ -19,7 +19,7 @@ if [ -n "$SXMO_TOUCHSCREEN_ID" ] || [ -n "$SXMO_STYLUS_ID" ]; then
 	sxmo_daemons.sh stop lisgd
 fi
 
-sxmo_hooks.sh statusbar locked
+sxmo_hook_statusbar.sh locked
 
 wait "$LEDPID"
 
@@ -36,16 +36,16 @@ esac
 # Resume tasks stop daemons
 if [ -z "$SXMO_DISABLE_LEDS" ]; then
 	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
-		timeout 8 'sxmo_daemons.sh start going_deeper sxmo_run_periodically.sh 5 sh -c "sxmo_hooks.sh check_state_mutexes && exec sxmo_mutex.sh can_suspend holdexec sxmo_suspend.sh"' \
+		timeout 8 'sxmo_daemons.sh start going_deeper sxmo_run_periodically.sh 5 sh -c "sxmo_hook_check_state_mutexes.sh && exec sxmo_mutex.sh can_suspend holdexec sxmo_suspend.sh"' \
 		resume 'sxmo_daemons.sh stop going_deeper' \
 		timeout 5 'sxmo_daemons.sh start periodic_blink sxmo_run_periodically.sh 2 sxmo_led.sh blink red blue' \
 		resume 'sxmo_daemons.sh stop periodic_blink' \
-		timeout 12 'sxmo_daemons.sh start periodic_state_mutex_check sxmo_run_periodically.sh 10 sxmo_hooks.sh check_state_mutexes' \
+		timeout 12 'sxmo_daemons.sh start periodic_state_mutex_check sxmo_run_periodically.sh 10 sxmo_hook_check_state_mutexes.sh' \
 		resume 'sxmo_daemons.sh stop periodic_state_mutex_check'
 else
 	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
-		timeout 8 'sxmo_daemons.sh start going_deeper sh -c "sxmo_hooks.sh check_state_mutexes && exec sxmo_mutex.sh can_suspend holdexec sxmo_suspend.sh"' \
+		timeout 8 'sxmo_daemons.sh start going_deeper sh -c "sxmo_hook_check_state_mutexes.sh && exec sxmo_mutex.sh can_suspend holdexec sxmo_suspend.sh"' \
 		resume 'sxmo_daemons.sh stop going_deeper' \
-		timeout 12 'sxmo_daemons.sh start periodic_state_mutex_check sxmo_run_periodically.sh 10 sxmo_hooks.sh check_state_mutexes' \
+		timeout 12 'sxmo_daemons.sh start periodic_state_mutex_check sxmo_run_periodically.sh 10 sxmo_hook_check_state_mutexes.sh' \
 		resume 'sxmo_daemons.sh stop periodic_state_mutex_check'
 fi

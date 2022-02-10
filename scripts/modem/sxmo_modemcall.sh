@@ -18,7 +18,7 @@ stderr() {
 
 finish() {
 	sxmo_vibrate 1000 &
-	setsid -f sh -c 'sleep 2; sxmo_hooks.sh statusbar call_duration'
+	setsid -f sh -c 'sleep 2; sxmo_hook_statusbar.sh call_duration'
 	if [ -n "$1" ]; then
 		stderr "$1"
 		notify-send Call "$1"
@@ -79,7 +79,7 @@ acceptcall() {
 			;;
 		incoming)
 			stderr "Invoking pickup hook (async)"
-			sxmo_hooks.sh pickup &
+			sxmo_hook_pickup.sh &
 			touch "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall" #this signals that we picked this call up
 												     #to other asynchronously running processes
 			modem_cmd_errcheck -m any -o "$CALLID" --accept
@@ -110,7 +110,7 @@ hangup() {
 		#this call was never picked up and hung up immediately, so it is a discarded call
 		touch "$XDG_RUNTIME_DIR/${CALLID}.discardedcall" #this signals that we discarded this call to other asynchronously running processes
 		stderr "sxmo_modemcall: Invoking discard hook (async)"
-		sxmo_hooks.sh discard &
+		sxmo_hook_discard.sh &
 		log_event "call_discard" "$CALLID"
 	fi
 	modem_cmd_errcheck -m any -o "$CALLID" --hangup
@@ -220,7 +220,7 @@ mute() {
 	CALLID="$1"
 	touch "$XDG_RUNTIME_DIR/${CALLID}.mutedring" #this signals that we muted this ring
 	stderr "Invoking mute_ring hook (async)"
-	sxmo_hooks.sh mute_ring "$CONTACTNAME" &
+	sxmo_hook_mute_ring.sh "$CONTACTNAME" &
 	log_event "ring_mute" "$1"
 	finish "Ringing with $NUMBER muted"
 }

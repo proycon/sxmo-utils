@@ -3,4 +3,4 @@
 # This script is executed (asynchronously) when you mute an incoming call
 
 # just do the same as the missed_call hook:
-exec sxmo_hooks.sh missed_call "$@"
+exec sxmo_hook_missed_call.sh "$@"

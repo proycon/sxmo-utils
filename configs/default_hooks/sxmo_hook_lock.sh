@@ -18,15 +18,15 @@ if [ -n "$SXMO_STYLUS_ID" ] || [ -n "$SXMO_TOUCHSCREEN_ID" ]; then
 	sxmo_daemons.sh stop lisgd
 fi
 
-sxmo_hooks.sh statusbar state_change
-sxmo_hooks.sh statusbar locked
+sxmo_hook_statusbar.sh state_change
+sxmo_hook_statusbar.sh locked
 
 wait "$LEDPID"
 
 # Go to screenoff after 8 seconds of inactivity
 if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
 	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
-		timeout 8 "sxmo_hooks.sh screenoff"
+		timeout 8 "sxmo_hook_screenoff.sh"
 fi
 
 sxmo_daemons.sh signal desktop_widget -12

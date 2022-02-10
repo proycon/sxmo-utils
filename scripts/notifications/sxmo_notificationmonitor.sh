@@ -11,7 +11,7 @@ handlenewnotiffile(){
 		sxmo_log "Invalid notification file $NOTIFFILE found (<3 lines -- see notif spec in sxmo_notifwrite.sh), deleting!"
 		rm -f "$NOTIFFILE"
 	else
-		sxmo_hooks.sh notification "$NOTIFFILE" &
+		sxmo_hook_notification.sh "$NOTIFFILE" &
 		NOTIFACTION="$(awk NR==1 "$NOTIFFILE")"
 		NOTIFWATCHFILE="$(awk NR==2 "$NOTIFFILE")"
 		NOTIFMSG="$(tail -n+3 "$NOTIFFILE" | cut -c1-70)"

@@ -4,7 +4,7 @@ udev_tmp="$(mktemp)"
 udevadm monitor -u -s power_supply >> "$udev_tmp" &
 UDEVPID=$!
 tail -f "$udev_tmp" | while read -r; do
-	sxmo_hooks.sh statusbar battery
+	sxmo_hook_statusbar.sh battery
 done &
 STATUSBATTERYPID=$!
 

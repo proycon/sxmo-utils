@@ -8,7 +8,7 @@ change_alpine() {
 	echo "Changing timezone to $1"
 
 	doas setup-timezone -z "$1"
-	sxmo_hooks.sh statusbar time
+	sxmo_hook_statusbar.sh time
 
 	echo "Timezone changed ok"
 }
@@ -17,7 +17,7 @@ change_arch() {
 	echo "Changing timezone to $1"
 
 	timedatectl set-timezone "$1"
-	sxmo_hooks.sh statusbar time
+	sxmo_hook_statusbar.sh time
 
 	echo "Timezone changed ok"
 }

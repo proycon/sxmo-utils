@@ -6,7 +6,7 @@ isLocked() {
 
 finish() {
 	sxmo_mutex.sh can_suspend free "Proximity lock is running"
-	sxmo_hooks.sh "$INITIALSTATE"
+	sxmo_hook_"$INITIALSTATE".sh
 	exit 0
 }
 
@@ -26,9 +26,9 @@ mainloop() {
 	while true; do
 		distance="$(distance)"
 		if isLocked && [ "$distance" -lt "$TARGET" ]; then
-			sxmo_hooks.sh unlock
+			sxmo_hook_unlock.sh
 		elif ! isLocked && [ "$distance" -gt "$TARGET" ]; then
-			sxmo_hooks.sh screenoff
+			sxmo_hook_screenoff.sh
 		fi
 		sleep 0.5
 	done

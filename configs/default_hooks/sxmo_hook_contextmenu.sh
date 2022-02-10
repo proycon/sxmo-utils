@@ -21,12 +21,12 @@ fi
 case "$WMCLASS" in
 	scripts)
 		# Scripts menu
-		CHOICES="$(sxmo_hooks.sh scripts)"
+		CHOICES="$(sxmo_hook_scripts.sh)"
 		WINNAME=Scripts
 		;;
 	applications)
 		# Apps menu
-		CHOICES="$(sxmo_hooks.sh apps)"
+		CHOICES="$(sxmo_hook_apps.sh)"
 		WINNAME=Apps
 		;;
 	modem)
@@ -36,11 +36,11 @@ case "$WMCLASS" in
 			$icon_phn Modem Monitor $(
 				sxmo_daemons.sh running modem_monitor -q &&
 				printf %b "$icon_ton ^ 1 ^ sxmo_daemons.sh stop modem_monitor" || printf %b "$icon_tof ^ 1 ^ sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh"
-			) && sxmo_hooks.sh statusbar modem_monitor
+			) && sxmo_hook_statusbar.sh modem_monitor
 			$icon_phn Modem Daemons $(
 				sxmo_modemdaemons.sh status > /dev/null &&
 				printf %b "$icon_ton ^ 1 ^ sxmo_modemdaemons.sh stop" || printf %b "$icon_tof ^ 1 ^ sxmo_modemdaemons.sh start"
-			) && sxmo_hooks.sh statusbar modem
+			) && sxmo_hook_statusbar.sh modem
 			$icon_inf Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
 			$icon_phl Modem Log                  ^ 0 ^ sxmo_modemlog.sh
 			$icon_img Config MMS                 ^ 1 ^ sxmo_mmsdconfig.sh
@@ -66,17 +66,17 @@ case "$WMCLASS" in
 			$icon_cfg Gestures $(
 				sxmo_daemons.sh running lisgd -q &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
-			) ^ 1 ^ toggle_daemon 'Lisgd' lisgd sxmo_hooks.sh lisgdstart
+			) ^ 1 ^ toggle_daemon 'Lisgd' lisgd sxmo_hook_lisgdstart.sh
 			$icon_cfg Toggle Bar ^ 0 ^ sxmo_wm.sh togglebar
 			$icon_bth Bluetooth $(
 				rfkill list bluetooth | grep -q "yes" &&
 				printf %b "$icon_tof" ||  printf %b "$icon_ton";
-				printf %b "^ 1 ^ doas sxmo_bluetoothtoggle.sh && sxmo_hooks.sh statusbar bluetooth"
+				printf %b "^ 1 ^ doas sxmo_bluetoothtoggle.sh && sxmo_hook_statusbar.sh bluetooth"
 			)
 			$icon_wif Wifi $(
 				rfkill -rn | grep wlan | grep -qE "unblocked unblocked" &&
 				printf %b "$icon_ton" ||  printf %b "$icon_tof";
-				printf %b "^ 1 ^ doas sxmo_wifitoggle.sh && sxmo_hooks.sh statusbar wifi"
+				printf %b "^ 1 ^ doas sxmo_wifitoggle.sh && sxmo_hook_statusbar.sh wifi"
 			)
 			$(test "$SXMO_WM" = dwm && printf %b "$icon_cfg Invert Colors ^ 1 ^ xcalib -a -invert")
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
@@ -107,9 +107,9 @@ case "$WMCLASS" in
 	power)
 		# Power menu
 		CHOICES="
-			$icon_lck Lock               ^ 0 ^ sxmo_hooks.sh lock
-			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_hooks.sh screenoff
-			$icon_zzz Suspend            ^ 0 ^ sxmo_hooks.sh screenoff && sxmo_hooks.sh crust
+			$icon_lck Lock               ^ 0 ^ sxmo_hook_lock.sh
+			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_hook_screenoff.sh
+			$icon_zzz Suspend            ^ 0 ^ sxmo_hook_screenoff.sh && sxmo_hook_crust.sh
 			$icon_out Logout             ^ 0 ^ confirm Logout && (pkill -9 dwm || pkill -9 sway)
 			$icon_rol Toggle WM          ^ 0 ^ confirm Toggle && sxmo_wmtoggle.sh
 			$icon_rld Reboot             ^ 0 ^ confirm Reboot && sxmo_power.sh reboot

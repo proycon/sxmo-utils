@@ -17,11 +17,11 @@ sxmo_wm.sh dpms off
 [ -z "$SXMO_STYLUS_ID" ] || sxmo_wm.sh inputevent stylus on
 
 if [ -n "$SXMO_TOUCHSCREEN_ID" ] || [ -n "$SXMO_TOUCHSCREEN_ID" ]; then
-       sxmo_hooks.sh lisgdstart
+       sxmo_hook_lisgdstart.sh
 fi
 
-sxmo_hooks.sh statusbar state_change
-sxmo_hooks.sh statusbar locked
+sxmo_hook_statusbar.sh state_change
+sxmo_hook_statusbar.sh locked
 
 wait "$LEDPID"
 
@@ -31,7 +31,7 @@ echo 16000 > "$NETWORKRTCSCAN"
 # Go to lock after 120 seconds of inactivity
 if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
 	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
-		timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" "sxmo_hooks.sh lock"
+		timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" "sxmo_hook_lock.sh"
 fi
 
 sxmo_daemons.sh signal desktop_widget -12

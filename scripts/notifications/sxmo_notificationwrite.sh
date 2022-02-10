@@ -30,5 +30,5 @@ writenotification() {
 writenotification
 
 if grep -q screenoff "$SXMO_STATE"; then
-	sxmo_hooks.sh lock
+	sxmo_hook_lock.sh
 fi

@@ -64,6 +64,8 @@ _sxmo_load_environments() {
 	command -v "$EDITOR" >/dev/null || export EDITOR=vim
 	command -v "$SHELL" >/dev/null || export SHELL=/bin/sh
 
+	export PATH="$XDG_CONFIG_HOME/sxmo/hooks/:/usr/share/sxmo/default_hooks/:$PATH"
+
 	if [ -e /sys/firmware/devicetree/base/compatible ]; then
 		device="$(cut -d ',' -f 2 < /sys/firmware/devicetree/base/compatible | tr -d '\0')"
 		deviceprofile="$(which "sxmo_deviceprofile_$device.sh")"

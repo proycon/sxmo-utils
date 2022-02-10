@@ -46,7 +46,7 @@ init() {
 
 	start
 	cleanup
-	sxmo_hooks.sh stop
+	sxmo_hook_stop.sh
 }
 
 if [ -z "$1" ]; then

@@ -57,7 +57,7 @@ statenumtoname() {
 
 mainloop() {
 	# Display the icon
-	sxmo_hooks.sh statusbar modem_monitor
+	sxmo_hook_statusbar.sh modem_monitor
 
 	PIDS=""
 
@@ -68,8 +68,8 @@ mainloop() {
 		done
 
 		# fake oldstate (boot) and reason (0)
-		sxmo_hooks.sh modem "boot" "$newstate" "0"
-		sxmo_hooks.sh statusbar modem
+		sxmo_hook_modem.sh "boot" "$newstate" "0"
+		sxmo_hook_statusbar.sh modem
 	) &
 	PIDS="$PIDS $!"
 
@@ -105,10 +105,10 @@ mainloop() {
 				read -r oldstate
 				read -r newstate
 				read -r reason
-				sxmo_hooks.sh modem "$(statenumtoname "$oldstate")" \
+				sxmo_hook_modem.sh "$(statenumtoname "$oldstate")" \
 					"$(statenumtoname "$newstate")" \
 					"$(echo "$reason" | sed 's/uint32 //')"
-				sxmo_hooks.sh statusbar modem
+				sxmo_hook_statusbar.sh modem
 			fi
 		done &
 	PIDS="$PIDS $!"

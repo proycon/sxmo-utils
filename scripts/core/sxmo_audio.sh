@@ -25,7 +25,7 @@ notifyvol() {
 			dunstify -r 999 "♫ Volume $vol"
 			;;
 	esac
-	sxmo_hooks.sh statusbar volume
+	sxmo_hook_statusbar.sh volume
 }
 
 pulsevolup() {
@@ -141,7 +141,7 @@ alsadeviceset() {
 	fi
 	printf '%s' "$DEV" > "$XDG_RUNTIME_DIR/sxmo.audiocurrentdevice"
 
-	sxmo_hooks.sh statusbar volume
+	sxmo_hook_statusbar.sh volume
 }
 
 alsamenuchoices() {

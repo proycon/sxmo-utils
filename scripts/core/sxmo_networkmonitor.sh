@@ -9,7 +9,7 @@ stderr() {
 }
 
 gracefulexit() {
-	sxmo_hooks.sh statusbar wifi
+	sxmo_hook_statusbar.sh wifi
 	stderr "gracefully exiting (on signal or after error)"
 	sxmo_daemons.sh stop network_monitor_device
 	exit
@@ -42,23 +42,23 @@ sxmo_daemons.sh start network_monitor_device \
 			if echo "$newstate" | grep -q "uint32 100"; then
 				# 100=NM_DEVICE_STATE_ACTIVATED
 				stderr "$devicename up."
-				sxmo_hooks.sh network-up "$devicename"
-				sxmo_hooks.sh statusbar "network_$devicename"
+				sxmo_hook_network_up.sh "$devicename"
+				sxmo_hook_statusbar.sh "network_$devicename"
 			elif echo "$newstate" | grep -q "uint32 30"; then
 				# 30=NM_DEVICE_STATE_DISCONNECTED 
 				stderr "$devicename down."
-				sxmo_hooks.sh network-down "$devicename"
-				sxmo_hooks.sh statusbar "network_$devicename"
+				sxmo_hook_network_down.sh "$devicename"
+				sxmo_hook_statusbar.sh "network_$devicename"
 			elif echo "$newstate" | grep -q "uint32 110"; then
 				# 110=NM_DEVICE_STATE_DEACTIVATING
 				stderr "$devicename pre-down"
-				sxmo_hooks.sh network-pre-down "$devicename"
-				sxmo_hooks.sh statusbar "network_$devicename"
+				sxmo_hook_network_pre_down.sh "$devicename"
+				sxmo_hook_statusbar.sh "network_$devicename"
 			elif echo "$newstate" | grep -q "uint32 90"; then
 				# 90=NM_DEVICE_STATE_SECONDARIES
 				stderr "$devicename pre-up"
-				sxmo_hooks.sh network-pre-up "$devicename"
-				sxmo_hooks.sh statusbar "network_$devicename"
+				sxmo_hook_network_pre_up.sh "$devicename"
+				sxmo_hook_statusbar.sh "network_$devicename"
 			fi
 		fi
 	done
