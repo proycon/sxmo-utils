@@ -7,7 +7,7 @@ ACTION="$1"
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 # this action will move the lock state $1 levels higher
 lock_screen_action() {
@@ -35,11 +35,6 @@ lock_screen_action() {
 XPROPOUT="$(sxmo_wm.sh focusedwindow)"
 WMCLASS="$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
 WMNAME="$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
-
-if [ -x "$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler ]; then
-	#hook script must exit with a zero exit code ONLY if it has handled the gesture!
-	"$XDG_CONFIG_HOME"/sxmo/hooks/inputhandler "$WMCLASS" "$WMNAME" "$@" && exit
-fi
 
 if ! grep -q unlock "$SXMO_STATE"; then
 	case "$ACTION" in
@@ -80,9 +75,49 @@ fi
 
 #special context-sensitive handling
 case "$WMCLASS" in
+	*"mpv"*)
+		case "$ACTION" in
+			"oneright")
+				sxmo_type.sh -k Left
+				exit 0
+				;;
+			"oneleft")
+				sxmo_type.sh -k Right
+				exit 0
+				;;
+			"oneup")
+				sxmo_type.sh m
+				exit 0
+				;;
+			"onedown")
+				sxmo_type.sh p
+				exit 0
+				;;
+		esac
+		;;
 	*"foot"*|*"st"*)
 		# First we try to handle the app running inside st:
 		case "$WMNAME" in
+			*"weechat"*)
+				case "$ACTION" in
+					*"oneleft")
+						sxmo_type.sh -M Alt -k a
+						exit 0
+						;;
+					*"oneright")
+						sxmo_type.sh -M Alt -k less
+						exit 0
+						;;
+					*"oneup")
+						sxmo_type.sh -k Page_Down
+						exit 0
+						;;
+					*"onedown")
+						sxmo_type.sh -k Page_Up
+						exit 0
+						;;
+				esac
+				;;
 			*" sms")
 				case "$ACTION" in
 					*"upbottomedge")

@@ -32,7 +32,7 @@ if [ "$counter" != "$new_counter" ] && [ "$#" -ne 1 ]; then # Only the last coun
 	exit
 fi
 
-eval sxmo_inputhandler.sh "$1" &
+eval sxmo_hook_inputhandler.sh "$1" &
 
 if [ "$counter" != "$new_counter" ]; then # overlowed
 	printf "%s * 2" "$threshold" | bc | xargs sleep
