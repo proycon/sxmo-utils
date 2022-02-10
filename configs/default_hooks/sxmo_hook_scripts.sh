@@ -12,24 +12,31 @@ write_line() {
 	printf "%s ^ 0 ^ %s\n" "$1" "$2"
 }
 
+get_title() {
+	title=""
+	# Process substitution because source won't work with data piped from stdin.
+	source <(head "$1" | grep '# title="[^\\"]*"' | sed 's/^# //g')
+	if [ -n "$title" ]; then
+		echo "$title"
+	else
+		basename="$(basename "$1")"
+		echo "$icon_itm $basename"
+	fi
+}
+
 if [ -f "$XDG_CONFIG_HOME/sxmo/userscripts" ]; then
 	cat "$XDG_CONFIG_HOME/sxmo/userscripts"
 elif [ -d "$XDG_CONFIG_HOME/sxmo/userscripts" ]; then
-	find "$XDG_CONFIG_HOME/sxmo/userscripts" -type f -o -type l | \
-		tr '\n' '\0' | \
-		xargs -0 -n1 basename | \
-		awk "{printf \"$icon_itm %s ^ 0 ^ $XDG_CONFIG_HOME/sxmo/userscripts/%s \\n\", \$0, \$0}" | \
-		sort -f
+	find "$XDG_CONFIG_HOME/sxmo/userscripts" -type f -o -type l | sort -f | while read script; do
+		title="$(get_title "$script")"
+		write_line "$title" "$script"
+	done
 fi
 
-write_line "$icon_mic Record" "sxmo_record.sh"
-write_line "$icon_red Reddit" "sxmo_reddit.sh"
-write_line "$icon_rss RSS" "sxmo_rss.sh"
-write_line "$icon_cam Screenshot" "sxmo_screenshot.sh"
-write_line "$icon_cam Screenshot (selection)" "sxmo_screenshot.sh selection"
-write_line "$icon_tmr Timer" "sxmo_timer.sh"
-write_line "$icon_ytb Youtube" "sxmo_youtube.sh video"
-write_line "$icon_ytb Youtube (Audio)" "sxmo_youtube.sh audio"
-write_line "$icon_glb Web Search" "sxmo_websearch.sh"
-write_line "$icon_wtr Weather" "sxmo_weather.sh"
-write_line "$icon_cfg Edit Userscripts" "sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/userscripts"
+write_line "$icon_cfg Edit Userscripts" "sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/userscripts/*"
+
+# System Scripts
+find /usr/share/sxmo/appscripts -type f -o -type l | sort -f | while read script; do
+	title="$(get_title "$script")"
+	write_line "$title" "$script"
+done

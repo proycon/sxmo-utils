@@ -68,6 +68,10 @@ install: $(PROGRAMS)
 	find $(DESTDIR)$(PREFIX)/share/sxmo/default_hooks/ -type f -exec ./setup_config_version.sh "{}" \;
 	find $(DESTDIR)$(PREFIX)/share/sxmo/appcfg/ -type f -exec ./setup_config_version.sh "{}" \;
 
+	# Appscripts
+	mkdir -p "$(DESTDIR)$(PREFIX)/share/sxmo/appscripts"
+	cd scripts/appscripts && find . -name 'sxmo_*.sh' | xargs -I{} ln -fs "$(DESTDIR)$(PREFIX)/bin/{}" "$(DESTDIR)$(PREFIX)/share/sxmo/appscripts/{}" && cd ../..
+
 	@echo "-------------------------------------------------------------------">&2
 	@echo "NOTICE 1: Do not forget to add sxmo-setpermissions to your init system, e.g. for openrc: rc-update add sxmo-setpermissions default && rc-service sxmo-setpermissions start" >&2
 	@echo "-------------------------------------------------------------------">&2

@@ -1,4 +1,5 @@
 #!/bin/sh
+# title="$icon_cam Screenshot"
 # scrot refuses to work with double quotes
 # shellcheck disable=SC2016
 

@@ -1,8 +1,8 @@
 #!/bin/sh
-
+# title="$icon_clk Timer"
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 timerrun() {
 	TIME=$(

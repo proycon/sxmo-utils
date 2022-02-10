@@ -1,8 +1,8 @@
 #!/bin/sh
-
+# title="$icon_glb Web Search"
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 sxmo_keyboard.sh open
 SEARCHQUERY="$(

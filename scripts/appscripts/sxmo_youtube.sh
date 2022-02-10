@@ -1,8 +1,8 @@
 #!/bin/sh
-
+# title="$icon_ytb YouTube"
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 HISTORY_FILE="$XDG_CACHE_HOME"/sxmo/youtubehistory.tsv
 AUDIOONLY=0
@@ -84,5 +84,8 @@ audio() {
 	AUDIOONLY=1
 	searchmenu
 }
-
-"$@"
+if [ -n "$1" ]; then
+	"$@"
+else
+	video
+fi
