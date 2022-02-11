@@ -262,6 +262,8 @@ if [ "$USER" = "root" ]; then
 	exit 127
 fi
 
+sxmo_migrate_1.9.0_hooks.sh
+
 #modes may be chained
 for MODE in "$@"; do
 	case "$MODE" in
