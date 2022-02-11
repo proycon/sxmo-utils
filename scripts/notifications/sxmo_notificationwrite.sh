@@ -28,7 +28,3 @@ writenotification() {
 
 [ "$#" -lt 4 ] && echo "Need >=4 args to create a notification" && exit 1
 writenotification
-
-if grep -q screenoff "$SXMO_STATE"; then
-	sxmo_hook_lock.sh
-fi
