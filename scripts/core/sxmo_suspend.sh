@@ -47,7 +47,7 @@ saveAllEventCounts
 sxmo_hooks.sh presuspend
 
 YEARS8_TO_SEC=268435455
-if mnc="$(sxmo_hook_mnc.sh)"; then
+if mnc="$(sxmo_hooks.sh mnc)"; then
 	#wake up 10 seconds before the next cron event
 	suspend_time="$((mnc-10))"
 fi
