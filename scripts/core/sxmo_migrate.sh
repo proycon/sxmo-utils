@@ -156,7 +156,9 @@ checkhooks() {
 	if ! [ -e "$XDG_CONFIG_HOME/sxmo/hooks/" ]; then
 		return
 	fi
-	for hook in "$XDG_CONFIG_HOME/sxmo/hooks/"* "$XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME/"*; do
+	for hook in \
+		"$XDG_CONFIG_HOME/sxmo/hooks/"* \
+		${SXMO_DEVICE_NAME:+"$XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME/"*}; do
 		{ [ -e "$hook" ] && [ -f "$hook" ];} || continue #sanity check because shell enters loop even when there are no files in dir (null glob)
 
 		if printf %s "$hook" | grep -q "/$SXMO_DEVICE_NAME/"; then
