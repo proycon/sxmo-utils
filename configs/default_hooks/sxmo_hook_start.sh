@@ -77,10 +77,15 @@ sxmo_daemons.sh start pipewire pipewire
 if ! sxmo_modemdaemons.sh status; then
 	sxmo_notify_user.sh --urgency=critical "Warning! Modem daemons are not running."
 else
+
+	(
+		sleep 5 # let some time to pipewire
+		sxmo_daemons.sh start callaudiod callaudiod
+	) &
+
 	# Turn on the dbus-monitors for modem-related tasks
 	sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh
 
-	sxmo_daemons.sh start callaudiod callaudiod
 
 	# Prevent crust for 120s if this is a reboot (uptime < 3mins)
 	if [ "$(cut -d '.' -f1 < /proc/uptime)" -lt 180 ]; then
