@@ -1,4 +1,4 @@
-
+!
 ! Xresource settings for HiDPI font support with Xft
 
 Xft.dpi: 192
