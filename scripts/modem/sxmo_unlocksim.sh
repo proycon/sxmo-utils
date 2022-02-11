@@ -25,7 +25,7 @@ EOF
 			exit
 			;;
 		*)
-			SIM="$(mmcli -m any | grep -oE 'SIM\/([0-9]+)' | cut -d'/' -f2)"
+			SIM="$(mmcli -m any | grep -oE 'SIM\/([0-9]+)' | cut -d'/' -f2 | head -n1)"
 			MSG="$(mmcli -i "$SIM" --pin "$PICKED" 2>&1 || true)"
 			[ -n "$MSG" ] && sxmo_notify_user.sh "$MSG"
 			if printf "%s\n" "$MSG" | grep -q "not SIM-PIN locked"; then
