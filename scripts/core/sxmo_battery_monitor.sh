@@ -15,5 +15,5 @@ finish() {
 }
 trap 'finish' TERM INT EXIT
 
-wait "$STATUSTIMEPID"
+wait "$UDEVPID"
 wait "$STATUSBATTERYPID"
