@@ -15,7 +15,6 @@ envvars() {
 }
 
 defaults() {
-	alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
 	[ -e "$HOME"/.Xresources ] && xrdb -merge "$HOME"/.Xresources
 }
 

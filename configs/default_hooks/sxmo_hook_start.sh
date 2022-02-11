@@ -8,12 +8,6 @@
 echo "unlock" > "$SXMO_STATE"
 [ -f "$SXMO_UNSUSPENDREASONFILE" ] && rm -f "$SXMO_UNSUSPENDREASONFILE"
 
-# Force audio over the main speaker
-# and set a sane default volume
-sxmo_audio.sh device set Speaker
-amixer sset 'Line Out Source' 'Mono Differential','Mono Differential' >/dev/null
-amixer set "Line Out" 75% >/dev/null
-
 # Play a funky startup tune if you want (disabled by default)
 #mpv --quiet --no-video ~/welcome.ogg &
 

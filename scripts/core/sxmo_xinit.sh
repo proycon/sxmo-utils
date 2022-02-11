@@ -13,7 +13,6 @@ envvars() {
 }
 
 defaults() {
-	alsactl --file /usr/share/sxmo/alsa/default_alsa_sound.conf restore
 	xmodmap /usr/share/sxmo/appcfg/xmodmap_caps_esc
 	xsetroot -mod 29 29 -fg '#0b3a4c' -bg '#082430'
 	xset s off -dpms

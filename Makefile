@@ -37,8 +37,6 @@ install: $(PROGRAMS)
 	# Configs
 	install -D -m 0755 -t $(DESTDIR)/etc/init.d configs/openrc/sxmo-setpermissions
 
-	install -D -m 0644 -t $(DESTDIR)/etc/alsa/conf.d/ configs/alsa/alsa_sxmo_enable_dmix.conf
-
 	install -D -m 0644 -t $(DESTDIR)/etc/udev/rules.d/ configs/udev/*.rules
 
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ configs/xdg/mimeapps.list
