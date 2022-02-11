@@ -62,7 +62,7 @@ EOF
 
 alsadetectdevice() {
 	for DEVICE in "$EARPIECE" "$HEADPHONE" "$SPEAKER"; do
-		if amixer -c 0 sget "$DEVICE" | grep -qE '\[on\]'; then
+		if amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" sget "$DEVICE" | grep -qE '\[on\]'; then
 			printf %s "$DEVICE"
 			return
 		fi
@@ -86,20 +86,20 @@ amixerextractvol() {
 }
 
 alsavolup() {
-	amixer -c 0 set "$(alsacurrentdevice)" "${1:-5}%+" | amixerextractvol | notifyvol -
+	amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$(alsacurrentdevice)" "${1:-5}%+" | amixerextractvol | notifyvol -
 }
 
 alsavoldown() {
-	amixer -c 0 set "$(alsacurrentdevice)" "${1:-5}%-" | amixerextractvol | notifyvol -
+	amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$(alsacurrentdevice)" "${1:-5}%-" | amixerextractvol | notifyvol -
 }
 
 alsavolset() {
-	amixer -c 0 set "$(alsacurrentdevice)" "$1%" | amixerextractvol | notifyvol -
+	amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$(alsacurrentdevice)" "$1%" | amixerextractvol | notifyvol -
 }
 
 alsavolget() {
 	if [ -n "$(alsacurrentdevice)" ]; then
-		amixer -c 0 get "$(alsacurrentdevice)" | amixerextractvol
+		amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" get "$(alsacurrentdevice)" | amixerextractvol
 	fi
 }
 
@@ -118,9 +118,9 @@ alsadeviceget() {
 }
 
 alsadeviceset() {
-	amixer -c 0 set "$SPEAKER" mute >/dev/null
-	amixer -c 0 set "$HEADPHONE" mute >/dev/null
-	amixer -c 0 set "$EARPIECE" mute >/dev/null
+	amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$SPEAKER" mute >/dev/null
+	amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$HEADPHONE" mute >/dev/null
+	amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$EARPIECE" mute >/dev/null
 
 	case "$1" in
 		Speaker|speaker)
@@ -137,7 +137,7 @@ alsadeviceset() {
 			;;
 	esac
 	if [ "$DEV" ]; then
-		amixer -c 0 set "$DEV" unmute >/dev/null
+		amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$DEV" unmute >/dev/null
 	fi
 	printf '%s' "$DEV" > "$XDG_RUNTIME_DIR/sxmo.audiocurrentdevice"
 
