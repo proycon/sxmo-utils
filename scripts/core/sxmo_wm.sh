@@ -69,6 +69,20 @@ swayinputevent() {
 		TOUCH_POINTER_ID="tablet_tool"
 	fi
 
+	# If we dont have any matching input
+	if ! swaymsg -t get_inputs \
+		| gojq -r ".[] | select(.type == \"$TOUCH_POINTER_ID\" )" \
+		| grep -q .; then
+
+		if [ -z "$2" ]; then
+			printf "not found"
+			exit 0
+		else
+			sxmo_notify_user.sh "No matching \"$TOUCH_POINTER_ID\" input has been found"
+			exit 1
+		fi
+	fi
+
 	STATE=on
 	if swaymsg -t get_inputs \
 		| jq -r ".[] | select(.type == \"$TOUCH_POINTER_ID\" ) | .libinput.send_events" \
