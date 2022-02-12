@@ -44,6 +44,7 @@ xorgrotnormal() {
 	xrandr -o normal
 	applyptrmatrix 0 0 0 0 0 0 0 0 0
 	sxmo_hook_lisgdstart.sh &
+	sxmo_hook_rotate.sh normal
 	exit 0
 }
 
@@ -53,6 +54,7 @@ swayrotnormal() {
 	swaymsg -- input type:touch map_to_output "$focused_name"
 	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 	sxmo_hook_lisgdstart.sh &
+	sxmo_hook_rotate.sh normal
 	exit 0
 }
 
@@ -61,6 +63,7 @@ xorgrotright() {
 	xrandr -o right
 	applyptrmatrix 0 1 0 -1 0 1 0 0 1
 	sxmo_hook_lisgdstart.sh &
+	sxmo_hook_rotate.sh right
 	exit 0
 }
 
@@ -70,6 +73,7 @@ swayrotright() {
 	swaymsg -- input type:touch map_to_output "$focused_name"
 	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 	sxmo_hook_lisgdstart.sh &
+	sxmo_hook_rotate.sh right
 	exit 0
 }
 
@@ -78,6 +82,7 @@ xorgrotleft() {
 	xrandr -o left
 	applyptrmatrix 0 -1 1 1 0 0 0 0 1
 	sxmo_hook_lisgdstart.sh &
+	sxmo_hook_rotate.sh left
 	exit 0
 }
 
@@ -87,6 +92,7 @@ swayrotleft() {
 	swaymsg -- input type:touch map_to_output "$focused_name"
 	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 	sxmo_hook_lisgdstart.sh &
+	sxmo_hook_rotate.sh left
 	exit 0
 }
 
