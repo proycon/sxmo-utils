@@ -55,7 +55,7 @@ install: $(PROGRAMS)
 
 	# Migrations
 	install -D -t $(DESTDIR)$(PREFIX)/share/sxmo/migrations migrations/*
-	
+
 	# Bin
 	install -D -t $(DESTDIR)$(PREFIX)/bin scripts/*/*
 
