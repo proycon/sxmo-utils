@@ -9,6 +9,12 @@
 sxmo_log "transitioning to stage off"
 printf screenoff > "$SXMO_STATE"
 
+case "$SXMO_WM" in
+	sway)
+		swaymsg mode default
+		;;
+esac
+
 sxmo_led.sh blink blue red &
 LEDPID=$!
 
