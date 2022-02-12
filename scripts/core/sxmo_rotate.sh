@@ -11,10 +11,12 @@ applyptrmatrix() {
 	[ -n "$SXMO_STYLUS_ID" ] && xinput set-prop "$SXMO_STYLUS_ID" --type=float --type=float "Coordinate Transformation Matrix" "$@"
 }
 
-swaytransforms() {
-	swaymsg -p -t get_outputs | awk '
-		/Output/ { printf $2 " " };
-		/Transform/ { print $2 }'
+swayfocusedtransform() {
+	swaymsg -t get_outputs | jq -r '.[] | select(.focused == true) | .transform'
+}
+
+swayfocusedname() {
+	swaymsg -t get_outputs | jq -r '.[] | select(.focused == true) | .name'
 }
 
 xorgisrotated() {
@@ -30,10 +32,7 @@ xorgisrotated() {
 
 swayisrotated() {
 	rotation="$(
-		swaytransforms \
-		| grep "$monitor" \
-		| cut -d" " -f2 \
-		| sed -e s/90/right/ -e s/270/left/ -e s/180/reverse/
+		swayfocusedtransform | sed -e s/90/right/ -e s/270/left/ -e s/180/reverse/
 	)"
 	if [ "$rotation" = "normal" ]; then
 		return 1;
@@ -51,9 +50,10 @@ xorgrotnormal() {
 }
 
 swayrotnormal() {
-	swaymsg -- output  "$monitor" transform 0
-	swaymsg -- input type:touch map_to_output "$monitor"
-	swaymsg -- input type:tablet_tool map_to_output "$monitor"
+	swaymsg -- output "-" transform 0
+	focused_name="$(swayfocusedname)"
+	swaymsg -- input type:touch map_to_output "$focused_name"
+	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 	sxmo_hook_lisgdstart.sh &
 	exit 0
 }
@@ -67,9 +67,10 @@ xorgrotright() {
 }
 
 swayrotright() {
-	swaymsg -- output  "$monitor" transform 90
-	swaymsg -- input type:touch map_to_output "$monitor"
-	swaymsg -- input type:tablet_tool map_to_output "$monitor"
+	swaymsg -- output "-" transform 90
+	focused_name="$(swayfocusedname)"
+	swaymsg -- input type:touch map_to_output "$focused_name"
+	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 	sxmo_hook_lisgdstart.sh &
 	exit 0
 }
@@ -83,9 +84,10 @@ xorgrotleft() {
 }
 
 swayrotleft() {
-	swaymsg -- output  "$monitor" transform 270
-	swaymsg -- input type:touch map_to_output "$monitor"
-	swaymsg -- input type:tablet_tool map_to_output "$monitor"
+	swaymsg -- output "-" transform 270
+	focused_name="$(swayfocusedname)"
+	swaymsg -- input type:touch map_to_output "$focused_name"
+	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 	sxmo_hook_lisgdstart.sh &
 	exit 0
 }
