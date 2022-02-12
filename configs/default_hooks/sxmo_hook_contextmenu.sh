@@ -55,13 +55,13 @@ case "$WMCLASS" in
 			$icon_ard Brightness               ^ 1 ^ sxmo_brightness.sh down
 			$icon_cfg Touch $(
 				sxmo_wm.sh inputevent touchscreen | grep -q on && \
-				printf %b "$icon_ton ^ 0 ^ sxmo_wm.sh inputevent touchscreen off" || \
-				printf %b "$icon_tof ^ 0 ^ sxmo_wm.sh inputevent touchscreen on"
+				printf %b "$icon_ton ^ 1 ^ sxmo_wm.sh inputevent touchscreen off" || \
+				printf %b "$icon_tof ^ 1 ^ sxmo_wm.sh inputevent touchscreen on"
 			)
 			$icon_cfg Stylus $(
 				sxmo_wm.sh inputevent stylus | grep -q on && \
-				printf %b "$icon_ton ^ 0 ^ sxmo_wm.sh inputevent stylus off" || \
-				printf %b "$icon_tof ^ 0 ^ sxmo_wm.sh inputevent stylus on"
+				printf %b "$icon_ton ^ 1 ^ sxmo_wm.sh inputevent stylus off" || \
+				printf %b "$icon_tof ^ 1 ^ sxmo_wm.sh inputevent stylus on"
 			)
 			$icon_cfg Gestures $(
 				sxmo_daemons.sh running lisgd -q &&
