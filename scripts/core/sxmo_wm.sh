@@ -22,10 +22,9 @@ xorgdpms() {
 }
 
 swaydpms() {
-	monitor="${SXMO_MONITOR:-"DSI-1"}"
 	STATE=off
 	if swaymsg -t get_outputs \
-		| jq ".[] | select(.name == \"$monitor\") | .dpms" \
+		| jq ".[] | .dpms" \
 		| grep -q "false"; then
 		STATE=on
 	fi
@@ -33,9 +32,9 @@ swaydpms() {
 	if [ -z "$1" ]; then
 		printf %s "$STATE"
 	elif [ "$1" = on ] && [ "$STATE" != on ]; then
-		swaymsg -- output "$monitor" dpms false
+		swaymsg -- output '*' dpms false
 	elif [ "$1" = off ] && [ "$STATE" != off ] ; then
-		swaymsg -- output "$monitor" dpms true
+		swaymsg -- output '*' dpms true
 	fi
 
 }
