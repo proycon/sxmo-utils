@@ -17,14 +17,11 @@ notifyvol() {
 	if [ "muted" = "$vol" ]; then
 		vol=0
 	fi
-	case "$SXMO_WM" in
-		sway)
-			printf "%s\n" "$vol" > "$XDG_RUNTIME_DIR"/sxmo.wobsock
-			;;
-		*)
-			dunstify -r 999 "♫ Volume $vol"
-			;;
-	esac
+	if [ "$SXMO_WM" = "sway" ] && [ -z "$SXMO_WOB_DISABLE" ]; then
+		printf "%s\n" "$vol" > "$XDG_RUNTIME_DIR"/sxmo.wobsock
+	else
+		dunstify -r 999 "♫ Volume $vol"
+	fi
 	sxmo_hook_statusbar.sh volume
 }
 

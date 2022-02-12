@@ -5,14 +5,11 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 notify() {
-	case "$SXMO_WM" in
-		sway)
-			light | grep -o "^[0-9]*" > "$XDG_RUNTIME_DIR"/sxmo.wobsock
-			;;
-		*)
-			light | xargs dunstify -r 888 " Brightness"
-			;;
-	esac
+	if [ "$SXMO_WM" = "sway" ] && [ -z "$SXMO_WOB_DISABLE" ]; then
+		light | grep -o "^[0-9]*" > "$XDG_RUNTIME_DIR"/sxmo.wobsock
+	else
+		light | xargs dunstify -r 888 " Brightness"
+	fi
 }
 
 setvalue() {
