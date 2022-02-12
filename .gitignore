@@ -1,1 +1,2 @@
-programs/sxmo_setpineled
+programs/*
+!programs/*.c
