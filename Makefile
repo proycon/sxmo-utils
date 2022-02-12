@@ -53,6 +53,9 @@ install: $(PROGRAMS)
 
 	install -D -m 0755 -T configs/profile.d/sxmo_init.sh $(DESTDIR)/etc/profile.d/sxmo_init.sh
 
+	# Migrations
+	install -D -t $(DESTDIR)$(PREFIX)/share/sxmo/migrations migrations/*
+	
 	# Bin
 	install -D -t $(DESTDIR)$(PREFIX)/bin scripts/*/*
 

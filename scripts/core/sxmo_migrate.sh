@@ -263,7 +263,8 @@ if [ "$USER" = "root" ]; then
 	exit 127
 fi
 
-sxmo_migrate_1.9.0_hooks.sh
+# Execute idempotent migrations
+find /usr/share/sxmo/migrations -type f | sort | tr '\n' '\0' | xargs -0
 
 #modes may be chained
 for MODE in "$@"; do
