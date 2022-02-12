@@ -264,7 +264,7 @@ if [ "$USER" = "root" ]; then
 fi
 
 # Execute idempotent migrations
-find /usr/share/sxmo/migrations -type f | sort -n | tr '\n' '\0' | xargs -0
+find /usr/share/sxmo/migrations -type f | sort -n | tr '\n' '\0' | xargs -0 sh
 
 #modes may be chained
 for MODE in "$@"; do
