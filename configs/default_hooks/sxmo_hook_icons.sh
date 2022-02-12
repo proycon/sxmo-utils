@@ -125,8 +125,3 @@ icon_zmi=""
 icon_zmo=""
 icon_zzz="" #sleep/suspend/crust
 
-#allow the user to override icons
-if icons_path="$(command -v sxmo_hook_icons.sh)"; then
-	# shellcheck disable=SC1090
-	. "$icons_path"
-fi

@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# shellcheck source=scripts/core/sxmo_icons.sh
-. "$(dirname "$0")/sxmo_icons.sh"
+# shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
+. sxmo_hook_icons.sh
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(dirname "$0")/sxmo_common.sh"
 

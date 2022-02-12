@@ -5,8 +5,8 @@
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
-# shellcheck source=scripts/core/sxmo_icons.sh
-. sxmo_icons.sh
+# shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
+. sxmo_hook_icons.sh
 
 set -e
 

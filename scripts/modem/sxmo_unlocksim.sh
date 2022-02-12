@@ -4,8 +4,8 @@
 
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(which sxmo_common.sh)"
-# shellcheck source=scripts/core/sxmo_icons.sh
-. "$(which sxmo_icons.sh)"
+# shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
+. sxmo_hook_icons.sh
 
 set -e
 
