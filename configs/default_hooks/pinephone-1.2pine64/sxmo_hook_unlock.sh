@@ -25,7 +25,9 @@ NETWORKRTCSCAN="/sys/module/8723cs/parameters/rtw_scan_interval_thr"
 echo 16000 > "$NETWORKRTCSCAN"
 
 # Go to lock after 120 seconds of inactivity
-if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
+if [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
+	sxmo_daemons.sh stop idle_locker
+else
 	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
 		timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" "sxmo_hook_lock.sh"
 fi

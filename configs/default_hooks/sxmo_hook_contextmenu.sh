@@ -85,7 +85,7 @@ case "$WMCLASS" in
 			) ^ 1 ^ rm "$XDG_CACHE_HOME/sxmo/sxmo.nosuspend" || touch "$XDG_CACHE_HOME/sxmo/sxmo.nosuspend"
 			$icon_zzz Auto-screen-off $(
 				[ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ] && printf "%s" "$icon_tof" || printf "%s" "$icon_ton"
-			) ^ 1 ^ rm "$XDG_CACHE_HOME/sxmo/sxmo.noidle" || touch "$XDG_CACHE_HOME/sxmo/sxmo.noidle"
+			) ^ 1 ^ (rm "$XDG_CACHE_HOME/sxmo/sxmo.noidle" || touch "$XDG_CACHE_HOME/sxmo/sxmo.noidle") && sxmo_hook_unlock.sh
 			$icon_ror Autorotate $(
 				sxmo_daemons.sh running autorotate -q &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
