@@ -75,11 +75,10 @@ else
 	(
 		sleep 5 # let some time to pipewire
 		sxmo_daemons.sh start callaudiod callaudiod
+
+		# Turn on the dbus-monitors for modem-related tasks
+		sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh
 	) &
-
-	# Turn on the dbus-monitors for modem-related tasks
-	sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh
-
 
 	# Prevent crust for 120s if this is a reboot (uptime < 3mins)
 	if [ "$(cut -d '.' -f1 < /proc/uptime)" -lt 180 ]; then
