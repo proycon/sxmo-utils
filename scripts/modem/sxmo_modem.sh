@@ -27,14 +27,6 @@ cleanupnumber() {
 	echo "$1"
 }
 
-lookupnumberfromcallid() {
-	VOICECALLID=$1
-	mmcli -m any --voice-list-calls -o "$VOICECALLID" -K |
-		grep call.properties.number |
-		cut -d ':' -f 2 |
-		tr -d ' '
-}
-
 checkforfinishedcalls() {
 	#find all finished calls
 	for FINISHEDCALLID in $(
@@ -43,32 +35,36 @@ checkforfinishedcalls() {
 		grep -oE "Call\/[0-9]+" |
 		cut -d'/' -f2
 	); do
-		FINISHEDNUMBER="$(lookupnumberfromcallid "$FINISHEDCALLID")"
+		FINISHEDNUMBER="$(sxmo_modemcall.sh vid_to_number "$FINISHEDCALLID")"
 		FINISHEDNUMBER="$(cleanupnumber "$FINISHEDNUMBER")"
 		mmcli -m any --voice-delete-call "$FINISHEDCALLID"
-		rm -f "$SXMO_NOTIFDIR/incomingcall_${FINISHEDCALLID}_notification"* #there may be multiple actionable notification for one call
 
 		rm -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.monitoredcall"
+
+		CONTACT="$(sxmo_contacts.sh --name "$FINISHEDNUMBER")"
+		[ "$CONTACT" = "???" ] && CONTACT="$FINISHEDNUMBER"
 
 		TIME="$(date +%FT%H:%M:%S%z)"
 		mkdir -p "$SXMO_LOGDIR"
 		if [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.discardedcall" ]; then
 			#this call was discarded
+			sxmo_notify_user.sh "Call with $CONTACT terminated"
 			stderr "Discarded call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
-			pkill -f sxmo_modemcall.sh
+			sxmo_notify_user.sh "Call with $CONTACT terminated"
 			sxmo_hook_statusbar.sh volume
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.hangedupcall" ]; then
 			#this call was hung up by the user
+			sxmo_notify_user.sh "Call with $CONTACT terminated"
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.initiatedcall" ]; then
 			#this call was hung up by the contact
-			pkill -f sxmo_modemcall.sh
+			sxmo_notify_user.sh "Call with $CONTACT terminated"
 			sxmo_hook_statusbar.sh volume
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
@@ -79,14 +75,11 @@ checkforfinishedcalls() {
 		else
 			#this is a missed call
 			# Add a notification for every missed call
-			pkill -f sxmo_modemcall.sh
 			sxmo_hook_statusbar.sh volume
 			stderr "Missed call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 
-			CONTACT="$(sxmo_contacts.sh --name "$FINISHEDNUMBER")"
 			stderr "Invoking missed call hook (async)"
-			[ "$CONTACT" = "???" ] && CONTACT="$FINISHEDNUMBER"
 			sxmo_hook_missed_call.sh "$CONTACT" &
 
 			sxmo_notificationwrite.sh \
@@ -94,6 +87,21 @@ checkforfinishedcalls() {
 				"sxmo_terminal.sh -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \
 				none \
 				"Missed $icon_phn $CONTACT"
+		fi
+
+		# If it was the last call
+		if ! sxmo_modemcall.sh list_active_calls | grep -q .; then
+			# Cleanup
+			sxmo_vibrate 1000 &
+			sxmo_daemons.sh stop incall_menu
+			sxmo_daemons.sh stop calling_proximity_lock
+			if ! sxmo_modemaudio.sh reset_audio; then
+				sxmo_notify_user.sh --urgency=critical "We failed to reset call audio"
+			fi
+			setsid -f sh -c 'sleep 2; sxmo_hook_statusbar.sh call_duration'
+		else
+			# Or refresh the menu
+			sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incall_menu
 		fi
 	done
 }
@@ -112,7 +120,7 @@ checkforincomingcalls() {
 
 	# Determine the incoming phone number
 	stderr "Incoming Call..."
-	INCOMINGNUMBER=$(lookupnumberfromcallid "$VOICECALLID")
+	INCOMINGNUMBER=$(sxmo_modemcall.sh vid_to_number "$VOICECALLID")
 	INCOMINGNUMBER="$(cleanupnumber "$INCOMINGNUMBER")"
 	CONTACTNAME=$(sxmo_contacts.sh --name "$INCOMINGNUMBER")
 
@@ -121,7 +129,6 @@ checkforincomingcalls() {
 		stderr "BLOCKED call from number: $VOICECALLID"
 		sxmo_modemcall.sh mute "$VOICECALLID"
 		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$SXMO_BLOCKDIR/modemlog.tsv"
-		rm -f "$SXMO_NOTIFDIR/incomingcall_${VOICECALLID}_notification"*
 	else
 		stderr "Invoking ring hook (async)"
 		[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$INCOMINGNUMBER"
@@ -130,12 +137,21 @@ checkforincomingcalls() {
 		mkdir -p "$SXMO_LOGDIR"
 		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 
-		sxmo_notificationwrite.sh \
-			"$SXMO_NOTIFDIR/incomingcall_${VOICECALLID}_notification" \
-			"sxmo_modemcall.sh incomingcallmenu '$VOICECALLID'" \
-			none \
-			"Incoming $icon_phn $CONTACTNAME" &
-		sxmo_modemcall.sh incomingcallmenu "$VOICECALLID" &
+		# do not duplicate proximity lock if already running
+		if ! (sxmo_daemons.sh running proximity_lock -q || sxmo_daemons.sh running calling_proximity_lock -q); then
+			sxmo_daemons.sh start calling_proximity_lock sxmo_proximitylock.sh
+		fi
+
+		# If we already got an active call
+		if sxmo_modemcall.sh list_active_calls \
+			| grep -v ringing-in \
+			| grep -q .; then
+			# Refresh the incall menu
+			sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incall_menu
+		else
+			# Or fire the incomming call menu
+			sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incoming_call_menu "$VOICECALLID"
+		fi
 
 		stderr "Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)"
 	fi

@@ -23,14 +23,16 @@ open() {
 
 close() {
 	if [ -n "$KEYBOARD" ]; then # avoid killing everything !
-		pkill -f "$KEYBOARD"
+		pkill "$KEYBOARD"
 	fi
 }
 
 if [ "$1" = "toggle" ]; then
 	close || open
 elif [ "$1" = "close" ]; then
-	close
+	if isopen; then
+		close
+	fi
 elif [ "$1" = "isopen" ]; then
 	isopen || exit 1
 else

@@ -2,50 +2,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
-trap "gracefulexit" INT TERM
-
 # include common definitions
 # shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
 . sxmo_hook_icons.sh
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
-AUDIO_MODE=
-ENABLED_SPEAKER=
-MUTED_MIC=
-
-stderr() {
-	sxmo_log "$*"
-}
-
-finish() {
-	sxmo_vibrate 1000 &
-	setsid -f sh -c 'sleep 2; sxmo_hook_statusbar.sh call_duration'
-	if [ -n "$1" ]; then
-		stderr "$1"
-		notify-send Call "$1"
-	fi
-	if [ -z "$LOCKALREADYRUNNING" ]; then
-		sxmo_daemons.sh stop proximity_lock
-	fi
-	sxmo_dmenu.sh close
-	exit 1
-}
-
-gracefulexit() {
-	kill "$MAINPID"
-	wait "$MAINPID"
-	finish "Call ended"
-}
-
-
-modem_cmd_errcheck() {
-	RES="$(mmcli "$@" 2>&1)"
-	OK="$?"
-	stderr "Command: mmcli $*"
-	if [ "$OK" != 0 ]; then finish "Problem executing mmcli command!\n$RES"; fi
-	echo "$RES"
-}
+set -e
 
 vid_to_number() {
 	mmcli -m any -o "$1" -K | \
@@ -57,15 +20,17 @@ vid_to_number() {
 log_event() {
 	EVT_HANDLE="$1"
 	EVT_VID="$2"
+
 	NUM="$(vid_to_number "$EVT_VID")"
 	TIME="$(date +%FT%H:%M:%S%z)"
+
 	mkdir -p "$SXMO_LOGDIR"
 	printf %b "$TIME\t$EVT_HANDLE\t$NUM\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 }
 
-acceptcall() {
+pickup() {
 	CALLID="$1"
-	stderr "Attempting to initialize CALLID $CALLID"
+
 	DIRECTION="$(
 		mmcli --voice-status -o "$CALLID" -K |
 		grep call.properties.direction |
@@ -74,133 +39,131 @@ acceptcall() {
 	)"
 	case "$DIRECTION" in
 		outgoing)
-			modem_cmd_errcheck -m any -o "$CALLID" --start
-			touch "$XDG_RUNTIME_DIR/${CALLID}.initiatedcall" #this signals that we started this call
+			if ! mmcli -m any -o "$CALLID" --start; then
+				sxmo_notify_user.sh --urgency=critical "We failed to start the call"
+				return 1
+			fi
+
+			sxmo_notify_user.sh "Started call"
+			touch "$XDG_RUNTIME_DIR/${CALLID}.initiatedcall"
 			log_event "call_start" "$CALLID"
-			stderr "Started call $CALLID"
 			;;
 		incoming)
-			stderr "Invoking pickup hook (async)"
+			sxmo_log "Invoking pickup hook (async)"
 			sxmo_hook_pickup.sh &
-			touch "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall" #this signals that we picked this call up
-												     #to other asynchronously running processes
-			modem_cmd_errcheck -m any -o "$CALLID" --accept
+
+			if ! mmcli -m any -o "$CALLID" --accept; then
+				sxmo_notify_user.sh --urgency=critical "We failed to accept the call"
+				return 1
+			fi
+
+			sxmo_notify_user.sh "Picked up call"
+			touch "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall"
 			log_event "call_pickup" "$CALLID"
-			stderr "Picked up call $CALLID"
 			;;
 		*)
-			finish "Couldn't initialize call with callid <$CALLID>; unknown direction <$DIRECTION>"
+			sxmo_notify_user.sh --urgency=critical "Couldn't initialize call with callid <$CALLID>; unknown direction <$DIRECTION>"
 			;;
 	esac
-
-	unmute_mic
-	enable_call_audio_mode
-	disable_speaker
 }
 
 hangup() {
 	CALLID="$1"
 
-	disable_call_audio_mode
-	enable_speaker
-
 	if [ -f "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall" ]; then
 		rm -f "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall"
-		touch "$XDG_RUNTIME_DIR/${CALLID}.hangedupcall" #this signals that we hanged up this call to other asynchronously running processes
+		touch "$XDG_RUNTIME_DIR/${CALLID}.hangedupcall"
 		log_event "call_hangup" "$CALLID"
 	else
 		#this call was never picked up and hung up immediately, so it is a discarded call
-		touch "$XDG_RUNTIME_DIR/${CALLID}.discardedcall" #this signals that we discarded this call to other asynchronously running processes
-		stderr "sxmo_modemcall: Invoking discard hook (async)"
-		sxmo_hook_discard.sh &
+		touch "$XDG_RUNTIME_DIR/${CALLID}.discardedcall"
 		log_event "call_discard" "$CALLID"
+
+		sxmo_log "sxmo_modemcall: Invoking discard hook (async)"
+		sxmo_hook_discard.sh &
 	fi
-	modem_cmd_errcheck -m any -o "$CALLID" --hangup
-	finish "Call with $NUMBER terminated"
-	exit 0
+
+	if ! mmcli -m any -o "$CALLID" --hangup; then
+		sxmo_notify_user.sh --urgency=critical "We failed to hangup the call"
+		return 1
+	fi
 }
 
-muted_mic() {
-	[ "$MUTED_MIC" -eq 1 ]
+# We shallow muted/blocked and terminated calls
+list_active_calls() {
+	mmcli -m any --voice-list-calls | \
+		awk '$1=$1' | \
+		grep -v terminated | \
+		grep -v "No calls were found" | while read -r line; do
+			CALLID="$(printf "%s\n" "$line" | awk '$1=$1' | cut -d" " -f1 | xargs basename)"
+			if [ -e "$XDG_RUNTIME_DIR/${CALLID}.mutedring" ]; then
+				continue # we shallow muted calls
+			fi
+			printf "%s\n" "$line"
+	done
 }
 
-mute_mic() {
-	callaudiocli -u 0
-	MUTED_MIC=1
-}
-
-unmute_mic() {
-	callaudiocli -u 1
-	MUTED_MIC=0
-}
-
-is_call_audio_mode() {
-	[ call = "$AUDIO_MODE" ]
-}
-
-enable_call_audio_mode() {
-	callaudiocli -m 1
-	AUDIO_MODE=call
-}
-
-disable_call_audio_mode() {
-	callaudiocli -m 0
-	AUDIO_MODE=default
-}
-
-enabled_speaker() {
-	[ "$ENABLED_SPEAKER" -eq 1 ]
-}
-
-enable_speaker() {
-	callaudiocli -s 1
-	ENABLED_SPEAKER=1
-}
-
-disable_speaker() {
-	callaudiocli -s 0
-	ENABLED_SPEAKER=0
-}
-
-incallmenuloop() {
-	DMENUIDX=0
-	NUMBER="$(vid_to_number "$1")"
-	export AUDIO_BACKEND=alsa # We cant control volume with pulse
-	while : ; do
+incall_menu() {
+	# We have an active call
+	while list_active_calls | grep -q . ; do
 		CHOICES="$(cat <<EOF
-$icon_aru Volume up                                          ^ sxmo_audio.sh vol up
-$icon_ard Volume down                                        ^ sxmo_audio.sh vol down
-$(enabled_speaker \
-	&& printf "%s Earpiece ^ disable_speaker" "$icon_phn" \
-	|| printf "%s Speakerphone ^ enable_speaker" "$icon_spk"
+$icon_cls Close menu                ^ exit
+$icon_aru Volume up                 ^ sxmo_audio.sh vol up 20
+$icon_ard Volume down               ^ sxmo_audio.sh vol down 20
+$icon_spk Speaker $(sxmo_modemaudio.sh is_enabled_speaker \
+	&& printf "%s ^ sxmo_modemaudio.sh disable_speaker" "$icon_ton" \
+	|| printf "%s ^ sxmo_modemaudio.sh enable_speaker" "$icon_tof"
 )
-$icon_mus DTMF Tones                                         ^ dtmfmenu $CALLID
-$icon_phx Hangup                                             ^ hangup $CALLID
+$(
+	list_active_calls | while read -r line; do
+		CALLID="$(printf %s "$line" | cut -d" " -f1 | xargs basename)"
+		NUMBER="$(vid_to_number "$CALLID")"
+		CONTACT="$(sxmo_contacts.sh --name "$NUMBER")"
+		[ "$CONTACT" = "???" ] && CONTACT="$NUMBER"
+		case "$line" in
+			*"(ringing-in)")
+				# TODO switch to this call
+				printf "%s Hangup %s ^ hangup %s\n" "$icon_phx" "$CONTACT" "$CALLID"
+				printf "%s Mute %s ^ mute %s\n" "$icon_phx" "$CONTACT" "$CALLID"
+				;;
+			*"(held)")
+				# TODO switch to this call
+				printf "%s Hangup %s ^ hangup %s\n" "$icon_phx" "$CONTACT" "$CALLID"
+				;;
+			*)
+				printf "%s DTMF Tones %s ^ dtmf_menu %s\n" "$icon_mus" "$CONTACT" "$CALLID"
+				printf "%s Hangup %s ^ hangup %s\n" "$icon_phx" "$CONTACT" "$CALLID"
+				;;
+		esac
+	done
+)
 EOF
 	)"
 
-		# Disable cause doesnt have effect o_O
-		# $(muted_mic \
-		# 	&& printf "%s Unmute mic ^ unmute_mic" "$icon_spk" \
-		# 	|| printf "%s Mute mic ^ mute_mic" "$icon_phn"
+		# Disabled cause no effect on pinephone
+		# https://gitlab.com/mobian1/callaudiod/-/merge_requests/10
+		# $icon_mic Mic $(sxmo_modemaudio.sh is_muted_mic \
+		# 	&& printf "%s ^ sxmo_modemaudio.sh unmute_mic " "$icon_tof" \
+		# 	|| printf "%s ^ sxmo_modemaudio.sh mute_mic" "$icon_ton"
 		# )
 
 		PICKED="$(
 			printf "%s\n" "$CHOICES" |
 				cut -d'^' -f1 |
-				dmenu --index "$DMENUIDX" -p "$NUMBER"
-		)" || hangup "$CALLID" # in case the menu is closed
+				sxmo_dmenu.sh -i -p "Incall Menu"
+		)" || exit
 
-		stderr "Picked is $PICKED"
+		sxmo_log "Picked is $PICKED"
 
 		CMD="$(printf "%s\n" "$CHOICES" | grep "$PICKED" | cut -d'^' -f2)"
-		DMENUIDX="$(($(printf "%s\n" "$CHOICES" | grep -n "^$PICKED" | head -n+1 | cut -d: -f1) -1))"
-		stderr "Eval in call context: $CMD"
-		eval "$CMD"
-	done
+
+		sxmo_log "Eval in call context: $CMD"
+		eval "$CMD" || exit 1
+	done & # To be killeable
+	wait
 }
 
-dtmfmenu() {
+dtmf_menu() {
 	CALLID="$1"
 
 	sxmo_keyboard.sh close
@@ -208,26 +171,23 @@ dtmfmenu() {
 		sxmo_splitchar | xargs -n1 printf "%s\n" | stdbuf -o0 grep '[0-9A-D*#]' | \
 		xargs -r -I{} -n1 mmcli -m any -o "$CALLID" --send-dtmf="{}" &
 
-	printf "Close Menu\n" | sxmo_dmenu.sh -p "DTMF Tone"
+	# Closed return to default menu
+	if ! printf "Close Menu\n" | sxmo_dmenu.sh -i -p "DTMF Tone"; then
+		sxmo_keyboard.sh close
+	fi
 
 	sxmo_keyboard.sh close
-}
-
-pickup() {
-	acceptcall "$1"
-	incallmenuloop "$1"
 }
 
 mute() {
 	CALLID="$1"
 	touch "$XDG_RUNTIME_DIR/${CALLID}.mutedring" #this signals that we muted this ring
-	stderr "Invoking mute_ring hook (async)"
+	sxmo_log "Invoking mute_ring hook (async)"
 	sxmo_hook_mute_ring.sh "$CONTACTNAME" &
 	log_event "ring_mute" "$1"
-	finish "Ringing with $NUMBER muted"
 }
 
-incomingcallmenu() {
+incoming_call_menu() {
 	NUMBER="$(vid_to_number "$1")"
 	CONTACTNAME="$(sxmo_contacts.sh --name "$NUMBER")"
 	[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$NUMBER"
@@ -238,35 +198,46 @@ incomingcallmenu() {
 		pickup_height="100"
 	fi
 
-	PICKED="$(
-		cat <<EOF | dmenu -H "$pickup_height" -p "$CONTACTNAME"
+	(
+		PICKED="$(
+			cat <<EOF | sxmo_dmenu.sh -i -H "$pickup_height" -p "$CONTACTNAME"
 $icon_phn Pickup
 $icon_phx Hangup
 $icon_mut Mute
 EOF
-	)" || exit
+		)" || exit
 
-	case "$PICKED" in
-		"$icon_phn Pickup")
-			pickup "$1"
-			;;
-		"$icon_phx Hangup")
-			hangup "$1"
-			;;
-		"$icon_mut Mute")
-			mute "$1"
-			;;
-	esac
-	rm -f "$SXMO_NOTIFDIR/incomingcall_${1}_notification"* #there may be multiple actionable notification for one call
+		case "$PICKED" in
+			"$icon_phn Pickup")
+				if ! sxmo_modemaudio.sh setup_audio; then
+					sxmo_notify_user.sh --urgency=critical "We failed to setup call audio"
+					return 1
+				fi
+
+				if ! pickup "$1"; then
+					sxmo_notify_user.sh --urgency=critical "We failed to pickup the call"
+					sxmo_modemaudio.sh reset_audio
+					return 1
+				fi
+
+				incall_menu
+				;;
+			"$icon_phx Hangup")
+				hangup "$1"
+				;;
+			"$icon_mut Mute")
+				mute "$1"
+				;;
+		esac
+	) & # To be killeable
+	wait
 }
 
-# do not duplicate proximity lock if already running
-if sxmo_daemons.sh running proximity_lock -q; then
-	LOCKALREADYRUNNING=1
-else
-	sxmo_daemons.sh start proximity_lock sxmo_proximitylock.sh
+killed() {
+	sxmo_dmenu.sh close
+}
+if [ "$1" = "incall_menu" ] || [ "$1" = "incoming_call_menu" ]; then
+	trap 'killed' TERM INT
 fi
 
-"$@" &
-MAINPID="$!"
-wait $MAINPID
+"$@"

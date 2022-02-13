@@ -35,6 +35,29 @@ sxmo_type() {
 	sxmo_type.sh -s 200 "$@" # dunno why this is necessary but it sucks without
 }
 
+call_entries() {
+	shown_incall_menu=
+	sxmo_modemcall.sh list_active_calls | while read -r line; do
+		case "$line" in
+			*"(ringing-in)")
+				CALLID="$(printf %s "$line" | cut -d" " -f1 | xargs basename)"
+				NUMBER="$(sxmo_modemcall.sh vid_to_number "$CALLID")"
+				CONTACT="$(sxmo_contacts.sh --name "$NUMBER")"
+
+				printf "%s Incoming call %s ^ 0 ^ sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incoming_call_menu %s\n" \
+					"$icon_phn" "$CONTACT" "$CALLID"
+				;;
+			*)
+				[ -n "$shown_incall_menu" ] && continue
+				shown_incall_menu=1
+				printf "%s Incall Menu ^ 0 ^ sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incall_menu\n" \
+					"$icon_phn"
+				;;
+		esac
+	done
+
+}
+
 getprogchoices() {
 	RES="$(sxmo_hook_contextmenu.sh "$1")"
 	if [ -n "$RES" ]; then
@@ -53,16 +76,10 @@ getprogchoices() {
 		fi
 	fi
 
-	#shellcheck disable=SC2044
-	for NOTIFFILE in $(find "$SXMO_NOTIFDIR" -name 'incomingcall*_notification'); do
-		NOTIFACTION="$(head -n1 "$NOTIFFILE")"
-		MESSAGE="$(tail -1 "$NOTIFFILE")"
-		CHOICES="
-			$icon_phn $MESSAGE ^ 0 ^ $NOTIFACTION
-			$CHOICES
-		"
-		break
-	done
+	CHOICES="
+		$(call_entries)
+		$CHOICES
+	"
 
 	# Decorate menu at bottom w/ system menu entry if not system menu
 	echo "$WINNAME" | grep -qv Sys && CHOICES="

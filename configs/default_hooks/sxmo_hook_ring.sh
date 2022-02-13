@@ -7,6 +7,21 @@
 
 # $1 = Contact Name or Number (if not in contacts)
 
+# Only vibrate if you already got an active call
+if sxmo_modemcall.sh list_active_calls \
+	| grep -v ringing-in \
+	| grep -q .; then
+	sxmo_vibrate 1500
+	exit
+fi
+
+# Shallow if you have more than one ringing call
+if ! sxmo_modemcall.sh list_active_calls \
+	| grep -c ringing-in \
+	| grep -q 1; then
+	exit
+fi
+
 # Start the mpv ring until another hook kill it or the max (10) is reached
 mpv --quiet --no-video --loop=10 /usr/share/sxmo/ring.ogg &
 MPVID=$!

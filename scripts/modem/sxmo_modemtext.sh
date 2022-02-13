@@ -204,7 +204,7 @@ readtextmenu() {
 	fi
 }
 
-if [ "2" != "$#" ]; then
+if [ -z "$*" ]; then
 	readtextmenu
 else
 	"$@"

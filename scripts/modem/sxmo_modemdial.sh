@@ -4,16 +4,11 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 set -e
 
-err() {
-	sxmo_notify_user.sh "$1"
-	exit 1
-}
-
-dialnumber() {
+dial_number() {
 	NUMBER="$1"
 
 	CLEANEDNUMBER="$(pn find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
@@ -26,18 +21,39 @@ EOF
 	fi
 
 	sxmo_log "Attempting to dial: $NUMBER"
-	CALLID="$(
+
+	if ! CALLID="$(
 		mmcli -m any --voice-create-call "number=$NUMBER" |
 		grep -Eo "Call/[0-9]+" |
 		grep -oE "[0-9]+"
-	)" || err "Unable to initiate call, is your modem working?"
+	)"; then
+		sxmo_notify_user.sh --urgency=critical "We failed to initiate call"
+		return 1
+	fi
 
 	find "$XDG_RUNTIME_DIR" -name "$CALLID.*" -delete 2>/dev/null # we cleanup all dangling event files
+
 	sxmo_log "Starting call with CALLID: $CALLID"
-	exec sxmo_modemcall.sh pickup "$CALLID"
+
+	if ! sxmo_modemaudio.sh setup_audio; then
+		sxmo_notify_user.sh --urgency=critical "We failed to setup call audio"
+		return 1
+	fi
+
+	if ! sxmo_modemcall.sh pickup "$CALLID"; then
+		sxmo_modemaudio.sh reset_audio
+		return 1
+	fi
+
+	# do not duplicate proximity lock if already running
+	if ! sxmo_daemons.sh running proximity_lock -q; then
+		sxmo_daemons.sh start calling_proximity_lock sxmo_proximitylock.sh
+	fi
+
+	sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incall_menu
 }
 
-dialmenu() {
+dial_menu() {
 	# Initial menu with recently contacted people
 	NUMBER="$(
 		cat <<EOF | sxmo_dmenu_with_kb.sh -p Number -i
@@ -62,11 +78,11 @@ EOF
 		exit 0
 	fi
 
-	dialnumber "$NUMBER"
+	dial_number "$NUMBER"
 }
 
 if [ -n "$1" ]; then
-	dialnumber "$1"
+	dial_number "$1"
 else
-	dialmenu
+	dial_menu
 fi

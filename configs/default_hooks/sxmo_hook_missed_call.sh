@@ -9,6 +9,8 @@
 # $1 = Contact Name or Number (if not in contacts)
 
 # kill existing ring playback
-MPVID="$(cat "$XDG_RUNTIME_DIR/sxmo.ring.pid")"
-kill $MPVID
-rm "$XDG_RUNTIME_DIR/sxmo.ring.pid"
+if [ -e "$XDG_RUNTIME_DIR/sxmo.ring.pid" ]; then
+	MPVID="$(cat "$XDG_RUNTIME_DIR/sxmo.ring.pid")"
+	kill "$MPVID"
+	rm "$XDG_RUNTIME_DIR/sxmo.ring.pid"
+fi
