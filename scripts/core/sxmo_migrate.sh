@@ -51,7 +51,7 @@ resolvedifference() {
 			;;
 		[2eE]*)
 			#open editor with both files and the diff
-
+			export DIFFTOOL="${DIFFTOOL:-vimdiff}"
 			if [ -n "$DIFFTOOL" ]; then # ex vimdiff
 				set -- "$DIFFTOOL" "$defaultfile" "$userfile"
 			else
