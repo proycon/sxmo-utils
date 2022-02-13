@@ -272,7 +272,13 @@ find /usr/share/sxmo/migrations -type f | sort -n | tr '\n' '\0' | xargs -0 sh
 #modes may be chained
 for MODE in "$@"; do
 	case "$MODE" in
-		"interactive"|"all"|"sync"|"reset")
+		"interactive"|"all")
+			common
+			sway
+			xorg
+			checkhooks
+			;;
+		"sync"|"reset")
 			case "$SXMO_WM" in
 				sway)
 					common
