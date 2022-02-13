@@ -4,6 +4,9 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(which sxmo_common.sh)"
 
+. /etc/profile.d/sxmo_init.sh
+_sxmo_load_environments
+
 smartdiff() {
 	if command -v colordiff > /dev/null; then
 		colordiff "$@"
