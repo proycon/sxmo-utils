@@ -29,6 +29,8 @@ alias netstat="busybox netstat"
 alias tail="busybox tail"
 alias xargs="busybox xargs"
 alias rfkill="busybox rfkill"
+alias flock="busybox flock"
+alias sed="busybox sed"
 
 confirm_menu() {
 	printf "No\nYes\n" | \
