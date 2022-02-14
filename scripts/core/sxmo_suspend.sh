@@ -59,19 +59,21 @@ if mnc="$(sxmo_hook_mnc.sh)"; then
 	#wake up 10 seconds before the next cron event
 	suspend_time="$((mnc-10))"
 fi
-if [ -z "$suspend_time" ] || [ "$suspend_time" -gt "$YEARS8_TO_SEC" ]; then
-	suspend_time="$YEARS8_TO_SEC"
-fi
 
 sxmo_led.sh blink red
 
-if [ "$suspend_time" -gt 0 ]; then
-	sxmo_log "real crusting now (suspendtime=$suspend_time)"
-	rtcwake -m mem -s "$suspend_time" >&2
+if [ -z "$suspend_time" ] || [ "$suspend_time" -ge "$((YEARS8_TO_SEC-10))" ]; then
+	sxmo_log "calling suspend with no suspend time"
+	sxmo_hook_suspend.sh
+	#We woke up again
+	UNSUSPENDREASON="$(whichWake)"
+elif [ "$suspend_time" -gt 0 ]; then
+	sxmo_log "calling suspend with suspend_time $suspend_time"
+	sxmo_hook_suspend.sh "$suspend_time"
 	#We woke up again
 	UNSUSPENDREASON="$(whichWake)"
 else
-	sxmo_log "fake crusting now (suspendtime=$suspend_time)"
+	sxmo_log "fake suspend (suspend_time ($suspend_time) less than zero)"
 	UNSUSPENDREASON=rtc # we fake the crust for those seconds
 fi
 echo "$UNSUSPENDREASON" > "$SXMO_UNSUSPENDREASONFILE"
