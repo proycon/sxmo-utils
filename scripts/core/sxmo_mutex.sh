@@ -24,9 +24,11 @@ lock() {
 free() {
 	# shellcheck disable=SC2016
 	flock "$REASON_FILE" env "REASON=$1" "REASON_FILE=$REASON_FILE" sh -c '
+		tmp="$(mktemp)"
 		grep -xnm1 "$REASON" "$REASON_FILE" | \
 			cut -d: -f1 | \
-			xargs -r -I{} sed -i '{}d' "$REASON_FILE"
+			xargs -r -I{} sed '{}d' "$REASON_FILE" > "$tmp"
+		mv -f "$tmp" "$REASON_FILE"
 	' # flock drops the lock when the program it's running finishes
 }
 
