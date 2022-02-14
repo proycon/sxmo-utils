@@ -177,9 +177,8 @@ case "$ACTION" in
 	"powerbutton_one")
 		if echo "$WMCLASS" | grep -i "megapixels"; then
 			sxmo_type.sh -k space
-		else
-			sxmo_hook_unlock.sh
 		fi
+		# swallow: postwake calls sxmo_hook_unlock.sh
 		exit 0
 		;;
 	"powerbutton_two")
@@ -207,19 +206,19 @@ case "$ACTION" in
 		exit 0
 		;;
 	"righttopedge")
-		sxmo_brightness.sh up &
+		sxmo_brightness.sh up
 		exit 0
 		;;
 	"lefttopedge")
-		sxmo_brightness.sh down &
+		sxmo_brightness.sh down
 		exit 0
 		;;
 	"upleftedge")
-		sxmo_audio.sh vol up &
+		sxmo_audio.sh vol up
 		exit 0
 		;;
 	"downleftedge")
-		sxmo_audio.sh vol down &
+		sxmo_audio.sh vol down
 		exit 0
 		;;
 	"upbottomedge")
@@ -231,11 +230,11 @@ case "$ACTION" in
 		exit 0
 		;;
 	"downtopedge")
-		sxmo_dmenu.sh isopen || sxmo_appmenu.sh &
+		sxmo_dmenu.sh isopen || sxmo_appmenu.sh
 		exit 0
 		;;
 	"twodowntopedge")
-		sxmo_dmenu.sh isopen || sxmo_appmenu.sh sys &
+		sxmo_dmenu.sh isopen || sxmo_appmenu.sh sys
 		exit 0
 		;;
 	"uptopedge")
@@ -276,19 +275,23 @@ case "$ACTION" in
 		exit 0
 		;;
 	"topleftcorner")
-		sxmo_appmenu.sh sys &
+		sxmo_appmenu.sh sys
 		exit 0
 		;;
 	"toprightcorner")
-		sxmo_appmenu.sh scripts &
+		sxmo_appmenu.sh scripts
 		exit 0
 		;;
 	"bottomleftcorner")
-		lock_screen_action
+		# could go into suspend? leaving blank for now.
 		exit 0
 		;;
 	"bottomrightcorner")
-		sxmo_rotate.sh &
+		if [ "$(sxmo_rotated.sh isrotated)" = "right" ]; then
+			sxmo_rotate.sh invert
+		else
+			sxmo_rotate.sh right
+		fi
 		exit 0
 		;;
 esac
