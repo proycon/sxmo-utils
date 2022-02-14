@@ -36,6 +36,8 @@ XPROPOUT="$(sxmo_wm.sh focusedwindow)"
 WMCLASS="$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
 WMNAME="$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
 
+sxmo_debug "ACTION: $ACTION WMCLASS: $WMCLASS WMNAME: $WMNAME XPROPOUT: $XPROPOUT"
+
 if ! grep -q unlock "$SXMO_STATE"; then
 	case "$ACTION" in
 		"powerbutton_one")

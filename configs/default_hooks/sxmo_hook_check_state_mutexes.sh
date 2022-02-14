@@ -6,6 +6,7 @@
 . "$(which sxmo_common.sh)"
 
 lock_suspend_mutex() {
+	sxmo_debug "lock suspend: $1"
 	if ! sxmo_mutex.sh can_suspend lockedby "$1"; then
 		sxmo_mutex.sh can_suspend lock "$1"
 	fi

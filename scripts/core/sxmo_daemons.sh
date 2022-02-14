@@ -34,7 +34,7 @@ stop() {
 			;;
 		*)
 			if [ -f "$ROOT/$id" ]; then
-				sxmo_log "stop $id"
+				sxmo_debug "stop $id"
 				xargs kill ${force:+-9} < "$ROOT"/"$id"
 				rm "$ROOT"/"$id"
 			fi
@@ -47,7 +47,7 @@ signal() {
 	shift
 
 	if [ -f "$ROOT/$id" ]; then
-		sxmo_log "signal $id $*"
+		sxmo_debug "signal $id $*"
 		xargs kill "$@" < "$ROOT"/"$id"
 	fi
 }
@@ -69,14 +69,14 @@ start() {
 
 	if [ -f "$ROOT/$id" ]; then
 		if [ -n "$no_restart" ]; then
-			sxmo_log "$id already running"
+			sxmo_debug "$id already running"
 			exit 1
 		else
 			stop "$id"
 		fi
 	fi
 
-	sxmo_log "start $id"
+	sxmo_debug "start $id"
 	"$@" &
 	printf "%s\n" "$!" > "$ROOT"/"$id"
 }
