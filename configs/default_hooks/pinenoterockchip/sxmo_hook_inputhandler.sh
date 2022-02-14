@@ -230,11 +230,11 @@ case "$ACTION" in
 		exit 0
 		;;
 	"downtopedge")
-		sxmo_dmenu.sh isopen || sxmo_appmenu.sh
+		sxmo_dmenu.sh isopen || sxmo_appmenu.sh &
 		exit 0
 		;;
 	"twodowntopedge")
-		sxmo_dmenu.sh isopen || sxmo_appmenu.sh sys
+		sxmo_dmenu.sh isopen || sxmo_appmenu.sh sys &
 		exit 0
 		;;
 	"uptopedge")
@@ -275,11 +275,11 @@ case "$ACTION" in
 		exit 0
 		;;
 	"topleftcorner")
-		sxmo_appmenu.sh sys
+		sxmo_appmenu.sh sys &
 		exit 0
 		;;
 	"toprightcorner")
-		sxmo_appmenu.sh scripts
+		sxmo_appmenu.sh scripts &
 		exit 0
 		;;
 	"bottomleftcorner")
