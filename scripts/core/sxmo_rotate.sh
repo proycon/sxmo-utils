@@ -39,6 +39,25 @@ swayisrotated() {
 	return 0;
 }
 
+xorgrotinvert() {
+	sxmo_keyboard.sh close
+	xrandr -o inverted
+	applyptrmatrix -1 0 1 0 -1 1 0 0 1
+	sxmo_hook_lisgdstart.sh &
+	sxmo_hook_rotate.sh invert
+	exit 0
+}
+
+swayrotinvert() {
+	swaymsg -- output "-" transform 180
+	focused_name="$(swayfocusedname)"
+	swaymsg -- input type:touch map_to_output "$focused_name"
+	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
+	sxmo_hook_lisgdstart.sh &
+	sxmo_hook_rotate.sh invert
+	exit 0
+}
+
 xorgrotnormal() {
 	sxmo_keyboard.sh close
 	xrandr -o normal
