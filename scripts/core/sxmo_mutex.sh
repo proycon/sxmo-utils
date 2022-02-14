@@ -15,13 +15,19 @@ mkdir -p "$(dirname "$REASON_FILE")"
 touch "$REASON_FILE"
 
 lock() {
-	printf "%s\n" "$1" >> "$REASON_FILE"
+	# shellcheck disable=SC2016
+	flock "$REASON_FILE" env "REASON=$1" "REASON_FILE=$REASON_FILE" sh -c '
+		printf "%s\n" "$REASON" >> "$REASON_FILE"
+	' # flock drops the lock when the program it's running finishes
 }
 
 free() {
-	grep -xnm1 "$1" "$REASON_FILE" | \
-		cut -d: -f1 | \
-		xargs -rn1 -I{} sed -i '{}d' "$REASON_FILE"
+	# shellcheck disable=SC2016
+	flock "$REASON_FILE" env "REASON=$1" "REASON_FILE=$REASON_FILE" sh -c '
+		grep -xnm1 "$REASON" "$REASON_FILE" | \
+			cut -d: -f1 | \
+			xargs -r -I{} sed -i '{}d' "$REASON_FILE"
+	' # flock drops the lock when the program it's running finishes
 }
 
 lockedby() {
