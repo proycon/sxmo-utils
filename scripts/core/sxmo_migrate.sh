@@ -52,7 +52,7 @@ resolvedifference() {
 		[2eE]*)
 			#open editor with both files and the diff
 			export DIFFTOOL="${DIFFTOOL:-vimdiff}"
-			if [ -n "$DIFFTOOL" ]; then # ex vimdiff
+			if [ -n "$DIFFTOOL" ] && command -v "$DIFFTOOL" >/dev/null; then # ex vimdiff
 				set -- "$DIFFTOOL" "$defaultfile" "$userfile"
 			else
 				diff -u "$defaultfile" "$userfile" > "${XDG_RUNTIME_DIR}/migrate.diff"
