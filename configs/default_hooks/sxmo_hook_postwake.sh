@@ -1,5 +1,7 @@
 #!/bin/sh
 
+. sxmo_common.sh
+
 UNSUSPENDREASON="$1"
 
 #The UNSUSPENDREASON can be "usb power", "modem", "rtc" (real-time clock

@@ -19,7 +19,7 @@ set_locked() {
 	if grep -q unlock "$SXMO_STATE"; then
 		sxmo_status.sh del 0-locked
 	else
-		sxmo_status.sh add 0-locked "LOCK" # You can also use "$icon_nto"
+		sxmo_status.sh add 0-locked "$(cat "$SXMO_STATE" | tr '[:lower:]' '[:upper:]')" # You can also use "$icon_nto"
 	fi
 }
 

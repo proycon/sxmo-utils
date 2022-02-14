@@ -456,6 +456,7 @@ case "$WMCLASS" in
 			$icon_arr History	^ 1 ^ sxmo_type -M Ctrl -k i
 			$icon_cfg Invert	^ 0 ^ sxmo_type -M Ctrl -k r
 			$icon_flt Index		^ 0 ^ sxmo_type -k Tab
+			$icon_cfg Fit           ^ 0 ^ sxmo_type -k a
 		"
 		WINNAME=Zathura
 		;;
