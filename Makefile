@@ -28,7 +28,7 @@ clean:
 
 install: $(PROGRAMS)
 	cd configs && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
-	cd configs && find default_hooks -exec install -D -m 0755 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
+	cd configs && find default_hooks -exec cp -rP "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; -exec chmod 0755 -R "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
 	[ -n "$(GITVERSION)" ] && echo "$(GITVERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version" || echo "$(VERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version"
 
