@@ -3,6 +3,8 @@
 # shellcheck source=configs/profile.d/sxmo_init.sh
 . /etc/profile.d/sxmo_init.sh
 
+. sxmo_common.sh
+
 # We can have multiple cronjobs at the same time
 sxmo_mutex.sh can_suspend lock "Executing cronjob"
 sxmo_mutex.sh can_suspend free "Waiting for cronjob"
@@ -14,5 +16,5 @@ finish() {
 
 trap 'finish' TERM INT EXIT
 
-echo "sxmo_rtcwake: Running sxmo_rtcwake for $* ($(date))" >&2
+sxmo_log "Running $*"
 "$@"
