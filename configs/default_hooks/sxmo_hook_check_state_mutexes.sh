@@ -45,7 +45,7 @@ else
 fi
 
 # active_ssh
-if netstat | grep ESTABLISHED | grep -q ssh; then
+if netstat | grep ESTABLISHED | cut -d':' -f2 | grep -q ssh; then
 	lock_suspend_mutex "SSH is connected"
 else
 	free_suspend_mutex "SSH is connected"
