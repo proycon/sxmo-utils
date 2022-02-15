@@ -97,7 +97,7 @@ case "$WMCLASS" in
 				;;
 		esac
 		;;
-	*"foot"*|*"st"*)
+	*"foot"*|*"st"*|*"vte"*)
 		# First we try to handle the app running inside st:
 		case "$WMNAME" in
 			*"weechat"*)
