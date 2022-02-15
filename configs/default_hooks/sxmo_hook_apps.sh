@@ -32,6 +32,7 @@ write_line_app dolphin "$icon_dir Dolphin" "dolphin"
 write_line_app emacs "$icon_edt Emacs (Terminal)" "sxmo_terminal.sh emacs -nw"
 write_line_app emacs "$icon_edt Emacs (X)" "emacs"
 write_line_app epiphany "$icon_glb Epiphany" "epiphany"
+write_line_app epy "$icon_bok Epy" "sxmo_terminal.sh epy"
 write_line_app firefox "$icon_ffx Firefox" "firefox"
 write_line_app foliate "$icon_bok Foliate" "foliate"
 ( [ "$SXMO_WM" = sway ] && command -v foot >/dev/null) && \
