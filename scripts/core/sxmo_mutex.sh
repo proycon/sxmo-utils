@@ -11,19 +11,20 @@ shift
 
 ROOT_DIR="${XDG_RUNTIME_DIR:-$HOME/.local/run}/sxmo_mutex"
 REASON_FILE="$ROOT_DIR/$MUTEX_NAME"
+LOCKFILE="$REASON_FILE.lock"
 mkdir -p "$(dirname "$REASON_FILE")"
 touch "$REASON_FILE"
 
 lock() {
 	# shellcheck disable=SC2016
-	flock "$REASON_FILE" env "REASON=$1" "REASON_FILE=$REASON_FILE" sh -c '
+	flock "$LOCKFILE" env "REASON=$1" "REASON_FILE=$REASON_FILE" sh -c '
 		printf "%s\n" "$REASON" >> "$REASON_FILE"
 	' # flock drops the lock when the program it's running finishes
 }
 
 free() {
 	# shellcheck disable=SC2016
-	flock "$REASON_FILE" env "REASON=$1" "REASON_FILE=$REASON_FILE" sh -c '
+	flock "$LOCKFILE" env "REASON=$1" "REASON_FILE=$REASON_FILE" sh -c '
 		grep -xnm1 "$REASON" "$REASON_FILE" | \
 			cut -d: -f1 | \
 			xargs -r -I{} sed -i '{}d' "$REASON_FILE"

@@ -71,10 +71,12 @@ Describe 'sxmo_mutex.sh'
 		set -e
 
 		for id in $IDS; do
+			[ "$id" = 50 ] && continue
 			sh scripts/core/sxmo_mutex.sh shellspec_mutex free "$id" &
 		done
 
 		for id in $IDS; do
+			[ "$id" = 50 ] && continue
 			wait
 		done
 	}
@@ -86,6 +88,6 @@ Describe 'sxmo_mutex.sh'
 
 	It 'clears all locks after they are unlocked'
 		When call sh scripts/core/sxmo_mutex.sh shellspec_mutex list
-		The output should equal ""
+		The output should equal "50"
 	End
 End
