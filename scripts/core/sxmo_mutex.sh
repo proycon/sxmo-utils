@@ -32,7 +32,6 @@ free() {
 }
 
 lockedby() {
-	sxmo_debug "Lockedby: $1"
 	grep -qxm1 "$1" "$REASON_FILE"
 }
 
@@ -45,9 +44,7 @@ list() {
 }
 
 hold() {
-	sxmo_debug "Hold started."
 	if ! [ -s "$REASON_FILE" ]; then
-		sxmo_debug "No reason file, hold done."
 		exit 0
 	fi
 
@@ -57,7 +54,6 @@ hold() {
 	NOTIFYPID=$!
 
 	finish() {
-		sxmo_debug "Hold finished."
 		kill "$NOTIFYPID"
 		rm "$FIFO"
 		exit 0
