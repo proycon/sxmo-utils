@@ -287,10 +287,10 @@ case "$ACTION" in
 		exit 0
 		;;
 	"bottomrightcorner")
-		if [ "$(sxmo_rotated.sh isrotated)" = "right" ]; then
-			sxmo_rotate.sh invert
+		if [ "$(sxmo_rotate.sh isrotated)" = "right" ]; then
+			sxmo_rotate.sh rotinvert
 		else
-			sxmo_rotate.sh right
+			sxmo_rotate.sh rotright
 		fi
 		exit 0
 		;;
