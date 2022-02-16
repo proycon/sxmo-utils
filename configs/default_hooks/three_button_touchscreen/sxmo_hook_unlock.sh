@@ -34,9 +34,9 @@ else
 				sway)
 					swaymsg mode default
 					;;
-				esac
-				exec sxmo_hook_lock.sh
-			"'
+			esac
+			exec sxmo_hook_lock.sh
+		"'
 fi
 
 sxmo_daemons.sh signal desktop_widget -12
