@@ -9,7 +9,7 @@ set -e
 MUTEX_NAME="$1"
 shift
 
-ROOT_DIR="${XDG_RUNTIME_DIR:-$HOME/.local/run}/sxmo_mutex"
+ROOT_DIR="${XDG_RUNTIME_DIR:-/dev/shm/user/$(id -u)}"/sxmo_mutex
 REASON_FILE="$ROOT_DIR/$MUTEX_NAME"
 LOCKFILE="$REASON_FILE.lock"
 mkdir -p "$(dirname "$REASON_FILE")"
