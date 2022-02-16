@@ -4,7 +4,7 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(which sxmo_common.sh)"
+. sxmo_common.sh
 # shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
 . sxmo_hook_icons.sh
 
@@ -15,7 +15,7 @@ write_line() {
 get_title() {
 	title=""
 	# Process substitution because source won't work with data piped from stdin.
-	source <(head "$1" | grep '# title="[^\\"]*"' | sed 's/^# //g')
+	. <(head "$1" | grep '# title="[^\\"]*"' | sed 's/^# //g')
 	if [ -n "$title" ]; then
 		echo "$title"
 	else
@@ -27,7 +27,7 @@ get_title() {
 if [ -f "$XDG_CONFIG_HOME/sxmo/userscripts" ]; then
 	cat "$XDG_CONFIG_HOME/sxmo/userscripts"
 elif [ -d "$XDG_CONFIG_HOME/sxmo/userscripts" ]; then
-	find "$XDG_CONFIG_HOME/sxmo/userscripts" -type f -o -type l | sort -f | while read script; do
+	find "$XDG_CONFIG_HOME/sxmo/userscripts" -type f -o -type l | sort -f | while read -r script; do
 		title="$(get_title "$script")"
 		write_line "$title" "$script"
 	done
@@ -36,7 +36,7 @@ fi
 write_line "$icon_cfg Edit Userscripts" "sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/userscripts/*"
 
 # System Scripts
-find /usr/share/sxmo/appscripts -type f -o -type l | sort -f | while read script; do
+find /usr/share/sxmo/appscripts -type f -o -type l | sort -f | while read -r script; do
 	title="$(get_title "$script")"
 	write_line "$title" "$script"
 done
