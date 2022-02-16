@@ -52,7 +52,7 @@ else
 fi
 
 # playing_mpc
-if command -v mpc > /dev/null && mpc status | grep -q '\[playing\]'; then
+if command -v mpc > /dev/null && mpc status 2>/dev/null | grep -q '\[playing\]'; then
 	lock_suspend_mutex "MPD is playing music"
 else
 	free_suspend_mutex "MPD is playing music"
