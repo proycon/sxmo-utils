@@ -32,6 +32,7 @@ free() {
 }
 
 lockedby() {
+	sxmo_log "Lockedby: $1"
 	grep -qxm1 "$1" "$REASON_FILE"
 }
 

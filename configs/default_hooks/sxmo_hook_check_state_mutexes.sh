@@ -3,10 +3,12 @@
 # This hook goal is to setup mutexes if the device must be considered
 # as idle or not, if it can go to crust or not
 
+# WARNING: if you remove an entry, be sure to run `sxmo_mutex.sh can_suspend
+# free "entry name"` afterwards.
+
 . "$(which sxmo_common.sh)"
 
 lock_suspend_mutex() {
-	sxmo_debug "lock suspend: $1"
 	if ! sxmo_mutex.sh can_suspend lockedby "$1"; then
 		sxmo_mutex.sh can_suspend lock "$1"
 	fi
