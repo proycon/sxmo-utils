@@ -5,40 +5,48 @@
 
 set -e
 
+# Find the hook by name in the current directory.
+filename() {
+	find "$SXMO_DEVICE_NAME/" . -name "sxmo_hook_$1.sh" -maxdepth 1 | head -n1
+}
+
 copy() {
 	mkdir -p "$XDG_CONFIG_HOME/sxmo/hooks"
 
-	if [ ! -e "$XDG_CONFIG_HOME/sxmo/hooks/$1" ]; then
-		cp "/usr/share/sxmo/default_hooks/$1" \
-			"$XDG_CONFIG_HOME/sxmo/hooks/$1"
+	cd "$XDG_CONFIG_HOME/sxmo/hooks" || return
+	file="$(filename "$1")"
+	if [ ! -e "$file" ]; then
+		cd "/usr/share/sxmo/default_hooks" || return
+		file="$(find "$SXMO_DEVICE_NAME/" . -name "sxmo_hook_$1.sh" -maxdepth 1 | head -n1)"
+		[ -e "$file" ] && cp "$file" "$XDG_CONFIG_HOME/sxmo/hooks/$file"
 	fi
 }
 
 edit() {
 	copy "$1"
-	sxmo_terminal.sh "$EDITOR" "$XDG_CONFIG_HOME/sxmo/hooks/$1" || true # shallow
+	cd "$XDG_CONFIG_HOME/sxmo/hooks" || return
+	file="$(filename "$1")"
+	sxmo_terminal.sh "$EDITOR" "$XDG_CONFIG_HOME/sxmo/hooks/$file" || true # shallow
 }
 
 reset() {
-	if [ -f "$XDG_CONFIG_HOME/sxmo/hooks/$1" ]; then
-		rm "$XDG_CONFIG_HOME/sxmo/hooks/$1"
-	fi
+	cd "$XDG_CONFIG_HOME/sxmo/hooks/" || return
+	filename "$1" | xargs -r rm
 }
 
-hookmenu() {
-	opt="$(cat <<EOF | sxmo_dmenu.sh -p "$1"
+removemenu() {
+	while : ; do
+		opt="$(cat <<EOF | sxmo_dmenu.sh -p "Revert to System Default"
 $icon_ret Return
-$icon_edt Edit
-$([ -f "$XDG_CONFIG_HOME/sxmo/hooks/$1" ] && echo "$icon_cls Use system hook" || echo "$icon_cpy Copy")
+$(list_hooks | grep -v "^S ")
 EOF
-	)" || return
+		)" || return
 
-	case "$opt" in
-		"$icon_edt Edit") edit "$1";;
-		"$icon_cpy Copy") copy "$1";;
-		"$icon_cls Use system hook") reset "$1";;
-		"$icon_ret Return") return;;
-	esac
+		case "$opt" in
+			"$icon_ret Return") return;;
+			*) reset "${opt#* }";;
+		esac
+	done
 }
 
 list_hooks() {
@@ -46,12 +54,17 @@ list_hooks() {
 	system=$(mktemp)
 
 	if [ -d "$XDG_CONFIG_HOME/sxmo/hooks" ]; then
-		find "$XDG_CONFIG_HOME/sxmo/hooks" \( -type f -o -type l \) -exec basename -a {} + |\
+		cd "$XDG_CONFIG_HOME/sxmo/hooks" || return
+		find . "$SXMO_DEVICE_NAME/" -maxdepth 1 \( -type f -o -type l \) -name 'sxmo_hook*.sh' -exec basename {} \; |\
+			sed 's/^sxmo_hook_//g' | sed 's/\.sh$//g' |\
 			sort > "$user"
 	fi
 
-	find "/usr/share/sxmo/default_hooks" \( -type f -o -type l \) -exec basename -a {} + |\
-		sort > "$system"
+	if cd "/usr/share/sxmo/default_hooks"; then
+		find . "$SXMO_DEVICE_NAME/" -maxdepth 1 \( -type f -o -type l \) -name 'sxmo_hook*.sh' -exec basename {} \; |\
+			sed 's/^sxmo_hook_//g' | sed 's/\.sh$//g' |\
+			sort > "$system"
+	fi
 
 	# TODO: someone please find some good icons for this
 	# Present in the user directory only (not in default hooks)
@@ -66,8 +79,9 @@ list_hooks() {
 
 menu() {
 	while : ; do
-		hook="$(cat <<EOF | sxmo_dmenu.sh
+		hook="$(cat <<EOF | sxmo_dmenu.sh -p "Edit Hook"
 $icon_cls Close Menu
+$icon_trh Revert a Hook
 $(list_hooks)
 EOF
 		)" || return;
@@ -76,8 +90,11 @@ EOF
 			"$icon_cls Close Menu")
 				return
 				;;
+			"$icon_trh Revert a Hook")
+				removemenu
+				;;
 			*)
-				hookmenu "${hook#* }"
+				edit "${hook#* }"
 				;;
 		esac
 	done
