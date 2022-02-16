@@ -43,5 +43,5 @@ sxmo_log() {
 }
 
 sxmo_debug() {
-	[ -n "$SXMO_DEBUG" ] && printf "%s %s DEBUG: %s\n" "$(date +%H:%M:%S)" "${0##*/}" "$*" >&2
+	printf "%s %s DEBUG: %s\n" "$(date +%H:%M:%S)" "${0##*/}" "$*" >&2
 }
