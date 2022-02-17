@@ -4,7 +4,7 @@
 # shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
 . sxmo_hook_icons.sh
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. "$(which sxmo_common.sh)"
 
 set -e
 
@@ -117,7 +117,7 @@ sendtextmenu() {
 					fi
 					kill "$(lsof | grep "/$OLDNUMBER/sms.txt" | cut -f1)"
 					[ -e "$SXMO_LOGDIR/$NUMBER/sms.txt" ] || touch "$SXMO_LOGDIR/$NUMBER/sms.txt"
-					tailtextlog "$NUMBER" &
+					sxmo_hook_tailtextlog.sh "$NUMBER" &
 				fi
 				;;
 			*"Edit"*)
@@ -151,7 +151,7 @@ sendtextmenu() {
 					fi
 					kill "$(lsof | grep "/$OLDNUMBER/sms.txt" | cut -f1)"
 					[ -e "$SXMO_LOGDIR/$NUMBER/sms.txt" ] || touch "$SXMO_LOGDIR/$NUMBER/sms.txt"
-					tailtextlog "$NUMBER" &
+					sxmo_hook_tailtextlog.sh "$NUMBER" &
 				fi
 				;;
 			*"Cancel")
@@ -183,14 +183,6 @@ conversationloop() {
 		sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT" || continue
 		rm "$DRAFT"
 	done
-}
-
-tailtextlog() {
-	NUMBER="$1"
-	CONTACTNAME="$(sxmo_contacts.sh | grep ": ${NUMBER}$" | cut -d: -f1)"
-	[ "???" = "$CONTACTNAME" ] && CONTACTNAME="$CONTACTNAME ($NUMBER)"
-
-	TERMNAME="$NUMBER SMS" sxmo_terminal.sh sh -c "tail -n9999 -f \"$SXMO_LOGDIR/$NUMBER/sms.txt\" | sed \"s|$NUMBER|$CONTACTNAME|g\""
 }
 
 readtextmenu() {

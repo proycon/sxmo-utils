@@ -243,7 +243,7 @@ checkfornewtexts() {
 
 		sxmo_notificationwrite.sh \
 			random \
-			"sxmo_modemtext.sh tailtextlog '$NUM'" \
+			"sxmo_hook_tailtextlog.sh '$NUM'" \
 			"$SXMO_LOGDIR/$NUM/sms.txt" \
 			"$CONTACTNAME: $TEXT"
 

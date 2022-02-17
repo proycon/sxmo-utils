@@ -243,7 +243,7 @@ processmms() {
 		[ "$FROM_NAME" = "???" ] && FROM_NAME="$FROM_NUM"
 		sxmo_notificationwrite.sh \
 			random \
-			"${OPEN_ATTACHMENTS_CMD}sxmo_modemtext.sh tailtextlog \"$LOGDIRNUM\"" \
+			"${OPEN_ATTACHMENTS_CMD}sxmo_hook_tailtextlog.sh \"$LOGDIRNUM\"" \
 			"$SXMO_LOGDIR/$LOGDIRNUM/sms.txt" \
 			"$FROM_NAME: $TEXT ($MMS_FILE)"
 

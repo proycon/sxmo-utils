@@ -121,7 +121,7 @@ showcontact() {
 
 	case "$PICKED" in
 		 *"List Messages")
-			sxmo_modemtext.sh tailtextlog  "$number"
+			sxmo_hook_tailtextlog.sh  "$number"
 			exit
 			;;
 		 *"Send a Message")
