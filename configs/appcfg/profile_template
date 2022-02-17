@@ -36,6 +36,9 @@ command -v firefox >/dev/null && export BROWSER=firefox
 # Or, enable vibration feedback on keypress
 #export KEYBOARD_ARGS="-o | clickclack -V"
 
+# Set the scale factor in sway
+# export SXMO_SWAY_SCALE=2
+
 # To load specific part of configuration depending on the running environment
 case "$SXMO_WM" in
 	sway)

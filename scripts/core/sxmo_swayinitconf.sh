@@ -9,8 +9,9 @@
 monitor="${SXMO_MONITOR:-"DSI-1"}"
 pwr="${SXMO_POWER_BUTTON:-"0:0:axp20x-pek"}"
 vol="${SXMO_VOLUME_BUTTON:-"1:1:1c21800.lradc"}"
+scale="${SXMO_SWAY_SCALE:-2}"
 
-swaymsg -- output "$monitor" scale 2
+swaymsg -- output "$monitor" scale "$scale"
 
 swaymsg -- input "$pwr" repeat_delay 200
 swaymsg -- input "$pwr" repeat_rate 15
