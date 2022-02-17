@@ -1,10 +1,6 @@
 #!/bin/sh
 
-# shellcheck disable=SC2034
-SXMO_NO_ICONS=1 #just to make it a bit faster
-# include common definitions
-# shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 isopen() {
 	if [ -z "$KEYBOARD" ]; then
