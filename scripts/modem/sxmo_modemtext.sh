@@ -198,7 +198,7 @@ readtextmenu() {
 	elif echo "$PICKED" | grep "Send a Text"; then
 		sendtextmenu
 	else
-		tailtextlog "$(echo "$PICKED" | cut -d: -f2 | sed 's/^ //' | cut -d' ' -f1 )"
+		sxmo_hook_tailtextlog.sh "$(echo "$PICKED" | cut -d: -f2 | sed 's/^ //' | cut -d' ' -f1 )"
 	fi
 }
 
