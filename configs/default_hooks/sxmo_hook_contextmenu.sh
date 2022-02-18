@@ -534,18 +534,10 @@ case "$WMCLASS" in
 	*foxtrot*)
 		# Foxtrot GPS
 		CHOICES="
-			$icon_itm Locations           ^ 0 ^ sxmo_gpsutil.sh menulocations
-			$icon_cpy Copy                ^ 1 ^ sxmo_gpsutil.sh copy
-			$icon_pst Paste               ^ 0 ^ sxmo_gpsutil.sh paste
-			$icon_itm Drop Pin            ^ 0 ^ sxmo_gpsutil.sh droppin
-			$icon_fnd Region Search       ^ 0 ^ sxmo_gpsutil.sh menuregionsearch
-			$icon_itm Region Details      ^ 0 ^ sxmo_gpsutil.sh details
 			$icon_zmi Zoom              ^ 1 ^ sxmo_type i
 			$icon_zmo Zoom              ^ 1 ^ sxmo_type o
-			$icon_itm Map Type            ^ 0 ^ sxmo_gpsutil.sh menumaptype
 			$icon_itm Panel Toggle        ^ 1 ^ sxmo_type m
 			$icon_itm GPSD Toggle         ^ 1 ^ sxmo_type a
-			$icon_usr Locate Me           ^ 0 ^ sxmo_gpsutil.sh gpsgeoclueset
 		"
 		WINNAME=Maps
 		;;
@@ -555,7 +547,6 @@ case "$WMCLASS" in
 			$icon_grd Scripts                                            ^ 0 ^ sxmo_appmenu.sh scripts
 			$icon_grd Apps                                               ^ 0 ^ sxmo_appmenu.sh applications
 			$icon_dir Files                                              ^ 0 ^ sxmo_files.sh
-			$(command -v foxtrotgps >/dev/null && echo "$icon_gps Maps   ^ 0 ^ foxtrotgps")
 			$icon_phn Dialer                                             ^ 0 ^ sxmo_modemdial.sh
 			$icon_msg Texts                                              ^ 0 ^ sxmo_modemtext.sh
 			$icon_usr Contacts                                           ^ 0 ^ sxmo_contactmenu.sh
