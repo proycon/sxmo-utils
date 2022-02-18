@@ -523,6 +523,14 @@ case "$WMCLASS" in
 		"
 		WINNAME=Lagrange
 		;;
+	*mepo*)
+		# Mepo
+		# The choices / hotkeys for the contextmenu are generated through mepo's
+		# own scripting to be in congruence since the same menu can be launched
+		# via mepo's UI as well, this compatibility is available as of mepo 0.4
+		CHOICES="$(mepo_ui_central_menu.sh menuoptions | awk -F^ '{ print $1 "^ 0 ^ sxmo_type" $3  }')"
+		WINNAME=Mepo
+		;;
 	*foxtrot*)
 		# Foxtrot GPS
 		CHOICES="
