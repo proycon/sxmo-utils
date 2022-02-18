@@ -46,9 +46,7 @@ Describe 'sxmo_mutex.sh'
 			sh scripts/core/sxmo_mutex.sh shellspec_mutex lock "$id" &
 		done
 
-		for id in $IDS; do
-			wait
-		done
+		wait
 	}
 
 	It 'can handle concurrent locks'
@@ -75,10 +73,7 @@ Describe 'sxmo_mutex.sh'
 			sh scripts/core/sxmo_mutex.sh shellspec_mutex free "$id" &
 		done
 
-		for id in $IDS; do
-			[ "$id" = 50 ] && continue
-			wait
-		done
+		wait
 	}
 
 	It 'can handle concurrent unlocks'

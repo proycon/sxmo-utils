@@ -72,16 +72,12 @@ set_led() {
 }
 
 set_leds() {
-	PIDS=""
 	while [ "$#" -ge 2 ]; do
 		set_led "$1" "$2" &
-		PIDS="$PIDS $!"
 		shift 2
 	done
 
-	for PID in $PIDS; do
-		wait "$PID"
-	done
+	wait
 }
 
 blink_led() {
