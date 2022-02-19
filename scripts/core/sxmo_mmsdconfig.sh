@@ -66,7 +66,7 @@ editfile() {
 
 newfile() {
 	tmp="$(mktemp)"
-	defaultfile > "$tmp"
+	defaultconfig > "$tmp"
 	editfile "$tmp"
 	mv "$tmp" "$MMSCONFIG"
 }
