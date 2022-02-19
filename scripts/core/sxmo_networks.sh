@@ -33,6 +33,7 @@ connections() {
 		sed "s/^cdc-wdm.*:/$icon_don /" |\
 		sed "s/^$VPNDEVICE.*:/$icon_don /" |\
 		sed "s/^wlan.*:/$icon_don /" |\
+		sed "s/^eth.*:/$icon_don /" |\
 		sed "s/^usb.*:/$icon_don /"
 }
 
