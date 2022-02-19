@@ -8,6 +8,7 @@
 
 useable_width="$(swaymsg -t get_outputs -r | jq '.[] | select(.focused == true) | .rect.width')"
 wob_sock="$XDG_RUNTIME_DIR"/sxmo.wobsock
+rm -f "$wob_sock"
 mkfifo "$wob_sock"
 
 # By opening the socket as read-write it isn't closed after the first write
