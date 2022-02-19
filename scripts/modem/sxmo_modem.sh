@@ -241,11 +241,17 @@ checkfornewtexts() {
 		CONTACTNAME=$(sxmo_contacts.sh --name "$NUM")
 		[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$NUM"
 
-		sxmo_notificationwrite.sh \
-			random \
-			"sxmo_hook_tailtextlog.sh '$NUM'" \
-			"$SXMO_LOGDIR/$NUM/sms.txt" \
-			"$CONTACTNAME: $TEXT"
+		if [ -z "$SXMO_DISABLE_SMS_NOTIFS" ]; then
+			sxmo_notificationwrite.sh \
+				random \
+				"sxmo_hook_tailtextlog.sh '$NUM'" \
+				"$SXMO_LOGDIR/$NUM/sms.txt" \
+				"$CONTACTNAME: $TEXT"
+		fi
+
+		if grep -q screenoff "$SXMO_STATE"; then
+			sxmo_hook_lock.sh
+		fi
 
 		sxmo_hook_sms.sh "$CONTACTNAME" "$TEXT"
 	done

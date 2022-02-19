@@ -11,8 +11,4 @@
 # Finally, mms may include this parameter:
 # $4 = Group Contact Name or Number (if number not in contacts)
 
-if grep -q screenoff "$SXMO_STATE"; then
-	sxmo_hook_lock.sh
-fi
-
 mpv --quiet --no-video /usr/share/sxmo/notify.ogg

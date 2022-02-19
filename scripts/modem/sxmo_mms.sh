@@ -239,13 +239,19 @@ processmms() {
 	printf "%b\n\n" "$TEXT" >> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
 
 	if [ "$MESSAGE_TYPE" = "Received" ]; then
-		[ -n "$OPEN_ATTACHMENTS_CMD" ] && TEXT="$icon_att $TEXT"
 		[ "$FROM_NAME" = "???" ] && FROM_NAME="$FROM_NUM"
-		sxmo_notificationwrite.sh \
-			random \
-			"${OPEN_ATTACHMENTS_CMD}sxmo_hook_tailtextlog.sh \"$LOGDIRNUM\"" \
-			"$SXMO_LOGDIR/$LOGDIRNUM/sms.txt" \
-			"$FROM_NAME: $TEXT ($MMS_FILE)"
+		if [ -z "$SXMO_DISABLE_SMS_NOTIFS" ]; then
+			[ -n "$OPEN_ATTACHMENTS_CMD" ] && TEXT="$icon_att $TEXT"
+			sxmo_notificationwrite.sh \
+				random \
+				"${OPEN_ATTACHMENTS_CMD}sxmo_hook_tailtextlog.sh \"$LOGDIRNUM\"" \
+				"$SXMO_LOGDIR/$LOGDIRNUM/sms.txt" \
+				"$FROM_NAME: $TEXT ($MMS_FILE)"
+		fi
+
+		if grep -q screenoff "$SXMO_STATE"; then
+			sxmo_hook_lock.sh
+		fi
 
 		if [ "$count" -gt 0 ]; then
 			GROUPNAME="$(sxmo_contacts.sh --name "$LOGDIRNUM")"

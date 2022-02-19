@@ -33,11 +33,17 @@ processvvm() {
 
 	printf "Received Voice Mail from %s at %s:\n%s %s\n\n" "$VVM_SENDER_NAME" "$VVM_DATE" "$icon_att" "$(basename "$VVM_FILE")" >> "$SXMO_LOGDIR/$VVM_SENDER/sms.txt"
 
-	sxmo_notificationwrite.sh \
-		random \
-		"sxmo_open.sh '$VVM_FILE'" \
-		"$SXMO_LOGDIR/$VVM_SENDER/sms.txt" \
-		"VM: $VVM_SENDER_NAME ($VVM_ID)"
+	if [ -z "$SXMO_DISABLE_SMS_NOTIFS" ]; then
+		sxmo_notificationwrite.sh \
+			random \
+			"sxmo_open.sh '$VVM_FILE'" \
+			"$SXMO_LOGDIR/$VVM_SENDER/sms.txt" \
+			"VM: $VVM_SENDER_NAME ($VVM_ID)"
+	fi
+
+	if grep -q screenoff "$SXMO_STATE"; then
+		sxmo_hook_lock.sh
+	fi
 
 	sxmo_hook_sms.sh "$VVM_SENDER" "VVM" "$VVM_ID"
 
