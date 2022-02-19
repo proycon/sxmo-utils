@@ -15,7 +15,7 @@ fi
 
 sxmo_hook_statusbar.sh time
 
-if grep -q rtc "$SXMO_UNSUSPENDREASONFILE"; then
+if [ "$UNSUSPENDREASON" = "rtc" ] || [ "$UNSUSPENDREASON" = "usb power" ]; then
 	# We stopped it in presuspend
 	sxmo_daemons.sh start periodic_blink sxmo_run_periodically.sh 2 sxmo_led.sh blink red blue
 fi
