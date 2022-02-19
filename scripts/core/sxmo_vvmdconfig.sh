@@ -58,7 +58,7 @@ newfile() {
 	tmp="$(mktemp)"
 	defaultconfig > "$tmp"
 	editfile "$tmp"
-	mv "$tmp" "$MMSCONFIG"
+	mv "$tmp" "$VVMCONFIG"
 }
 
 mkdir -p "$VVM_BASE_DIR"
