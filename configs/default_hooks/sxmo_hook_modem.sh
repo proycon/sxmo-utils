@@ -10,8 +10,6 @@ oldstate="$1"
 newstate="$2"
 reason="$3" # 0 or 1
 
-sxmo_debug "$oldstate -> $newstate [reason: $reason]"
-
 case "$newstate" in
 	"locked")
 		sxmo_log "State is locked.  Attempting to unlock."

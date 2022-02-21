@@ -36,7 +36,6 @@ sxmo_daemons.sh start network_monitor_device \
 			read -r newstate
 			read -r oldstate
 			read -r reason
-			sxmo_debug "$device ($oldstate -> $newstate) [$reason]"
 
 			devicename="$(_getdevicename "$device")"
 			if echo "$newstate" | grep -q "uint32 100"; then
