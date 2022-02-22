@@ -33,7 +33,7 @@ searchmenu() {
 				sed '/^[[:space:]]*$/d' |
 				awk '{$1=$1};1' |
 				sxmo_dmenu_with_kb.sh -p "Yt Search"
-		)"
+		)" || exit 0
 
 		if [ "Close Menu" = "$ENTRY" ]; then
 			exit 0
@@ -59,7 +59,7 @@ resultsmenu() {
 				sed '/^[[:space:]]*$/d' |
 				awk '{$1=$1};1' |
 				sxmo_dmenu.sh -p "Results"
-		)"
+		)" || exit 0
 
 		if [ "Change Search" = "$PICKED" ]; then
 			return

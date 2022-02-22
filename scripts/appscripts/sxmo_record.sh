@@ -45,15 +45,16 @@ recordconfirm() {
 			xargs -0 echo | sed '/^[[:space:]]*$/d' | awk '{$1=$1};1' |
 			sxmo_dmenu.sh -p "$DUR"
 		)"
-		if echo "$PICK" | grep "Playback"; then
-			sxmo_terminal.sh mpv -ao=alsa -v "$FILE"
-		elif echo "$PICK" | grep "Delete Recording"; then
-			rm "$FILE"
-			echo "File deleted." | sxmo_dmenu.sh
-			return
-		else
-			return
-		fi
+
+		case "$PICK" in
+			"Playback: "*) sxmo_terminal.sh mpv -ao=alsa -v "$FILE" ;;
+			"Delete Recording")
+				rm "$FILE"
+				echo "File deleted." | sxmo_dmenu.sh
+				return
+				;;
+			*) return ;;
+		esac
 	done
 }
 
@@ -75,32 +76,34 @@ recordmenu() {
 			sxmo_dmenu.sh -p "Record"
 		)"
 
-		if [ "$OPTION" = "Line Jack" ]; then
-			OLDAUDIOF="$(mktemp)"
-			alsactl --file "$OLDAUDIOF" store
-			sxmo_megiaudioroute -l
-			FILE="$(record line dsnoop 1)"
-			alsactl --file "$OLDAUDIOF" restore
-			recordconfirm "$FILE"
-
-		elif [ "$OPTION" = "Microphone" ]; then
-			OLDAUDIOF="$(mktemp)"
-			alsactl --file "$OLDAUDIOF" store
-			sxmo_megiaudioroute -m
-			FILE="$(record mic dsnoop 1)"
-			alsactl --file "$OLDAUDIOF" restore
-			recordconfirm "$FILE"
-
-		elif echo "$OPTION" | grep "Recordings$"; then
-			sxmo_files.sh "$SXMO_RECDIR"
-		elif [ "$OPTION" = "Close Menu" ]; then
-			exit 0
-		fi
+		case "$OPTION" in
+			"Line Jack")
+				OLDAUDIOF="$(mktemp)"
+				alsactl --file "$OLDAUDIOF" store
+				sxmo_megiaudioroute -l
+				FILE="$(record line dsnoop 1)"
+				alsactl --file "$OLDAUDIOF" restore
+				recordconfirm "$FILE"
+				;;
+			"Microphone")
+				OLDAUDIOF="$(mktemp)"
+				alsactl --file "$OLDAUDIOF" store
+				sxmo_megiaudioroute -m
+				FILE="$(record mic dsnoop 1)"
+				alsactl --file "$OLDAUDIOF" restore
+				recordconfirm "$FILE"
+				;;
+			*"Recordings")
+				sxmo_files.sh "$SXMO_RECDIR"
+				;;
+			*)
+				exit 0
+		esac
 	done
 }
 
 if [ -z "$1" ]; then
-	recordmenu
-else
-	"$@"
+	set -- recordmenu
 fi
+
+"$@"
