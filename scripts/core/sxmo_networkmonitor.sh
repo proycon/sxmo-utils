@@ -34,8 +34,6 @@ sxmo_daemons.sh start network_monitor_device \
 		if echo "$line" | grep -qE "^signal.*StateChanged"; then
 			device="$(printf "%s\n" "$line" | cut -d'/' -f 6 | cut -d';' -f1)"
 			read -r newstate
-			read -r oldstate
-			read -r reason
 
 			devicename="$(_getdevicename "$device")"
 			if echo "$newstate" | grep -q "uint32 100"; then
