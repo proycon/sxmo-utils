@@ -120,6 +120,15 @@ swayfocusedwindow() {
 		'
 }
 
+swaypaste() {
+	wl-paste
+}
+
+xorgpaste() {
+
+	xclip -o
+}
+
 swayexec() {
 	swaymsg exec -- "$@"
 }

@@ -194,7 +194,7 @@ case "$WMCLASS" in
 				$icon_ard Scroll down      ^ 1 ^ sxmo_type -M Ctrl d
 				$icon_trm Command prompt   ^ 0 ^ sxmo_type -k Escape -s 300 ':'
 				$icon_pst Paste Selection  ^ 0 ^ sxmo_type -k Escape -s 300 -k quotedbl -k asterisk -k p
-				$icon_pst Paste Clipboard  ^ 0 ^ wl-paste
+				$icon_pst Paste Clipboard  ^ 0 ^ sxmo_type -k Escape -s 300 -k quotedbl -k plus -k p
 				$icon_fnd Search           ^ 0 ^ sxmo_type -k Escape -s 300 /
 				$icon_arr Next buffer      ^ 1 ^ sxmo_type -k Escape -s 300 ':bn' -k Return
 				$icon_arl Previous buffer  ^ 1 ^ sxmo_type -k Escape -s 300 ':bp' -k Return
