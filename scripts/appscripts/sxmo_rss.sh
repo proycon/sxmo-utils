@@ -52,7 +52,7 @@ list_items() {
 
 rsstimespanmenu() {
 	CHOICE="Fetch"
-	while echo "$CHOICE" | grep Fetch; do
+	while [ "${CHOICE#Fetch}" != "$CHOICE" ]; do
 		# Dmenu prompt for timespan
 		CHOICES="
 			Close Menu
@@ -69,13 +69,13 @@ rsstimespanmenu() {
 			sed '/^[[:space:]]*$/d' |
 			awk '{$1=$1};1' |
 			sxmo_dmenu.sh -p "RSS Timespan"
-		)"
+		)" || return 0
 
-		if echo "$CHOICE" | grep "Fetch"; then
-			[ "$FETCHENABLED" = 0 ] && FETCHENABLED=1 || FETCHENABLED=0
-		else
-			TIMESPAN="$CHOICE"
-		fi
+		case "$CHOICE" in
+			"Close Menu") return 0 ;;
+			"Fetch"*) [ "$FETCHENABLED" = 0 ] && FETCHENABLED=1 || FETCHENABLED=0 ;;
+			*) TIMESPAN="$CHOICE" ;;
+		esac
 	done
 
 	# Update Sfeed via sfeed_update (as long as user didn't request cached)
@@ -91,30 +91,27 @@ rssreadmenu() {
 	prep_temp_folder_with_items
 	TIMESPANABBR="$(
 		echo "$TIMESPAN" |
-		sed 's/ago//' |
-		sed 's/hours/h/' |
-		sed 's/hour/h/' |
-		sed 's/days/d/' |
-		sed 's/day/d/' |
-		tr -d ' '
+		sed -e 's/ago//g' -e 's/hour\|hours/h/g' -e 's/day\|days/d/g' -e 's/\s//g'
 	)"
 
 	CHOICES="$(list_items)"
 	DMENUIDX=1
 	while true; do
-		# Show list of items
-		PICKED="$(printf %b "$CHOICES" | sxmo_dmenu.sh --index $DMENUIDX -p "RSS ($TIMESPANABBR)" -fn Terminus-15)"
+		PICKED="$(printf %b "$CHOICES" |
+			sxmo_dmenu.sh --index $DMENUIDX -p "RSS ($TIMESPANABBR)")" || return 0
 		DMENUIDX="$(echo "$CHOICES" | grep -m1 -F -n "$PICKED" | cut -d ':' -f1)"
-		if [ "$PICKED" = "Close Menu" ]; then
-			die Closed Menu
-		elif [ "$PICKED" = "Change Timespan" ]; then
-			rsstimespanmenu
-			CHOICES="$(list_items)"
-			DMENUIDX=1
-		else
-			URL="$(echo "$PICKED" | gawk -F " " '{print $NF}')"
-			sxmo_urlhandler.sh "$URL" fork
-		fi
+
+		case "$PICKED" in
+			"Close Menu") return 0;;
+			"Change Timespan")
+				rsstimespanmenu
+				CHOICES="$(list_items)"
+				DMENUIDX=1
+				;;
+			*)
+				URL="$(echo "$PICKED" | awk -F " " '{print $NF}')"
+				sxmo_urlhandler.sh "$URL"
+		esac
 	done
 }
 

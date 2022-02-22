@@ -7,12 +7,10 @@
 [ -z "$SXMO_SUBREDDITS" ] && SXMO_SUBREDDITS="pine64official pinephoneofficial unixporn postmarketos linux"
 
 menu() {
-	sxmo_keyboard.sh open
 	SUBREDDIT="$(
 		printf %b "Close Menu\n$(echo "$SXMO_SUBREDDITS" | tr " " '\n')" |
-		sxmo_dmenu.sh -p "Subreddit:"
-	)"
-	sxmo_keyboard.sh close
+		sxmo_dmenu_with_kb.sh -p "Subreddit:"
+	)" || exit 0
 	[ "Close Menu" = "$SUBREDDIT" ] && exit 0
 
 	REDDITRESULTS="$(
@@ -29,13 +27,13 @@ menu() {
 	while true; do
 		RESULT="$(
 			printf %b "Close Menu\n$REDDITRESULTS" |
-			sxmo_dmenu.sh -fn Terminus-20
-		)"
+			sxmo_dmenu.sh
+		)" || exit 0
 
 		[ "Close Menu" = "$RESULT" ] && exit 0
 		URL=$(echo "$RESULT" | awk -F " " '{print $NF}')
 
-		sxmo_urlhandler.sh "$URL" fork
+		sxmo_urlhandler.sh "$URL"
 	done
 }
 

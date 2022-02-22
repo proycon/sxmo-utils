@@ -29,27 +29,25 @@ timerrun() {
 }
 
 menu() {
-	sxmo_keyboard.sh open
 	TIMEINPUT="$(
-	echo "
-		1h
-		10m
-		9m
-		8m
-		7m
-		6m
-		5m
-		4m
-		3m
-		2m
-		1m
-		30s
-		Close Menu
-	" | awk 'NF' | awk '{$1=$1};1' | sxmo_dmenu.sh -p Timer
-	)"
-	sxmo_keyboard.sh close
+		echo "
+			1h
+			10m
+			9m
+			8m
+			7m
+			6m
+			5m
+			4m
+			3m
+			2m
+			1m
+			30s
+			Close Menu
+		" | awk 'NF' | awk '{$1=$1};1' | sxmo_dmenu_with_kb.sh -p Timer
+	)" || exit 0
 	[ "Close Menu" = "$TIMEINPUT" ] && exit 0
-	sxmo_terminal.sh -f Monospace-50 "$0" timerrun "$TIMEINPUT"
+	sxmo_terminal.sh "$0" timerrun "$TIMEINPUT"
 }
 
 if [ $# -gt 0 ]; then "$@"; else menu; fi

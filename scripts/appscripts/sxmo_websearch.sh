@@ -4,13 +4,9 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-sxmo_keyboard.sh open
-SEARCHQUERY="$(
-	echo "Close Menu" | sxmo_dmenu.sh -p "Search:"
-)"
-sxmo_keyboard.sh close
-[ "Close Menu" = "$SEARCHQUERY" ] && exit 0
+SEARCHQUERY="$(echo "Close Menu" | sxmo_dmenu_with_kb.sh -p "Search:")" || exit 0
 
-echo "$SEARCHQUERY" | grep . || exit 0
-
-$BROWSER "https://duckduckgo.com/?q=${SEARCHQUERY}"
+case "$SEARCHQUERY" in
+	"Close Menu") exit 0 ;;
+	*) $BROWSER "https://duckduckgo.com/?q=${SEARCHQUERY}" ;;
+esac

@@ -67,10 +67,10 @@ resultsmenu() {
 			exit 0
 		elif [ "$AUDIOONLY" = 1 ]; then
 			URL="$(echo "$PICKED" | awk -F " " '{print $NF}')"
-			sxmo_terminal.sh mpv -ao=alsa -v --no-video "$URL" &
+			sxmo_terminal.sh mpv -ao=alsa -v --no-video "$URL"
 		else
 			URL="$(echo "$PICKED" | awk -F " " '{print $NF}')"
-			sxmo_terminal.sh mpv -ao=alsa -v --ytdl-format='[height<420]' "$URL" &
+			sxmo_terminal.sh mpv -ao=alsa -v --ytdl-format='[height<420]' "$URL"
 		fi
 	done
 }
