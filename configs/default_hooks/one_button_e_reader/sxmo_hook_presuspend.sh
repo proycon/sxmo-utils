@@ -15,7 +15,7 @@ case "$SXMO_WM" in
 esac
 
 printf "SUSPEND" > "$SXMO_STATE"
-sxmo_hook_statusbar.sh locked
+sxmo_hook_statusbar.sh state_change
 
 # store brightness state and set it to zero
 light > "$XDG_RUNTIME_DIR"/sxmo.brightness.presuspend.state

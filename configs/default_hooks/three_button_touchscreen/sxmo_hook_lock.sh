@@ -8,15 +8,14 @@ sxmo_log "transitioning to stage lock"
 printf lock > "$SXMO_STATE"
 
 # This hook is called when the system reaches a locked state
+
 sxmo_led.sh blink blue &
 LEDPID=$!
+sxmo_hook_statusbar.sh state_change
 
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen off
 sxmo_daemons.sh stop lisgd
-
-sxmo_hook_statusbar.sh state_change
-sxmo_hook_statusbar.sh locked
 
 wait "$LEDPID"
 

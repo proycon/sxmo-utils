@@ -11,13 +11,11 @@ printf unlock > "$SXMO_STATE"
 
 sxmo_led.sh blink red green &
 LEDPID=$!
+sxmo_hook_statusbar.sh state_change
 
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen on
 sxmo_hook_lisgdstart.sh
-
-sxmo_hook_statusbar.sh state_change
-sxmo_hook_statusbar.sh locked
 
 wait "$LEDPID"
 

@@ -7,13 +7,12 @@
 sxmo_log "transitioning to stage unlock"
 printf unlock > "$SXMO_STATE"
 
+sxmo_hook_statusbar.sh state_change
+
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen on
 sxmo_wm.sh inputevent stylus on
 sxmo_hook_lisgdstart.sh
-
-sxmo_hook_statusbar.sh state_change
-sxmo_hook_statusbar.sh locked
 
 # suspend after 30s
 # the periodic mutex check is necessary to 'free' old mutex, I think.

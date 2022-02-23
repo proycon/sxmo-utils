@@ -11,12 +11,11 @@ printf screenoff > "$SXMO_STATE"
 
 sxmo_led.sh blink blue red &
 LEDPID=$!
+sxmo_hook_statusbar.sh state_change
 
 sxmo_wm.sh dpms on
 sxmo_wm.sh inputevent touchscreen off
 sxmo_daemons.sh stop lisgd
-
-sxmo_hook_statusbar.sh locked
 
 wait "$LEDPID"
 

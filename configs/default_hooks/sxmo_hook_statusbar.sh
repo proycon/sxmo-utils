@@ -15,11 +15,11 @@ set_time() {
 	date "+${SXMO_STATUS_DATE_FORMAT:-%H:%M}" | head -c -1 | sxmo_status.sh add 99-time
 }
 
-set_locked() {
+set_state() {
 	if grep -q unlock "$SXMO_STATE"; then
-		sxmo_status.sh del 0-locked
+		sxmo_status.sh del 0-state
 	else
-		sxmo_status.sh add 0-locked "$(cat "$SXMO_STATE" | tr '[:lower:]' '[:upper:]')" # You can also use "$icon_nto"
+		tr '[:lower:]' '[:upper:]' < "$SXMO_STATE" | sxmo_status.sh add 0-state
 	fi
 }
 
@@ -256,13 +256,14 @@ case "$1" in
 	network_$VPNDEVICE)
 		set_vpn
 		;;
-	time|call_duration|modem|modem_monitor|battery|volume|locked)
+	time|call_duration|modem|modem_monitor|battery|volume|state)
 		set_"$1"
 		;;
 	periodics|state_change) # 55 s loop and screenlock triggers
 		set_time
 		set_modem
 		set_battery
+		set_state
 		;;
 	all)
 		sxmo_status.sh reset
@@ -274,7 +275,7 @@ case "$1" in
 		set_vpn
 		set_battery
 		set_volume
-		set_locked
+		set_state
 		;;
 	*)
 		exit # swallow it !
