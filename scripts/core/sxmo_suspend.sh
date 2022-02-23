@@ -60,7 +60,7 @@ if mnc="$(sxmo_hook_mnc.sh)"; then
 	suspend_time="$((mnc-10))"
 fi
 
-sxmo_led.sh blink red
+sxmo_uniq_exec.sh sxmo_led.sh blink red
 
 if [ -z "$suspend_time" ] || [ "$suspend_time" -ge "$((YEARS8_TO_SEC-10))" ]; then
 	sxmo_log "calling suspend with no suspend time"

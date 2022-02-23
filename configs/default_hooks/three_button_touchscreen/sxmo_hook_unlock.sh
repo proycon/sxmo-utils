@@ -9,7 +9,7 @@
 sxmo_log "transitioning to stage unlock"
 printf unlock > "$SXMO_STATE"
 
-sxmo_led.sh blink red green &
+sxmo_uniq_exec.sh sxmo_led.sh blink red green &
 LEDPID=$!
 sxmo_hook_statusbar.sh state_change
 

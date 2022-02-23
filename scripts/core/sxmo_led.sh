@@ -1,20 +1,16 @@
 #!/bin/sh
+
 # shellcheck source=scripts/core/sxmo_common.sh
 . "$(which sxmo_common.sh)"
 
 free_mutex() {
 	sxmo_mutex.sh can_suspend free "Playing with leds"
-	rmdir "$XDG_RUNTIME_DIR"/sxmo.led.lock
+	exit
 }
 
 ensure_mutex() {
 	sxmo_mutex.sh can_suspend lock "Playing with leds"
-
-	while ! mkdir "$XDG_RUNTIME_DIR"/sxmo.led.lock 2> /dev/null; do
-		sleep 0.1
-	done
-
-	trap 'free_mutex' TERM INT EXIT
+	trap 'free_mutex' TERM INT
 }
 
 get_type() {
@@ -119,10 +115,11 @@ case "$cmd" in
 	"set")
 		ensure_mutex
 		set_leds "$@"
+		free_mutex
 		;;
 	get|blink)
 		ensure_mutex
-
 		"$cmd"_led "$@"
+		free_mutex
 		;;
 esac

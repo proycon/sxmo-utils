@@ -9,7 +9,7 @@ printf lock > "$SXMO_STATE"
 
 # This hook is called when the system reaches a locked state
 
-sxmo_led.sh blink blue &
+sxmo_uniq_exec.sh sxmo_led.sh blink blue &
 LEDPID=$!
 sxmo_hook_statusbar.sh state_change
 
