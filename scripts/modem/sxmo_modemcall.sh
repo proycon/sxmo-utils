@@ -73,7 +73,10 @@ hangup() {
 	if [ -f "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall" ]; then
 		rm -f "$XDG_RUNTIME_DIR/${CALLID}.pickedupcall"
 		touch "$XDG_RUNTIME_DIR/${CALLID}.hangedupcall"
-		log_event "call_hangup" "$CALLID"
+		log_event "call_hangsxmo_hook_discard.shup" "$CALLID"
+
+		sxmo_log "sxmo_modemcall: Invoking hangup hook (async)"
+		sxmo_hook_hangup.sh &
 	else
 		#this call was never picked up and hung up immediately, so it is a discarded call
 		touch "$XDG_RUNTIME_DIR/${CALLID}.discardedcall"
