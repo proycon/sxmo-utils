@@ -9,6 +9,7 @@ envvars() {
 	export SXMO_WM=sway
 	export MOZ_ENABLE_WAYLAND=1
 	export SDL_VIDEODRIVER=wayland
+	export XDG_CURRENT_DESKTOP=sway
 	# shellcheck disable=SC2086
 	command -v $TERMCMD "" >/dev/null || export TERMCMD="foot"
 	command -v "$KEYBOARD" >/dev/null || export KEYBOARD=wvkbd-mobintl
