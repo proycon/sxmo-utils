@@ -188,7 +188,7 @@ case "$WMCLASS" in
 			#Vim in foot
 			CHOICES="
 				$icon_cls Save and Quit    ^ 0 ^ sxmo_type -k Escape -s 300 ':wq' -k Return
-				$icon_cls Save             ^ 0 ^ sxmo_type -k Escape -s 300 ':w' -k Return
+				$icon_sav Save             ^ 0 ^ sxmo_type -k Escape -s 300 ':w' -k Return
 				$icon_cls Quit without saving  ^ 0 ^ sxmo_type -k Escape -s 300 ':q!' -k Return
 				$icon_aru Scroll up        ^ 1 ^ sxmo_type -M Ctrl u
 				$icon_ard Scroll down      ^ 1 ^ sxmo_type -M Ctrl d
