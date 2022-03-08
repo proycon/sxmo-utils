@@ -358,7 +358,19 @@ case "$WMCLASS" in
 				$icon_msg Reply          ^ 0 ^ sxmo_modemtext.sh sendtextmenu $number
 				$icon_phn Call           ^ 0 ^ sxmo_modemdial.sh $number
 				$([ -d "$SXMO_LOGDIR/$number/attachments" ] && echo "$icon_att View Attachments ^ 1 ^ sxmo_files.sh $SXMO_LOGDIR/$number/attachments --date-sort")
-				$(sxmo_contacts.sh --name "$number" | grep -q '???' && echo "$icon_usr Add to contacts ^ 1 ^ sxmo_contactmenu.sh newcontact $number")
+				$(
+
+				count=0
+				printf %s "$number" | xargs pn find | while read -r line; do
+					count=$((count+1))
+					sxmo_contacts.sh --name "$line" | grep -q '???' && echo "$icon_usr Add $line ^ 1 ^ sxmo_contactmenu.sh newcontact $line"
+				done
+				# if this is a group chain, then allow to add entire chain as a contact too
+				if [ "$count" -gt 1 ]; then
+					sxmo_contacts.sh --name "$number" | grep -q '???' && echo "$icon_usr Add $number ^ 1 ^ sxmo_contactmenu.sh newcontact $number"
+				fi
+
+				)
 				$icon_aru Scroll up       ^ 1 ^ sxmo_type -M Shift -M Ctrl b
 				$icon_ard Scroll down     ^ 1 ^ sxmo_type -M Shift -M Ctrl f
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
