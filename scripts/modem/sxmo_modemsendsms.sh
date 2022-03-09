@@ -167,7 +167,7 @@ else
 		mmcli -m any --messaging-create-sms="text=\"$SAFE_TEXT\",number=$NUMBER" |
 		grep -o "[0-9]*$"
 	)"
-	mmcli -s "${SMSNO}" --send || err "Couldn't send text message"
+	mmcli -s "${SMSNO}" --send --timeout="${SXMO_MM_TIMEOUT:-"30"}" || err "Couldn't send text message"
 	for i in $(mmcli -m any --messaging-list-sms | grep " (sent)" | cut -f5 -d' ') ; do
 		mmcli -m any --messaging-delete-sms="$i"
 	done
