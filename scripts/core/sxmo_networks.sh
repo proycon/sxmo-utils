@@ -218,22 +218,22 @@ networksmenu() {
 	while true; do
 		CHOICE="$(
 			rfkill list wifi | grep -q "yes" || WIFI_ENABLED=1
-			printf %b "
-				$(connections)
-				$icon_mod Add a GSM Network
-				$([ -z "$WIFI_ENABLED" ] || printf %b "$icon_wif Add a WPA Network")
-				$([ -z "$WIFI_ENABLED" ] || printf %b "$icon_wif Add a Wifi Hotspot")
-				$icon_usb Add a USB Hotspot
-				$icon_cls Delete a Network
-				$icon_cfg Nmtui
-				$icon_cfg Ifconfig
-				$([ -z "$WIFI_ENABLED" ] || printf %b "$icon_wif Scan Wifi Networks")
-				$icon_mnu System Menu
-				$icon_cls Close Menu
-			" |
-			awk '{$1=$1};1' | grep '\w' | menu -p 'Networks'
-		)"
-		[ -z "$CHOICE" ] && exit
+
+			cat << EOF | sxmo_dmenu.sh -p "Networks"
+$(connections)
+$icon_mod Add a GSM Network
+$([ -z "$WIFI_ENABLED" ] || printf "%s Add a WPA Network\n" "$icon_wif")
+$([ -z "$WIFI_ENABLED" ] || printf "%s Add a Wifi Hotspot\n" "$icon_wif")
+$icon_usb Add a USB Hotspot
+$icon_cls Delete a Network
+$icon_cfg Nmtui
+$icon_cfg Ifconfig
+$([ -z "$WIFI_ENABLED" ] || printf "%s Scan Wifi Networks\n" "$icon_wif")
+$icon_mnu System Menu
+$icon_cls Close Menu
+EOF
+		)" || exit
+
 		case "$CHOICE" in
 			*"System Menu" )
 				sxmo_appmenu.sh sys && exit
