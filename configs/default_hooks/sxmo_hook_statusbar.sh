@@ -164,13 +164,19 @@ _battery() {
 		if [ "$(cat "$power_supply"/type)" = "Battery" ]; then
 			if [ -e "$power_supply"/capacity ]; then
 				PCT="$(cat "$power_supply"/capacity)"
-			else
+			elif [ -e "$power_supply"/charge_now ]; then
 				CHARGE_NOW="$(cat "$power_supply"/charge_now)"
 				CHARGE_FULL="$(cat "$power_supply"/charge_full_design)"
 				PCT="$(printf "scale=2; %s / %s * 100\n" "$CHARGE_NOW" "$CHARGE_FULL" | bc | cut -d'.' -f1)"
+			else
+				continue
 			fi
 
-			BATSTATUS="$(cut -c1 "$power_supply"/status)"
+			if [ -e "$power_supply"/status ]; then
+				# The status is not always given for the battery device.
+				# (sometimes it's linked to the charger device).
+				BATSTATUS="$(cut -c1 "$power_supply"/status)"
+			fi
 
 			# Treat 'Full' status as same as 'Charging'
 			if [ "$BATSTATUS" = "C" ] || [ "$BATSTATUS" = "F" ]; then
