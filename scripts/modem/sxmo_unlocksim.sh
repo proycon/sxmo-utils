@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 
 # small utility to prompt user for PIN and unlock mode
 

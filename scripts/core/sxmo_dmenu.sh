@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 
 # We still use dmenu in dwm|worgs cause pointer/touch events
 # are not implemented yet in the X11 library of bemenu

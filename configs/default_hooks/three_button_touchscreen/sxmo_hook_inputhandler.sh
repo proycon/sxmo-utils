@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 
 # This script handles input actions, it is called by lisgd for gestures
 # and by dwm for button presses

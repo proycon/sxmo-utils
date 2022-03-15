@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 
 # 1.9.0 introduced a new naming scheme for hooks.
 # This script moves them from their 1.8.x location.

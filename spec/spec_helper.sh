@@ -1,4 +1,6 @@
 # shellcheck shell=sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 
 # Defining variables and functions here will affect all specfiles.
 # Change shell options inside a function may cause different behavior,

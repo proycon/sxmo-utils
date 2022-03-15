@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 
 # This hook goal is to setup mutexes if the device must be considered
 # as idle or not, if it can go to crust or not

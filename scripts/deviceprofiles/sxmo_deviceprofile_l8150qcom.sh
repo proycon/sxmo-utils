@@ -1,5 +1,6 @@
 #!/bin/sh
-
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 # Wileyfox Swift (wileyfox-crackling)
 
 export SXMO_TOUCHSCREEN_ID="10"

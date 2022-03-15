@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 
 not_ready_yet() {
 	sxmo_notify_user.sh "Your device looks not ready yet"

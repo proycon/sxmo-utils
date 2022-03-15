@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 # Main vvm (Visual Voice Mail) code.  Functions here are called from sxmo_modemmonitor.sh
 
 # shellcheck source=configs/default_hooks/sxmo_hook_icons.sh

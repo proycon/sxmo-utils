@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 
 # This script is executed (asynchronously) when you missed a call
 # You can use it to play a ring tone

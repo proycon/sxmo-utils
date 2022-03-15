@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+// Copyright 2022 Sxmo Contributors
 #include <stdio.h>
 #include <stdlib.h>
 

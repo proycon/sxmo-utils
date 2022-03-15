@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 
 # we disable shellcheck SC2154 (unreferenced variable used)
 # shellcheck disable=SC2154

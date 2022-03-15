@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 # This script prints in reverse chronological order unique entries from the
 # modem log merged with contact names defined in contacts file tsv.
 #   Wherein $CONTACTSFILE is tsv with two fields: number\tcontact name

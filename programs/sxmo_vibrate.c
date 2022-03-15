@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+// Copyright 2022 Sxmo Contributors
 /* Based on: https://xnux.eu/devices/feature/vibrator.html#toc-example-program-to-control-the-vibration-motor */
 #include <stdio.h>
 #include <stdlib.h>

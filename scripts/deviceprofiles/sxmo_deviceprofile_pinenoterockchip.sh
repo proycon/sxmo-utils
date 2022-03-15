@@ -1,5 +1,7 @@
 #!/bin/sh
 # Pine Note!
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 
 # from https://github.com/DorianRudolph/pinenotes
 export WLR_RENDERER_ALLOW_SOFTWARE=1 # Dorian

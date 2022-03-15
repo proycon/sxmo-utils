@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
 
 # This script will output the content of the contextual menu
 # It should stdout the title as the first line followed by the entries
