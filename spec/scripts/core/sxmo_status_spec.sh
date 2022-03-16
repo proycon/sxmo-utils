@@ -1,9 +1,15 @@
 export SXMO_STATUS_NAME=test
+XDG_RUNTIME_DIR="$(mktemp -d)"
+export XDG_RUNTIME_DIR
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
 Describe 'sxmo_status.sh'
 	Include scripts/core/sxmo_status.sh
+
+	# Clean up our temporary runtime directory
+	# shellcheck disable=SC2016
+	AfterAll 'rm -r "$XDG_RUNTIME_DIR"'
 
 	It 'reset the bar'
 		When call reset

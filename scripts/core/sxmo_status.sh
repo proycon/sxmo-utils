@@ -7,7 +7,7 @@
 # It sort file elements numerically
 # It can watch file events to stdout new content
 
-ROOT="${XDG_RUNTIME_DIR:-$HOME/.local/run}/sxmo_status/${SXMO_STATUS_NAME:-default}"
+ROOT="$XDG_RUNTIME_DIR/sxmo_status/${SXMO_STATUS_NAME:-default}"
 mkdir -p "$ROOT"
 
 _sorted_components_name() {
