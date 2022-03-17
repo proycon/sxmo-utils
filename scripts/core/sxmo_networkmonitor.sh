@@ -11,13 +11,22 @@ stderr() {
 }
 
 gracefulexit() {
-	sxmo_hook_statusbar.sh wifi
 	stderr "gracefully exiting (on signal or after error)"
 	sxmo_daemons.sh stop network_monitor_device
 	trap - INT TERM EXIT
 }
 
 trap "gracefulexit" INT TERM EXIT
+
+getdevtype() {
+	nmcli -g GENERAL.TYPE device show "$1" 2>/dev/null
+}
+
+# Send the initial states to the statusbar
+nmcli -g GENERAL.TYPE,GENERAL.DEVICE d show | grep . | while read -r type; do
+	read -r name || break
+	sxmo_hook_statusbar.sh network "$type" "$name"
+done
 
 # shellcheck disable=2016
 sxmo_daemons.sh start network_monitor_device \
@@ -31,26 +40,27 @@ sxmo_daemons.sh start network_monitor_device \
 	}' | while read -r devicename; do
 		read -r newstate || break
 
+		devicetype="$(getdevtype "$devicename")"
 		case "$newstate" in
 			"connected")
 				stderr "$devicename up."
-				sxmo_hook_network_up.sh "$devicename"
-				sxmo_hook_statusbar.sh "network_$devicename"
+				sxmo_hook_network_up.sh "$devicename" "$devicetype"
+				sxmo_hook_statusbar.sh network "$devicetype" "$devicename"
 				;;
 			"disconnected")
 				stderr "$devicename down."
-				sxmo_hook_network_down.sh "$devicename"
-				sxmo_hook_statusbar.sh "network_$devicename"
+				sxmo_hook_network_down.sh "$devicename" "$devicetype"
+				sxmo_hook_statusbar.sh network "$devicetype" "$devicename"
 				;;
 			"deactivating")
 				stderr "$devicename pre-down"
-				sxmo_hook_network_pre_down.sh "$devicename"
-				sxmo_hook_statusbar.sh "network_$devicename"
+				sxmo_hook_network_pre_down.sh "$devicename" "$devicetype"
+				sxmo_hook_statusbar.sh network "$devicetype" "$devicename"
 				;;
 			"connecting")
 				stderr "$devicename pre-up"
-				sxmo_hook_network_pre_up.sh "$devicename"
-				sxmo_hook_statusbar.sh "network_$devicename"
+				sxmo_hook_network_pre_up.sh "$devicename" "$devicetype"
+				sxmo_hook_statusbar.sh network "$devicetype" "$devicename"
 				;;
 		esac
 	done

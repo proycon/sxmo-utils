@@ -142,21 +142,29 @@ set_modem_monitor() {
 }
 
 set_wifi() {
-	WLANSTATE="$(tr -d "\n" < /sys/class/net/wlan0/operstate)"
-	if [ "$WLANSTATE" = "up" ]; then
-		sxmo_status.sh add 30-wifi-status "$icon_wif"
-	else
-		sxmo_status.sh del 30-wifi-status
-	fi
+	case "$(cat "/sys/class/net/$2/operstate")" in
+		"up") sxmo_status.sh add "30-network-$2-status" "$icon_wif" ;;
+		*) sxmo_status.sh del "30-network-$2-status" ;;
+	esac
 }
 
 set_vpn() {
-	VPNSTATE="$(nmcli device status | grep -E 'wireguard|vpn' | awk '{ print $3 }')"
-	if [ "$VPNDEVICE" != "--" ] && [ "$VPNSTATE" = "connected" ]; then
-		sxmo_status.sh add 30-vpn-status "$icon_key"
+	if nmcli -g GENERAL.STATE device show "$2" | grep connected > /dev/null; then
+		sxmo_status.sh add "30-network-$2-status" "$icon_key"
 	else
-		sxmo_status.sh del 30-vpn-status
+		sxmo_status.sh del "30-network-$2-status"
 	fi
+}
+
+# $1: type (reported by nmcli)
+# $2: interface name
+set_network() {
+	case "$1" in
+		wifi) set_wifi "$@" ;;
+		wireguard|vpn) set_vpn "$@" ;;
+		# the type will be empty if the interface disappeared
+		"") sxmo_status.sh del "30-network-$2-status" ;;
+	esac
 }
 
 _battery() {
@@ -264,11 +272,9 @@ set_volume() {
 }
 
 case "$1" in
-	network_wlan0)
-		set_wifi
-		;;
-	network_$VPNDEVICE)
-		set_vpn
+	network)
+		shift
+		set_network "$@"
 		;;
 	time|call_duration|modem|modem_monitor|battery|volume|state)
 		set_"$1"
@@ -285,8 +291,6 @@ case "$1" in
 		set_call_duration
 		set_modem
 		set_modem_monitor
-		set_wifi
-		set_vpn
 		set_battery
 		set_volume
 		set_state

@@ -82,7 +82,7 @@ case "$WMCLASS" in
 			$icon_wif Wifi $(
 				rfkill list wifi | grep -q "yes" &&
 				printf %b "$icon_tof" ||  printf %b "$icon_ton";
-				printf %b "^ 1 ^ doas sxmo_wifitoggle.sh && sxmo_hook_statusbar.sh wifi"
+				printf %b "^ 1 ^ doas sxmo_wifitoggle.sh"
 			)
 			$(test "$SXMO_WM" = dwm && printf %b "$icon_cfg Invert Colors ^ 1 ^ xcalib -a -invert")
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
