@@ -4,7 +4,7 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 stderr() {
 	sxmo_log "$*"
@@ -14,50 +14,43 @@ gracefulexit() {
 	sxmo_hook_statusbar.sh wifi
 	stderr "gracefully exiting (on signal or after error)"
 	sxmo_daemons.sh stop network_monitor_device
-	exit
+	trap - INT TERM EXIT
 }
 
 trap "gracefulexit" INT TERM EXIT
 
-_getdevicename() {
-	dbus-send --system --print-reply --dest=org.freedesktop.NetworkManager \
-		/org/freedesktop/NetworkManager/Devices/"$1" \
-		org.freedesktop.DBus.Properties.Get \
-		string:"org.freedesktop.NetworkManager.Device" \
-		string:"Interface" | grep variant | cut -d'"' -f2
-}
-
-# see https://people.freedesktop.org/~lkundrak/nm-docs/nm-dbus-types.html
-# from my tests, when you disconnect wifi network it goes: 100 -> 110 -> 30
-# when you connect wifi network: 30 -> 40 -> 50 -> 60 -> 40 -> 50 -> 70 -> 80 -> 90 -> 100
+# shellcheck disable=2016
 sxmo_daemons.sh start network_monitor_device \
-	dbus-monitor --system "interface='org.freedesktop.NetworkManager.Device',type='signal',member='StateChanged'" | \
-	while read -r line; do
-		if echo "$line" | grep -qE "^signal.*StateChanged"; then
-			device="$(printf "%s\n" "$line" | cut -d'/' -f 6 | cut -d';' -f1)"
-			read -r newstate
+	nmcli device monitor | stdbuf -o0 awk '
+	{ newstate=$2 }
+	/device removed$/ {newstate="disconnected"}
 
-			devicename="$(_getdevicename "$device")"
-			if echo "$newstate" | grep -q "uint32 100"; then
-				# 100=NM_DEVICE_STATE_ACTIVATED
+	{
+		sub(":$", "", $1) # remove trailing colon from device name
+		printf "%s\n%s\n", $1, newstate
+	}' | while read -r devicename; do
+		read -r newstate || break
+
+		case "$newstate" in
+			"connected")
 				stderr "$devicename up."
 				sxmo_hook_network_up.sh "$devicename"
 				sxmo_hook_statusbar.sh "network_$devicename"
-			elif echo "$newstate" | grep -q "uint32 30"; then
-				# 30=NM_DEVICE_STATE_DISCONNECTED 
+				;;
+			"disconnected")
 				stderr "$devicename down."
 				sxmo_hook_network_down.sh "$devicename"
 				sxmo_hook_statusbar.sh "network_$devicename"
-			elif echo "$newstate" | grep -q "uint32 110"; then
-				# 110=NM_DEVICE_STATE_DEACTIVATING
+				;;
+			"deactivating")
 				stderr "$devicename pre-down"
 				sxmo_hook_network_pre_down.sh "$devicename"
 				sxmo_hook_statusbar.sh "network_$devicename"
-			elif echo "$newstate" | grep -q "uint32 90"; then
-				# 90=NM_DEVICE_STATE_SECONDARIES
+				;;
+			"connecting")
 				stderr "$devicename pre-up"
 				sxmo_hook_network_pre_up.sh "$devicename"
 				sxmo_hook_statusbar.sh "network_$devicename"
-			fi
-		fi
+				;;
+		esac
 	done
