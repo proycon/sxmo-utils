@@ -36,7 +36,7 @@ esac
 # Start a periodic daemon (2s) blink after 5 seconds
 # Resume tasks stop daemons
 sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
-	timeout 8 'sxmo_daemons.sh start going_deeper sxmo_run_periodically.sh 5 sh -c "sxmo_hook_check_state_mutexes.sh && exec sxmo_mutex.sh can_suspend holdexec sxmo_suspend.sh"' \
+	timeout 8 'sxmo_daemons.sh start going_deeper sxmo_run_periodically.sh 30 sh -c "sxmo_hook_check_state_mutexes.sh && exec sxmo_mutex.sh can_suspend holdexec sxmo_suspend.sh"' \
 	resume 'sxmo_daemons.sh stop going_deeper' \
 	timeout 5 'sxmo_daemons.sh start periodic_blink sxmo_run_periodically.sh 2 sxmo_uniq_exec.sh sxmo_led.sh blink red blue' \
 	resume 'sxmo_daemons.sh stop periodic_blink' \
