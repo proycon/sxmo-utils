@@ -6,3 +6,6 @@ export SXMO_SYS_FILES="/sys/module/8723cs/parameters/rtw_scan_interval_thr /sys/
 export SXMO_TOUCHSCREEN_ID=8
 export SXMO_POWER_BUTTON="1:1:gpio-key-power"
 export SXMO_VOLUME_BUTTON="1:1:adc-keys"
+export SXMO_MODEMRTC=12
+export SXMO_POWERRTC=5
+export SXMO_WAKEUPRTC=3
