@@ -160,6 +160,7 @@ set_vpn() {
 }
 
 _battery() {
+	count=0 # if multiple batteries, add space between them
 	for power_supply in /sys/class/power_supply/*; do
 		if [ "$(cat "$power_supply"/type)" = "Battery" ]; then
 			if [ -e "$power_supply"/capacity ]; then
@@ -171,6 +172,11 @@ _battery() {
 			else
 				continue
 			fi
+
+			if [ "$count" -gt 0 ]; then
+				printf " "
+			fi
+			count=$((count+1))
 
 			if [ -e "$power_supply"/status ]; then
 				# The status is not always given for the battery device.
@@ -216,12 +222,12 @@ _battery() {
 					printf ""
 				else
 					printf ""
+				fi
 			fi
-		fi
 
-		[ -z "$SXMO_BAR_HIDE_BAT_PER" ] && printf " %s%%" "$PCT"
-	fi
-done
+			[ -z "$SXMO_BAR_HIDE_BAT_PER" ] && printf " %s%%" "$PCT"
+		fi
+	done
 }
 
 set_battery() {
