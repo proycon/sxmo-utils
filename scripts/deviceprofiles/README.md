@@ -36,6 +36,7 @@ SXMO_LISGD_THRESHOLD_PRESSED	| Threshold for detecting long presses [default: 60
 SXMO_LISGD_INPUT_DEVICE		| Input device [default: /dev/input/touchscreen]
 
 ### General / Misc.
+SXMO_WIFI_MODULE		| The wifi kernel module used when switching scan intervals
 SXMO_SYS_FILES			| String of files for sxmo_setpermissions.sh to make +rw [see sxmo_setpermissions.sh.]
 SXMO_WAKEUPRTC			| RTC wakeup number in /sys/class/wakeup/wakeup<number>/ (see sxmo_suspend.sh) [default: 1]
 SXMO_MODEMRTC			| Modem wakeup number in /sys/class/wakeup/wakeup<number>/ (see sxmo_suspend.sh) [default: 10]

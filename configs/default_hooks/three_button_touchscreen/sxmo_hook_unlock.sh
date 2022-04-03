@@ -21,8 +21,10 @@ sxmo_hook_lisgdstart.sh
 
 wait "$LEDPID"
 
-NETWORKRTCSCAN="/sys/module/8723cs/parameters/rtw_scan_interval_thr"
-echo 16000 > "$NETWORKRTCSCAN"
+NETWORKRTCSCAN="/sys/module/$SXMO_WIFI_MODULE/parameters/rtw_scan_interval_thr"
+if [ -w "$NETWORKRTCSCAN" ]; then
+	echo 16000 > "$NETWORKRTCSCAN"
+fi
 
 # Go to lock after 120 seconds of inactivity
 if [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then

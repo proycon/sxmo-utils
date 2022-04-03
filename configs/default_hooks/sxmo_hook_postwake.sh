@@ -11,8 +11,10 @@ UNSUSPENDREASON="$1"
 #decide what to do
 
 if [ "$UNSUSPENDREASON" != "modem" ]; then
-	NETWORKRTCSCAN="/sys/module/8723cs/parameters/rtw_scan_interval_thr"
-	echo 1200 > "$NETWORKRTCSCAN"
+	NETWORKRTCSCAN="/sys/module/$SXMO_WIFI_MODULE/parameters/rtw_scan_interval_thr"
+	if [ -w "$NETWORKRTCSCAN" ]; then
+		echo 1200 > "$NETWORKRTCSCAN"
+	fi
 fi
 
 sxmo_hook_statusbar.sh time
