@@ -110,6 +110,7 @@ incall_menu() {
 $icon_cls Close menu                ^ exit
 $icon_aru Volume up                 ^ sxmo_audio.sh vol up 20
 $icon_ard Volume down               ^ sxmo_audio.sh vol down 20
+$icon_rol Reset call audio          ^ sxmo_modemaudio.sh setup_audio
 $icon_spk Speaker $(sxmo_modemaudio.sh is_enabled_speaker \
 	&& printf "%s ^ sxmo_modemaudio.sh disable_speaker" "$icon_ton" \
 	|| printf "%s ^ sxmo_modemaudio.sh enable_speaker" "$icon_tof"
