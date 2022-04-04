@@ -192,6 +192,14 @@ _battery() {
 				BATSTATUS="$(cut -c1 "$power_supply"/status)"
 			fi
 
+			# fixes a bug with keyboard case where
+			# /sys/class/power_supply/ip5xxx-charger/capacity
+			# exists but returns 'Not a tty'
+			if [ -z "$PCT" ]; then
+				printf "ERR"
+				continue
+			fi
+
 			# Treat 'Full' status as same as 'Charging'
 			if [ "$BATSTATUS" = "C" ] || [ "$BATSTATUS" = "F" ]; then
 				if [ "$PCT" -lt 20 ]; then
