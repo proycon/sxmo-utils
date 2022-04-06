@@ -20,8 +20,10 @@ fi
 sxmo_hook_statusbar.sh time
 
 if [ "$UNSUSPENDREASON" = "rtc" ] || [ "$UNSUSPENDREASON" = "usb power" ]; then
-	# We stopped it in presuspend
-	sxmo_daemons.sh start periodic_blink sxmo_run_periodically.sh 2 sxmo_uniq_exec.sh sxmo_led.sh blink red blue
+	if grep -q screenoff "$XDG_RUNTIME_DIR/sxmo.state"; then
+		# We stopped it in presuspend
+		sxmo_daemons.sh start periodic_blink sxmo_run_periodically.sh 2 sxmo_uniq_exec.sh sxmo_led.sh blink red blue
+	fi
 fi
 
 # Add here whatever you want to do
