@@ -34,6 +34,7 @@ SXMO_STYLUS_ID			| ID (from xinput) for the stylus device [DWM-ONLY] [default: 1
 SXMO_LISGD_THRESHOLD		| Threshold for detecting touches [default: 125]
 SXMO_LISGD_THRESHOLD_PRESSED	| Threshold for detecting long presses [default: 60]
 SXMO_LISGD_INPUT_DEVICE		| Input device [default: /dev/input/touchscreen]
+SXMO_VOLUME_BUTTON		| Volume button "Identifier" from `swaymsg -t get_inputs` command. If the volume up identifier (`$VOL_UP_ID`) is different from the volume down identifier (`$VOL_DOWN_ID`), set `$SXMO_VOLUME_BUTTON="$VOL_UP_ID $VOL_DOWN_ID"`. See the `sxmo-utils/scripts/deviceprofiles/sxmo_deviceprofile_berylliumqcom.sh` file.
 
 ### General / Misc.
 SXMO_WIFI_MODULE		| The wifi kernel module used when switching scan intervals
