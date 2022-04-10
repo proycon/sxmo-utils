@@ -65,7 +65,7 @@ install: $(PROGRAMS)
 	install -D -t $(DESTDIR)$(PREFIX)/share/sxmo/migrations migrations/*
 
 	# Bin
-	install -D -t $(DESTDIR)$(PREFIX)/bin scripts/*/*
+	install -D -t $(DESTDIR)$(PREFIX)/bin scripts/*/*.sh
 
 	install -D programs/sxmo_vibrate $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_splitchar $(DESTDIR)$(PREFIX)/bin/
