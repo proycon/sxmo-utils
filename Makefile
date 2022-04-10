@@ -6,6 +6,8 @@ VERSION:=1.9.0
 
 GITVERSION:=$(shell git describe --tags)
 
+OPENRC:=1
+
 CC ?= $(CROSS_COMPILE)gcc
 PROGRAMS = \
 	programs/sxmo_vibrate \
@@ -28,7 +30,7 @@ clean:
 	rm -f programs/sxmo_vibrate programs/sxmo_splitchar
 
 install: $(PROGRAMS)
-	cd configs && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
+	cd configs && find . -type f -not -name sxmo-setpermissions -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
 	rm -rf "$(DESTDIR)$(PREFIX)/share/sxmo/default_hooks/"
 	cd configs && find default_hooks -type f -exec install -D -m 0755 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
@@ -39,7 +41,9 @@ install: $(PROGRAMS)
 	cd resources && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
 	# Configs
-	install -D -m 0755 -t $(DESTDIR)/etc/init.d configs/openrc/sxmo-setpermissions
+	if [ "$(OPENRC)" = "1" ]; then \
+		install -D -m 0755 -t $(DESTDIR)/etc/init.d configs/openrc/sxmo-setpermissions; \
+	fi
 
 	install -D -m 0644 -t $(DESTDIR)/usr/lib/udev/rules.d/ configs/udev/*.rules
 
