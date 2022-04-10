@@ -71,7 +71,8 @@ install: $(PROGRAMS)
 
 	# Appscripts
 	mkdir -p "$(DESTDIR)$(PREFIX)/share/sxmo/appscripts"
-	cd scripts/appscripts && find . -name 'sxmo_*.sh' | xargs -I{} ln -fs "$(DESTDIR)$(PREFIX)/bin/{}" "$(DESTDIR)$(PREFIX)/share/sxmo/appscripts/{}" && cd ../..
+	cd scripts/appscripts && find . -name 'sxmo_*.sh' | xargs -I{} ln -fs "$(PREFIX)/bin/{}" "$(DESTDIR)$(PREFIX)/share/sxmo/appscripts/{}" && cd ../..
+
 
 	mkdir -p "$(DESTDIR)$(PREFIX)/share/superd/services"
 	install -m 0644 -t $(DESTDIR)$(PREFIX)/share/superd/services configs/superd/services/*
