@@ -6,6 +6,7 @@ VERSION:=1.9.0
 
 GITVERSION:=$(shell git describe --tags)
 
+CC ?= $(CROSS_COMPILE)gcc
 PROGRAMS = \
 	programs/sxmo_vibrate \
 	programs/sxmo_splitchar
@@ -18,10 +19,10 @@ shellcheck:
 	shellcheck -x scripts/*/*.sh
 
 programs/sxmo_vibrate: programs/sxmo_vibrate.c
-	gcc -o programs/sxmo_vibrate programs/sxmo_vibrate.c
+	$(CC) -o programs/sxmo_vibrate programs/sxmo_vibrate.c
 
 programs/sxmo_splitchar: programs/sxmo_splitchar.c
-	gcc -o programs/sxmo_splitchar programs/sxmo_splitchar.c
+	$(CC) -o programs/sxmo_splitchar programs/sxmo_splitchar.c
 
 clean:
 	rm -f programs/sxmo_vibrate programs/sxmo_splitchar
