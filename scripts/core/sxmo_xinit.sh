@@ -11,7 +11,6 @@ envvars() {
 	command -v $TERMCMD "" >/dev/null || export TERMCMD="st"
 	command -v "$KEYBOARD" >/dev/null || defaultkeyboard
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
-	[ -z "$XDG_PICTURES_DIR" ] && export XDG_PICTURES_DIR=~/Pictures
 }
 
 defaults() {

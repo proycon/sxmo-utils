@@ -13,7 +13,6 @@ envvars() {
 	command -v $TERMCMD "" >/dev/null || export TERMCMD="foot"
 	command -v "$KEYBOARD" >/dev/null || export KEYBOARD=wvkbd-mobintl
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
-	[ -z "$XDG_PICTURES_DIR" ] && export XDG_PICTURES_DIR=~/Pictures
 }
 
 defaults() {

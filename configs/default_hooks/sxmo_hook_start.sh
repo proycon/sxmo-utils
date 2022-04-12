@@ -10,6 +10,9 @@
 echo "unlock" > "$SXMO_STATE"
 [ -f "$SXMO_UNSUSPENDREASONFILE" ] && rm -f "$SXMO_UNSUSPENDREASONFILE"
 
+# Create xdg user directories, such as ~/Pictures
+xdg-user-dirs-update
+
 # Play a funky startup tune if you want (disabled by default)
 #mpv --quiet --no-video ~/welcome.ogg &
 
