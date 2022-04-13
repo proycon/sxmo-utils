@@ -8,6 +8,33 @@ While it is technically possible to put any valid shell commands/logic in the
 device profile, it is recommended to only use environment variables to keep the
 script's execution time at a minimum and to keep things simple.
 
+
+## File name
+
+To define a device profile, you need to first obtain the device identifier.
+This can be found via `/proc/device-tree/compatible`.
+
+See: https://www.kernel.org/doc/html/latest/admin-guide/abi-testing.html#abi-sys-firmware-devicetree
+
+The compatible is null terminated, not comma terminated. Commas are
+optional delimiters between manufacturer and model.
+
+See: https://github.com/devicetree-org/devicetree-specification/releases
+
+For example, the poco f1 is a 3 button touch device and 
+`tr '\0' '\n' < /proc/device-tree/compatible` returns:
+
+```
+xiaomi,beryllium
+qcom,sdm845
+```
+
+As such, `sxmo-utils/configs/default_hooks/xiaomi,beryllium` 
+is a symlink to `sxmo-utils/configs/default_hooks/three_button_touchscreen`.
+Finally, the device profile variables (explained in the following secion) is defined in:
+
+`sxmo-utils/scripts/deviceprofiles/sxmo_deviceprofile_xiaomi,beryllium.sh`
+
 ## Device profile variables used by sxmo
 Supported variables used by sxmo are:
 
