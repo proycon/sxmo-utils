@@ -46,12 +46,12 @@ _sxmo_load_environments() {
 
 	export SXMO_CACHEDIR="${SXMO_CACHEDIR:-$XDG_CACHE_HOME/sxmo}"
 
-	export SXMO_BLOCKDIR="${SXMO_BLOCKDIR:-$SXMO_CACHEDIR/block}"
-	export SXMO_BLOCKFILE="${SXMO_BLOCKFILE:-$SXMO_CACHEDIR/block.tsv}"
-	export SXMO_CONTACTFILE="${SXMO_CONTACTFILE:-$SXMO_CACHEDIR/contacts.tsv}"
+	export SXMO_BLOCKDIR="${SXMO_BLOCKDIR:-$XDG_DATA_HOME/sxmo/block}"
+	export SXMO_BLOCKFILE="${SXMO_BLOCKFILE:-$XDG_CONFIG_HOME/sxmo/block.tsv}"
+	export SXMO_CONTACTFILE="${SXMO_CONTACTFILE:-$XDG_CONFIG_HOME/sxmo/contacts.tsv}"
 	export SXMO_STATE="${SXMO_STATE:-$XDG_RUNTIME_DIR/sxmo.state}"
 	export SXMO_LOGDIR="${SXMO_LOGDIR:-$XDG_DATA_HOME/sxmo/modem}"
-	export SXMO_NOTIFDIR="${SXMO_NOTIFDIR:-$SXMO_CACHEDIR/notifications}"
+	export SXMO_NOTIFDIR="${SXMO_NOTIFDIR:-$XDG_DATA_HOME/sxmo/notifications}"
 	export SXMO_UNSUSPENDREASONFILE="${SXMO_UNSUSPENDREASONFILE:-$XDG_RUNTIME_DIR/sxmo.suspend.reason}"
 
 	export BEMENU_OPTS="${BEMENU_OPTS:---fn 'Monospace 14' --scrollbar autohide -s -n -w -c -l8 -M 40 -H 20}"
