@@ -1,0 +1,1 @@
+sxmo_deviceprofile_pine64,pinephone-1.2.sh

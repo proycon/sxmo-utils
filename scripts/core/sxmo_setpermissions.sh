@@ -6,8 +6,9 @@
 # from the init process and sets
 # some device-specific permissions
 
-if [ -e /sys/firmware/devicetree/base/compatible ]; then
-	device="$(cut -d ',' -f 2 < /sys/firmware/devicetree/base/compatible | tr -d '\0')"
+if [ -e /proc/device-tree/compatible ]; then
+    device="$(tr -c '\0[:alnum:].,-' '_' < /proc/device-tree/compatible |
+			tr '\0' '\n' | head -n1)"
 	deviceprofile="$(which "sxmo_deviceprofile_$device.sh")"
 	# shellcheck disable=SC1090
 	[ -f "$deviceprofile" ] && . "$deviceprofile"

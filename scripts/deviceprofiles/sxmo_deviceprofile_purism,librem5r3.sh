@@ -1,0 +1,1 @@
+sxmo_deviceprofile_purism,librem5r4.sh

@@ -68,8 +68,9 @@ _sxmo_load_environments() {
 	export PATH="$XDG_CONFIG_HOME/sxmo/hooks/:/usr/share/sxmo/default_hooks/:$PATH"
 
 	# The user can already forced a $SXMO_DEVICE_NAME value
-	if [ -z "$SXMO_DEVICE_NAME" ] && [ -e /sys/firmware/devicetree/base/compatible ]; then
-		SXMO_DEVICE_NAME="$(cut -d ',' -f 2 < /sys/firmware/devicetree/base/compatible | tr -d '\0')"
+	if [ -z "$SXMO_DEVICE_NAME" ] && [ -e /proc/device-tree/compatible ]; then
+		SXMO_DEVICE_NAME="$(tr -c '\0[:alnum:].,-' '_' < /proc/device-tree/compatible |
+			tr '\0' '\n' | head -n1)"
 		export SXMO_DEVICE_NAME
 		deviceprofile="$(which "sxmo_deviceprofile_$SXMO_DEVICE_NAME.sh")"
 		# shellcheck disable=SC1090
