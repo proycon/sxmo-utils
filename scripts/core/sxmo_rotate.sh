@@ -45,7 +45,7 @@ xorgrotinvert() {
 	sxmo_keyboard.sh close
 	xrandr -o inverted
 	applyptrmatrix -1 0 1 0 -1 1 0 0 1
-	sxmo_hook_lisgdstart.sh &
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh invert
 	exit 0
 }
@@ -55,7 +55,7 @@ swayrotinvert() {
 	focused_name="$(swayfocusedname)"
 	swaymsg -- input type:touch map_to_output "$focused_name"
 	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
-	sxmo_hook_lisgdstart.sh &
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh invert
 	exit 0
 }
@@ -64,7 +64,7 @@ xorgrotnormal() {
 	sxmo_keyboard.sh close
 	xrandr -o normal
 	applyptrmatrix 0 0 0 0 0 0 0 0 0
-	sxmo_hook_lisgdstart.sh &
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh normal
 	exit 0
 }
@@ -74,7 +74,7 @@ swayrotnormal() {
 	focused_name="$(swayfocusedname)"
 	swaymsg -- input type:touch map_to_output "$focused_name"
 	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
-	sxmo_hook_lisgdstart.sh &
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh normal
 	exit 0
 }
@@ -83,7 +83,7 @@ xorgrotright() {
 	sxmo_keyboard.sh close
 	xrandr -o right
 	applyptrmatrix 0 1 0 -1 0 1 0 0 1
-	sxmo_hook_lisgdstart.sh &
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh right
 	exit 0
 }
@@ -93,7 +93,7 @@ swayrotright() {
 	focused_name="$(swayfocusedname)"
 	swaymsg -- input type:touch map_to_output "$focused_name"
 	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
-	sxmo_hook_lisgdstart.sh &
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh right
 	exit 0
 }
@@ -102,7 +102,7 @@ xorgrotleft() {
 	sxmo_keyboard.sh close
 	xrandr -o left
 	applyptrmatrix 0 -1 1 1 0 0 0 0 1
-	sxmo_hook_lisgdstart.sh &
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh left
 	exit 0
 }
@@ -112,7 +112,7 @@ swayrotleft() {
 	focused_name="$(swayfocusedname)"
 	swaymsg -- input type:touch map_to_output "$focused_name"
 	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
-	sxmo_hook_lisgdstart.sh &
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh left
 	exit 0
 }

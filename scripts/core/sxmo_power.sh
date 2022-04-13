@@ -9,12 +9,14 @@ usage() {
 case "$1" in
 	reboot)
 		sxmo_hook_reboot.sh
-		sxmo_daemons.sh stop all
+		sxmo_daemons.sh stop all #  TODO: If I manage to remove all sxmo_daemons.sh calls. Remove this
+		pkill superd
 		doas reboot
 		;;
 	poweroff)
 		sxmo_hook_poweroff.sh
-		sxmo_daemons.sh stop all
+		sxmo_daemons.sh stop all  # TODO: If I manage to remove all sxmo_daemons.sh calls. Remove this
+		pkill superd
 		doas poweroff
 		;;
 	*)

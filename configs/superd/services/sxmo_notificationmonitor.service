@@ -1,0 +1,7 @@
+[Unit]
+Description=display notifications popup messages
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/sxmo_notificationmonitor.sh

@@ -1,0 +1,7 @@
+[Unit]
+Description=Sxmo: sets menu buttons for sway
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/sxmo_menumode_toggler.sh

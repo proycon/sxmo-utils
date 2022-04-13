@@ -1,0 +1,7 @@
+[Unit]
+Description=Sxmo: start desktop widget (ie. clock)
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/sxmo_hooks.sh sxmo_hook_desktop_widget.sh

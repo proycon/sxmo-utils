@@ -14,7 +14,7 @@ sxmo_hook_statusbar.sh state_change
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen on
 sxmo_wm.sh inputevent stylus on
-sxmo_hook_lisgdstart.sh
+superctl start sxmo_hook_lisgd
 
 # suspend after 30s
 # the periodic mutex check is necessary to 'free' old mutex, I think.
@@ -26,4 +26,4 @@ if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.nosuspend" ]; then
 		resume 'sxmo_daemons.sh stop periodic_state_mutex_check'
 fi
 
-sxmo_daemons.sh signal desktop_widget -12
+sxmo_daemons.sh supersignal sxmo_desktop_widget -12

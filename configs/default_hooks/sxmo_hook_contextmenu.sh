@@ -14,6 +14,11 @@
 XPROPOUT="$(sxmo_wm.sh focusedwindow)"
 WMCLASS="${1:-$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
 
+service_isrunning() {
+	superctl status "$1" | grep -q started
+	return "$?"
+}
+
 if [ -z "$XPROPOUT" ]; then
 	sxmo_log "detected no active window, no problem, opening system menu"
 else
@@ -66,9 +71,9 @@ case "$WMCLASS" in
 				printf %b "$icon_tof ^ 1 ^ sxmo_wm.sh inputevent stylus on"
 			)
 			$icon_cfg Gestures $(
-				sxmo_daemons.sh running lisgd -q &&
+				service_isrunning "sxmo_hook_lisgd" &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
-			) ^ 1 ^ toggle_daemon 'Lisgd' lisgd sxmo_hook_lisgdstart.sh
+			) ^ 1 ^ supertoggle_daemon 'sxmo_hook_lisgd'
 			$icon_cfg Toggle Bar ^ 0 ^ sxmo_wm.sh togglebar
 			$icon_bth Bluetooth $(
 				rfkill list bluetooth | grep -q "yes" &&

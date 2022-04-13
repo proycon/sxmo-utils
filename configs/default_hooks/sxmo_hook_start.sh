@@ -18,9 +18,9 @@ xdg-user-dirs-update
 
 case "$SXMO_WM" in
 	sway)
-		sxmo_daemons.sh start desktop_notifier mako
-		sxmo_daemons.sh start wob sxmo_wob.sh
-		sxmo_daemons.sh start menu_mode_toggler sxmo_menumode_toggler.sh
+		superctl start mako
+		superctl start sxmo_wob
+		superctl start sxmo_menumode_toggler
 		;;
 	dwm)
 		sxmo_daemons.sh start desktop_notifier dunst
@@ -51,7 +51,7 @@ if [ -f "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" ]; then
 fi
 
 # Start the desktop widget (e.g. clock)
-sxmo_daemons.sh start desktop_widget sxmo_hook_desktop_widget.sh
+superctl start sxmo_desktop_widget
 
 # Periodically update some status bar components
 sxmo_hook_statusbar.sh all
@@ -59,18 +59,18 @@ sxmo_daemons.sh start statusbar_periodics sxmo_run_periodically.sh 55 \
 	sxmo_hook_statusbar.sh periodics
 
 # Monitor the battery
-sxmo_daemons.sh start battery_monitor sxmo_battery_monitor.sh
+superctl start sxmo_battery_monitor
 
 # It watch network changes and update the status bar icon by example
-sxmo_daemons.sh start network_monitor sxmo_networkmonitor.sh
+superctl start sxmo_networkmonitor
 
 # The daemon that display notifications popup messages
-sxmo_daemons.sh start notification_monitor sxmo_notificationmonitor.sh
+superctl start sxmo_notificationmonitor
 
 # To setup initial lock state
 sxmo_hook_unlock.sh
 
-sxmo_daemons.sh start pipewire pipewire
+superctl start pipewire
 
 # Verify modemmanager and eg25-manager are running
 if ! sxmo_modemdaemons.sh status; then
@@ -79,7 +79,7 @@ else
 
 	(
 		sleep 5 # let some time to pipewire
-		sxmo_daemons.sh start callaudiod callaudiod
+		superctl start callaudiod
 
 		# Turn on the dbus-monitors for modem-related tasks
 		sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh

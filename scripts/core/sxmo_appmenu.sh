@@ -18,6 +18,17 @@ confirm() {
 	fi
 }
 
+supertoggle_daemon() {
+	if superctl status "$1" | grep -q started; then
+		superctl stop "$1"
+		sxmo_notify_user.sh "$1 Stopped"
+	else
+		superctl start "$1"
+		sxmo_notify_user.sh "$1 Started"
+	fi
+
+}
+
 toggle_daemon() {
 	name="$1"
 	shift

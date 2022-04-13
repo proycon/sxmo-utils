@@ -17,7 +17,7 @@ sxmo_hook_statusbar.sh state_change
 
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen on
-sxmo_hook_lisgdstart.sh
+superctl start sxmo_hook_lisgd
 
 wait "$LEDPID"
 
@@ -41,4 +41,4 @@ else
 		"'
 fi
 
-sxmo_daemons.sh signal desktop_widget -12
+sxmo_daemons.sh supersignal sxmo_desktop_widget -12

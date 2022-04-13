@@ -50,7 +50,8 @@ start() {
 }
 
 cleanup() {
-	sxmo_daemons.sh stop all
+	pkill superd
+	sxmo_daemons.sh stop all # TODO: If I manage to remove all sxmo_daemons.sh calls. Remove this
 	pkill svkbd
 	pkill dmenu
 }

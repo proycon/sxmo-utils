@@ -1,0 +1,8 @@
+[Unit]
+Description=low-level multimedia framework - capture and playback for both audio and video
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/pipewire
+ExecOnFailure=/usr/bin/sxmo_notify_user.sh "superd failed to start pipewire"
