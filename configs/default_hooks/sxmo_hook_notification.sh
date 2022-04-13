@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
+# shellcheck source=scripts/core/sxmo_common.sh
+. sxmo_common.sh
+
 VIBS=5
 VIBI=0
 while [ $VIBI -lt $VIBS ]; do
