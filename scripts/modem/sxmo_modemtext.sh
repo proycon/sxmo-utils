@@ -172,7 +172,7 @@ conversationloop() {
 
 	set -e
 
-	sxmo_keyboard.sh open 2>> "$SXMO_DEBUGLOG"
+	sxmo_keyboard.sh open
 
 	while true; do
 		DRAFT="$SXMO_LOGDIR/$NUMBER/draft.txt"
