@@ -4,4 +4,4 @@ Description=run user defined lisgd start hook
 [Service]
 Type=simple
 Restart=always
-ExecStart=/usr/bin/sxmo_hooks.sh sxmo_hook_lisgdstart.sh
+ExecStart=sxmo_hook_lisgdstart.sh

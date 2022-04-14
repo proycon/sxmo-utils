@@ -17,7 +17,7 @@ sxmo_hook_statusbar.sh state_change
 
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen off
-sxmo_daemons.sh stop lisgd
+superctl stop sxmo_hook_lisgd
 
 # avoid dangling purple blinking when usb wakeup + power button…
 sxmo_daemons.sh stop periodic_blink
@@ -30,4 +30,4 @@ if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
 		timeout 8 "sxmo_hook_screenoff.sh"
 fi
 
-sxmo_daemons.sh supersignal sxmo_desktop_widget -12
+sxmo_superd_signal.sh sxmo_desktop_widget -12

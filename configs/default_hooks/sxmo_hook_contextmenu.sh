@@ -16,7 +16,6 @@ WMCLASS="${1:-$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper
 
 service_isrunning() {
 	superctl status "$1" | grep -q started
-	return "$?"
 }
 
 if [ -z "$XPROPOUT" ]; then

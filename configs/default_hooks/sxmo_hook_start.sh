@@ -16,6 +16,8 @@ xdg-user-dirs-update
 # Play a funky startup tune if you want (disabled by default)
 #mpv --quiet --no-video ~/welcome.ogg &
 
+sxmo_daemons.sh start daemon_manager superd -v
+
 case "$SXMO_WM" in
 	sway)
 		superctl start mako

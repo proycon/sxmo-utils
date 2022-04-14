@@ -9,12 +9,6 @@
 ROOT="$XDG_RUNTIME_DIR/sxmo_daemons"
 mkdir -p "$ROOT"
 
-supersignal() {
-	SIGNAL="$2"
-	PID="$(superctl status "$1" | grep "PID:" | cut -f"2" -d":" |  tr -d "[:blank:]")"
-	kill "$SIGNAL" "$PID"
-}
-
 list() {
 	find "$ROOT" -exec 'basename' '{}' ';' -mindepth 1
 }

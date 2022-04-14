@@ -22,7 +22,7 @@ fi
 #-g format:
 #   fingers,swipe,edge,distance,command
 #order matters, only the first match gets executed
-lisgd "$@" -d "$LISGD_INPUT_DEVICE" ${orientation:+-o $orientation} \
+exec lisgd "$@" -d "$LISGD_INPUT_DEVICE" ${orientation:+-o $orientation} \
 	-t "$LISGD_THRESHOLD" -T "$LISGD_THRESHOLD_PRESSED" \
 	-g '1,DRUL,BR,*,sxmo_hook_inputhandler.sh bottomrightcorner' \
 	-g '1,DLUR,BL,*,sxmo_hook_inputhandler.sh bottomleftcorner' \
