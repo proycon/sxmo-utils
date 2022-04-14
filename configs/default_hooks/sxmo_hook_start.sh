@@ -73,6 +73,8 @@ superctl start sxmo_notificationmonitor
 sxmo_hook_unlock.sh
 
 superctl start pipewire
+superctl start pipewire-pulse
+superctl start wireplumber
 
 # Verify modemmanager and eg25-manager are running
 if ! sxmo_modemdaemons.sh status; then

@@ -239,7 +239,6 @@ checkhooks() {
 
 common() {
 	defaultconfig /usr/share/sxmo/appcfg/profile_template "$XDG_CONFIG_HOME/sxmo/profile" 644
-	defaultconfig /usr/share/sxmo/appcfg/pipewire.conf "$XDG_CONFIG_HOME/pipewire/pipewire.conf" 644
 }
 
 sway() {

@@ -1,6 +1,6 @@
 [Unit]
 Description=call audio routing daemon
-After=pipewire
+After=pipewire-pulse
 
 [Service]
 Type=simple
