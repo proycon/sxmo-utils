@@ -1,0 +1,7 @@
+[Unit]
+Description=automated xcutsel
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/autocutsel

@@ -75,10 +75,10 @@ newfile() {
 
 mkdir -p "$MMS_BASE_DIR"
 
-sxmo_daemons.sh stop mmsd
+superctl stop mmsd
 
 finish() {
-	sxmo_daemons.sh start mmsd mmsdtng "$SXMO_MMSD_ARGS"
+	superctl start mmsd
 }
 trap 'finish' EXIT
 

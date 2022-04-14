@@ -1,0 +1,7 @@
+[Unit]
+Description=periodically set the status bar content
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/sxmo_status_xsetroot.sh

@@ -1,0 +1,7 @@
+[Unit]
+Description=daemon for receiving and managing GSM MMS messages
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/mmsdtng

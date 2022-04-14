@@ -1,0 +1,7 @@
+[Unit]
+Description=lower level daemon that retrieves Visual Voicemail
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/vvmd

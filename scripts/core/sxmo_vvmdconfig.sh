@@ -65,10 +65,10 @@ newfile() {
 
 mkdir -p "$VVM_BASE_DIR"
 
-sxmo_daemons.sh stop vvmd
+superctl stop vvmd
 
 finish() {
-	sxmo_daemons.sh start vvmd vvmd
+	superctl start vvmd
 }
 trap 'finish' EXIT
 

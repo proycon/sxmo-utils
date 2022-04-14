@@ -25,7 +25,7 @@ case "$SXMO_WM" in
 		superctl start sxmo_menumode_toggler
 		;;
 	dwm)
-		sxmo_daemons.sh start desktop_notifier dunst
+		superctl start dunst
 
 		# Auto hide cursor with touchscreen, Show it with a mouse
 		if command -v "unclutter-xfixes" > /dev/null; then
@@ -33,23 +33,23 @@ case "$SXMO_WM" in
 		else
 			set -- unclutter
 		fi
-		sxmo_daemons.sh start unclutter_xfixes "$1" --hide-on-touch --start-hidden
+		superctl start "$1"
 
 		# Set a pretty wallpaper
 		feh --bg-fill /usr/share/sxmo/background.jpg
 
-		sxmo_daemons.sh start autocutsel_1 autocutsel
-		sxmo_daemons.sh start autocutsel_2 autocutsel -selection PRIMARY
-		sxmo_daemons.sh start statusbar_xsetroot sxmo_status_xsetroot.sh
+		superctl start autocutsel
+		superctl start autocutsel-primary
+		superctl start sxmo-x11-status
 		;;
 esac
 
 if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
-	sxmo_daemons.sh start mmsd mmsdtng "$SXMO_MMSD_ARGS"
+	superctl start mmsd
 fi
 
 if [ -f "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" ]; then
-	sxmo_daemons.sh start vvmd vvmd "$SXMO_VVMD_ARGS"
+	superctl start mmsd
 fi
 
 # Start the desktop widget (e.g. clock)

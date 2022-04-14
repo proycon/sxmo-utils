@@ -1,0 +1,7 @@
+[Unit]
+Description=Hides mouse pointer while not in use
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/unclutter --hide-on-touch --start-hidden
