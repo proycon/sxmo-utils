@@ -18,6 +18,8 @@ xdg-user-dirs-update
 
 sxmo_daemons.sh start daemon_manager superd -v
 
+sleep 2 # let time to superd to start correctly
+
 case "$SXMO_WM" in
 	sway)
 		superctl start mako
