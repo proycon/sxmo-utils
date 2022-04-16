@@ -67,12 +67,40 @@ pulsesinksget() {
 	done
 }
 
+_callaudiodsubmenu() {
+	if ! command -v callaudiocli > /dev/null; then
+		return
+	fi
+
+	printf "%s " "$icon_ear"
+	if sxmo_modemaudio.sh is_call_audio_mode; then
+		printf "Mode: Call -> Default ^ sxmo_modemaudio.sh disable_call_audio_mode\n"
+	else
+		printf "Mode: Default -> Call ^ sxmo_modemaudio.sh enable_call_audio_mode\n"
+	fi
+
+	printf "%s " "$icon_ear"
+	if sxmo_modemaudio.sh is_enabled_speaker; then
+		printf "Output: Speaker -> Earpiece ^ sxmo_modemaudio.sh disable_speaker\n"
+	else
+		printf "Output: Earpiece -> Speaker ^ sxmo_modemaudio.sh enable_speaker\n"
+	fi
+
+	printf "%s " "$icon_ear"
+	if sxmo_modemaudio.sh is_muted_mic; then
+		printf "Mic: Off -> On ^ sxmo_modemaudio.sh unmute_mic\n"
+	else
+		printf "Mic: On -> Off ^ sxmo_modemaudio.sh mute_mic\n"
+	fi
+}
+
 pulsemenuchoices() {
 	cat <<EOF
 $icon_cls Close Menu  ^ exit
 $icon_aru Volume up   ^ pulsevolup
 $icon_ard Volume down ^ pulsevoldown
 $(pulsesinksget | sed -e "s/^/$icon_spk /" -e 's/\^ \([0-9]\+\)$/^ pulsesinksset \1/')
+$(_callaudiodsubmenu)
 EOF
 }
 
