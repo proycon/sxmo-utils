@@ -51,11 +51,28 @@ pulsedeviceget() {
 	printf "Not implemented\n" >&2
 }
 
+pulsesinksset() {
+	pactl set-default-sink "$1"
+}
+
+pulsesinksget() {
+	default_id="$(pamixer --get-default-sink | tail -n1 | cut -d" " -f1)"
+	pamixer --list-sinks | tail -n+2 | while read -r id _ description; do
+		eval description="$description"
+		if [ "$default_id" = "$id" ]; then
+			printf "%s %s ^ %s\n" "$icon_chk" "$description" "$id"
+		else
+			printf "%s ^ %s\n" "$description" "$id"
+		fi
+	done
+}
+
 pulsemenuchoices() {
 	cat <<EOF
 $icon_cls Close Menu  ^ exit
 $icon_aru Volume up   ^ pulsevolup
 $icon_ard Volume down ^ pulsevoldown
+$(pulsesinksget | sed -e "s/^/$icon_spk /" -e 's/\^ \([0-9]\+\)$/^ pulsesinksset \1/')
 EOF
 }
 
