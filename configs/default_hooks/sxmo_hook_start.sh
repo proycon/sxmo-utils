@@ -49,7 +49,7 @@ if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
 fi
 
 if [ -f "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" ]; then
-	superctl start mmsd
+	superctl start vvmd
 fi
 
 # Start the desktop widget (e.g. clock)
