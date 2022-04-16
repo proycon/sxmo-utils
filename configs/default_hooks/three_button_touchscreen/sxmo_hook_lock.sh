@@ -30,4 +30,4 @@ if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
 		timeout 8 "sxmo_hook_screenoff.sh"
 fi
 
-sxmo_superd_signal.sh sxmo_desktop_widget -12
+sxmo_superd_signal.sh sxmo_desktop_widget -USR2

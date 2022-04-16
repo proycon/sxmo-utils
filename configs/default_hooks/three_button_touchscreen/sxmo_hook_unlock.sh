@@ -41,4 +41,4 @@ else
 		"'
 fi
 
-sxmo_superd_signal.sh sxmo_desktop_widget -12
+sxmo_superd_signal.sh sxmo_desktop_widget -USR2
