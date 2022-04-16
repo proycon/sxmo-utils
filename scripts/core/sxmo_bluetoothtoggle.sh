@@ -5,7 +5,7 @@
 # Must be run as root
 
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(which sxmo_common.sh)"
+. sxmo_common.sh
 
 # see sxmo_common.sh
 if [ -e /etc/os-release ]; then

@@ -3,7 +3,7 @@
 # Copyright 2022 Sxmo Contributors
 
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(which sxmo_common.sh)"
+. sxmo_common.sh
 
 free_mutex() {
 	sxmo_mutex.sh can_suspend free "Playing with leds"

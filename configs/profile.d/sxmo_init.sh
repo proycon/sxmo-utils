@@ -72,14 +72,15 @@ _sxmo_load_environments() {
 		SXMO_DEVICE_NAME="$(tr -c '\0[:alnum:].,-' '_' < /proc/device-tree/compatible |
 			tr '\0' '\n' | head -n1)"
 		export SXMO_DEVICE_NAME
-		deviceprofile="$(which "sxmo_deviceprofile_$SXMO_DEVICE_NAME.sh")"
+		deviceprofile="$(command -v "sxmo_deviceprofile_$SXMO_DEVICE_NAME.sh")"
 		# shellcheck disable=SC1090
 		if [ -f "$deviceprofile" ]; then
 			. "$deviceprofile"
 			printf "deviceprofile file %s loaded.\n" "$deviceprofile"
 		else
-			printf "WARNING: deviceprofile file %s not found.\n" "$deviceprofile"
+			printf "WARNING: deviceprofile file not found for %s.\n" "$SXMO_DEVICE_NAME"
 		fi
+		unset deviceprofile
 	fi
 
 	if [ -n "$SXMO_DEVICE_NAME" ]; then

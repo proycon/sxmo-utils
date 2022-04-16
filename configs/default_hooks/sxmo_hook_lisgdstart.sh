@@ -4,7 +4,7 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(which sxmo_common.sh)"
+. sxmo_common.sh
 
 LISGD_THRESHOLD="${SXMO_LISGD_THRESHOLD:-125}"
 LISGD_THRESHOLD_PRESSED="${SXMO_LISGD_THRESHOLD_PRESSED:-60}"

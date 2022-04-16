@@ -4,7 +4,7 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(which sxmo_common.sh)"
+. sxmo_common.sh
 
 # in case of weird crash
 echo "unlock" > "$SXMO_STATE"

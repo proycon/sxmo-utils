@@ -9,7 +9,7 @@
 # shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
 . sxmo_hook_icons.sh
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(which sxmo_common.sh)"
+. sxmo_common.sh
 
 VPNDEVICE="$(nmcli con show 2>/dev/null | grep -E 'wireguard|vpn' | awk '{ print $1 }')"
 

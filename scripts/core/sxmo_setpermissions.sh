@@ -9,7 +9,7 @@
 if [ -e /proc/device-tree/compatible ]; then
     device="$(tr -c '\0[:alnum:].,-' '_' < /proc/device-tree/compatible |
 			tr '\0' '\n' | head -n1)"
-	deviceprofile="$(which "sxmo_deviceprofile_$device.sh")"
+	deviceprofile="$(command -v "sxmo_deviceprofile_$device.sh")"
 	# shellcheck disable=SC1090
 	[ -f "$deviceprofile" ] && . "$deviceprofile"
 fi

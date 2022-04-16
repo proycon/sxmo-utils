@@ -5,7 +5,7 @@
 # This hook is called when the ModemManager1.Modem signals a StateChanged
 
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(which sxmo_common.sh)"
+. sxmo_common.sh
 
 # see networkmanager documentation for state names
 oldstate="$1"

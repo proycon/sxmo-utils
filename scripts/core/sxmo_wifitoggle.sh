@@ -5,7 +5,7 @@
 # Note: this script should be run as root via doas
 
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(which sxmo_common.sh)"
+. sxmo_common.sh
 
 on() {
 	rfkill unblock wlan

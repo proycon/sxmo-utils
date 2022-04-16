@@ -8,7 +8,9 @@
 # WARNING: if you remove an entry, be sure to run `sxmo_mutex.sh can_suspend
 # free "entry name"` afterwards.
 
-. "$(which sxmo_common.sh)"
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. sxmo_common.sh
 
 lock_suspend_mutex() {
 	if ! sxmo_mutex.sh can_suspend lockedby "$1"; then

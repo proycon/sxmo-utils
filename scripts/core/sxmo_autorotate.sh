@@ -3,7 +3,7 @@
 # Copyright 2022 Sxmo Contributors
 
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(which sxmo_common.sh)"
+. sxmo_common.sh
 
 ROTATION_GRAVITY="${SXMO_ROTATION_GRAVITY:-"16374"}"
 ROTATION_THRESHOLD="${SXMO_ROTATION_THRESHOLD:-"400"}"

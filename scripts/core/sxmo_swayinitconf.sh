@@ -6,7 +6,7 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(which sxmo_common.sh)"
+. sxmo_common.sh
 
 monitor="${SXMO_MONITOR:-"DSI-1"}"
 pwr="${SXMO_POWER_BUTTON:-"0:0:axp20x-pek"}"
