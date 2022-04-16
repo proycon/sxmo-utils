@@ -44,19 +44,19 @@ reset_audio() {
 }
 
 is_muted_mic() {
-	callaudiocli -S | grep -q "Mic muted: CALL_AUDIO_MIC_ON"
-}
-
-is_unmuted_mic() {
 	callaudiocli -S | grep -q "Mic muted: CALL_AUDIO_MIC_OFF"
 }
 
+is_unmuted_mic() {
+	callaudiocli -S | grep -q "Mic muted: CALL_AUDIO_MIC_ON"
+}
+
 mute_mic() {
-	callaudiocli -u 0
+	callaudiocli -u 1
 }
 
 unmute_mic() {
-	callaudiocli -u 1
+	callaudiocli -u 0
 }
 
 is_call_audio_mode() {
