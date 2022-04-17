@@ -7,6 +7,10 @@
 # so it is better to set them here.
 # set -eu
 
+# Include common aliases such as find='busybox find' to avoid breaking
+# expected coreutils environment.
+. scripts/core/sxmo_common.sh
+
 # This callback function will be invoked only once before loading specfiles.
 spec_helper_precheck() {
   # Available functions: info, warn, error, abort, setenv, unsetenv
