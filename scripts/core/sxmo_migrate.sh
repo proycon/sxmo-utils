@@ -166,6 +166,8 @@ checkhooks() {
 		${SXMO_DEVICE_NAME:+"$XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME/"*}; do
 		{ [ -e "$hook" ] && [ -f "$hook" ];} || continue #sanity check because shell enters loop even when there are no files in dir (null glob)
 
+		[ -h "$hook" ] && continue # shallow symlink
+
 		if printf %s "$hook" | grep -q "/$SXMO_DEVICE_NAME/"; then
 			# We also compare the device user hook to the system
 			# default version
