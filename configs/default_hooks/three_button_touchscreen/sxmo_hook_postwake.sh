@@ -19,8 +19,6 @@ if [ "$UNSUSPENDREASON" != "modem" ]; then
 	fi
 fi
 
-sxmo_hook_statusbar.sh time
-
 if [ "$UNSUSPENDREASON" = "rtc" ] || [ "$UNSUSPENDREASON" = "usb power" ]; then
 	if grep -q screenoff "$XDG_RUNTIME_DIR/sxmo.state"; then
 		# We stopped it in presuspend

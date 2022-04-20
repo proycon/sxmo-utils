@@ -27,5 +27,3 @@ if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.nosuspend" ]; then
 		timeout "$((${SXMO_UNLOCK_IDLE_TIME:-120}+10))" 'sxmo_daemons.sh start periodic_state_mutex_check sxmo_run_periodically.sh 10 sxmo_hook_check_state_mutexes.sh' \
 		resume 'sxmo_daemons.sh stop periodic_state_mutex_check'
 fi
-
-sxmo_superd_signal.sh sxmo_desktop_widget -USR2

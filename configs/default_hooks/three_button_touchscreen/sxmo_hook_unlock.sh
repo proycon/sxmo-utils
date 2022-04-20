@@ -44,5 +44,3 @@ else
 			;;
 	esac
 fi
-
-sxmo_superd_signal.sh sxmo_desktop_widget -USR2

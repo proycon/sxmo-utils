@@ -14,7 +14,6 @@
 
 light -S "$(cat "$XDG_RUNTIME_DIR"/sxmo.brightness.presuspend.state)"
 
-sxmo_hook_statusbar.sh time
 sxmo_hook_unlock.sh
 
 # Add here whatever you want to do

@@ -29,5 +29,3 @@ if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
 	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
 		timeout 8 "sxmo_hook_screenoff.sh"
 fi
-
-sxmo_superd_signal.sh sxmo_desktop_widget -USR2

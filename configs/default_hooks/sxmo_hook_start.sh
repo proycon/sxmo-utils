@@ -60,7 +60,7 @@ superctl start sxmo_desktop_widget
 
 # Periodically update some status bar components
 sxmo_hook_statusbar.sh all
-sxmo_daemons.sh start statusbar_periodics sxmo_run_periodically.sh 55 \
+sxmo_daemons.sh start statusbar_periodics sxmo_run_aligned.sh 60 \
 	sxmo_hook_statusbar.sh periodics
 
 # Monitor the battery

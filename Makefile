@@ -10,6 +10,7 @@ OPENRC:=1
 
 CC ?= $(CROSS_COMPILE)gcc
 PROGRAMS = \
+	programs/sxmo_aligned_sleep \
 	programs/sxmo_vibrate \
 	programs/sxmo_splitchar
 
@@ -20,14 +21,11 @@ test: shellcheck
 shellcheck:
 	find . -type f -name '*.sh' -print0 | xargs -0 shellcheck -x --shell=sh
 
-programs/sxmo_vibrate: programs/sxmo_vibrate.c
-	$(CC) -o programs/sxmo_vibrate programs/sxmo_vibrate.c
-
-programs/sxmo_splitchar: programs/sxmo_splitchar.c
-	$(CC) -o programs/sxmo_splitchar programs/sxmo_splitchar.c
+programs/%: programs/%.c
+	gcc -o $@ $<
 
 clean:
-	rm -f programs/sxmo_vibrate programs/sxmo_splitchar
+	rm -f programs/sxmo_aligned_sleep programs/sxmo_vibrate programs/sxmo_splitchar
 
 install: $(PROGRAMS)
 	cd configs && find . -type f -not -name sxmo-setpermissions -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
@@ -68,6 +66,7 @@ install: $(PROGRAMS)
 	# Bin
 	install -D -t $(DESTDIR)$(PREFIX)/bin scripts/*/*.sh
 
+	install -D programs/sxmo_aligned_sleep $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_vibrate $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_splitchar $(DESTDIR)$(PREFIX)/bin/
 

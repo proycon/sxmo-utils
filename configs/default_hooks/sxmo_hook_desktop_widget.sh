@@ -19,40 +19,23 @@ pangodraw() {
 }
 
 if [ -n "$WAYLAND_DISPLAY" ] && command -v wayout > /dev/null; then
+	trap 'kill -- $WAYOUT' TERM INT EXIT
+
 	# For wayland we use wayout:
-	tmp="$(mktemp)"
 	(
-		pangodraw
-		pangodraw
+		sleep 1 # wayout misses output sent to it as it's starting
 		while : ; do
-			sleep 60
 			pangodraw
+			sxmo_aligned_sleep 60
 		done
-	) >> "$tmp" &
-	PIDS="$!"
-
-	forceredraw() {
-		pangodraw >> "$tmp"
-		for PID in $PIDS; do
-			wait "$PID"
-		done
-	}
-	trap 'forceredraw' USR2
-
-	tail -f "$tmp" | wayout --font "FiraMono Nerd Font" --foreground-color "#ffffff" --fontsize "80" --height 200 --textalign center --feed-par &
-	PIDS="$! $PIDS"
-
-	finish() {
-		for PID in $PIDS; do
-			kill "$PID"
-		done
-		rm "$tmp"
-	}
-	trap 'finish' TERM INT EXIT
-
-	for PID in $PIDS; do
-		wait "$PID"
-	done
+	) | wayout --font "FiraMono Nerd Font" \
+		--foreground-color "#ffffff" \
+		--fontsize "80" \
+		--height 200 \
+		--textalign center \
+		--feed-par &
+	WAYOUT="$!"
+	wait
 elif [ -n "$DISPLAY" ] && command -v conky > /dev/null; then
 	# For X we use conky (if not already running):
 	exec conky -c "$(xdg_data_path sxmo/appcfg/conky24h.conf)" #24 hour clock
