@@ -116,7 +116,7 @@ case "$WMCLASS" in
 			$icon_lck Lock               ^ 0 ^ sxmo_hook_lock.sh
 			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_hook_screenoff.sh
 			$icon_zzz Suspend            ^ 0 ^ sxmo_hook_screenoff.sh && sxmo_suspend.sh
-			$icon_out Logout             ^ 0 ^ confirm Logout && (pkill -9 dwm || pkill -9 sway)
+			$icon_out Logout             ^ 0 ^ confirm Logout && (pkill dwm || swaymsg exit)
 			$icon_rol Toggle WM          ^ 0 ^ confirm Toggle && sxmo_wmtoggle.sh
 			$icon_rld Reboot             ^ 0 ^ confirm Reboot && sxmo_power.sh reboot
 			$icon_pwr Poweroff           ^ 0 ^ confirm Poweroff && sxmo_power.sh poweroff
