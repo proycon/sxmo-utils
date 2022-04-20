@@ -24,45 +24,45 @@ fi
 #order matters, only the first match gets executed
 exec lisgd "$@" -d "$LISGD_INPUT_DEVICE" ${orientation:+-o $orientation} \
 	-t "$LISGD_THRESHOLD" -T "$LISGD_THRESHOLD_PRESSED" \
-	-g '1,DRUL,BR,*,sxmo_hook_inputhandler.sh bottomrightcorner' \
-	-g '1,DLUR,BL,*,sxmo_hook_inputhandler.sh bottomleftcorner' \
-	-g '1,ULDR,TL,*,sxmo_hook_inputhandler.sh topleftcorner' \
-	-g '1,URDL,TR,*,sxmo_hook_inputhandler.sh toprightcorner' \
-	-g '1,LR,B,L,sxmo_hook_inputhandler.sh rightbottomedge' \
-	-g '1,RL,B,L,sxmo_hook_inputhandler.sh leftbottomedge' \
-	-g '1,LR,L,*,sxmo_hook_inputhandler.sh rightleftedge' \
-	-g '1,RL,R,*,sxmo_hook_inputhandler.sh leftrightedge' \
-	-g '1,DU,L,*,P,sxmo_hook_inputhandler.sh upleftedge' \
-	-g '1,UD,L,*,P,sxmo_hook_inputhandler.sh downleftedge' \
-	-g '1,LR,T,*,P,sxmo_hook_inputhandler.sh righttopedge' \
-	-g '1,RL,T,*,P,sxmo_hook_inputhandler.sh lefttopedge' \
-	-g "1,DU,B,*,sxmo_hook_inputhandler.sh upbottomedge" \
-	-g "1,UD,B,*,sxmo_hook_inputhandler.sh downbottomedge" \
-	-g "1,UD,T,*,sxmo_hook_inputhandler.sh downtopedge" \
-	-g "1,DU,T,*,sxmo_hook_inputhandler.sh uptopedge" \
-	-g "2,UD,T,*,sxmo_hook_inputhandler.sh twodowntopedge" \
-	-g "2,UD,B,*,sxmo_hook_inputhandler.sh twodownbottomedge" \
-	-g '1,DU,R,*,P,sxmo_hook_inputhandler.sh uprightedge' \
-	-g '1,UD,R,*,P,sxmo_hook_inputhandler.sh downrightedge' \
-	-g '1,LR,R,S,sxmo_hook_inputhandler.sh rightrightedge_short' \
-	-g '1,RL,L,S,sxmo_hook_inputhandler.sh leftrightedge_short' \
-	-g '1,RL,*,L,sxmo_hook_inputhandler.sh longoneleft' \
-	-g '1,LR,*,L,sxmo_hook_inputhandler.sh longoneright' \
-	-g '1,DU,*,L,sxmo_hook_inputhandler.sh longoneup' \
-	-g '1,UD,*,L,sxmo_hook_inputhandler.sh longonedown' \
-	-g '1,RL,*,M,sxmo_hook_inputhandler.sh mediumoneleft' \
-	-g '1,LR,*,M,sxmo_hook_inputhandler.sh mediumoneright' \
-	-g '1,DU,*,M,sxmo_hook_inputhandler.sh mediumoneup' \
-	-g '1,UD,*,M,sxmo_hook_inputhandler.sh mediumonedown' \
-	-g '1,RL,*,*,sxmo_hook_inputhandler.sh oneleft' \
-	-g '1,LR,*,*,sxmo_hook_inputhandler.sh oneright' \
-	-g '1,DU,*,*,sxmo_hook_inputhandler.sh oneup' \
-	-g '1,UD,*,*,sxmo_hook_inputhandler.sh onedown' \
-	-g '1,DRUL,*,*,sxmo_hook_inputhandler.sh upleft' \
-	-g '1,URDL,*,*,sxmo_hook_inputhandler.sh downleft' \
-	-g '1,DLUR,*,*,sxmo_hook_inputhandler.sh upright' \
-	-g '1,ULDR,*,*,sxmo_hook_inputhandler.sh downright' \
-	-g '2,RL,*,*,sxmo_hook_inputhandler.sh twoleft' \
-	-g '2,LR,*,*,sxmo_hook_inputhandler.sh tworight' \
-	-g '2,DU,*,*,sxmo_hook_inputhandler.sh twoup' \
-	-g '2,UD,*,*,sxmo_hook_inputhandler.sh twodown'
+	-g '1,DRUL,BR,*,setsid -f sxmo_hook_inputhandler.sh bottomrightcorner' \
+	-g '1,DLUR,BL,*,setsid -f sxmo_hook_inputhandler.sh bottomleftcorner' \
+	-g '1,ULDR,TL,*,setsid -f sxmo_hook_inputhandler.sh topleftcorner' \
+	-g '1,URDL,TR,*,setsid -f sxmo_hook_inputhandler.sh toprightcorner' \
+	-g '1,LR,B,L,setsid -f sxmo_hook_inputhandler.sh rightbottomedge' \
+	-g '1,RL,B,L,setsid -f sxmo_hook_inputhandler.sh leftbottomedge' \
+	-g '1,LR,L,*,setsid -f sxmo_hook_inputhandler.sh rightleftedge' \
+	-g '1,RL,R,*,setsid -f sxmo_hook_inputhandler.sh leftrightedge' \
+	-g '1,DU,L,*,P,setsid -f sxmo_hook_inputhandler.sh upleftedge' \
+	-g '1,UD,L,*,P,setsid -f sxmo_hook_inputhandler.sh downleftedge' \
+	-g '1,LR,T,*,P,setsid -f sxmo_hook_inputhandler.sh righttopedge' \
+	-g '1,RL,T,*,P,setsid -f sxmo_hook_inputhandler.sh lefttopedge' \
+	-g "1,DU,B,*,setsid -f sxmo_hook_inputhandler.sh upbottomedge" \
+	-g "1,UD,B,*,setsid -f sxmo_hook_inputhandler.sh downbottomedge" \
+	-g "1,UD,T,*,setsid -f sxmo_hook_inputhandler.sh downtopedge" \
+	-g "1,DU,T,*,setsid -f sxmo_hook_inputhandler.sh uptopedge" \
+	-g "2,UD,T,*,setsid -f sxmo_hook_inputhandler.sh twodowntopedge" \
+	-g "2,UD,B,*,setsid -f sxmo_hook_inputhandler.sh twodownbottomedge" \
+	-g '1,DU,R,*,P,setsid -f sxmo_hook_inputhandler.sh uprightedge' \
+	-g '1,UD,R,*,P,setsid -f sxmo_hook_inputhandler.sh downrightedge' \
+	-g '1,LR,R,S,setsid -f sxmo_hook_inputhandler.sh rightrightedge_short' \
+	-g '1,RL,L,S,setsid -f sxmo_hook_inputhandler.sh leftrightedge_short' \
+	-g '1,RL,*,L,setsid -f sxmo_hook_inputhandler.sh longoneleft' \
+	-g '1,LR,*,L,setsid -f sxmo_hook_inputhandler.sh longoneright' \
+	-g '1,DU,*,L,setsid -f sxmo_hook_inputhandler.sh longoneup' \
+	-g '1,UD,*,L,setsid -f sxmo_hook_inputhandler.sh longonedown' \
+	-g '1,RL,*,M,setsid -f sxmo_hook_inputhandler.sh mediumoneleft' \
+	-g '1,LR,*,M,setsid -f sxmo_hook_inputhandler.sh mediumoneright' \
+	-g '1,DU,*,M,setsid -f sxmo_hook_inputhandler.sh mediumoneup' \
+	-g '1,UD,*,M,setsid -f sxmo_hook_inputhandler.sh mediumonedown' \
+	-g '1,RL,*,*,setsid -f sxmo_hook_inputhandler.sh oneleft' \
+	-g '1,LR,*,*,setsid -f sxmo_hook_inputhandler.sh oneright' \
+	-g '1,DU,*,*,setsid -f sxmo_hook_inputhandler.sh oneup' \
+	-g '1,UD,*,*,setsid -f sxmo_hook_inputhandler.sh onedown' \
+	-g '1,DRUL,*,*,setsid -f sxmo_hook_inputhandler.sh upleft' \
+	-g '1,URDL,*,*,setsid -f sxmo_hook_inputhandler.sh downleft' \
+	-g '1,DLUR,*,*,setsid -f sxmo_hook_inputhandler.sh upright' \
+	-g '1,ULDR,*,*,setsid -f sxmo_hook_inputhandler.sh downright' \
+	-g '2,RL,*,*,setsid -f sxmo_hook_inputhandler.sh twoleft' \
+	-g '2,LR,*,*,setsid -f sxmo_hook_inputhandler.sh tworight' \
+	-g '2,DU,*,*,setsid -f sxmo_hook_inputhandler.sh twoup' \
+	-g '2,UD,*,*,setsid -f sxmo_hook_inputhandler.sh twodown'
