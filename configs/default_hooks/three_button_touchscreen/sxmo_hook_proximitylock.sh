@@ -1,0 +1,36 @@
+#!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright 2022 Sxmo Contributors
+
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
+. sxmo_common.sh
+
+# This hook enables the proximity lock.
+
+finish() {
+	sxmo_mutex.sh can_suspend free "Proximity lock is running"
+	sxmo_hook_"$INITIALSTATE".sh
+	# De-activate thresholds
+	printf 0 > "$prox_path/events/in_proximity_thresh_falling_value"
+	# The in_proximity_scale affects the maximum threshold value
+	# (see static const int stk3310_ps_max[4])
+	printf 6553 > "$prox_path/events/in_proximity_thresh_rising_value"
+	exit 0
+}
+
+INITIALSTATE="$(cat "$SXMO_STATE")"
+trap 'finish' TERM INT
+
+sxmo_mutex.sh can_suspend lock "Proximity lock is running"
+
+# Permissions for these set by udev rules.
+prox_raw_bus="$(find /sys/devices/platform/soc -name 'in_proximity_raw' | head -n1)"
+prox_path="$(dirname "$prox_raw_bus")"
+prox_name="$(cat "$prox_path/name")" # e.g. stk3310
+
+printf "%d" "${SXMO_PROX_FALLING:-50}" > "$prox_path/events/in_proximity_thresh_falling_value"
+printf "%d" "${SXMO_PROX_RISING:-100}" > "$prox_path/events/in_proximity_thresh_rising_value"
+
+# TODO: stdbuf not needed with linux-tools-iio >=5.17
+stdbuf -o L iio_event_monitor "$prox_name" | awk '/rising/{system("sxmo_hook_screenoff.sh")} /falling/{system("sxmo_hook_unlock.sh")}'

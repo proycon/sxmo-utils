@@ -99,7 +99,7 @@ case "$WMCLASS" in
 			$icon_lck Proximity Lock $(
 				sxmo_daemons.sh running proximity_lock -q &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
-			) ^ 1 ^ toggle_daemon 'Proximity Lock' proximity_lock sxmo_proximitylock.sh
+			) ^ 1 ^ toggle_daemon 'Proximity Lock' proximity_lock sxmo_hook_proximitylock.sh
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
 			$icon_trm Hooks                      ^ 0 ^ sxmo_hookmenu.sh
 			$icon_upc Upgrade Pkgs               ^ 0 ^ sxmo_terminal.sh sxmo_upgrade.sh

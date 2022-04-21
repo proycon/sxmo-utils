@@ -47,7 +47,7 @@ EOF
 
 	# do not duplicate proximity lock if already running
 	if ! sxmo_daemons.sh running proximity_lock -q; then
-		sxmo_daemons.sh start calling_proximity_lock sxmo_proximitylock.sh
+		sxmo_daemons.sh start calling_proximity_lock sxmo_hook_proximitylock.sh
 	fi
 
 	sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incall_menu
