@@ -13,7 +13,10 @@ finish() {
 	kill "$AWKPID"
 	rm "$tmp"
 
-	sxmo_hook_"$INITIALSTATE".sh
+	if ! grep -q "$INITIALSTATE" "$SXMO_STATE"; then
+		sxmo_hook_"$INITIALSTATE".sh
+	fi
+
 	# De-activate thresholds
 	printf 0 > "$prox_path/events/in_proximity_thresh_falling_value"
 	# The in_proximity_scale affects the maximum threshold value
@@ -51,9 +54,9 @@ awk '
 AWKPID=$!
 
 initial_distance="$(cat "$prox_raw_bus")"
-if [ "$initial_distance" -gt 50 ]; then
+if [ "$initial_distance" -gt 50 ] && [ "$INITIALSTATE" != "screenoff" ]; then
 	sxmo_hook_screenoff.sh
-else
+elif [ "$initial_distance" -lt 100 ] && [ "$INITIALSTATE" != "unlock" ]; then
 	sxmo_hook_unlock.sh
 fi
 
