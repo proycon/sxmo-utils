@@ -9,6 +9,10 @@
 # This hook enables the proximity lock.
 
 finish() {
+	kill "$EVENTMONITORPID"
+	kill "$AWKPID"
+	rm "$tmp"
+
 	sxmo_mutex.sh can_suspend free "Proximity lock is running"
 	sxmo_hook_"$INITIALSTATE".sh
 	# De-activate thresholds
@@ -32,5 +36,18 @@ prox_name="$(cat "$prox_path/name")" # e.g. stk3310
 printf "%d" "${SXMO_PROX_FALLING:-50}" > "$prox_path/events/in_proximity_thresh_falling_value"
 printf "%d" "${SXMO_PROX_RISING:-100}" > "$prox_path/events/in_proximity_thresh_rising_value"
 
+tmp="$(mktemp -u)"
+mkfifo "$tmp"
+
 # TODO: stdbuf not needed with linux-tools-iio >=5.17
-stdbuf -o L iio_event_monitor "$prox_name" | awk '/rising/{system("sxmo_hook_screenoff.sh")} /falling/{system("sxmo_hook_unlock.sh")}'
+stdbuf -o L iio_event_monitor "$prox_name" >> "$tmp" &
+EVENTMONITORPID=$!
+
+awk '
+	/rising/{system("sxmo_hook_screenoff.sh")}
+	/falling/{system("sxmo_hook_unlock.sh")}
+' "$tmp" &
+AWKPID=$!
+
+wait "$EVENTMONITORPID"
+wait "$AWKPID"
