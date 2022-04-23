@@ -49,5 +49,12 @@ awk '
 ' "$tmp" &
 AWKPID=$!
 
+initial_distance="$(cat "$prox_raw_bus")"
+if [ "$initial_distance" -gt 50 ]; then
+	sxmo_hook_screenoff.sh
+else
+	sxmo_hook_unlock.sh
+fi
+
 wait "$EVENTMONITORPID"
 wait "$AWKPID"
