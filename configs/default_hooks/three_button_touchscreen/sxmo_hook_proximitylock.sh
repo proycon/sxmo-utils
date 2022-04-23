@@ -13,13 +13,14 @@ finish() {
 	kill "$AWKPID"
 	rm "$tmp"
 
-	sxmo_mutex.sh can_suspend free "Proximity lock is running"
 	sxmo_hook_"$INITIALSTATE".sh
 	# De-activate thresholds
 	printf 0 > "$prox_path/events/in_proximity_thresh_falling_value"
 	# The in_proximity_scale affects the maximum threshold value
 	# (see static const int stk3310_ps_max[4])
 	printf 6553 > "$prox_path/events/in_proximity_thresh_rising_value"
+
+	sxmo_mutex.sh can_suspend free "Proximity lock is running"
 	exit 0
 }
 
