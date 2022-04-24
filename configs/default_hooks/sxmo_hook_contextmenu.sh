@@ -172,6 +172,13 @@ case "$WMCLASS" in
 		"
 		WINNAME=Sxiv
 		;;
+	*kasts*)
+		CHOICES="
+			$icon_mus Audio ^ 0 ^ sxmo_audio.sh
+			$icon_bth Bluetooth ^ 0 ^ sxmo_bluetoothmenu.sh
+			"
+		WINNAME="Kasts"
+		;;
 	*sthotkeys*)
 		#  St hotkeys
 		CHOICES="
