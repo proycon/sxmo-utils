@@ -60,11 +60,6 @@ _sxmo_load_environments() {
 	export BROWSER="${BROWSER:-firefox}"
 	export SHELL="${SHELL:-/bin/sh}"
 
-	#also fall back if user set something that doesn't exist:
-	command -v "$BROWSER" >/dev/null || export BROWSER=firefox
-	command -v "$EDITOR" >/dev/null || export EDITOR=vim
-	command -v "$SHELL" >/dev/null || export SHELL=/bin/sh
-
 	export PATH="$XDG_CONFIG_HOME/sxmo/hooks/:/usr/share/sxmo/default_hooks/:$PATH"
 
 	# The user can already forced a $SXMO_DEVICE_NAME value
