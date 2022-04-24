@@ -64,6 +64,15 @@ else
 	free_suspend_mutex "MPD is playing music"
 fi
 
+# mpris compatible media player
+if command -v playerctl; then
+	if test "$(playerctl status)" = "Playing"; then
+		lock_suspend_mutex "MPRIS client is playing"
+	else
+		free_suspend_mutex "MPRIS client is playing"
+	fi
+fi
+
 # photos_processing
 if pgrep -f postprocess.sh > /dev/null; then
 	lock_suspend_mutex "Camera postprocessing"
