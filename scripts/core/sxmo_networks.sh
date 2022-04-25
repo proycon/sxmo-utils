@@ -10,7 +10,7 @@
 
 set -e
 
-VPNDEVICE="$(nmcli con show | grep -E 'wireguard|vpn' | awk '{ print $1 }')"
+VPNDEVICE="$(nmcli con show --active | grep -E 'wireguard|vpn' | awk '{ print $1 }')"
 
 nofail() {
 	"$@" || return 0
