@@ -16,7 +16,7 @@ set -e
 
 while : ; do
 	PICKED="$(
-		cat <<EOF | sxmo_dmenu_with_kb.sh -l 3 -c -p "PIN:"
+		cat <<EOF | sxmo_dmenu_with_kb.sh -l 3 -p "PIN:"
 $icon_cls Cancel
 0000
 1234
