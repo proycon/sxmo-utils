@@ -30,15 +30,19 @@ fi
 if [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
 	sxmo_daemons.sh stop idle_locker
 else
-	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
-		timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" 'sh -c "
-			case "$SXMO_WM" in
-				sway)
-					swaymsg mode default
-					;;
-			esac
-			exec sxmo_hook_lock.sh
-		"'
+	case "$SXMO_WM" in
+		sway)
+			sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
+				timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" 'sh -c "
+					swaymsg mode default;
+					exec sxmo_hook_lock.sh
+				"'
+			;;
+		dwm)
+			sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
+				timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" "sxmo_hook_lock.sh"
+			;;
+	esac
 fi
 
 sxmo_superd_signal.sh sxmo_desktop_widget -USR2
