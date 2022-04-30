@@ -60,7 +60,8 @@ sendtextmenu() {
 		echo 'Enter text message here' > "$DRAFT"
 	fi
 
-	sxmo_terminal.sh "$EDITOR" "$DRAFT"
+	# shellcheck disable=SC2086
+	sxmo_terminal.sh $EDITOR "$DRAFT"
 
 	while true
 	do
@@ -184,7 +185,8 @@ conversationloop() {
 			touch "$DRAFT"
 		fi
 
-		"$EDITOR" "$DRAFT"
+		# shellcheck disable=SC2086
+		$EDITOR "$DRAFT"
 		sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT" || continue
 		rm "$DRAFT"
 	done

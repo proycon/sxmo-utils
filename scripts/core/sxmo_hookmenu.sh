@@ -29,7 +29,8 @@ edit() {
 	copy "$1"
 	cd "$XDG_CONFIG_HOME/sxmo/hooks" || return
 	file="$(filename "$1")"
-	sxmo_terminal.sh "$EDITOR" "$XDG_CONFIG_HOME/sxmo/hooks/$file" || true # shallow
+	# shellcheck disable=SC2086
+	sxmo_terminal.sh $EDITOR "$XDG_CONFIG_HOME/sxmo/hooks/$file" || true # shallow
 }
 
 reset() {

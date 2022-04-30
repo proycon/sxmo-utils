@@ -58,7 +58,8 @@ resolvedifference() {
 				set -- "$DIFFTOOL" "$defaultfile" "$userfile"
 			else
 				diff -u "$defaultfile" "$userfile" > "${XDG_RUNTIME_DIR}/migrate.diff"
-				set -- "$EDITOR" "$userfile" "$defaultfile" "${XDG_RUNTIME_DIR}/migrate.diff"
+				# shellcheck disable=SC2086
+				set -- $EDITOR "$userfile" "$defaultfile" "${XDG_RUNTIME_DIR}/migrate.diff"
 			fi
 
 			if ! "$@"; then
