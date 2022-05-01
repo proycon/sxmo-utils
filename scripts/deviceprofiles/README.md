@@ -37,6 +37,10 @@ Further reading:
 ## Device profile variables used by sxmo
 Supported variables used by sxmo are:
 
+### Modem related
+
+export SXMO_EG25		| If the modem requires EG25-manager, set this to 1. If the phone does not require EG25-manager, leave this unset. EG25-manager is found on the pinephone/pinephonepro.
+
 ### Screen-related
 SXMO_ROTATION_POLL_TIME		| Polling time for rotate in seconds (decimals allowed e.g. .1) [default: 1]
 

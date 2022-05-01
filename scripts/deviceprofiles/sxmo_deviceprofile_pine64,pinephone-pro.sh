@@ -10,3 +10,4 @@ export SXMO_VOLUME_BUTTON="1:1:adc-keys"
 export SXMO_MODEMRTC=12
 export SXMO_POWERRTC=5
 export SXMO_WAKEUPRTC=3
+export SXMO_EG25=1

@@ -88,12 +88,14 @@ case "$1" in
 			exit 1
 		fi
 
-		sxmo_notify_user.sh "Starting eg25-manager..."
+		if [ "$SXMO_EG25" = 1 ]; then
+			sxmo_notify_user.sh "Starting eg25-manager..."
 
-		daemon_start eg25-manager
-		if ! daemon_isrunning eg25-manager; then
-			sxmo_notify_user.sh --urgency=critical "The eg25-manager failed to start!"
-			exit 1
+			daemon_start eg25-manager
+			if ! daemon_isrunning eg25-manager; then
+				sxmo_notify_user.sh --urgency=critical "The eg25-manager failed to start!"
+				exit 1
+			fi
 		fi
 
 		sxmo_notify_user.sh --urgency=critical "Do not restart or reboot for 120s!"
@@ -109,14 +111,16 @@ case "$1" in
 			exit 1
 		fi
 
-		# stop eg25-manager first.
-		# eg25-manager takes 30s to shutdown (which is unnecessary but will cause problems
-		# if we try to start it within that period)
-		# It is up to the user to put post_stop() { sleep 32 } in /etc/init.d/eg25-manager
-		sxmo_notify_user.sh "Stopping eg25-manager. WARNING: please wait 30s before restarting."
+		if [ "$SXMO_EG25" = 1 ]; then
+			# stop eg25-manager first.
+			# eg25-manager takes 30s to shutdown (which is unnecessary but will cause problems
+			# if we try to start it within that period)
+			# It is up to the user to put post_stop() { sleep 32 } in /etc/init.d/eg25-manager
+			sxmo_notify_user.sh "Stopping eg25-manager. WARNING: please wait 30s before restarting."
 
-		if ! daemon_stop eg25-manager; then
-			sxmo_notify_user.sh --urgency=critical "The eg25-manager failed to stop!"
+			if ! daemon_stop eg25-manager; then
+				sxmo_notify_user.sh --urgency=critical "The eg25-manager failed to stop!"
+			fi
 		fi
 
 		sxmo_notify_user.sh "Stopping modemmanager..."
@@ -131,7 +135,9 @@ case "$1" in
 		sxmo_notify_user.sh "Finished stopping daemons."
 		;;
 	status)
-		daemon_isrunning eg25-manager || exit 1
+		if [ "$SXMO_EG25" = 1 ]; then
+			daemon_isrunning eg25-manager || exit 1
+		fi
 		daemon_isrunning modemmanager || exit 1
 		;;
 esac
