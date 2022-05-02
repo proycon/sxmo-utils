@@ -65,6 +65,10 @@ checkforlostmms() {
 					[ "$FORCE" -eq 1 ] && processmms "/org/ofono/mms/modemmanager/$line" "Received"
 
 					;;
+				expired)
+					stderr "This mms is status:expired."
+					[ "$FORCE" -eq 1 ] && processmms "/org/ofono/mms/modemmanager/$line" "Expired"
+					;;
 				*)
 					stderr "This mms has a bad message type: '$MESSAGE_STATUS'. Bailing."
 					;;
@@ -165,6 +169,13 @@ processmms() {
 		stderr "The mms ($MESSAGE_PATH) states: 'Message not found'. Deleting."
 		dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
 		printf "%s\tdebug_mms\t%s\t%s\n" "$(date +%FT%H:%M:%S%z)" "NULL" "ERROR: Message not found." >> "$SXMO_LOGDIR/modemlog.tsv"
+		return
+	fi
+
+	if [ "$MESSAGE_TYPE" = "Expired" ]; then
+		stderr "The mms ($MESSAGE_PATH) has status:expired! Deleting."
+		dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
+		printf "%s\tdebug_mms\t%s\t%s\n" "$(date +%FT%H:%M:%S%z)" "NULL" "expired" >> "$SXMO_LOGDIR/modemlog.tsv"
 		return
 	fi
 
