@@ -62,3 +62,5 @@ fi
 
 wait "$EVENTMONITORPID"
 wait "$AWKPID"
+
+finish
