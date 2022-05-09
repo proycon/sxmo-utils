@@ -29,7 +29,7 @@ fi
 
 sxmo_multikey.sh clear
 
-swaymsg -- bindsym --input-device="$pwr" XF86PowerOff exec sxmo_multikey.sh \
+swaymsg -- bindsym --locked --input-device="$pwr" XF86PowerOff exec sxmo_multikey.sh \
 	powerbutton \
 	powerbutton_one \
 	powerbutton_two \
@@ -37,14 +37,14 @@ swaymsg -- bindsym --input-device="$pwr" XF86PowerOff exec sxmo_multikey.sh \
 
 if ! [ "$vols" = "none" ]; then
 	for vol in $vols; do
-		swaymsg -- bindsym --input-device="$vol" XF86AudioRaiseVolume exec \
+		swaymsg -- bindsym --locked --input-device="$vol" XF86AudioRaiseVolume exec \
 			sxmo_multikey.sh \
 			volup \
 			volup_one \
 			volup_two \
 			volup_three
 
-		swaymsg -- bindsym --input-device="$vol" XF86AudioLowerVolume exec \
+		swaymsg -- bindsym --locked --input-device="$vol" XF86AudioLowerVolume exec \
 			sxmo_multikey.sh \
 			voldown \
 			voldown_one \
