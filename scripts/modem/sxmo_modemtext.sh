@@ -67,7 +67,10 @@ sendtextmenu() {
 		ATTACHMENTS=
 		if [ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ]; then
 			# shellcheck disable=SC2016
-			ATTACHMENTS="$(tr '\n' '\0' < "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" | xargs -0 -I{} sh -c 'printf " 📎 "$(basename {})" :: {}\n"')"
+			ATTACHMENTS="$(
+				tr '\n' '\0' < "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" |
+				xargs -0 -I{} sh -c 'printf "%s %s %s :: %s\n" "" "" "$(basename "{}")" "{}"'
+			)"
 		fi
 
 		RECIPIENTS=
@@ -94,7 +97,7 @@ sendtextmenu() {
 				fi
 				;;
 			# Remove Attachment
-			" 📎"*)
+			" "*)
 				FILE="$(printf %s "$CONFIRM" | awk -F' :: ' '{print $2}')"  
 				sed -i "\|$FILE|d" "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 				if [ ! -s "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ] ; then
