@@ -11,7 +11,7 @@ LISGD_THRESHOLD_PRESSED="${SXMO_LISGD_THRESHOLD_PRESSED:-60}"
 LISGD_INPUT_DEVICE="${SXMO_LISGD_INPUT_DEVICE:-"/dev/input/touchscreen"}"
 
 if [ dwm = "$SXMO_WM" ]; then
-	case "$(xrandr | grep DSI-1 | cut -d' ' -f 5)" in
+	case "$(xrandr | grep primary | cut -d' ' -f 5)" in
 		right) orientation=1;;
 		left) orientation=3;;
 		inverted) orientation=2;;

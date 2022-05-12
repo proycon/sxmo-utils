@@ -43,7 +43,7 @@ case "$SXMO_WM" in
 		superctl start autocutsel
 		superctl start autocutsel-primary
 		superctl start sxmo-x11-status
-		xrandr --output "$SXMO_MONITOR" --primary
+		[ -n "$SXMO_MONITOR" ] && xrandr --output "$SXMO_MONITOR" --primary
 		;;
 esac
 
