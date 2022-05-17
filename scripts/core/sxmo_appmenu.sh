@@ -6,7 +6,7 @@
 # shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
 . sxmo_hook_icons.sh
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 confirm() {
 	PICKED="$(printf "Yes\nNo\n" | sxmo_dmenu.sh -p "Confirm $1")"
@@ -118,10 +118,16 @@ mainloop() {
 		cut -d'^' -f1 |
 		sxmo_dmenu.sh -i -p "$WINNAME"
 	)" || quit
-	LOOP="$(printf "%s\n" "$CHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f2)"
-	CMD="$(printf "%s\n" "$CHOICES" | grep -m1 -F "$PICKED" | cut -d '^' -f3)"
 
-	printf "%s\n" "sxmo_appmenu: Eval: <$CMD> from picked <$PICKED> with loop <$LOOP>">&2
+	CHOICE="$(echo "$CHOICES" | awk -F '^' -v picked="$PICKED" \
+		'$1 == picked {print $2 "^" $3}'
+	)"
+
+	LOOP="$(echo "$CHOICE" | cut -d '^' -f1)"
+	CMD="$(echo "$CHOICE" | cut -d '^' -f2)"
+
+	printf 'sxmo_appmenu: Eval: <%s> from picked <%s> with loop <%s>\n' \
+		"$CMD" "$PICKED" "$LOOP" >&2
 
 	if printf %s "$LOOP" | grep -q 1; then
 		eval "$CMD"
