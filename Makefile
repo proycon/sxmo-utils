@@ -18,7 +18,7 @@ all: $(PROGRAMS)
 test: shellcheck
 
 shellcheck:
-	shellcheck -x scripts/*/*.sh
+	find . -type f -name '*.sh' -print0 | xargs -0 shellcheck -x --shell=sh
 
 programs/sxmo_vibrate: programs/sxmo_vibrate.c
 	$(CC) -o programs/sxmo_vibrate programs/sxmo_vibrate.c
