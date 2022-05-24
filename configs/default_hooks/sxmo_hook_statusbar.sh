@@ -11,8 +11,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-VPNDEVICE="$(nmcli con show 2>/dev/null | grep -E 'wireguard|vpn' | awk '{ print $1 }')"
-
 set_time() {
 	date "+${SXMO_STATUS_DATE_FORMAT:-%H:%M}" | head -c -1 | sxmo_status.sh add 99-time
 }
