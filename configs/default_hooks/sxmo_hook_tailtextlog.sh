@@ -11,5 +11,12 @@
 NUMBER="$1"
 CONTACTNAME="$(sxmo_contacts.sh | grep ": ${NUMBER}$" | cut -d: -f1)"
 [ "???" = "$CONTACTNAME" ] && CONTACTNAME="$CONTACTNAME ($NUMBER)"
+TERMNAME="$NUMBER SMS"
+export TERMNAME
 
-TERMNAME="$NUMBER SMS" sxmo_terminal.sh sh -c "tail -n9999 -f \"$SXMO_LOGDIR/$NUMBER/sms.txt\" | sed \"s|$NUMBER|$CONTACTNAME|g\""
+# If it's already open, switch to it.
+if [ "$SXMO_WM" = "sway" ]; then
+	regesc_termname="$(echo "$TERMNAME" | sed 's|+|\\+|g')"
+	swaymsg "[title=\"^$regesc_termname\$\"]" focus && exit 0
+fi
+sxmo_terminal.sh sh -c "tail -n9999 -f \"$SXMO_LOGDIR/$NUMBER/sms.txt\" | sed \"s|$NUMBER|$CONTACTNAME|g\""
