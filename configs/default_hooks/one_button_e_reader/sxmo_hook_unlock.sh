@@ -4,6 +4,8 @@
 
 # This hook is called when the system becomes unlocked again
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
 sxmo_log "transitioning to stage unlock"

@@ -4,6 +4,8 @@
 
 # This script is called prior to suspending
 
+# include common definitions
+# shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
 pkill clickclack
