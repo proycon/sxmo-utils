@@ -16,8 +16,7 @@ write_line() {
 
 get_title() {
 	title=""
-	# Process substitution because source won't work with data piped from stdin.
-	. <(head "$1" | grep '# title="[^\\"]*"' | sed 's/^# //g')
+	eval "$(head "$1" | grep '# title="[^\\"]*"' | sed 's/^# //g')"
 	if [ -n "$title" ]; then
 		echo "$title"
 	else
