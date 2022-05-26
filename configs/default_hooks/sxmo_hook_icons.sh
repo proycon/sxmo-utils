@@ -121,6 +121,7 @@ icon_vim=''
 icon_wif=""
 icon_win="" #window
 icon_wn2=""
+icon_wrh=""
 icon_wtr="" #weather
 icon_ytb="" #youtube
 icon_zmi=""

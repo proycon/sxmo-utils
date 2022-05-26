@@ -43,10 +43,7 @@ case "$WMCLASS" in
 				sxmo_daemons.sh running modem_monitor -q &&
 				printf %b "$icon_ton ^ 1 ^ sxmo_daemons.sh stop modem_monitor" || printf %b "$icon_tof ^ 1 ^ sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh"
 			) && sxmo_hook_statusbar.sh modem_monitor
-			$icon_phn Modem Daemons $(
-				sxmo_modemdaemons.sh status > /dev/null &&
-				printf %b "$icon_ton ^ 1 ^ sxmo_modemdaemons.sh stop" || printf %b "$icon_tof ^ 1 ^ sxmo_modemdaemons.sh start"
-			) && sxmo_hook_statusbar.sh modem
+			$icon_wrh Restart System Daemons     ^ 1 ^ sxmo_hook_restart_modem_daemons.sh && sxmo_hook_statusbar.sh modem
 			$icon_inf Modem Info                 ^ 0 ^ sxmo_modeminfo.sh
 			$icon_phl Modem Log                  ^ 0 ^ sxmo_modemlog.sh
 			$icon_img Config MMS                 ^ 1 ^ sxmo_mmsdconfig.sh

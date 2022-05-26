@@ -17,7 +17,6 @@ gracefulexit() {
 	sxmo_daemons.sh stop modem_monitor_text
 	sxmo_daemons.sh stop modem_monitor_finished_voice
 	sxmo_daemons.sh stop modem_monitor_state_change
-	sxmo_daemons.sh stop modem_monitor_check_daemons
 	sxmo_daemons.sh stop modem_monitor_mms
 	sxmo_daemons.sh stop modem_monitor_vvm
 	exit
