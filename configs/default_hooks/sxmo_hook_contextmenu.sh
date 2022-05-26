@@ -360,13 +360,12 @@ case "$WMCLASS" in
 				$([ -d "$SXMO_LOGDIR/$number/attachments" ] && echo "$icon_att View Attachments ^ 1 ^ sxmo_files.sh $SXMO_LOGDIR/$number/attachments --date-sort")
 				$(
 
-				count=0
-				printf %s "$number" | xargs pn find | while read -r line; do
-					count=$((count+1))
+				found_numbers="$(printf %s "$number" | xargs -I{} pn find "{}")"
+				printf "%s\n" "$found_numbers" | while read -r line; do
 					sxmo_contacts.sh --name "$line" | grep -q '???' && echo "$icon_usr Add $line ^ 1 ^ sxmo_contactmenu.sh newcontact $line"
 				done
 				# if this is a group chain, then allow to add entire chain as a contact too
-				if [ "$count" -gt 1 ]; then
+				if [ "$(printf "%s\n" "$found_numbers" | wc -l)" -gt 1 ]; then
 					sxmo_contacts.sh --name "$number" | grep -q '???' && echo "$icon_usr Add $number ^ 1 ^ sxmo_contactmenu.sh newcontact $number"
 				fi
 
