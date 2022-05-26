@@ -325,14 +325,14 @@ case "$WMCLASS" in
 			WINNAME=less
 		elif printf %s "$WMNAME" | grep -qi -w "git \(blame\|diff\|grep\|help\|log\|stash\|tag\|var\)"; then
 			# These git commands only launch the pager.
-			exec "$0" "$WMCLASS ${PAGER:less}"
+			exec "$0" "$WMCLASS ${PAGER:-less}"
 		elif printf %s "$WMNAME" | grep -qi -w "git \(add\|bugreport\|commit\|merge\|notes\|rebase\|replace\|send-email\|svn\)"; then
 			# These git commands only launch the editor.
 			exec "$0" "$WMCLASS $EDITOR"
 		elif printf %s "$WMNAME" | grep -qi -w "git"; then
 			# git am, branch, config, tag (and other commands which launch both).
 			CHOICES="
-				$icon_fil ${PAGER:less} menu ^ 0 ^ sxmo_appmenu.sh '$WMCLASS ${PAGER:less}'
+				$icon_fil ${PAGER:-less} menu ^ 0 ^ sxmo_appmenu.sh '$WMCLASS ${PAGER:-less}'
 				$icon_edt $EDITOR menu ^ 0 ^ sxmo_appmenu.sh '$WMCLASS $EDITOR'
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"

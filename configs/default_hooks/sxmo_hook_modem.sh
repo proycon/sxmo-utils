@@ -8,9 +8,9 @@
 . sxmo_common.sh
 
 # see networkmanager documentation for state names
-oldstate="$1"
+# oldstate="$1"
 newstate="$2"
-reason="$3" # 0 or 1
+# reason="$3" # 0 or 1
 
 case "$newstate" in
 	"locked")
