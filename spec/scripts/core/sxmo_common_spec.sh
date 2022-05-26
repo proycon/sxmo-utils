@@ -1,8 +1,5 @@
-#!/bin/sh
-
 # shellcheck disable=SC2155
-# SPDX-License-Identifier: AGPL-3.0-only
-# Copyright 2022 Sxmo Contributors
+export PATH="$PATH:$(pwd)/scripts/core"
 
 # This file is to investigate whether sxmo_common.sh is loaded in tests
 
