@@ -8,7 +8,7 @@ sources:
 tasks:
   - shellcheck: |
       cd sxmo-utils
-      shellcheck -x scripts/*/*.sh
+      find . -type f -name '*.sh' -print0 | xargs -0 shellcheck -x --shell=sh
   - shellspec: |
       cd sxmo-utils
       shellspec
