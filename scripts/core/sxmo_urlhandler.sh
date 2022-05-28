@@ -43,7 +43,7 @@ COMMAND="$(
 		$(command -v netsurf    >/dev/null && echo 'netsurf URL')
 		$(command -v surf       >/dev/null && echo 'surf URL')
 		$(command -v echo       >/dev/null && echo 'echo URL | xsel -i')
-		$(command -v youtube-dl >/dev/null && echo 'youtube-dl -o- URL | mpv -ao=alsa -v -')
+		$(command -v youtube-dl >/dev/null && echo 'youtube-dl -o- URL | mpv -v -')
 		$(command -v youtube-dl >/dev/null && echo 'youtube-dl URL')
 		$(command -v curl       >/dev/null && echo "curl URL | $EDITOR -")
 		$(command -v wget       >/dev/null && echo 'wget URL')

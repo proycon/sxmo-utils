@@ -49,7 +49,7 @@ recordconfirm() {
 		)"
 
 		case "$PICK" in
-			"Playback: "*) sxmo_terminal.sh mpv -ao=alsa -v "$FILE" ;;
+			"Playback: "*) sxmo_terminal.sh mpv -v "$FILE" ;;
 			"Delete Recording")
 				rm "$FILE"
 				echo "File deleted." | sxmo_dmenu.sh
