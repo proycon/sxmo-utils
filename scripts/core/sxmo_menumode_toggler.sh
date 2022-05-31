@@ -15,8 +15,8 @@ setup_xkb() {
 
 swaymsg -t subscribe -m "['mode']" | while read -r message; do
 	if printf %s "$message" | grep -q menu; then
-		setup_xkb /usr/share/sxmo/sway/xkb_mobile_movement_buttons
+		setup_xkb /usr/share/sxmo/xkb/xkb_mobile_movement_buttons
 	else
-		setup_xkb /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+		setup_xkb /usr/share/sxmo/xkb/xkb_mobile_normal_buttons
 	fi
 done
