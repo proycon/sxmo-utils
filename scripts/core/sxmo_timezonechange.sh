@@ -25,9 +25,10 @@ change_arch() {
 }
 
 menu() {
+	zoneinfo_dir=$(xdg_data_path zoneinfo)
 	T="$(
-		find /usr/share/zoneinfo -type f |
-		sed  's#^/usr/share/zoneinfo/##g' |
+		find "$zoneinfo_dir" -type f |
+		sed  "s#^${zoneinfo_dir}/##g" |
 		sort |
 		sxmo_dmenu_with_kb.sh -p Timezone -i
 	)" || exit 0

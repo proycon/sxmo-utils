@@ -8,7 +8,7 @@
 
 MIMEAPPS="${XDG_CONFIG_HOME:-$HOME/.config}/mimeapps.list"
 DESKTOPS_CACHED_MIMEAPPS="${XDG_CONFIG_HOME:-$HOME/.config}/desktops.mimeapps.list"
-DESKTOP_DIRS="/usr/share/sxmo/applications/|/usr/share/applications/|/usr/local/share/applications/|${XDG_DATA_HOME:-$HOME/.local/share}/applications/"
+DESKTOP_DIRS="$(xdg_data_path sxmo/applications/ 0 "|")|$(xdg_data_path applications 0 "|")|${XDG_DATA_HOME:-$HOME/.local/share}/applications/"
 attached=
 debug=
 TERMCMD="${TERMCMD:-st -e}"

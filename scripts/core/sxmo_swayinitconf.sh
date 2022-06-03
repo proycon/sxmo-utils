@@ -17,13 +17,13 @@ swaymsg -- output "$monitor" scale "$scale"
 
 swaymsg -- input "$pwr" repeat_delay 200
 swaymsg -- input "$pwr" repeat_rate 15
-swaymsg -- input "$pwr" xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+swaymsg -- input "$pwr" xkb_file "$(xdg_data_path sxmo/sway/xkb_mobile_normal_buttons)"
 
 if ! [ "$vols" = "none" ]; then
 	for vol in $vols; do
 		swaymsg -- input "$vol" repeat_delay 200
 		swaymsg -- input "$vol" repeat_rate 15
-		swaymsg -- input "$vol" xkb_file /usr/share/sxmo/sway/xkb_mobile_normal_buttons
+		swaymsg -- input "$vol" xkb_file "$(xdg_data_path sxmo/sway/xkb_mobile_normal_buttons)"
 	done
 fi
 

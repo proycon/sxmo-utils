@@ -37,7 +37,7 @@ fi
 write_line "$icon_cfg Edit Userscripts" "sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/userscripts/*"
 
 # System Scripts
-find /usr/share/sxmo/appscripts -type f -o -type l | sort -f | while read -r script; do
+find "$(xdg_data_path sxmo/appscripts)" -type f -o -type l | sort -f | while read -r script; do
 	title="$(get_title "$script")"
 	write_line "$title" "$script"
 done

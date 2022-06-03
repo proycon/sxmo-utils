@@ -8,5 +8,7 @@
 #The following parameters are provided:
 #$1 = Number
 #$2 = Text
+# shellcheck source=scripts/core/sxmo_common.sh
+. sxmo_common.sh
 
-mpv --quiet --no-video /usr/share/sxmo/notify.ogg
+mpv --quiet --no-video "$(xdg_data_path sxmo/notify.ogg)"

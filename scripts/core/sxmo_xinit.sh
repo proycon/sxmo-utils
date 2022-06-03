@@ -4,6 +4,7 @@
 
 # shellcheck source=scripts/core/sxmo_common.sh
 . /etc/profile.d/sxmo_init.sh
+. sxmo_common.sh
 
 envvars() {
 	export SXMO_WM=dwm
@@ -15,10 +16,10 @@ envvars() {
 }
 
 defaults() {
-	xmodmap /usr/share/sxmo/appcfg/xmodmap_caps_esc
+	xmodmap "$(xdg_data_path sxmo/appcfg/xmodmap_caps_esc)"
 	xsetroot -mod 29 29 -fg '#0b3a4c' -bg '#082430'
 	xset s off -dpms
-	for xr in /usr/share/sxmo/appcfg/*.xr; do
+	for xr in "$(xdg_data_path sxmo/appcfg)"/*.xr; do
 		xrdb -merge "$xr"
 	done
 	[ -e "$HOME"/.Xresources ] && xrdb -merge "$HOME"/.Xresources

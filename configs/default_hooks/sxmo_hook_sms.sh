@@ -13,4 +13,7 @@
 # Finally, mms may include this parameter:
 # $4 = Group Contact Name or Number (if number not in contacts)
 
-mpv --quiet --no-video /usr/share/sxmo/notify.ogg
+# shellcheck source=scripts/core/sxmo_common.sh
+. sxmo_common.sh
+
+mpv --quiet --no-video "$(xdg_data_path sxmo/notify.ogg)"

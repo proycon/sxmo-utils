@@ -38,7 +38,7 @@ case "$SXMO_WM" in
 		superctl start "$1"
 
 		# Set a pretty wallpaper
-		feh --bg-fill /usr/share/sxmo/background.jpg
+		feh --bg-fill "$(xdg_data_path sxmo/background.jpg)"
 
 		superctl start autocutsel
 		superctl start autocutsel-primary

@@ -7,7 +7,7 @@
 . "$(dirname "$0")/sxmo_common.sh"
 
 printf "Sxmo "
-cat /usr/share/sxmo/version
+cat "$(xdg_data_path sxmo/version)"
 case "$SXMO_WM" in
 	dwm)
 		/usr/bin/dwm -v

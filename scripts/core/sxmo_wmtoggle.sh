@@ -2,20 +2,23 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
+# shellcheck source=scripts/core/sxmo_common.sh
+. sxmo_common.sh
+
 not_ready_yet() {
 	sxmo_notify_user.sh "Your device looks not ready yet"
 	exit 1
 }
 
 case "$(realpath /var/lib/tinydm/default-session.desktop)" in
-	/usr/share/wayland-sessions/swmo.desktop)
+	"$(realpath "$(xdg_data_path wayland-sessions/swmo.desktop)")")
 		command -v dwm >/dev/null || not_ready_yet
-		doas tinydm-set-session -f -s /usr/share/xsessions/sxmo.desktop
+		doas tinydm-set-session -f -s "$(xdg_data_path xsessions/sxmo.desktop)"
 		pkill sway
 		;;
-	/usr/share/xsessions/sxmo.desktop)
+	"$(realpath "$(xdg_data_path xsessions/sxmo.desktop)")")
 		command -v sway >/dev/null || not_ready_yet
-		doas tinydm-set-session -f -s /usr/share/wayland-sessions/swmo.desktop
+		doas tinydm-set-session -f -s "$(xdg_data_path wayland-sessions/swmo.desktop)"
 		pkill dwm
 		;;
 esac

@@ -8,6 +8,10 @@
 # $1 = Contact Name or Number (if not in contacts)
 
 # Only vibrate if you already got an active call
+
+# shellcheck source=scripts/core/sxmo_common.sh
+. sxmo_common.sh
+
 if sxmo_modemcall.sh list_active_calls \
 	| grep -v ringing-in \
 	| grep -q .; then
@@ -23,7 +27,7 @@ if ! sxmo_modemcall.sh list_active_calls \
 fi
 
 # Start the mpv ring until another hook kill it or the max (10) is reached
-mpv --quiet --no-video --loop=10 /usr/share/sxmo/ring.ogg &
+mpv --quiet --no-video --loop=10 "$(xdg_data_path sxmo/ring.ogg)" &
 MPVID=$!
 echo "$MPVID" > "$XDG_RUNTIME_DIR/sxmo.ring.pid"
 

@@ -15,7 +15,7 @@ if [ -f "$XDG_CONFIG_HOME/sxmo/sfeedrc" ]; then
 elif [ -f "$HOME/.sfeed/sfeedrc" ]; then
 	SFEEDCONF="$HOME/.sfeed/sfeedrc"
 else
-	SFEEDCONF=/usr/share/sxmo/appcfg/sxmo_sfeedrc
+	SFEEDCONF=$(xdg_data_path sxmo/appcfg/sxmo_sfeedrc)
 fi
 
 die() {

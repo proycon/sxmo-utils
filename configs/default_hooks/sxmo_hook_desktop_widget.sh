@@ -4,6 +4,9 @@
 
 # This hook launches a desktop widget (e.g. a clock) (blocking)
 
+# shellcheck source=scripts/core/sxmo_common.sh
+. sxmo_common.sh
+
 pangodraw() {
 	date +"<b>%H</b>:%M" #date with some pango markup syntax (https://docs.gtk.org/Pango/pango_markup.html)
 	date +"<small><small><small><small>%a %d %b %Y</small></small></small></small>"
@@ -52,6 +55,6 @@ if [ -n "$WAYLAND_DISPLAY" ] && command -v wayout > /dev/null; then
 	done
 elif [ -n "$DISPLAY" ] && command -v conky > /dev/null; then
 	# For X we use conky (if not already running):
-	exec conky -c /usr/share/sxmo/appcfg/conky24h.conf #24 hour clock
-	#exec conky -c /usr/share/sxmo/appcfg/conky.conf #12 hour clock (am/pm)
+	exec conky -c "$(xdg_data_path sxmo/appcfg/conky24h.conf)" #24 hour clock
+	#exec conky -c "$(xdg_data_path sxmo/appcfg/conky.conf)" #12 hour clock (am/pm)
 fi

@@ -171,11 +171,11 @@ checkhooks() {
 		if printf %s "$hook" | grep -q "/$SXMO_DEVICE_NAME/"; then
 			# We also compare the device user hook to the system
 			# default version
-			DEFAULT_PATH="/usr/share/sxmo/default_hooks/$SXMO_DEVICE_NAME/:/usr/share/sxmo/default_hooks/"
+			DEFAULT_PATH="$(xdg_data_path sxmo/default_hooks/"$SXMO_DEVICE_NAME"/):$(xdg_data_path sxmo/default_hooks/)"
 		else
 			# We dont want to compare a default user hook to the device
 			# system version
-			DEFAULT_PATH="/usr/share/sxmo/default_hooks/"
+			DEFAULT_PATH="$(xdg_data_path sxmo/default_hooks/)"
 		fi
 
 		if [ "$MODE" = "reset" ]; then
@@ -240,18 +240,18 @@ checkhooks() {
 }
 
 common() {
-	defaultconfig /usr/share/sxmo/appcfg/profile_template "$XDG_CONFIG_HOME/sxmo/profile" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/profile_template)" "$XDG_CONFIG_HOME/sxmo/profile" 644
 }
 
 sway() {
-	defaultconfig /usr/share/sxmo/appcfg/sway_template "$XDG_CONFIG_HOME/sxmo/sway" 644
-	defaultconfig /usr/share/sxmo/appcfg/foot.ini "$XDG_CONFIG_HOME/foot/foot.ini" 644
-	defaultconfig /usr/share/sxmo/appcfg/mako.conf "$XDG_CONFIG_HOME/mako/config" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/sway_template)" "$XDG_CONFIG_HOME/sxmo/sway" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/foot.ini)" "$XDG_CONFIG_HOME/foot/foot.ini" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/mako.conf)" "$XDG_CONFIG_HOME/mako/config" 644
 }
 
 xorg() {
-	defaultconfig /usr/share/sxmo/appcfg/xinit_template "$XDG_CONFIG_HOME/sxmo/xinit" 644
-	defaultconfig /usr/share/sxmo/appcfg/dunst.conf "$XDG_CONFIG_HOME/dunst/dunstrc" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/xinit_template)" "$XDG_CONFIG_HOME/sxmo/xinit" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/dunst.conf)" "$XDG_CONFIG_HOME/dunst/dunstrc" 644
 }
 
 
@@ -270,7 +270,7 @@ if [ "$USER" = "root" ]; then
 fi
 
 # Execute idempotent migrations
-find /usr/share/sxmo/migrations -type f | sort -n | tr '\n' '\0' | xargs -0 sh
+find "$(xdg_data_path sxmo/migrations)" -type f | sort -n | tr '\n' '\0' | xargs -0 sh
 
 #modes may be chained
 for MODE in "$@"; do

@@ -4,6 +4,7 @@
 
 # shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
 . sxmo_hook_icons.sh
+. sxmo_common.sh
 
 set -e
 
@@ -18,7 +19,7 @@ copy() {
 	cd "$XDG_CONFIG_HOME/sxmo/hooks" || return
 	file="$(filename "$1")"
 	if [ ! -e "$file" ]; then
-		cd "/usr/share/sxmo/default_hooks" || return
+		cd "$(xdg_data_path sxmo/default_hooks)" || return
 		file="$(find "$SXMO_DEVICE_NAME/" . -name "sxmo_hook_$1.sh" -maxdepth 1 | head -n1)"
 		[ -e "$file" ] && cp "$file" "$XDG_CONFIG_HOME/sxmo/hooks/$file"
 	fi
@@ -62,7 +63,7 @@ list_hooks() {
 			sort > "$user"
 	fi
 
-	if cd "/usr/share/sxmo/default_hooks"; then
+	if cd "$(xdg_data_path sxmo/default_hooks)"; then
 		find . "$SXMO_DEVICE_NAME/" -maxdepth 1 \( -type f -o -type l \) -name 'sxmo_hook*.sh' -exec basename {} \; |\
 			sed 's/^sxmo_hook_//g' | sed 's/\.sh$//g' |\
 			sort > "$system"

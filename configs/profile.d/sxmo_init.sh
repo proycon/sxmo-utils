@@ -3,6 +3,8 @@
 # Copyright 2022 Sxmo Contributors
 
 # This script is meant to be sourced on login shells
+# shellcheck source=scripts/core/sxmo_common.sh
+. sxmo_common.sh
 
 _sxmo_is_running() {
 	unset SXMO_WM
@@ -43,6 +45,7 @@ _sxmo_load_environments() {
 	export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 	export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 	export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/dev/shm/user/$(id -u)}"
+	export XDG_DATA_DIRS="${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
 
 	export SXMO_CACHEDIR="${SXMO_CACHEDIR:-$XDG_CACHE_HOME/sxmo}"
 
@@ -60,7 +63,8 @@ _sxmo_load_environments() {
 	export BROWSER="${BROWSER:-firefox}"
 	export SHELL="${SHELL:-/bin/sh}"
 
-	export PATH="$XDG_CONFIG_HOME/sxmo/hooks/:/usr/share/sxmo/default_hooks/:$PATH"
+	default_hooks_path=$(xdg_data_path sxmo/default_hooks/)
+	export PATH="$XDG_CONFIG_HOME/sxmo/hooks/:$default_hooks_path:$PATH"
 
 	# The user can already forced a $SXMO_DEVICE_NAME value
 	if [ -z "$SXMO_DEVICE_NAME" ] && [ -e /proc/device-tree/compatible ]; then
@@ -79,7 +83,8 @@ _sxmo_load_environments() {
 	fi
 
 	if [ -n "$SXMO_DEVICE_NAME" ]; then
-		export PATH="$XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME/:/usr/share/sxmo/default_hooks/$SXMO_DEVICE_NAME/:$PATH"
+		hook_path=$(xdg_data_path sxmo/default_hooks/"${SXMO_DEVICE_NAME}"/)
+		export PATH="$XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME/:$hook_path:$PATH"
 	fi
 }
 
