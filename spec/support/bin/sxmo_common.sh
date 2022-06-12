@@ -1,0 +1,1 @@
+../../../scripts/core/sxmo_common.sh

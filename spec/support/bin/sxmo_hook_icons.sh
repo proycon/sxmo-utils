@@ -1,0 +1,1 @@
+../../../configs/default_hooks/sxmo_hook_icons.sh
