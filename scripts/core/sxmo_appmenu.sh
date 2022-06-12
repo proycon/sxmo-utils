@@ -144,4 +144,7 @@ mainloop() {
 	fi
 }
 
-mainloop "$@"
+# Allow loading from shellspec
+if [ -z "$SHELLSPEC_PATH" ]; then
+	mainloop "$@"
+fi
