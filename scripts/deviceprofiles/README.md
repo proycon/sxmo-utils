@@ -82,6 +82,8 @@ SXMO_LISGD_INPUT_DEVICE		| Input device [default: /dev/input/touchscreen]
 
 SXMO_VOLUME_BUTTON		| Volume button "Identifier" from `swaymsg -t get_inputs` command. If the volume up identifier (`$VOL_UP_ID`) is different from the volume down identifier (`$VOL_DOWN_ID`), set `$SXMO_VOLUME_BUTTON="$VOL_UP_ID $VOL_DOWN_ID"`. See the `sxmo-utils/scripts/deviceprofiles/sxmo_deviceprofile_berylliumqcom.sh` file.
 
+SXMO_MONITOR		| Touch screen "Identifier" from `swaymsg -t get_inputs` command.
+
 ### General / Misc.
 SXMO_WIFI_MODULE		| The wifi kernel module used when switching scan intervals
 
