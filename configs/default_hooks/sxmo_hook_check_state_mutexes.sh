@@ -50,6 +50,15 @@ else
 	free_suspend_mutex "Modem is used"
 fi
 
+# hotspot active
+if nmcli --get-values UUID connection show --active 2>/dev/null | while read -r uuid; do
+	nmcli --get-values 802-11-wireless.mode connection show "$uuid" 2>/dev/null
+done | grep -q '^ap$'; then
+	lock_suspend_mutex "Hotspot is active"
+else
+	free_suspend_mutex "Hotspot is active"
+fi
+
 # active_ssh
 if netstat | grep ESTABLISHED | cut -d':' -f2 | grep -q ssh; then
 	lock_suspend_mutex "SSH is connected"
