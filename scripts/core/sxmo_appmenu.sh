@@ -126,6 +126,12 @@ mainloop() {
 	LOOP="$(echo "$CHOICE" | cut -d '^' -f1)"
 	CMD="$(echo "$CHOICE" | cut -d '^' -f2)"
 
+	if [ -z "$CMD" ]; then
+		printf "%s\n" "sxmo_appmenu: Fallback: unknown choice <$PICKED> to contextmenu_fallback hook">&2
+		sxmo_hooks.sh contextmenu_fallback "$WINNAME" "$PICKED"
+		quit
+	fi
+
 	printf 'sxmo_appmenu: Eval: <%s> from picked <%s> with loop <%s>\n' \
 		"$CMD" "$PICKED" "$LOOP" >&2
 
