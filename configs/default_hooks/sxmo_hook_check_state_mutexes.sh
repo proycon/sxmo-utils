@@ -83,7 +83,7 @@ if command -v playerctl; then
 fi
 
 # photos_processing
-if pgrep -f postprocess.sh > /dev/null; then
+if pgrep -f postprocess > /dev/null; then
 	lock_suspend_mutex "Camera postprocessing"
 else
 	free_suspend_mutex "Camera postprocessing"
