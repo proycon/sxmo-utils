@@ -22,6 +22,8 @@ set $menu bemenu-run
 
 exec_always sxmo_swayinitconf.sh
 
+exec_always dbus-update-activation-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+
 mode "menu" {
     bindsym --input-device=1:1:1c21800.lradc XF86AudioMute exec nothing # just a placeholder for "menu" mode
 }

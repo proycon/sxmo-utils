@@ -7,6 +7,7 @@
 
 envvars() {
 	export SXMO_WM=dwm
+	export XDG_CURRENT_DESKTOP=dwm
 	# shellcheck disable=SC2086
 	command -v $TERMCMD "" >/dev/null || export TERMCMD="st"
 	command -v "$KEYBOARD" >/dev/null || defaultkeyboard
