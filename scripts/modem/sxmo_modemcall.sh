@@ -87,8 +87,11 @@ hangup() {
 	fi
 
 	if ! mmcli -m any -o "$CALLID" --hangup; then
-		sxmo_notify_user.sh --urgency=critical "We failed to hangup the call"
-		return 1
+		# we ignore already closed calls
+		if list_active_calls | grep -q "/$CALLID "; then
+			sxmo_notify_user.sh --urgency=critical "We failed to hangup the call"
+			return 1
+		fi
 	fi
 }
 
