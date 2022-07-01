@@ -69,7 +69,7 @@ pulsesinksset() {
 
 pulsesinksget() {
 	default_id="$(pamixer --get-default-sink | tail -n1 | cut -d" " -f1)"
-	pamixer --list-sinks | tail -n+2 | while read -r id _ description; do
+	pamixer --list-sinks | tail -n+2 | while read -r id _ _ description; do
 		eval description="$description"
 		if [ "$default_id" = "$id" ]; then
 			printf "%s %s ^ %s\n" "$icon_chk" "$description" "$id"
