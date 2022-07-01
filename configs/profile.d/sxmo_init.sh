@@ -63,9 +63,6 @@ _sxmo_load_environments() {
 	export BROWSER="${BROWSER:-firefox}"
 	export SHELL="${SHELL:-/bin/sh}"
 
-	default_hooks_path=$(xdg_data_path sxmo/default_hooks/)
-	export PATH="$XDG_CONFIG_HOME/sxmo/hooks/:$default_hooks_path:$PATH"
-
 	# The user can already forced a $SXMO_DEVICE_NAME value
 	if [ -z "$SXMO_DEVICE_NAME" ] && [ -e /proc/device-tree/compatible ]; then
 		SXMO_DEVICE_NAME="$(tr -c '\0[:alnum:].,-' '_' < /proc/device-tree/compatible |
@@ -83,8 +80,15 @@ _sxmo_load_environments() {
 	fi
 
 	if [ -n "$SXMO_DEVICE_NAME" ]; then
-		hook_path=$(xdg_data_path sxmo/default_hooks/"${SXMO_DEVICE_NAME}"/)
-		export PATH="$XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME/:$hook_path:$PATH"
+		export PATH="\
+$XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME:\
+$XDG_CONFIG_HOME/sxmo/hooks:\
+$(xdg_data_path "sxmo/default_hooks/$SXMO_DEVICE_NAME" 0 ':'):\
+$(xdg_data_path "sxmo/default_hooks" 0 ':'):\
+$PATH"
+	else
+		default_hooks_path=$(xdg_data_path sxmo/default_hooks 0 ':')
+		export PATH="$XDG_CONFIG_HOME/sxmo/hooks:$default_hooks_path:$PATH"
 	fi
 }
 
