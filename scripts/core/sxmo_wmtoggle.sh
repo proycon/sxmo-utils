@@ -11,14 +11,14 @@ not_ready_yet() {
 }
 
 case "$(realpath /var/lib/tinydm/default-session.desktop)" in
-	"$(realpath "$(xdg_data_path wayland-sessions/swmo.desktop)")")
+	*"swmo.desktop")
 		command -v dwm >/dev/null || not_ready_yet
-		doas tinydm-set-session -f -s "$(xdg_data_path xsessions/sxmo.desktop)"
+		doas tinydm-set-session -f -s "$(xdg_data_path xsessions/sxmo.desktop)" || not_ready_yet
 		pkill sway
 		;;
-	"$(realpath "$(xdg_data_path xsessions/sxmo.desktop)")")
+	*"sxmo.desktop")
 		command -v sway >/dev/null || not_ready_yet
-		doas tinydm-set-session -f -s "$(xdg_data_path wayland-sessions/swmo.desktop)"
+		doas tinydm-set-session -f -s "$(xdg_data_path wayland-sessions/swmo.desktop)" || not_ready_yet
 		pkill dwm
 		;;
 esac

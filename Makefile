@@ -27,7 +27,15 @@ programs/%: programs/%.c
 clean:
 	rm -f programs/sxmo_aligned_sleep programs/sxmo_vibrate programs/sxmo_splitchar
 
-install: $(PROGRAMS)
+install: install-sway install-dwm install-scripts
+
+install-sway:
+	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/wayland-sessions/ configs/applications/swmo.desktop
+
+install-dwm:
+	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/xsessions/ configs/applications/sxmo.desktop
+
+install-scripts: $(PROGRAMS)
 	cd configs && find . -type f -not -name sxmo-setpermissions -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
 	rm -rf "$(DESTDIR)$(PREFIX)/share/sxmo/default_hooks/"
@@ -47,8 +55,6 @@ install: $(PROGRAMS)
 	install -D -m 0644 -t $(DESTDIR)/etc/sway/config.d/ configs/sway/*
 
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ configs/xdg/mimeapps.list
-	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/xsessions/ configs/applications/sxmo.desktop
-	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/wayland-sessions/ configs/applications/swmo.desktop
 
 	install -D -m 0640 -t $(DESTDIR)/etc/doas.d/ configs/doas/sxmo.conf
 
