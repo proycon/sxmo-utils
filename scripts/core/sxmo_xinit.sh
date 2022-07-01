@@ -3,7 +3,6 @@
 # Copyright 2022 Sxmo Contributors
 
 # shellcheck source=scripts/core/sxmo_common.sh
-. /etc/profile.d/sxmo_init.sh
 . sxmo_common.sh
 
 envvars() {
@@ -41,14 +40,21 @@ defaultkeyboard() {
 	fi
 }
 
+with_dbus() {
+	echo "$DBUS_SESSION_BUS_ADDRESS" > "$XDG_RUNTIME_DIR"/dbus.bus
+	# shellcheck source=configs/appcfg/xinit_template
+	. "$XDG_CONFIG_HOME"/sxmo/xinit
+	exec dwm
+}
 
 start() {
-	# shellcheck disable=SC2016
-	dbus-run-session sh -c '
-		echo "$DBUS_SESSION_BUS_ADDRESS" > "$XDG_RUNTIME_DIR"/dbus.bus
-		. "$XDG_CONFIG_HOME"/sxmo/xinit
-		dwm
-	'
+	if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+		dbus-run-session -- "$0" "with_dbus"
+	else
+		# with_dbus calls exec because dbus-run-session starts it in a
+		# new shell, but we need to keep this shell; start in a subshell
+		( with_dbus )
+	fi
 }
 
 cleanup() {
@@ -58,6 +64,9 @@ cleanup() {
 }
 
 init() {
+	# shellcheck source=/dev/null
+	. /etc/profile.d/sxmo_init.sh
+
 	_sxmo_load_environments
 	_sxmo_prepare_dirs
 	envvars

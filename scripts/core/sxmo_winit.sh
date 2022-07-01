@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
-# shellcheck source=scripts/core/sxmo_common.sh
-. /etc/profile.d/sxmo_init.sh
-
 envvars() {
 	export SXMO_WM=sway
 	export MOZ_ENABLE_WAYLAND=1
@@ -20,12 +17,19 @@ defaults() {
 	[ -e "$HOME"/.Xresources ] && xrdb -merge "$HOME"/.Xresources
 }
 
+with_dbus() {
+	echo "$DBUS_SESSION_BUS_ADDRESS" > "$XDG_RUNTIME_DIR"/dbus.bus
+	exec sway -c "$XDG_CONFIG_HOME/sxmo/sway"
+}
+
 start() {
-	# shellcheck disable=SC2016
-	dbus-run-session sh -c '
-		echo "$DBUS_SESSION_BUS_ADDRESS" > "$XDG_RUNTIME_DIR"/dbus.bus
-		/usr/bin/sway -c "$XDG_CONFIG_HOME/sxmo/sway"
-	'
+	if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+		dbus-run-session -- "$0" "with_dbus"
+	else
+		# with_dbus calls exec because dbus-run-session starts it in a
+		# new shell, but we need to keep this shell; start a subshell
+		( with_dbus )
+	fi
 }
 
 cleanup() {
@@ -35,6 +39,9 @@ cleanup() {
 }
 
 init() {
+	# shellcheck source=/dev/null
+	. /etc/profile.d/sxmo_init.sh
+
 	_sxmo_load_environments
 	_sxmo_prepare_dirs
 	envvars
