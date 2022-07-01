@@ -6,7 +6,10 @@
 # shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
 . sxmo_hook_icons.sh
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
+
+# We use this directory to store states, so it must exist
+mkdir -p "$XDG_RUNTIME_DIR/sxmo_calls"
 
 stderr() {
 	sxmo_log "$*"
@@ -39,36 +42,36 @@ checkforfinishedcalls() {
 		FINISHEDNUMBER="$(cleanupnumber "$FINISHEDNUMBER")"
 		mmcli -m any --voice-delete-call "$FINISHEDCALLID"
 
-		rm -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.monitoredcall"
+		rm -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.monitoredcall"
 
 		CONTACT="$(sxmo_contacts.sh --name "$FINISHEDNUMBER")"
 		[ "$CONTACT" = "???" ] && CONTACT="$FINISHEDNUMBER"
 
 		TIME="$(date +%FT%H:%M:%S%z)"
 		mkdir -p "$SXMO_LOGDIR"
-		if [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.discardedcall" ]; then
+		if [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.discardedcall" ]; then
 			#this call was discarded
 			sxmo_notify_user.sh "Call with $CONTACT terminated"
 			stderr "Discarded call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
-		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.pickedupcall" ]; then
+		elif [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
 			sxmo_notify_user.sh "Call with $CONTACT terminated"
 			sxmo_hook_statusbar.sh volume
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
-		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.hangedupcall" ]; then
+		elif [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.hangedupcall" ]; then
 			#this call was hung up by the user
 			sxmo_notify_user.sh "Call with $CONTACT terminated"
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
-		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.initiatedcall" ]; then
+		elif [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.initiatedcall" ]; then
 			#this call was hung up by the contact
 			sxmo_notify_user.sh "Call with $CONTACT terminated"
 			sxmo_hook_statusbar.sh volume
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
-		elif [ -f "$XDG_RUNTIME_DIR/${FINISHEDCALLID}.mutedring" ]; then
+		elif [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.mutedring" ]; then
 			#this ring was muted up
 			stderr "Muted ring from $FINISHEDNUMBER"
 			printf %b "$TIME\tring_muted\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
@@ -114,9 +117,9 @@ checkforincomingcalls() {
 	)"
 	[ -z "$VOICECALLID" ] && return
 
-	[ -f "$XDG_RUNTIME_DIR/${VOICECALLID}.monitoredcall" ] && return # prevent multiple rings
-	find "$XDG_RUNTIME_DIR" -name "$VOICECALLID.*" -delete 2>/dev/null # we cleanup all dangling event files
-	touch "$XDG_RUNTIME_DIR/${VOICECALLID}.monitoredcall" #this signals that we handled the call
+	[ -f "$XDG_RUNTIME_DIR/sxmo_calls/${VOICECALLID}.monitoredcall" ] && return # prevent multiple rings
+	rm "$XDG_RUNTIME_DIR/sxmo_calls/$VOICECALLID."* 2>/dev/null # we cleanup all dangling event files
+	touch "$XDG_RUNTIME_DIR/sxmo_calls/${VOICECALLID}.monitoredcall" #this signals that we handled the call
 
 	# Determine the incoming phone number
 	stderr "Incoming Call..."

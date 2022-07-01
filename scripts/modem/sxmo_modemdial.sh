@@ -31,8 +31,8 @@ EOF
 		return 1
 	fi
 
-	find "$XDG_RUNTIME_DIR" -name "$CALLID.*" -delete 2>/dev/null # we cleanup all dangling event files
-
+	# cleanup all dangling event files, ignore errors
+	rm "$XDG_RUNTIME_DIR/sxmo_calls/$CALLID."* 2>/dev/null || true
 	sxmo_log "Starting call with CALLID: $CALLID"
 
 	if ! sxmo_modemaudio.sh setup_audio; then

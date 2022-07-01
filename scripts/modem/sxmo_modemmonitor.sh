@@ -5,7 +5,7 @@ trap "gracefulexit" INT TERM
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 stderr() {
 	sxmo_log "$*"
@@ -167,12 +167,7 @@ mainloop() {
 }
 
 # new session, clean up all phone related files
-rm -f "$XDG_RUNTIME_DIR"/*.monitoredcall 2>/dev/null
-rm -f "$XDG_RUNTIME_DIR"/*.mutedring 2>/dev/null
-rm -f "$XDG_RUNTIME_DIR"/*.hangedupcall 2>/dev/null
-rm -f "$XDG_RUNTIME_DIR"/*.discardedcall 2>/dev/null
-rm -f "$XDG_RUNTIME_DIR"/*.initiatedcall 2>/dev/null
-rm -f "$XDG_RUNTIME_DIR"/*.pickedupcall 2>/dev/null
+rm "$XDG_RUNTIME_DIR/sxmo_calls/"* 2>/dev/null || true
 rm -f "$XDG_RUNTIME_DIR"/sxmo.ring.pid 2>/dev/null
 rm -f "$SXMO_NOTIFDIR"/incomingcall* 2>/dev/null
 mainloop
