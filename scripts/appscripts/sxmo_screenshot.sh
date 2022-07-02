@@ -69,7 +69,7 @@ filepathoutput() {
 	esac
 }
 
-FILENAME="${SXMO_SCREENSHOT_DIR:-$HOME/$(date +%Y-%m-%d-%T).png}"
+FILENAME="${SXMO_SCREENSHOT_DIR:-$HOME}/$(date +%Y-%m-%d-%T).png"
 
 screenshot "$@"
 filepathoutput
