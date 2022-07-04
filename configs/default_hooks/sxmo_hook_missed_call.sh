@@ -14,3 +14,5 @@ if [ -e "$XDG_RUNTIME_DIR/sxmo.ring.pid" ]; then
 	kill "$MPVID"
 	rm "$XDG_RUNTIME_DIR/sxmo.ring.pid"
 fi
+
+sxmo_playerctl.sh resume_all

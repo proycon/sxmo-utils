@@ -10,3 +10,5 @@ if [ -e "$XDG_RUNTIME_DIR/sxmo.ring.pid" ]; then
 	rm "$XDG_RUNTIME_DIR/sxmo.ring.pid"
 fi
 
+sxmo_playerctl.sh pause_all
+

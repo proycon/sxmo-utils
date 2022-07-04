@@ -25,6 +25,16 @@ if ! sxmo_modemcall.sh list_active_calls \
 	exit
 fi
 
+case "$(cat "$XDG_CONFIG_HOME"/sxmo/.ringmode)" in
+	Mute|Vibrate)
+		;;
+	*)
+		# In order for this to work, you will need to install playerctl and run playerctld
+		# In order for this to work with mpv, you will need to install mpv-mdis.
+		sxmo_playerctl.sh pause_all
+		;;
+esac
+
 # Start the mpv ring until another hook kill it or the max SXMO_RINGTIME or SXMO_RINGNUMBER is reached
 case "$(cat "$XDG_CONFIG_HOME"/sxmo/.ringmode)" in
 	Mute)
