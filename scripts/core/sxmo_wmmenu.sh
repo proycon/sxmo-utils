@@ -83,7 +83,7 @@ swaywmmenu() {
 				LAYOUT_LINE="splitv → tabbed → splith"
 			fi
 		fi
-		CHOICES="$(cat <<EOF
+		CHOICES="$(grep . <<EOF
 $icon_cls Close Menu
 $icon_mov Move menu
 $icon_rld Switch menu

@@ -221,7 +221,7 @@ networksmenu() {
 		CHOICE="$(
 			rfkill list wifi | grep -q "yes" || WIFI_ENABLED=1
 
-			cat << EOF | sxmo_dmenu.sh -p "Networks"
+			grep . << EOF | sxmo_dmenu.sh -p "Networks"
 $(connections)
 $icon_mod Add a GSM Network
 $([ -z "$WIFI_ENABLED" ] || printf "%s Add a WPA Network\n" "$icon_wif")

@@ -107,7 +107,7 @@ _callaudiodsubmenu() {
 }
 
 pulsemenuchoices() {
-	cat <<EOF
+	grep . <<EOF
 $icon_cls Close Menu  ^ exit
 $icon_aru Volume up   ^ pulsevolup
 $icon_ard Volume down ^ pulsevoldown

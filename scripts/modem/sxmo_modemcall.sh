@@ -109,7 +109,7 @@ list_active_calls() {
 incall_menu() {
 	# We have an active call
 	while list_active_calls | grep -q . ; do
-		CHOICES="$(cat <<EOF
+		CHOICES="$(grep . <<EOF
 $icon_cls Close menu                ^ exit
 $icon_aru Volume up                 ^ sxmo_audio.sh vol up 20
 $icon_ard Volume down               ^ sxmo_audio.sh vol down 20

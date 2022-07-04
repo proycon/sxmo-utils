@@ -40,7 +40,7 @@ reset() {
 
 removemenu() {
 	while : ; do
-		opt="$(cat <<EOF | sxmo_dmenu.sh -p "Revert to System Default"
+		opt="$(grep . <<EOF | sxmo_dmenu.sh -p "Revert to System Default"
 $icon_ret Return
 $(list_hooks | grep -v "^S ")
 EOF
@@ -83,7 +83,7 @@ list_hooks() {
 
 menu() {
 	while : ; do
-		hook="$(cat <<EOF | sxmo_dmenu.sh -p "Edit Hook"
+		hook="$(grep . <<EOF | sxmo_dmenu.sh -p "Edit Hook"
 $icon_cls Close Menu
 $icon_trh Revert a Hook
 $(list_hooks)
