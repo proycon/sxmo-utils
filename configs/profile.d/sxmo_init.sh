@@ -80,12 +80,13 @@ _sxmo_load_environments() {
 	fi
 
 	if [ -n "$SXMO_DEVICE_NAME" ]; then
-		export PATH="\
+		PATH="\
 $XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME:\
 $XDG_CONFIG_HOME/sxmo/hooks:\
 $(xdg_data_path "sxmo/default_hooks/$SXMO_DEVICE_NAME" 0 ':'):\
 $(xdg_data_path "sxmo/default_hooks" 0 ':'):\
 $PATH"
+		export PATH
 	else
 		default_hooks_path=$(xdg_data_path sxmo/default_hooks 0 ':')
 		export PATH="$XDG_CONFIG_HOME/sxmo/hooks:$default_hooks_path:$PATH"
