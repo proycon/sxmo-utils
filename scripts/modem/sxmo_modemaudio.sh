@@ -19,7 +19,7 @@ setup_audio() {
 
 		enable_call_audio_mode
 		disable_speaker
-		umute_mic
+		unmute_mic
 	done
 }
 
