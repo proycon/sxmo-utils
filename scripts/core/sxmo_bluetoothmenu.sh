@@ -37,7 +37,7 @@ _restart_bluetooth() {
 		alpine|postmarketos)
 			doas rc-service bluetooth restart
 			;;
-		arch|archarm)
+		arch|archarm|nixos)
 			doas systemctl restart bluetooth
 			;;
 	esac

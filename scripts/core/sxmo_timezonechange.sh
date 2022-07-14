@@ -42,6 +42,7 @@ if [ $# -gt 0 ]; then
 	case "$OS" in
 		alpine|postmarketos) change_alpine "$@";;
 		arch|archarm) change_arch "$@";;
+		nixos) echo "Change the timezone in configuration.nix with time.timeZone = \"[timezone]\"";;
 		*) echo "Changing the timezone isn't implemented on your distro yet";;
 	esac
 else

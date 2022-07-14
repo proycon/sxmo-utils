@@ -24,7 +24,18 @@ update_pacman() {
 	echo "Upgrade complete - reboot for all changes to take effect"
 }
 
+update_nixos() {
+	echo "Upgrading all packages"
+	# nohup needed because nixos-rebuild might restart the display manager
+	# (and thus the terminal we're running in) before the update is complete
+	doas nohup nixos-rebuild switch --upgrade > /tmp/sxmo-last-upgrade.log &
+	coreutils --coreutils-prog=tail -f /tmp/sxmo-last-upgrade.log --pid=$!
+
+	echo "Upgrade complete - reboot for all changes to take effect"
+}
+
 case "$OS" in
 	alpine|postmarketos) update_apk;;
 	arch|archarm) update_pacman;;
+	nixos) update_nixos;;
 esac
