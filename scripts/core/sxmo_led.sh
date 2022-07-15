@@ -44,7 +44,7 @@ get_led() {
 
 	value="$(cat "/sys/class/leds/$color:$type/brightness")"
 	max="$(cat "/sys/class/leds/$color:$type/max_brightness")"
-	printf "scale=0; %s / %s * 100" "$value" "$max" | bc -l
+	printf "scale=0; %s / %s * 100\n" "$value" "$max" | bc -l
 }
 
 set_led() {
