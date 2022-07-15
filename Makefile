@@ -22,7 +22,7 @@ shellcheck:
 	find . -type f -name '*.sh' -print0 | xargs -0 shellcheck -x --shell=sh
 
 programs/%: programs/%.c
-	$(CC) -o $@ $<
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ $<
 
 clean:
 	rm -f programs/sxmo_aligned_sleep programs/sxmo_vibrate programs/sxmo_splitchar
