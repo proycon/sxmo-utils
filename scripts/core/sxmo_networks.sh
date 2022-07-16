@@ -202,6 +202,19 @@ addhotspotwifimenu() {
 		return
 	fi
 
+	# valid keys for WPA networks have a lengths of 8-63 characters
+	keylen=$( echo "$key" | tr -d '\n' | wc -c )
+	keylen=$(( keylen ))
+	if [ $keylen -lt 8 ]; then
+		notify-send "key too short ($keylen < 8)"
+		stderr "key too short ($keylen < 8)"
+		return
+	elif [ $keylen -gt 63 ]; then
+		notify-send "key too long ($keylen > 63)"
+		stderr "key too long ($keylen > 63)"
+		return
+	fi
+
 	channel="$(
 		printf "%s Close Menu\n11\n" "$icon_cls" | sxmo_dmenu_with_kb.sh -p "Channel"
 	)"
