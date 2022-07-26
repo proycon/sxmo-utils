@@ -542,6 +542,23 @@ case "$WMCLASS" in
 		"
 		WINNAME=Firefox
 		;;
+	*geopard*)
+		# Geopard
+		CHOICES="
+			$icon_pls New Tab            ^ 0 ^ sxmo_type -M Ctrl t
+			$icon_cls Close Tab          ^ 0 ^ sxmo_type -M Ctrl w
+			$icon_bok Open Bookmarks     ^ 0 ^ sxmo_type -M Ctrl b
+			$icon_pls Add Bookmark       ^ 0 ^ sxmo_type -M Ctrl d
+			$icon_edt Edit Bookmarks     ^ 0 ^ sxmo_keyboard.sh open && sxmo_terminal.sh $EDITOR ~/.local/share/geopard/bookmarks.gemini
+			$icon_zmi Increase Font Size ^ 1 ^ sxmo_type -M Ctrl -k plus
+			$icon_zmo Decrease Font Size ^ 1 ^ sxmo_type -M Ctrl -k minus
+			$icon_arl History Back       ^ 1 ^ sxmo_type -M Alt -k Left
+			$icon_arr History Forward    ^ 1 ^ sxmo_type -M Alt -k Right
+			$icon_fnd URL Bar            ^ 0 ^ sxmo_keyboard.sh open && sxmo_type -k F6
+			$icon_rld Refresh            ^ 0 ^ sxmo_type -k F6 -k Return
+			"
+		WINNAME=Geopard
+		;;
 	*lagrange*)
 		# Lagrange
 		CHOICES="
