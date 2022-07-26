@@ -85,6 +85,7 @@ write_line_app profanity "$icon_msg Profanity" "sxmo_terminal.sh profanity"
 write_line_app qutebrowser "$icon_glb Qutebrowser" "qutebrowser"
 write_line_app ranger "$icon_dir Ranger" "sxmo_terminal.sh ranger"
 write_line_app sacc "$icon_glb Sacc" "sxmo_terminal.sh sacc i-logout.cz/1/bongusta"
+write_line_app senpai "$icon_msg Senpai" "sxmo_terminal.sh senpai"
 write_line_app sic "$icon_msg Sic" "sxmo_terminal.sh sic"
 ([ "$SXMO_WM" = dwm ] && command -v st >/dev/null) && \
 	write_line "$icon_trm St" "st -e $SHELL"

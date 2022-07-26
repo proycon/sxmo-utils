@@ -337,6 +337,16 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=git
+		elif printf %s "$WMNAME" | grep -qi -w "senpai"; then
+			CHOICES="
+				$icon_aru Scroll up       ^ 1 ^ sxmo_type -k Prior
+				$icon_ard Scroll down     ^ 1 ^ sxmo_type -k Next
+				$icon_ac1 Previous Buffer ^ 1 ^ sxmo_type -M Alt -k Left
+				$icon_ac4 Next Buffer     ^ 1 ^ sxmo_type -M Alt -k Right
+				$icon_lst Toggle Channels ^ 0 ^ sxmo_type -k F7
+				$icon_usr Toggle Members  ^ 0 ^ sxmo_type -k F8
+			"
+			WINNAME=senpai
 		elif printf %s "$WMNAME" | grep -qi -w "weechat"; then
 			#weechat
 			CHOICES="
