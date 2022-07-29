@@ -52,9 +52,6 @@ xorgrotinvert() {
 
 swayrotinvert() {
 	swaymsg -- output "-" transform 180
-	focused_name="$(swayfocusedname)"
-	swaymsg -- input type:touch map_to_output "$focused_name"
-	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh invert
 	exit 0
@@ -71,9 +68,6 @@ xorgrotnormal() {
 
 swayrotnormal() {
 	swaymsg -- output "-" transform 0
-	focused_name="$(swayfocusedname)"
-	swaymsg -- input type:touch map_to_output "$focused_name"
-	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh normal
 	exit 0
@@ -90,9 +84,6 @@ xorgrotright() {
 
 swayrotright() {
 	swaymsg -- output "-" transform 90
-	focused_name="$(swayfocusedname)"
-	swaymsg -- input type:touch map_to_output "$focused_name"
-	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh right
 	exit 0
@@ -109,9 +100,6 @@ xorgrotleft() {
 
 swayrotleft() {
 	swaymsg -- output "-" transform 270
-	focused_name="$(swayfocusedname)"
-	swaymsg -- input type:touch map_to_output "$focused_name"
-	swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh left
 	exit 0

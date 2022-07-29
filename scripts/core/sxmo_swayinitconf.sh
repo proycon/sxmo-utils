@@ -15,8 +15,12 @@ scale="${SXMO_SWAY_SCALE:-2}"
 
 swaymsg -- output "$monitor" scale "$scale"
 
-swaymsg -- input "$pwr" repeat_delay 200
-swaymsg -- input "$pwr" repeat_rate 15
+focused_name="$(
+	swaymsg -t get_outputs | jq -r '.[] | select(.focused == true) | .name'
+)"
+swaymsg -- input type:touch map_to_output "$focused_name"
+swaymsg -- input type:tablet_tool map_to_output "$focused_name"
+
 swaymsg -- input "$pwr" xkb_file "$(xdg_data_path sxmo/sway/xkb_mobile_normal_buttons)"
 
 if ! [ "$vols" = "none" ]; then
