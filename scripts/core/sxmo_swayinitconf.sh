@@ -31,28 +31,15 @@ if ! [ "$vols" = "none" ]; then
 	done
 fi
 
-sxmo_multikey.sh clear
-
-swaymsg -- bindsym --locked --input-device="$pwr" XF86PowerOff exec sxmo_multikey.sh \
-	powerbutton \
-	powerbutton_one \
-	powerbutton_two \
-	powerbutton_three
+swaymsg -- bindsym --locked --input-device="$pwr" --no-repeat XF86PowerOff exec bonsaictl -e power_pressed
+swaymsg -- bindsym --locked --input-device="$pwr" --release XF86PowerOff exec bonsaictl -e power_released
 
 if ! [ "$vols" = "none" ]; then
 	for vol in $vols; do
-		swaymsg -- bindsym --locked --input-device="$vol" XF86AudioRaiseVolume exec \
-			sxmo_multikey.sh \
-			volup \
-			volup_one \
-			volup_two \
-			volup_three
+		swaymsg -- bindsym --locked --input-device="$vol" --no-repeat XF86AudioRaiseVolume exec bonsaictl -e volup_pressed
+		swaymsg -- bindsym --locked --input-device="$vol" --release XF86AudioRaiseVolume exec bonsaictl -e volup_released
 
-		swaymsg -- bindsym --locked --input-device="$vol" XF86AudioLowerVolume exec \
-			sxmo_multikey.sh \
-			voldown \
-			voldown_one \
-			voldown_two \
-			voldown_three
+		swaymsg -- bindsym --locked --input-device="$vol" --no-repeat XF86AudioLowerVolume exec bonsaictl -e voldown_pressed
+		swaymsg -- bindsym --locked --input-device="$vol" --release XF86AudioLowerVolume exec bonsaictl -e voldown_released
 	done
 fi

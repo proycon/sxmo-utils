@@ -1,0 +1,8 @@
+[Unit]
+Description=Bonsai daemon
+
+[Service]
+Type=simple
+Restart=always
+ExecStartPre=rm -f $XDG_RUNTIME_DIR/bonsai
+ExecStart=bonsaid -t $XDG_CONFIG_HOME/sxmo/bonsai_tree.json

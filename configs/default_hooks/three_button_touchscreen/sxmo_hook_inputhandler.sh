@@ -126,7 +126,7 @@ case "$WMCLASS" in
 				case "$ACTION" in
 					*"upbottomedge")
 						number="$(printf %s "$WMNAME" | sed -e 's|^\"||' -e 's|\"$||' | cut -f1 -d' ')"
-						sxmo_terminal.sh sxmo_modemtext.sh conversationloop "$number" &
+						sxmo_terminal.sh sxmo_modemtext.sh conversationloop "$number"
 						exit 0
 						;;
 				esac
@@ -293,19 +293,19 @@ case "$ACTION" in
 		exit 0
 		;;
 	"righttopedge")
-		sxmo_brightness.sh up &
+		sxmo_brightness.sh up
 		exit 0
 		;;
 	"lefttopedge")
-		sxmo_brightness.sh down &
+		sxmo_brightness.sh down
 		exit 0
 		;;
 	"upleftedge")
-		sxmo_audio.sh vol up &
+		sxmo_audio.sh vol up
 		exit 0
 		;;
 	"downleftedge")
-		sxmo_audio.sh vol down &
+		sxmo_audio.sh vol down
 		exit 0
 		;;
 	"upbottomedge")
@@ -317,11 +317,11 @@ case "$ACTION" in
 		exit 0
 		;;
 	"downtopedge")
-		sxmo_dmenu.sh isopen || sxmo_appmenu.sh &
+		sxmo_dmenu.sh isopen || sxmo_appmenu.sh
 		exit 0
 		;;
 	"twodowntopedge")
-		sxmo_dmenu.sh isopen || sxmo_appmenu.sh sys &
+		sxmo_dmenu.sh isopen || sxmo_appmenu.sh sys
 		exit 0
 		;;
 	"uptopedge")
@@ -362,11 +362,11 @@ case "$ACTION" in
 		exit 0
 		;;
 	"topleftcorner")
-		sxmo_appmenu.sh sys &
+		sxmo_appmenu.sh sys
 		exit 0
 		;;
 	"toprightcorner")
-		sxmo_appmenu.sh scripts &
+		sxmo_appmenu.sh scripts
 		exit 0
 		;;
 	"bottomleftcorner")
@@ -379,7 +379,7 @@ case "$ACTION" in
 		exit 0
 		;;
 	"bottomrightcorner")
-		sxmo_rotate.sh &
+		sxmo_rotate.sh
 		exit 0
 		;;
 esac
