@@ -106,6 +106,44 @@ _callaudiodsubmenu() {
 	fi
 }
 
+_ringmodesubmenu() {
+	curmode="$(cat "$XDG_CONFIG_HOME"/sxmo/.ringmode)"
+	[ -z "$curmode" ] && curmode="Ring&Vibrate"
+
+	if [ "$curmode" = "Ring&Vibrate" ]; then
+		printf "%s" "$icon_chk"
+	else
+		printf "%s" "$icon_cls"
+	fi
+	# carefull, this one can easily match for the Ring one too
+	# shellcheck disable=SC2016
+	printf ' Mode Ring&vibrate ^ echo "" > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
+
+	if [ "$curmode" = Vibrate ]; then
+		printf "%s" "$icon_chk"
+	else
+		printf "%s" "$icon_cls"
+	fi
+	# shellcheck disable=SC2016
+	printf ' Mode Vibrate ^ echo Vibrate > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
+
+	if [ "$curmode" = Ring ]; then
+		printf "%s" "$icon_chk"
+	else
+		printf "%s" "$icon_cls"
+	fi
+	# shellcheck disable=SC2016
+	printf ' Mode Ring ^ echo Ring > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
+
+	if [ "$curmode" = Mute ]; then
+		printf "%s" "$icon_chk"
+	else
+		printf "%s" "$icon_cls"
+	fi
+	# shellcheck disable=SC2016
+	printf ' Mode Muted ^ echo Mute > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
+}
+
 pulsemenuchoices() {
 	grep . <<EOF
 $icon_cls Close Menu  ^ exit
@@ -113,6 +151,7 @@ $icon_aru Volume up   ^ pulsevolup
 $icon_ard Volume down ^ pulsevoldown
 $(pulsesinksget | sed -e "s/^/$icon_spk /" -e 's/\^ \([0-9]\+\)$/^ pulsesinksset \1/')
 $(_callaudiodsubmenu)
+$(_ringmodesubmenu)
 EOF
 }
 
@@ -210,6 +249,7 @@ $icon_phn Earpiece $([ "$CURRENTDEV" = "Earpiece" ] && echo "$icon_chk")    ^ al
 $icon_mut None $([ -z "$CURRENTDEV" ] && echo "$icon_chk")                  ^ alsadeviceset
 $icon_aru Volume up                                                         ^ alsavolup
 $icon_ard Volume down                                                       ^ alsavoldown
+$(_ringmodesubmenu)
 EOF
 }
 

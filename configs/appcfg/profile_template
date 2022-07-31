@@ -46,3 +46,19 @@ case "$SXMO_WM" in
 	dwm)
 		;;
 esac
+
+#Set RINGTONE to audio file to play for incoming call
+export SXMO_RINGTONE="/usr/share/sxmo/ring.ogg"
+
+#Set TEXTSOUND to audio file to play when received text message
+export SXMO_TEXTSOUND="/usr/share/sxmo/notify.ogg"
+
+#Set RINGTIME to number of seconds the phone will ring
+export SXMO_RINGTIME=20
+
+#Set RINGNUMBER to number of times phone will ring or repeat ringtone
+#(whichever of SXMO_RINGTIME or SXMO_RINGNUMBER runs less will limit how long phone rings)
+export SXMO_RINGNUMER=10
+
+# default to ring and vibrate
+touch "$XDG_CONFIG_HOME"/sxmo/.ringmode

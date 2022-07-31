@@ -5,10 +5,16 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-VIBS=5
-VIBI=0
-while [ $VIBI -lt $VIBS ]; do
-	sxmo_vibrate 400 &
-	sleep 0.5
-	VIBI=$(echo $VIBI+1 | bc)
-done
+case "$(cat "$XDG_CONFIG_HOME"/sxmo/.ringmode)" in
+	Mute|Ring)
+		;;
+	*) # can vibrate
+		VIBS=5
+		VIBI=0
+		while [ $VIBI -lt $VIBS ]; do
+			sxmo_vibrate 400 &
+			sleep 0.5
+			VIBI=$(echo $VIBI+1 | bc)
+		done
+esac
+

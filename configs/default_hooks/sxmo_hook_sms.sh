@@ -16,4 +16,17 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-mpv --quiet --no-video "$(xdg_data_path sxmo/notify.ogg)"
+case "$(cat "$XDG_CONFIG_HOME"/sxmo/.ringmode)" in
+	Mute)
+		;;
+	Vibrate)
+		sxmo_vibrate 500
+		;;
+	Ring)
+		mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND"
+		;;
+	*) #Default: ring&vibrate
+		mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND" &
+		sxmo_vibrate 500
+		;;
+esac
