@@ -7,11 +7,10 @@
 
 # $1 = Contact Name or Number (if not in contacts)
 
-# Only vibrate if you already got an active call
-
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
+# Only vibrate if you already got an active call
 if sxmo_modemcall.sh list_active_calls \
 	| grep -v ringing-in \
 	| grep -q .; then
