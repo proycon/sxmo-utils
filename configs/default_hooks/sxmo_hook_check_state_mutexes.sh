@@ -60,7 +60,7 @@ else
 fi
 
 # active_ssh
-if netstat | grep ESTABLISHED | cut -d':' -f2 | grep -q ssh; then
+if netstat -tn | grep ESTABLISHED | cut -d':' -f2 | grep -q '^22 '; then
 	lock_suspend_mutex "SSH is connected"
 else
 	free_suspend_mutex "SSH is connected"
@@ -74,7 +74,7 @@ else
 fi
 
 # mpris compatible media player
-if command -v playerctl; then
+if command -v playerctl > /dev/null; then
 	if test "$(playerctl status)" = "Playing"; then
 		lock_suspend_mutex "MPRIS client is playing"
 	else
