@@ -5,6 +5,8 @@ packages:
   - shellspec
   - gojq
   - jq
+sources:
+  - https://git.sr.ht/~mil/sxmo-utils
 tasks:
   - shellcheck: |
       cd sxmo-utils
