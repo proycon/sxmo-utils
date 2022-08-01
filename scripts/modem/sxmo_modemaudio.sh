@@ -13,6 +13,14 @@ reset_audio() {
 	disable_call_audio_mode
 }
 
+toggle_speaker() {
+	if is_enabled_speaker; then
+		disable_speaker
+	else
+		enable_speaker
+	fi
+}
+
 is_muted_mic() {
 	callaudiocli -S | grep -q "Mic muted: CALL_AUDIO_MIC_OFF"
 }
