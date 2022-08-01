@@ -4,44 +4,13 @@
 . sxmo_common.sh
 
 setup_audio() {
+	# implies speaker off, mic not muted
 	enable_call_audio_mode
-	disable_speaker
-	unmute_mic
-
-	i=0
-	while (! is_unmuted_mic) || (! is_call_audio_mode) || (! is_disabled_speaker); do
-		i=$((i+1))
-		if [ "$i" -gt 5 ]; then
-			return 1
-		fi
-
-		sleep 0.2
-
-		enable_call_audio_mode
-		disable_speaker
-		unmute_mic
-	done
 }
 
 reset_audio() {
+	# implies speaker on, mic muted
 	disable_call_audio_mode
-	enable_speaker
-	mute_mic
-
-	# eventually we should remove this loop once upstream is stable
-	i=0
-	while (! is_muted_mic) || (! is_default_audio_mode) || (! is_enabled_speaker); do
-		i=$((i+1))
-		if [ "$i" -gt 5 ]; then
-			return 1
-		fi
-
-		sleep 0.2
-
-		disable_call_audio_mode
-		enable_speaker
-		mute_mic
-	done
 }
 
 is_muted_mic() {
