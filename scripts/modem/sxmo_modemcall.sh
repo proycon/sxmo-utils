@@ -221,6 +221,12 @@ EOF
 
 		case "$PICKED" in
 			"$icon_phn Pickup")
+				if [ -e "$XDG_CONFIG_HOME/sxmo/.ringmode" ] && \
+					! [ -e "$XDG_CONFIG_HOME/sxmo/.ringmode.beforecall" ]; then
+					mv "$XDG_CONFIG_HOME/sxmo/.ringmode" "$XDG_CONFIG_HOME/sxmo/.ringmode.beforecall"
+				fi
+				echo Vibrate > "$XDG_CONFIG_HOME/sxmo/.ringmode"
+
 				if ! sxmo_modemaudio.sh setup_audio; then
 					sxmo_notify_user.sh --urgency=critical "We failed to setup call audio"
 					return 1

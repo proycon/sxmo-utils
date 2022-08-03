@@ -98,6 +98,11 @@ checkforfinishedcalls() {
 			sxmo_vibrate 1000 &
 			sxmo_daemons.sh stop incall_menu
 			sxmo_daemons.sh stop calling_proximity_lock
+
+			if [ -e "$XDG_CONFIG_HOME/sxmo/.ringmode.beforecall" ]; then
+				mv "$XDG_CONFIG_HOME/sxmo/.ringmode.beforecall" "$XDG_CONFIG_HOME/sxmo/.ringmode"
+			fi
+
 			if ! sxmo_modemaudio.sh reset_audio; then
 				sxmo_notify_user.sh --urgency=critical "We failed to reset call audio"
 			fi
