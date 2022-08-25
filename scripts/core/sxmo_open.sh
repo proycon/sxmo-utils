@@ -4,7 +4,7 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 MIMEAPPS="${XDG_CONFIG_HOME:-$HOME/.config}/mimeapps.list"
 DESKTOPS_CACHED_MIMEAPPS="${XDG_CONFIG_HOME:-$HOME/.config}/desktops.mimeapps.list"
@@ -199,7 +199,7 @@ execute() {
 		exit 0
 	fi
 
-	eval "$@"
+	eval "$*"
 }
 
 fetch_file() {
@@ -208,7 +208,7 @@ fetch_file() {
 		return
 	fi
 
-	eval "$@"
+	eval "$*"
 }
 
 build_command() {
