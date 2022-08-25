@@ -9,6 +9,8 @@
 MIMEAPPS="${XDG_CONFIG_HOME:-$HOME/.config}/mimeapps.list"
 DESKTOPS_CACHED_MIMEAPPS="${XDG_CONFIG_HOME:-$HOME/.config}/desktops.mimeapps.list"
 DESKTOP_DIRS="$(xdg_data_path sxmo/applications/ 0 "|")|$(xdg_data_path applications 0 "|")|${XDG_DATA_HOME:-$HOME/.local/share}/applications/"
+CACHE_DIR="${XDG_RUNTIME_DIR:-$HOME/.run}/xdg-open-cache"
+[ ! -d "$CACHE_DIR" ] && mkdir -p "$CACHE_DIR"
 attached=
 debug=
 TERMCMD="${TERMCMD:-st -e}"
@@ -50,7 +52,7 @@ get_mimeapps_entries_from_desktop_dir() {
 
 # Build and save the desktop mimeapps mapping if necessary
 prepare_desktop_mimeapps_mapping_cache() {
-	last_desktop_modif_date="$(printf %s "$DESKTOP_DIRS" | tr '|' '\n' | while read -r desktop_dir; do
+	last_desktop_modif_date="$(printf "%s\n" "$DESKTOP_DIRS" | tr '|' '\n' | while read -r desktop_dir; do
 		for desktop_file in "$desktop_dir"/*.desktop; do
 			stat -c %Y "$desktop_file"
 		done
@@ -145,7 +147,13 @@ filter_matching_desktops() {
 }
 
 curl_mime_type() {
-	curl --head -fsw '%{content_type}' "$1" | tail -n1 | sed 's|;.*||'
+	if result="$(curl -sL --head -f "$1")"; then
+		printf %s "$result" \
+			| grep -i "^content-type: " \
+			| cut -d" " -f2 \
+			| head -c-2 \
+			| sed "s|;.*||"
+	fi
 }
 
 extension_mime_type() {
@@ -156,16 +164,17 @@ extension_mime_type() {
 }
 
 get_mime_type() {
-	if [ -r "$1" ]; then
-		# is readable
+	if [ -r "$1" ]; then # is readable
 		mime_type="$(file -b --mime-type "$1")"
-	elif ! test -e "$1" && echo "$1" | grep -q '^.\+:'; then
-		# Seems like an x-scheme
+	elif echo "$1" | grep -q '^.\+:'; then # Seems like an x-scheme
 		if echo "$1" | grep -q '^https\?:'; then
 			mime_type="$(curl_mime_type "$1")"
 		fi
 
-		[ -z "$mime_type" ] && mime_type="x-scheme-handler/$(echo "$1" | grep -o '^\w\+')"
+		if [ -z "$mime_type" ] || \
+			[ "$mime_type" = "application/binary" ]; then
+			mime_type="x-scheme-handler/$(echo "$1" | grep -o '^\w\+')"
+		fi
 	else
 		echo "This file does not exists?" >&2
 		exit 1
@@ -190,7 +199,7 @@ execute() {
 		exit 0
 	fi
 
-	eval "$*"
+	eval "$@"
 }
 
 fetch_file() {
@@ -199,7 +208,7 @@ fetch_file() {
 		return
 	fi
 
-	eval "$*"
+	eval "$@"
 }
 
 build_command() {
@@ -214,9 +223,12 @@ build_command() {
 	if echo "$exec" | grep -q '%f\|%F'; then # We must retrieve distant files
 		file_paths="$(
 			echo "$file_paths" | while read -r file_path; do
-				local_file_path="$(mktemp --suffix=".$(basename "$file_path")")"
+				file_id="$(printf %s "$file_path" | sha256sum | cut -d" " -f1)"
+				local_file_path="$CACHE_DIR/$file_id"
 				if echo "$file_path" | grep -q '^https\?://'; then
-					fetch_file curl -so "$local_file_path" "$file_path"
+					if [ ! -f "$local_file_path" ]; then
+						fetch_file curl -L -so "$local_file_path" "$file_path"
+					fi
 				else
 					echo "$file_path"
 					continue
@@ -291,7 +303,7 @@ run() {
 	mime_type="$(get_mime_type "$1")"
 
 	if [ -z "$mime_type" ]; then
-		echo "We failed to find the mime_type for \"$1\"">&2
+		echo "We failed to find the mime_type for \"$1\"" >&2
 		exit 1
 	fi
 
@@ -324,5 +336,6 @@ if [ "-a" = "$1" ]; then
 fi
 
 if [ $# -gt 0 ]; then
+	set -- "${1#file://}"
 	run "$@"
 fi
