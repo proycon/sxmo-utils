@@ -66,6 +66,13 @@ else
 	free_suspend_mutex "SSH is connected"
 fi
 
+# active_mosh
+if pgrep -f mosh-server > /dev/null; then
+	lock_suspend_mutex "Mosh is listening"
+else
+	free_suspend_mutex "Mosh is listening"
+fi
+
 # playing_mpc
 if command -v mpc > /dev/null && mpc status 2>/dev/null | grep -q '\[playing\]'; then
 	lock_suspend_mutex "MPD is playing music"
