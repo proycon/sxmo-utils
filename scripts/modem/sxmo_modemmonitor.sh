@@ -19,6 +19,8 @@ gracefulexit() {
 	sxmo_daemons.sh stop modem_monitor_state_change
 	sxmo_daemons.sh stop modem_monitor_mms
 	sxmo_daemons.sh stop modem_monitor_vvm
+	sxmo_daemons.sh stop modem_monitor_periodic_text
+	sxmo_daemons.sh stop modem_monitor_periodic_calls
 	exit
 }
 
@@ -86,17 +88,23 @@ mainloop() {
 	sxmo_daemons.sh start modem_monitor_text \
 		dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Messaging',type='signal',member='Added'" | \
 		while read -r line; do
-			echo "$line" | grep -qE "^signal" && sxmo_modem.sh checkfornewtexts
+			echo "$line" | grep -qE "^signal" && sxmo_uniq_exec.sh sxmo_modem.sh checkfornewtexts
 		done &
 	PIDS="$PIDS $!"
+
+	sxmo_daemons.sh start modem_monitor_periodic_text \
+		sxmo_run_aligned.sh 300 sxmo_uniq_exec.sh sxmo_modem.sh checkfornewtexts
 
 	# Monitor for finished calls
 	sxmo_daemons.sh start modem_monitor_finished_voice \
 		dbus-monitor --system "interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',arg0='org.freedesktop.ModemManager1.Call'" | \
 		while read -r line; do
-			echo "$line" | grep -qE "^signal" && sxmo_modem.sh checkforfinishedcalls
+			echo "$line" | grep -qE "^signal" && sxmo_uniq_exec.sh sxmo_modem.sh checkforfinishedcalls
 		done &
 	PIDS="$PIDS $!"
+
+	sxmo_daemons.sh start modem_monitor_periodic_calls \
+		sxmo_run_aligned.sh 300 sxmo_uniq_exec.sh sxmo_modem.sh checkforfinishedcalls
 
 	# Monitor for modem state change
 	sxmo_daemons.sh start modem_monitor_state_change \

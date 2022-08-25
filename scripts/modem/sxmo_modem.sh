@@ -246,4 +246,6 @@ checkfornewtexts() {
 	done
 }
 
+sxmo_mutex.sh can_suspend lock "Modem is used"
 "$@"
+sxmo_mutex.sh can_suspend free "Modem is used"

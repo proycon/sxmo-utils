@@ -37,19 +37,6 @@ else
 	free_suspend_mutex "Ongoing call"
 fi
 
-# modem_use
-if pgrep -f sxmo_modem.sh > /dev/null || \
-	pgrep -f sxmo_mms.sh > /dev/null || \
-	pgrep -f mmcli > /dev/null || \
-	pgrep -f mmsctl > /dev/null || \
-	pgrep -f sxmo_modemsendsms.sh > /dev/null || \
-	sxmo_daemons.sh running modem_nocrust -q || \
-	pgrep -f sxmo_modemdaemons.sh >/dev/null; then
-	lock_suspend_mutex "Modem is used"
-else
-	free_suspend_mutex "Modem is used"
-fi
-
 # hotspot active
 if nmcli --get-values UUID connection show --active 2>/dev/null | while read -r uuid; do
 	nmcli --get-values 802-11-wireless.mode connection show "$uuid" 2>/dev/null
