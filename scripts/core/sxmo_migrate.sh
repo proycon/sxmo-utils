@@ -277,6 +277,10 @@ fi
 # Execute idempotent migrations
 find "$(xdg_data_path sxmo/migrations)" -type f | sort -n | tr '\n' '\0' | xargs -0 sh
 
+if [ -z "$*" ]; then
+	set -- sync interactive
+fi
+
 #modes may be chained
 for MODE in "$@"; do
 	case "$MODE" in
