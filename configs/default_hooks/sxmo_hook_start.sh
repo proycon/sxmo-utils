@@ -25,6 +25,7 @@ case "$SXMO_WM" in
 		superctl start mako
 		superctl start sxmo_wob
 		superctl start sxmo_menumode_toggler
+		superctl start bonsaid
 		;;
 	dwm)
 		superctl start dunst
