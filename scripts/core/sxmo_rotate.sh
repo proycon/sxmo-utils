@@ -45,14 +45,14 @@ xorgrotinvert() {
 	sxmo_keyboard.sh close
 	xrandr -o inverted
 	applyptrmatrix -1 0 1 0 -1 1 0 0 1
-	sxmo_daemons.sh start sxmo_hook_lisgd sxmo_hook_lisgdstart.sh
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh invert
 	exit 0
 }
 
 swayrotinvert() {
 	swaymsg -- output "-" transform 180
-	sxmo_daemons.sh start sxmo_hook_lisgd sxmo_hook_lisgdstart.sh
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh invert
 	exit 0
 }
@@ -61,14 +61,14 @@ xorgrotnormal() {
 	sxmo_keyboard.sh close
 	xrandr -o normal
 	applyptrmatrix 0 0 0 0 0 0 0 0 0
-	sxmo_daemons.sh start sxmo_hook_lisgd sxmo_hook_lisgdstart.sh
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh normal
 	exit 0
 }
 
 swayrotnormal() {
 	swaymsg -- output "-" transform 0
-	sxmo_daemons.sh start sxmo_hook_lisgd sxmo_hook_lisgdstart.sh
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh normal
 	exit 0
 }
@@ -77,14 +77,14 @@ xorgrotright() {
 	sxmo_keyboard.sh close
 	xrandr -o right
 	applyptrmatrix 0 1 0 -1 0 1 0 0 1
-	sxmo_daemons.sh start sxmo_hook_lisgd sxmo_hook_lisgdstart.sh
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh right
 	exit 0
 }
 
 swayrotright() {
 	swaymsg -- output "-" transform 90
-	sxmo_daemons.sh start sxmo_hook_lisgd sxmo_hook_lisgdstart.sh
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh right
 	exit 0
 }
@@ -93,14 +93,14 @@ xorgrotleft() {
 	sxmo_keyboard.sh close
 	xrandr -o left
 	applyptrmatrix 0 -1 1 1 0 0 0 0 1
-	sxmo_daemons.sh start sxmo_hook_lisgd sxmo_hook_lisgdstart.sh
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh left
 	exit 0
 }
 
 swayrotleft() {
 	swaymsg -- output "-" transform 270
-	sxmo_daemons.sh start sxmo_hook_lisgd sxmo_hook_lisgdstart.sh
+	superctl restart sxmo_hook_lisgd
 	sxmo_hook_rotate.sh left
 	exit 0
 }

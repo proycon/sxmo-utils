@@ -25,7 +25,7 @@ case "$SXMO_WM" in
 		superctl start mako
 		superctl start sxmo_wob
 		superctl start sxmo_menumode_toggler
-		rm -f "$XDG_RUNTIME_DIR/bonsai" && sxmo_daemons.sh start bonsaid bonsaid -t "$XDG_CONFIG_HOME/sxmo/bonsai_tree.json"
+		superctl start bonsaid
 		;;
 	dwm)
 		superctl start dunst

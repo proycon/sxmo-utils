@@ -71,7 +71,7 @@ case "$WMCLASS" in
 				printf %b "$icon_tof ^ 1 ^ sxmo_wm.sh inputevent stylus on"
 			)
 			$icon_cfg Gestures $(
-				sxmo_service_isrunning "sxmo_hook_lisgd" &&
+				superd_service_isrunning "sxmo_hook_lisgd" &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
 			) ^ 1 ^ supertoggle_daemon 'sxmo_hook_lisgd'
 			$icon_cfg Toggle Bar ^ 0 ^ sxmo_wm.sh togglebar
