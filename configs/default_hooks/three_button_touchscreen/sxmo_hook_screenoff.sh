@@ -17,7 +17,7 @@ sxmo_hook_statusbar.sh state_change
 
 sxmo_wm.sh dpms on
 sxmo_wm.sh inputevent touchscreen off
-superctl stop sxmo_hook_lisgd
+sxmo_daemons.sh stop sxmo_hook_lisgd
 
 wait "$LEDPID"
 

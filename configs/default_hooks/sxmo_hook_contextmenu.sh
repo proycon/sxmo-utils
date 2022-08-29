@@ -14,8 +14,12 @@
 XPROPOUT="$(sxmo_wm.sh focusedwindow)"
 WMCLASS="${1:-$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
 
-service_isrunning() {
+superd_service_isrunning() {
 	superctl status "$1" | grep -q started
+}
+
+sxmo_service_isrunning() {
+	sxmo_daemons.sh running "$1" > /dev/null
 }
 
 if [ -z "$XPROPOUT" ]; then
@@ -67,7 +71,7 @@ case "$WMCLASS" in
 				printf %b "$icon_tof ^ 1 ^ sxmo_wm.sh inputevent stylus on"
 			)
 			$icon_cfg Gestures $(
-				service_isrunning "sxmo_hook_lisgd" &&
+				sxmo_service_isrunning "sxmo_hook_lisgd" &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
 			) ^ 1 ^ supertoggle_daemon 'sxmo_hook_lisgd'
 			$icon_cfg Toggle Bar ^ 0 ^ sxmo_wm.sh togglebar

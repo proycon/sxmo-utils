@@ -16,7 +16,7 @@ sxmo_hook_statusbar.sh state_change
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen on
 sxmo_wm.sh inputevent stylus on
-superctl start sxmo_hook_lisgd
+sxmo_daemons.sh start sxmo_hook_lisgd sxmo_hook_lisgdstart.sh
 
 # suspend after 30s
 # the periodic mutex check is necessary to 'free' old mutex, I think.
