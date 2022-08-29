@@ -10,10 +10,9 @@
           {
             "type": "exec",
             "command": [
-              "setsid",
-              "-f",
-              "sxmo_hook_inputhandler.sh",
-              "powerbutton_three"
+              "sh",
+              "-c",
+              "setsid -f sxmo_hook_inputhandler.sh powerbutton_three >> \"$XDG_STATE_HOME\"/bonsaid_execs.log 2>&1"
             ]
           }
         ]
@@ -29,10 +28,9 @@
               {
                 "type": "exec",
                 "command": [
-                  "setsid",
-                  "-f",
-                  "sxmo_hook_inputhandler.sh",
-                  "powerbutton_one"
+                  "sh",
+                  "-c",
+                  "setsid -f sxmo_hook_inputhandler.sh powerbutton_one >> \"$XDG_STATE_HOME\"/bonsaid_execs.log 2>&1"
                 ]
               }
             ]
@@ -48,10 +46,9 @@
                   {
                     "type": "exec",
                     "command": [
-                      "setsid",
-                      "-f",
-                      "sxmo_hook_inputhandler.sh",
-                      "powerbutton_two"
+                      "sh",
+                      "-c",
+                      "setsid -f sxmo_hook_inputhandler.sh powerbutton_two >> \"$XDG_STATE_HOME\"/bonsaid_execs.log 2>&1"
                     ]
                   }
                 ]
@@ -63,10 +60,9 @@
                   {
                     "type": "exec",
                     "command": [
-                      "setsid",
-                      "-f",
-                      "sxmo_hook_inputhandler.sh",
-                      "powerbutton_three"
+                      "sh",
+                      "-c",
+                      "setsid -f sxmo_hook_inputhandler.sh powerbutton_three >> \"$XDG_STATE_HOME\"/bonsaid_execs.log 2>&1"
                     ]
                   }
                 ]
@@ -88,10 +84,9 @@
           {
             "type": "exec",
             "command": [
-              "setsid",
-              "-f",
-              "sxmo_hook_inputhandler.sh",
-              "voldown_three"
+              "sh",
+              "-c",
+              "setsid -f sxmo_hook_inputhandler.sh voldown_three >> \"$XDG_STATE_HOME\"/bonsaid_execs.log 2>&1"
             ]
           }
         ]
@@ -107,10 +102,9 @@
               {
                 "type": "exec",
                 "command": [
-                  "setsid",
-                  "-f",
-                  "sxmo_hook_inputhandler.sh",
-                  "voldown_one"
+                  "sh",
+                  "-c",
+                  "setsid -f sxmo_hook_inputhandler.sh voldown_one >> \"$XDG_STATE_HOME\"/bonsaid_execs.log 2>&1"
                 ]
               }
             ]
@@ -126,10 +120,9 @@
                   {
                     "type": "exec",
                     "command": [
-                      "setsid",
-                      "-f",
-                      "sxmo_hook_inputhandler.sh",
-                      "voldown_two"
+                      "sh",
+                      "-c",
+                      "setsid -f sxmo_hook_inputhandler.sh voldown_two >> \"$XDG_STATE_HOME\"/bonsaid_execs.log 2>&1"
                     ]
                   }
                 ]
@@ -141,10 +134,9 @@
                   {
                     "type": "exec",
                     "command": [
-                      "setsid",
-                      "-f",
-                      "sxmo_hook_inputhandler.sh",
-                      "voldown_three"
+                      "sh",
+                      "-c",
+                      "setsid -f sxmo_hook_inputhandler.sh voldown_three >> \"$XDG_STATE_HOME\"/bonsaid_execs.log 2>&1"
                     ]
                   }
                 ]
@@ -166,10 +158,9 @@
           {
             "type": "exec",
             "command": [
-              "setsid",
-              "-f",
-              "sxmo_hook_inputhandler.sh",
-              "volup_three"
+              "sh",
+              "-c",
+              "setsid -f sxmo_hook_inputhandler.sh volup_three >> \"$XDG_STATE_HOME\"/bonsaid_execs.log 2>&1"
             ]
           }
         ]
@@ -185,10 +176,9 @@
               {
                 "type": "exec",
                 "command": [
-                  "setsid",
-                  "-f",
-                  "sxmo_hook_inputhandler.sh",
-                  "volup_one"
+                  "sh",
+                  "-c",
+                  "setsid -f sxmo_hook_inputhandler.sh volup_one >> \"$XDG_STATE_HOME\"/bonsaid_execs.log 2>&1"
                 ]
               }
             ]
@@ -204,10 +194,9 @@
                   {
                     "type": "exec",
                     "command": [
-                      "setsid",
-                      "-f",
-                      "sxmo_hook_inputhandler.sh",
-                      "volup_two"
+                      "sh",
+                      "-c",
+                      "setsid -f sxmo_hook_inputhandler.sh volup_two >> \"$XDG_STATE_HOME\"/bonsaid_execs.log 2>&1"
                     ]
                   }
                 ]
@@ -219,10 +208,9 @@
                   {
                     "type": "exec",
                     "command": [
-                      "setsid",
-                      "-f",
-                      "sxmo_hook_inputhandler.sh",
-                      "volup_three"
+                      "sh",
+                      "-c",
+                      "setsid -f sxmo_hook_inputhandler.sh volup_three >> \"$XDG_STATE_HOME\"/bonsaid_execs.log 2>&1"
                     ]
                   }
                 ]
