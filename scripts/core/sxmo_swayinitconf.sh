@@ -13,6 +13,12 @@ pwr="${SXMO_POWER_BUTTON:-"0:0:axp20x-pek"}"
 vols="${SXMO_VOLUME_BUTTON:-"1:1:1c21800.lradc"}"
 scale="${SXMO_SWAY_SCALE:-2}"
 
+if [ -n "$SXMO_MODEM_GPIO_KEY_RI" ]; then
+	# Disable the gpio-key-ri input devive
+	# It will trigger idle wakeup on modem notification which break sxmo
+	swaymsg -- input "$SXMO_MODEM_GPIO_KEY_RI" events disabled
+fi
+
 swaymsg -- output "$monitor" scale "$scale"
 
 focused_name="$(
