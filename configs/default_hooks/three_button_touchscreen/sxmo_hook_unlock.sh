@@ -46,4 +46,4 @@ else
 fi
 
 sxmo_daemons.sh start periodic_state_mutex_check \
-	sxmo_run_aligned.sh 50 sxmo_uniq_exec.sh sxmo_hook_check_state_mutexes.sh
+	sxmo_run_aligned.sh 60 sxmo_uniq_exec.sh sxmo_hook_check_state_mutexes.sh
