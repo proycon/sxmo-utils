@@ -104,7 +104,17 @@ checkconfigversion() {
 		#if the userfile doesn't exist then we revert to default anyway so it's considered up to date
 		return 0
 	fi
+
 	refversion=$(grep -e "^[#;]\\s*configversion\\s*[:=]" "$reffile" |  tr -d '#;:=[:space:]')
+	if [ -z "$refversion" ]; then
+		#no ref version found, check file diff instead
+		if diff "$reffile" "$userfile" > /dev/null; then
+			return 0
+		else
+			return 1
+		fi
+	fi
+
 	userversion=$(grep -e "^[#;]\\s*configversion\\s*[:=]" "$userfile" |  tr -d '#;:=[:space:]')
 	if [ -z "$userversion" ]; then
 		#no user version found, check file contents instead
@@ -117,9 +127,9 @@ checkconfigversion() {
 			rm "$tmpreffile"
 			return 1
 		fi
-	else
-		[ "$refversion" = "$userversion" ]
 	fi
+
+	[ "$refversion" = "$userversion" ]
 }
 
 defaultconfig() {
@@ -135,13 +145,10 @@ defaultconfig() {
 		cp "$defaultfile" "$userfile"
 		chmod "$filemode" "$userfile"
 	elif [ "$MODE" = "reset" ]; then
-		if [ -e "$userfile" ] \
-			&& ! diff "$defaultfile" "$userfile" > /dev/null; then
-			if [ ! -e "$userfile.needs-migration" ]; then
-				mv "$userfile" "$userfile.needs-migration"
-			else
-				sxmo_log "$userfile was already flagged for needing migration; not overwriting the older one"
-			fi
+		if [ ! -e "$userfile.needs-migration" ]; then
+			mv "$userfile" "$userfile.needs-migration"
+		else
+			sxmo_log "$userfile was already flagged for needing migration; not overwriting the older one"
 		fi
 		cp "$defaultfile" "$userfile"
 		chmod "$filemode" "$userfile"
@@ -251,7 +258,7 @@ sway() {
 	defaultconfig "$(xdg_data_path sxmo/appcfg/sway_template)" "$XDG_CONFIG_HOME/sxmo/sway" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/foot.ini)" "$XDG_CONFIG_HOME/foot/foot.ini" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/mako.conf)" "$XDG_CONFIG_HOME/mako/config" 644
-	MODE=reset defaultconfig "$(xdg_data_path sxmo/appcfg/bonsai_tree.json)" "$XDG_CONFIG_HOME/sxmo/bonsai_tree.json" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/bonsai_tree.json)" "$XDG_CONFIG_HOME/sxmo/bonsai_tree.json" 644
 }
 
 xorg() {
