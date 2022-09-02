@@ -189,6 +189,8 @@ bar {
     # The default just shows the current date and time.
     status_command sxmo_status.sh watch
 
+    pango_markup enabled
+
     colors {
         statusline #ffffff
         background #323232

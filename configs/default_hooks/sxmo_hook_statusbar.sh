@@ -11,6 +11,23 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
+#colours using pango markup
+if [ $SXMO_WM = "sway" ]; then
+	SPAN_RED="<span foreground=\"#ff5454\">"
+	SPAN_GREEN="<span foreground=\"#54ff54\">"
+	SPAN_ORANGE="<span foreground=\"#ffa954\">"
+	BOLD="<b>"
+	ENDBOLD="</b>"
+	ENDSPAN="</span>"
+else
+	SPAN_RED=""
+	SPAN_GREEN=""
+	SPAN_ORANGE=""
+	BOLD=""
+	ENDBOLD=""
+	ENDSPAN=""
+fi
+
 set_time() {
 	date "+${SXMO_STATUS_DATE_FORMAT:-%H:%M}" | head -c -1 | sxmo_status.sh add 99-time
 }
@@ -19,7 +36,8 @@ set_state() {
 	if grep -q unlock "$SXMO_STATE"; then
 		sxmo_status.sh del 0-state
 	else
-		tr '[:lower:]' '[:upper:]' < "$SXMO_STATE" | sxmo_status.sh add 0-state
+		STATE_LABEL=$(tr '[:lower:]' '[:upper:]' < "$SXMO_STATE")
+		echo "${SPAN_RED}${BOLD}${STATE_LABEL}${ENDBOLD}${ENDSPAN}" | sxmo_status.sh add 0-state
 	fi
 }
 
@@ -49,13 +67,13 @@ _modem() {
 		MODEMSTATUS="$(printf %s "$MMCLI" | jq -r .modem.generic.state)"
 		case "$MODEMSTATUS" in
 			locked)
-				printf "%s" "$icon_plk"
+				printf "%s%s%s" "$SPAN_RED" "$icon_plk" "$ENDSPAN"
 				;;
 			initializing)
 				printf "I"
 				;;
 			disabled) # low power state
-				printf "%s" "$icon_mdd"
+				printf "%s%s%s" "$SPAN_RED" "$icon_mdd" "$ENDSPAN"
 				;;
 			disabling)
 				printf ">%s" "$icon_mdd"
@@ -72,7 +90,7 @@ _modem() {
 			registered|connected|connecting|disconnecting)
 				MODEMSIGNAL="$(printf %s "$MMCLI" | jq -r '.modem.generic."signal-quality".value')"
 				if [ "$MODEMSIGNAL" -lt 20 ]; then
-					printf ""
+					printf "%s%s" "$SPAN_RED" "$ENDSPAN"
 				elif [ "$MODEMSIGNAL" -lt 40 ]; then
 					printf ""
 				elif [ "$MODEMSIGNAL" -lt 60 ]; then
@@ -213,13 +231,13 @@ _battery() {
 				elif [ "$PCT" -lt 90 ]; then
 					printf ""
 				else
-					printf ""
+					printf "%s%s" "$SPAN_GREEN" "$ENDSPAN"
 				fi
 			else
 				if [ "$PCT" -lt 10 ]; then
-					printf ""
+					printf "%s%s" "$SPAN_RED" "$ENDSPAN"
 				elif [ "$PCT" -lt 20 ]; then
-					printf ""
+					printf "%s%s" "$SPAN_ORANGE" "$ENDSPAN"
 				elif [ "$PCT" -lt 30 ]; then
 					printf ""
 				elif [ "$PCT" -lt 40 ]; then
