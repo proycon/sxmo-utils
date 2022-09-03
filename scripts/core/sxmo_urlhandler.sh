@@ -39,6 +39,7 @@ COMMAND="$(
 		$(command -v w3m        >/dev/null && echo 'w3m URL')
 		$(command -v mpv        >/dev/null && echo 'mpv -v URL')
 		$(command -v mpv        >/dev/null && echo 'mpv -v --ytdl-format="[height<420]" URL')
+		$(command -v badwolf    >/dev/null && echo 'badwolf URL')
 		$(command -v firefox    >/dev/null && echo 'firefox -new-window URL')
 		$(command -v netsurf    >/dev/null && echo 'netsurf URL')
 		$(command -v surf       >/dev/null && echo 'surf URL')
