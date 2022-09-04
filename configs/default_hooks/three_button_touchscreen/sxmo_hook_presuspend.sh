@@ -12,7 +12,7 @@ sxmo_daemons.sh stop periodic_blink
 
 pkill clickclack
 sxmo_keyboard.sh close
-pkill mpv #if any audio/video is playing, kill it (it might stutter otherwise)
+pkill -INT mpv #if any audio/video is playing, kill it (it might stutter otherwise)
 
 case "$SXMO_WM" in
 	dwm)
