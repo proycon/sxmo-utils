@@ -4,12 +4,9 @@
 
 # shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
 . sxmo_hook_icons.sh
+. sxmo_common.sh
 
 set -e
-
-SPEAKER="${SXMO_SPEAKER:-"Line Out"}"
-HEADPHONE="${SXMO_HEADPHONE:-"Headphone"}"
-EARPIECE="${SXMO_EARPIECE:-"Earpiece"}"
 
 notifyvol() {
 	vol="$1"
@@ -27,55 +24,183 @@ notifyvol() {
 	sxmo_hook_statusbar.sh volume
 }
 
+# adjust *output* vol/mute
 pulsevolup() {
-	pamixer -i "${1:-5}" --get-volume | notifyvol -
+	cur_vol="$(pulsevolget)"
+	[ "$cur_vol" = "muted" ] && return
+	if [ "$cur_vol" -gt "$((100 - ${1:-5}))" ]; then
+		pactl set-sink-volume @DEFAULT_SINK@ 100%
+	else
+		pactl set-sink-volume @DEFAULT_SINK@ +"${1:-5}%"
+	fi
+	pulsevolget | notifyvol -
 }
 
 pulsevoldown() {
-	pamixer -d "${1:-5}" --get-volume | notifyvol -
+	cur_vol="$(pulsevolget)"
+	[ "$cur_vol" = "muted" ] && return
+	if [ "$cur_vol" -lt "$((0 + ${1:-5}))" ]; then
+		pactl set-sink-volume @DEFAULT_SINK@ 0%
+	else
+		pactl set-sink-volume @DEFAULT_SINK@ -"${1:-5}%"
+	fi
+	pulsevolget | notifyvol -
 }
 
 pulsevoltogglemute() {
-	pamixer -t --get-mute --get-volume | \
-		sed -e 's/^true.*/0/' -e 's/^false //' | \
-		notifyvol -
+	pactl set-sink-mute @DEFAULT_SINK@ toggle
+	sxmo_hook_statusbar.sh volume
 }
 
-pulsemictogglemute() {
-	pamixer -t --default-source --get-mute --get-volume | \
-		sed -e 's/^true.*/0/' -e 's/^false //' | \
-		notifyvol -
+pulsevolismuted() {
+	pactl get-sink-mute @DEFAULT_SINK@ | grep -q "Mute: yes"
 }
 
 pulsevolget() {
-	pamixer --get-volume
+	if pulsevolismuted; then
+		printf "muted"
+	else
+		pactl get-sink-volume @DEFAULT_SINK@ | head -n1 | cut -d'/' -f2 | sed 's/ //g' | sed 's/\%//'
+	fi
 }
 
 pulsevolset() {
-	pamixer --set-volume "$1" --get-volume | notifyvol -
+	pact set-sink-volume @DEFAULT_SINK@ "$1"%
+	pulsevolget | notifyvol
 }
 
+# adjust *input* vol/mute
+pulsemicvolup() {
+	cur_vol="$(pulsemicvolget)"
+	[ "$cur_vol" = "muted" ] && return
+	if [ "$cur_vol" -gt "$((100 - ${1:-5}))" ]; then
+		pactl set-source-volume @DEFAULT_SOURCE@ 100%
+	else
+		pactl set-source-volume @DEFAULT_SOURCE@ +"${1:-5}%"
+	fi
+	pulsemicvolget | notifyvol -
+}
+
+pulsemicvoldown() {
+	cur_vol="$(pulsemicvolget)"
+	[ "$cur_vol" = "muted" ] && return
+	if [ "$cur_vol" -lt "$((0 + ${1:-5}))" ]; then
+		pactl set-source-volume @DEFAULT_SOURCE@ 0%
+	else
+		pactl set-source-volume @DEFAULT_SOURCE@ -"${1:-5}%"
+	fi
+	pulsemicvolget | notifyvol -
+}
+
+pulsemictogglemute() {
+	pactl set-source-mute @DEFAULT_SOURCE@ toggle
+	sxmo_hook_statusbar.sh volume
+}
+
+pulsemicismuted() {
+	pactl get-source-mute @DEFAULT_SOURCE@ | grep -q "Mute: yes"
+}
+
+pulsemicvolget() {
+	if pulsemicismuted; then
+		printf "muted"
+	else
+		pactl get-source-volume @DEFAULT_SOURCE@ | head -n1 | cut -d'/' -f2 | sed 's/ //g' | sed 's/\%//'
+	fi
+}
+
+pulsemicvolset() {
+	pact set-source-volume @DEFAULT_SOURCE@ "$1"%
+	pulsevolget | notifyvol
+}
+
+# set the *active port* for output
 pulsedeviceset() {
-	printf "Not implemented\n" >&2
+	pactl set-sink-port @DEFAULT_SINK@ "[Out] $1"
+	sxmo_hook_statusbar.sh volume
 }
 
+# set the *active port* for input
+pulsedevicesetinput() {
+	pactl set-source-port @DEFAULT_SOURCE@ "[In] $1"
+	sxmo_hook_statusbar.sh volume
+}
+
+# get the *active port* for input
+pulsedevicegetinput() {
+	[ -z "$1" ] && default_source="$(pactl get-default-source)" || default_source="$1"
+	pactl --format=json list sources | jq -r ".[] | select(.name == \"$default_source\") | .active_port" | sed 's/\[In] //'
+}
+
+# get the *active port* for output
 pulsedeviceget() {
-	printf "Not implemented\n" >&2
+	[ -z "$1" ] && default_sink="$(pactl get-default-sink)" || default_sink="$1"
+	pactl --format=json list sinks | jq -r ".[] | select(.name == \"$default_sink\") | .active_port" | sed 's/\[Out] //'
 }
 
-pulsesinksset() {
+# get the default sink
+pulsedevicegetdefaultsink() {
+	pactl get-default-sink
+}
+
+# get the default source
+pulsedevicegetdefaultsource() {
+	pactl get-default-source
+}
+
+pulsesourceset() {
+	pactl set-default-source "$1"
+}
+
+pulsesinkset() {
 	pactl set-default-sink "$1"
 }
 
-pulsesinksget() {
-	default_id="$(pamixer --get-default-sink | tail -n1 | cut -d" " -f1)"
-	pamixer --list-sinks | tail -n+2 | while read -r id _ _ description; do
+# get a list of sinks
+_pulsesinkssubmenu() {
+	[ -z "$1" ] && default_sink="$(pactl get-default-sink)" || default_sink="$1"
+	pamixer --list-sinks | tail -n+2 | while read -r _ name _ description; do
 		eval description="$description"
-		if [ "$default_id" = "$id" ]; then
-			printf "%s %s ^ %s\n" "$icon_chk" "$description" "$id"
+		if [ "\"$default_sink\"" = "$name" ]; then
+			printf "%s %s %s ^ pulsesinkset %s\n" "$icon_chk" "$icon_spk" "$description" "$name"
 		else
-			printf "%s ^ %s\n" "$description" "$id"
+			printf "  %s %s ^ pulsesinkset %s\n" "$icon_spk" "$description" "$name"
 		fi
+	done
+}
+
+# get a list of output ports
+_pulseoutportssubmenu() {
+	[ -z "$1" ] && default_sink="$(pactl get-default-sink)" || default_sink="$1"
+	active_out_port="$(pulsedeviceget "$default_sink")"
+	pactl --format=json list sinks | jq -r ".[] | select(.name == \"$default_sink\" ) | .ports[] | select(.availability != \"not available\" ) | .name" | sed 's/\[Out] //' | while read -r line; do
+		[ "$active_out_port" = "$line" ] && icon="$icon_ton" || icon="$icon_tof"
+		printf "  %s %s ^ pulsedeviceset %s\n" "$icon" "$line" "$line"
+	done
+}
+
+# get a list of input sources
+_pulsesourcessubmenu() {
+	[ -z "$1" ] && default_source="$(pactl get-default-source)" || default_source="$1"
+	pamixer --list-sources | tail -n+2 | grep -v "Monitor of " | while read -r _ name _ description; do
+		eval description="$description"
+		if [ "\"$default_source\"" = "$name" ]; then
+			printf "%s %s %s ^ pulsesourceset %s\n" "$icon_chk" "$icon_mic" "$description" "$name"
+		else
+			printf "  %s %s ^ pulsesourceset %s\n" "$icon_mic" "$description" "$name"
+		fi
+	done
+}
+
+# get a list of input ports
+_pulseinportssubmenu() {
+	# if the Headset is NOT plugged in, then do not display Headset
+	# as a option, as clicking on it causes pulse to unset the source!!
+	[ -z "$1" ] && default_source="$(pactl get-default-source)" || default_source="$1"
+	active_in_port="$(pulsedevicegetinput "$default_source")"
+	pactl --format=json list sources | jq -r ".[] | select(.name == \"$default_source\" ) | .ports[] | select(.availability != \"not available\" ) | .name" | sed 's/\[In] //' | while read -r line; do
+		[ "$active_in_port" = "$line" ] && icon="$icon_ton" || icon="$icon_tof"
+		printf "  %s %s ^ pulsedevicesetinput %s\n" "$icon" "$line" "$line"
 	done
 }
 
@@ -85,22 +210,11 @@ _callaudiodsubmenu() {
 	fi
 
 	if sxmo_modemaudio.sh is_call_audio_mode; then
-		printf "%s Call Mode ^ sxmo_modemaudio.sh disable_call_audio_mode\n" "$icon_ton"
+		printf "  %s callaudiod 'Call Mode' profile ^ sxmo_modemaudio.sh disable_call_audio_mode\n" "$icon_ton"
 	else
-		printf "%s Call Mode ^ sxmo_modemaudio.sh enable_call_audio_mode\n" "$icon_tof"
+		printf "  %s callaudiod 'Call Mode' profile ^ sxmo_modemaudio.sh enable_call_audio_mode\n" "$icon_tof"
 	fi
 
-	if sxmo_modemaudio.sh is_enabled_speaker; then
-		printf "%s Earpiece Out ^ sxmo_modemaudio.sh disable_speaker\n" "$icon_tof"
-	else
-		printf "%s Earpiece Out ^ sxmo_modemaudio.sh enable_speaker\n" "$icon_ton"
-	fi
-
-	if sxmo_modemaudio.sh is_muted_mic; then
-		printf "%s Mic ^ sxmo_modemaudio.sh unmute_mic\n" "$icon_tof"
-	else
-		printf "%s Mic ^ sxmo_modemaudio.sh mute_mic\n" "$icon_ton"
-	fi
 }
 
 _ringmodesubmenu() {
@@ -142,13 +256,39 @@ _ringmodesubmenu() {
 }
 
 pulsemenuchoices() {
-	grep . <<EOF
-$icon_cls Close Menu  ^ exit
-$icon_aru Volume up   ^ pulsevolup
-$icon_ard Volume down ^ pulsevoldown
-$(pulsesinksget | sed -e "s/^/$icon_spk /" -e 's/\^ \([0-9]\+\)$/^ pulsesinksset \1/')
+cur_vol="$(pulsevolget)"
+cur_mic_vol="$(pulsemicvolget)"
+default_sink_name="$(pulsedevicegetdefaultsink)"
+default_source_name="$(pulsedevicegetdefaultsource)"
+grep . <<EOF
+Output:
+$(_pulsesinkssubmenu "$default_sink_name")
+$(
+if [ "$cur_vol" != "muted" ]; then
+	printf "  %s Volume (%s%%) ^ pulsevolup\n" "$icon_aru" "$cur_vol"
+	printf "  %s Volume (%s%%) ^ pulsevoldown\n" "$icon_ard" "$cur_vol"
+	printf "  %s Output Mute ^ pulsevoltogglemute\n" "$icon_tof"
+else
+	printf "  %s Output Mute ^ pulsevoltogglemute\n" "$icon_ton"
+fi
+)
+$(_pulseoutportssubmenu "$default_sink_name")
+Input:
+$(_pulsesourcessubmenu "$default_source_name")
+$(
+if [ "$cur_mic_vol" != "muted" ]; then
+	printf "  %s Volume (%s%%) ^ pulsemicvolup\n" "$icon_aru" "$cur_mic_vol"
+	printf "  %s Volume (%s%%) ^ pulsemicvoldown\n" "$icon_ard" "$cur_mic_vol"
+	printf "  %s Input Mute ^ pulsemictogglemute\n" "$icon_tof"
+else
+	printf "  %s Input Mute ^ pulsemictogglemute\n" "$icon_ton"
+fi
+)
+$(_pulseinportssubmenu "$default_source_name")
+Call Options:
 $(_callaudiodsubmenu)
 $(_ringmodesubmenu)
+$icon_cls Close Menu  ^ exit
 EOF
 }
 
@@ -180,6 +320,10 @@ alsavolget() {
 	if [ -n "$(alsacurrentdevice)" ]; then
 		amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" get "$(alsacurrentdevice)" | amixerextractvol
 	fi
+}
+
+alsamicismuted() {
+	echo "Not implemented"
 }
 
 alsadeviceget() {
@@ -226,6 +370,13 @@ if [ -z "$backend" ]; then
 	else
 		backend=alsa
 	fi
+fi
+
+if [ "$backend" = "alsa" ]; then
+	# set some alsa specific things
+	SPEAKER="${SXMO_SPEAKER:-"Line Out"}"
+	HEADPHONE="${SXMO_HEADPHONE:-"Headphone"}"
+	EARPIECE="${SXMO_EARPIECE:-"Earpiece"}"
 fi
 
 cmd="$1"
