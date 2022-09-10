@@ -50,8 +50,8 @@ if [ -n "$WAYLAND_DISPLAY" ]; then
 	trap 'cleanmode' TERM INT
 
 	bemenu -l "$(sxmo_rotate.sh isrotated > /dev/null && \
-		printf %s "${SXMO_BMENU_LANDSCAPE_LINES:-8}" || \
-		printf %s "${SXMO_BMENU_PORTRAIT_LINES:-15}")" "$@"
+		printf %s "${SXMO_BEMENU_LANDSCAPE_LINES:-8}" || \
+		printf %s "${SXMO_BEMENU_PORTRAIT_LINES:-15}")" "$@"
 	returned=$?
 
 	cleanmode
