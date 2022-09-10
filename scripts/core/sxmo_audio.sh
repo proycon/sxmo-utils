@@ -84,25 +84,22 @@ _callaudiodsubmenu() {
 		return
 	fi
 
-	printf "%s " "$icon_ear"
 	if sxmo_modemaudio.sh is_call_audio_mode; then
-		printf "Mode: Call -> Default ^ sxmo_modemaudio.sh disable_call_audio_mode\n"
+		printf "$icon_ton Call Mode ^ sxmo_modemaudio.sh disable_call_audio_mode\n"
 	else
-		printf "Mode: Default -> Call ^ sxmo_modemaudio.sh enable_call_audio_mode\n"
+		printf "$icon_tof Call Mode ^ sxmo_modemaudio.sh enable_call_audio_mode\n"
 	fi
 
-	printf "%s " "$icon_ear"
 	if sxmo_modemaudio.sh is_enabled_speaker; then
-		printf "Output: Speaker -> Earpiece ^ sxmo_modemaudio.sh disable_speaker\n"
+		printf "$icon_tof Earpiece Out ^ sxmo_modemaudio.sh disable_speaker\n"
 	else
-		printf "Output: Earpiece -> Speaker ^ sxmo_modemaudio.sh enable_speaker\n"
+		printf "$icon_ton Earpiece Out ^ sxmo_modemaudio.sh enable_speaker\n"
 	fi
 
-	printf "%s " "$icon_ear"
 	if sxmo_modemaudio.sh is_muted_mic; then
-		printf "Mic: Off -> On ^ sxmo_modemaudio.sh unmute_mic\n"
+		printf "$icon_tof Mic ^ sxmo_modemaudio.sh unmute_mic\n"
 	else
-		printf "Mic: On -> Off ^ sxmo_modemaudio.sh mute_mic\n"
+		printf "$icon_ton Mic ^ sxmo_modemaudio.sh mute_mic\n"
 	fi
 }
 
@@ -111,37 +108,37 @@ _ringmodesubmenu() {
 	[ -z "$curmode" ] && curmode="Ring&Vibrate"
 
 	if [ "$curmode" = "Ring&Vibrate" ]; then
-		printf "%s" "$icon_chk"
+		printf "%s" "$icon_ton"
 	else
-		printf "%s" "$icon_cls"
+		printf "%s" "$icon_tof"
 	fi
 	# carefull, this one can easily match for the Ring one too
 	# shellcheck disable=SC2016
-	printf ' Mode Ring&vibrate ^ echo "" > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
+	printf ' Ring & Vibrate ^ echo "" > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
 
 	if [ "$curmode" = Vibrate ]; then
-		printf "%s" "$icon_chk"
+		printf "%s" "$icon_ton"
 	else
-		printf "%s" "$icon_cls"
+		printf "%s" "$icon_tof"
 	fi
 	# shellcheck disable=SC2016
-	printf ' Mode Vibrate ^ echo Vibrate > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
+	printf ' Vibrate Only ^ echo Vibrate > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
 
 	if [ "$curmode" = Ring ]; then
-		printf "%s" "$icon_chk"
+		printf "%s" "$icon_ton"
 	else
-		printf "%s" "$icon_cls"
+		printf "%s" "$icon_tof"
 	fi
 	# shellcheck disable=SC2016
-	printf ' Mode Ring ^ echo Ring > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
+	printf ' Ring Only ^ echo Ring > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
 
 	if [ "$curmode" = Mute ]; then
-		printf "%s" "$icon_chk"
+		printf "%s" "$icon_ton"
 	else
-		printf "%s" "$icon_cls"
+		printf "%s" "$icon_tof"
 	fi
 	# shellcheck disable=SC2016
-	printf ' Mode Muted ^ echo Mute > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
+	printf ' No Ring & No Vibrate ^ echo Mute > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
 }
 
 pulsemenuchoices() {
