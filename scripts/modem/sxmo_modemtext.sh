@@ -57,7 +57,7 @@ sendtextmenu() {
 	DRAFT="$SXMO_LOGDIR/$NUMBER/draft.txt"
 	if [ ! -f "$DRAFT" ]; then
 		mkdir -p "$(dirname "$DRAFT")"
-		echo 'Enter text message here' > "$DRAFT"
+		echo ${SXMO_DEFAULT_DRAFT:-Enter text message here} > "$DRAFT"
 	fi
 
 	# shellcheck disable=SC2086
