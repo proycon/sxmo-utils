@@ -12,7 +12,7 @@
 . sxmo_common.sh
 
 #colours using pango markup
-if [ $SXMO_WM = "sway" ]; then
+if [ "$SXMO_WM" = "sway" ]; then
 	SPAN_RED="<span foreground=\"#ff5454\">"
 	SPAN_GREEN="<span foreground=\"#54ff54\">"
 	SPAN_ORANGE="<span foreground=\"#ffa954\">"

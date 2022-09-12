@@ -85,21 +85,21 @@ _callaudiodsubmenu() {
 	fi
 
 	if sxmo_modemaudio.sh is_call_audio_mode; then
-		printf "$icon_ton Call Mode ^ sxmo_modemaudio.sh disable_call_audio_mode\n"
+		printf "%s Call Mode ^ sxmo_modemaudio.sh disable_call_audio_mode\n" "$icon_ton"
 	else
-		printf "$icon_tof Call Mode ^ sxmo_modemaudio.sh enable_call_audio_mode\n"
+		printf "%s Call Mode ^ sxmo_modemaudio.sh enable_call_audio_mode\n" "$icon_tof"
 	fi
 
 	if sxmo_modemaudio.sh is_enabled_speaker; then
-		printf "$icon_tof Earpiece Out ^ sxmo_modemaudio.sh disable_speaker\n"
+		printf "%s Earpiece Out ^ sxmo_modemaudio.sh disable_speaker\n" "$icon_tof"
 	else
-		printf "$icon_ton Earpiece Out ^ sxmo_modemaudio.sh enable_speaker\n"
+		printf "%s Earpiece Out ^ sxmo_modemaudio.sh enable_speaker\n" "$icon_ton"
 	fi
 
 	if sxmo_modemaudio.sh is_muted_mic; then
-		printf "$icon_tof Mic ^ sxmo_modemaudio.sh unmute_mic\n"
+		printf "%s Mic ^ sxmo_modemaudio.sh unmute_mic\n" "$icon_tof"
 	else
-		printf "$icon_ton Mic ^ sxmo_modemaudio.sh mute_mic\n"
+		printf "%s Mic ^ sxmo_modemaudio.sh mute_mic\n" "$icon_ton"
 	fi
 }
 
