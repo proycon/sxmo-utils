@@ -46,6 +46,7 @@ _sxmo_load_environments() {
 	export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 	export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/dev/shm/user/$(id -u)}"
 	export XDG_DATA_DIRS="${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+	export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 
 	export SXMO_CACHEDIR="${SXMO_CACHEDIR:-$XDG_CACHE_HOME/sxmo}"
 
