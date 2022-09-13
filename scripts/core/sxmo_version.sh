@@ -18,11 +18,19 @@ case "$SXMO_WM" in
 		/usr/bin/sway -v
 		/usr/bin/bemenu -v
 		/usr/bin/foot -v
+		if ! command -v bonsaictl > /dev/null; then
+			echo "no bonsai"
+		else
+			which bonsaictl
+		fi
 		;;
 esac
 
+printf "superd "
+/usr/bin/superctl --version
 "$KEYBOARD" -v
 /usr/bin/mmcli --version | head -n 1
+uname -m
 . /etc/os-release
 printf "%s %s" "$NAME" "$VERSION"
 
