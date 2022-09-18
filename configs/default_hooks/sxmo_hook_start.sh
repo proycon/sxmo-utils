@@ -88,5 +88,10 @@ superctl start wireplumber
 	sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh
 ) &
 
+deviceprofile="$(command -v "sxmo_deviceprofile_$SXMO_DEVICE_NAME.sh")"
+
+[ -f "$deviceprofile" ] || sxmo_notify_user.sh --urgency=critical \
+	"No deviceprofile found $SXMO_DEVICE_NAME. See: https://sxmo.org/deviceprofile"
+
 sxmo_migrate.sh state || sxmo_notify_user.sh --urgency=critical \
 	"Config needs migration" "$? file(s) in your sxmo configuration are out of date and disabled - using defaults until you migrate (run sxmo_migrate.sh)"

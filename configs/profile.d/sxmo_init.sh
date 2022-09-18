@@ -75,7 +75,7 @@ _sxmo_load_environments() {
 			. "$deviceprofile"
 			printf "deviceprofile file %s loaded.\n" "$deviceprofile"
 		else
-			printf "WARNING: deviceprofile file not found for %s.\n" "$SXMO_DEVICE_NAME"
+			printf "WARNING: deviceprofile file not found for %s. Most device functions will not work. Please read: https://sxmo.org/deviceprofile \n" "$SXMO_DEVICE_NAME"
 		fi
 		unset deviceprofile
 	fi
