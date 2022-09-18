@@ -65,4 +65,8 @@ lisgd "$@" -d "$LISGD_INPUT_DEVICE" ${orientation:+-o $orientation} \
 	-g "2,RL,*,*,setsid -f sxmo_hook_inputhandler.sh twoleft" \
 	-g "2,LR,*,*,setsid -f sxmo_hook_inputhandler.sh tworight" \
 	-g "2,DU,*,*,setsid -f sxmo_hook_inputhandler.sh twoup" \
-	-g "2,UD,*,*,setsid -f sxmo_hook_inputhandler.sh twodown"
+	-g "2,UD,*,*,setsid -f sxmo_hook_inputhandler.sh twodown" \
+	-g "3,RL,*,*,setsid -f sxmo_hook_inputhandler.sh threeleft" \
+	-g "3,LR,*,*,setsid -f sxmo_hook_inputhandler.sh threeright" \
+	-g "3,DU,*,*,setsid -f sxmo_hook_inputhandler.sh threeup" \
+	-g "3,UD,*,*,setsid -f sxmo_hook_inputhandler.sh threedown"
