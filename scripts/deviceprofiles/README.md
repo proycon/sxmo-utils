@@ -61,6 +61,8 @@ SXMO_LED_RED_TYPE		| LED device type, i.e., the part after the colon in the path
 
 SXMO_LED_GREEN_TYPE		| LED device type, i.e., the part after the colon in the path: `/sys/class/leds/<color>:<type>` [default: status]
 
+SXMO_SWAY_SCALE		| Screen scale for hidpi screens. Can be fractional [SWAY-ONLY].
+
 ### Music-related
 SXMO_SPEAKER			| Audio device name for the main speaker [default: Speaker]
 
