@@ -105,7 +105,7 @@ _modem() {
 				# FAILED, UNKNOWN
 				# see https://www.freedesktop.org/software/ModemManager/doc/latest/ModemManager/ModemManager-Flags-and-Enumerations.html#MMModemState
 				sxmo_log "WARNING: MODEMSTATUS: $MODEMSTATUS"
-				printf "<%s>" "$MODEMSTATUS"
+				printf "%s" "$MODEMSTATUS"
 				;;
 		esac
 	fi
