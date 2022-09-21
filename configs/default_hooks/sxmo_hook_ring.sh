@@ -33,13 +33,13 @@ case "$(cat "$XDG_CONFIG_HOME"/sxmo/.ringmode)" in
 		for _ in $(seq 5); do
 			sxmo_vibrate 1500
 			sleep 0.5
-		done
+		done &
+		echo "$!" > "$XDG_RUNTIME_DIR/sxmo.ring.pid"
 		;;
 	Ring)
 		timeout "$SXMO_RINGTIME" mpv --no-resume-playback --quiet --no-video \
 			--loop="$SXMO_RINGNUMBER" "$SXMO_RINGTONE" &
-		MPVID=$!
-		echo "$MPVID" > "$XDG_RUNTIME_DIR/sxmo.ring.pid"
+		echo "$!" > "$XDG_RUNTIME_DIR/sxmo.ring.pid"
 	;;
 	*) #Default ring and vibrate
 		timeout "$SXMO_RINGTIME" mpv --no-resume-playback --quiet --no-video \
