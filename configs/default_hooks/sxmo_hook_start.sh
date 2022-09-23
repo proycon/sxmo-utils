@@ -84,6 +84,12 @@ superctl start wireplumber
 	sleep 5 # let some time to pipewire
 	superctl start callaudiod
 
+	# trick it into updating the status bar for volume
+	sleep 2
+	sxmo_hook_statusbar.sh volume
+
+	# this is also where you'd play a startup sound
+
 	# Turn on the dbus-monitors for modem-related tasks
 	sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh
 ) &
