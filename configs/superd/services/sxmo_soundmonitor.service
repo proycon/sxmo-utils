@@ -1,0 +1,7 @@
+[Unit]
+Description=Sxmo: watch audio changes and update the status bar
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/sxmo_soundmonitor.sh

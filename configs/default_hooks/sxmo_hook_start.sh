@@ -88,6 +88,9 @@ superctl start wireplumber
 	sleep 2
 	sxmo_hook_statusbar.sh volume
 
+	# monitor for headphone for statusbar
+	superctl start sxmo_soundmonitor
+
 	# this is also where you'd play a startup sound
 
 	# Turn on the dbus-monitors for modem-related tasks
