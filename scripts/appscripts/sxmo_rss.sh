@@ -18,6 +18,8 @@ else
 	SFEEDCONF=$(xdg_data_path sxmo/appcfg/sxmo_sfeedrc)
 fi
 
+. "$SFEEDCONF"
+
 die() {
 	echo "Error: $1"
 	exit 1
@@ -33,7 +35,7 @@ tflt() {
 prep_temp_folder_with_items() {
 	mkdir -p "$FOLDER"
 	rm -rf "${FOLDER:?}/*"
-	cd ~/.sfeed/feeds/ || die "Could cd to ~/.sfeed/feeds/"
+	cd "${sfeedpath:-$HOME/.sfeed/feeds}" || die "Could cd to ${sfeedpath:-$HOME/.sfeed/feeds}"
 	for f in ./*; do
 		fclean="$(basename "$f")"
 		tflt < "$fclean" > "$FOLDER/$fclean"
