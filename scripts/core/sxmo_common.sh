@@ -45,7 +45,7 @@ sxmo_log() {
 }
 
 sxmo_debug() {
-	printf "%s %s DEBUG: %s\n" "$(date +%H:%M:%S)" "${0##*/}" "$*" >&2
+	[ -n "$SXMO_DEBUG" ] && printf "%s %s DEBUG: %s\n" "$(date +%H:%M:%S)" "${0##*/}" "$*" >&2
 }
 
 # Outputs the paths of the specified file/dir path in XDG_DATA_DIRS.
