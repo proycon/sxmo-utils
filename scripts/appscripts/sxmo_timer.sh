@@ -9,10 +9,7 @@
 timerrun() {
 	TIME=$(
 		echo "$@" |
-		sed 's#h#*60m#g'|
-		sed 's#m#*60s#g'|
-		sed 's#s#*1#g'|
-		sed 's# #+#g' |
+		sed 's/\([^0-9]\)\([0-9]\)/\1+\2/g; s/h/*60m/g; s/m/*60s/g; s/s//g' |
 		bc
 	)
 
