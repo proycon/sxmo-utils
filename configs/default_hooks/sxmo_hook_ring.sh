@@ -38,12 +38,12 @@ case "$(cat "$XDG_CONFIG_HOME"/sxmo/.ringmode)" in
 		;;
 	Ring)
 		timeout "$SXMO_RINGTIME" mpv --no-resume-playback --quiet --no-video \
-			--loop="$SXMO_RINGNUMBER" "$SXMO_RINGTONE" &
+			--loop="$SXMO_RINGNUMBER" "$SXMO_RINGTONE" >/dev/null &
 		echo "$!" > "$XDG_RUNTIME_DIR/sxmo.ring.pid"
 	;;
 	*) #Default ring and vibrate
 		timeout "$SXMO_RINGTIME" mpv --no-resume-playback --quiet --no-video \
-			--loop="$SXMO_RINGNUMBER" "$SXMO_RINGTONE" &
+			--loop="$SXMO_RINGNUMBER" "$SXMO_RINGTONE" >/dev/null &
 		MPVID=$!
 		echo "$MPVID" > "$XDG_RUNTIME_DIR/sxmo.ring.pid"
 		# Vibrate while mpv is running
