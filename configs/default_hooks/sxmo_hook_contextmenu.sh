@@ -113,8 +113,8 @@ case "$WMCLASS" in
 			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_hook_screenoff.sh
 			$icon_zzz Suspend            ^ 0 ^ sxmo_hook_screenoff.sh && sxmo_suspend.sh
 			$icon_out Logout             ^ 0 ^ confirm Logout && sxmo_power.sh logout
-			$([ -f /usr/share/xsessions/sxmo.desktop ] &&
-				[ -f /usr/share/wayland-sessions/swmo.desktop ] &&
+			$([ -f "$(xdg_data_path xsessions/sxmo.desktop)" ] &&
+				[ -f "$(xdg_data_path wayland-sessions/swmo.desktop)" ] &&
 				echo "$icon_rol Toggle WM ^ 0 ^ confirm Toggle && sxmo_power.sh togglewm"
 			)
 			$icon_rld Reboot             ^ 0 ^ confirm Reboot && sxmo_power.sh reboot
