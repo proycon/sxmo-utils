@@ -23,10 +23,10 @@ case "$(cat "$XDG_CONFIG_HOME"/sxmo/.ringmode)" in
 		sxmo_vibrate 500
 		;;
 	Ring)
-		mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND"
+		mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND" >/dev/null
 		;;
 	*) #Default: ring&vibrate
-		mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND" &
+		mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND" >/dev/null &
 		sxmo_vibrate 500
 		;;
 esac
