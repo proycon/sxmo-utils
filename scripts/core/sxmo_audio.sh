@@ -218,41 +218,16 @@ _callaudiodsubmenu() {
 }
 
 _ringmodesubmenu() {
-	curmode="$(cat "$XDG_CONFIG_HOME"/sxmo/.ringmode)"
-	[ -z "$curmode" ] && curmode="Ring&Vibrate"
-
-	if [ "$curmode" = "Ring&Vibrate" ]; then
-		printf "%s" "$icon_ton"
+	if [ -f "$XDG_CONFIG_HOME"/sxmo/.noring ]; then
+		printf " %s Ring ^ rm -f \"$XDG_CONFIG_HOME\"/sxmo/.noring\n" "$icon_tof"
 	else
-		printf "%s" "$icon_tof"
+		printf " %s Ring ^ touch \"$XDG_CONFIG_HOME\"/sxmo/.noring\n" "$icon_ton"
 	fi
-	# carefull, this one can easily match for the Ring one too
-	# shellcheck disable=SC2016
-	printf ' Ring & Vibrate ^ echo "" > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
-
-	if [ "$curmode" = Vibrate ]; then
-		printf "%s" "$icon_ton"
+	if [ -f "$XDG_CONFIG_HOME"/sxmo/.novibrate ]; then
+		printf " %s Vibrate ^ rm -f \"$XDG_CONFIG_HOME\"/sxmo/.novibrate\n" "$icon_tof"
 	else
-		printf "%s" "$icon_tof"
+		printf " %s Vibrate ^ touch \"$XDG_CONFIG_HOME\"/sxmo/.novibrate\n" "$icon_ton"
 	fi
-	# shellcheck disable=SC2016
-	printf ' Vibrate Only ^ echo Vibrate > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
-
-	if [ "$curmode" = Ring ]; then
-		printf "%s" "$icon_ton"
-	else
-		printf "%s" "$icon_tof"
-	fi
-	# shellcheck disable=SC2016
-	printf ' Ring Only ^ echo Ring > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
-
-	if [ "$curmode" = Mute ]; then
-		printf "%s" "$icon_ton"
-	else
-		printf "%s" "$icon_tof"
-	fi
-	# shellcheck disable=SC2016
-	printf ' No Ring & No Vibrate ^ echo Mute > "$XDG_CONFIG_HOME/sxmo/.ringmode"\n'
 }
 
 pulsemenuchoices() {

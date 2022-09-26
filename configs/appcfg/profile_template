@@ -59,6 +59,3 @@ export SXMO_RINGTIME=20
 #Set RINGNUMBER to number of times phone will ring or repeat ringtone
 #(whichever of SXMO_RINGTIME or SXMO_RINGNUMBER runs less will limit how long phone rings)
 export SXMO_RINGNUMER=10
-
-# default to ring and vibrate
-touch "$XDG_CONFIG_HOME"/sxmo/.ringmode

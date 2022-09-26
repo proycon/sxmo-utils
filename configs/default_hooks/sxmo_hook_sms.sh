@@ -16,17 +16,15 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-case "$(cat "$XDG_CONFIG_HOME"/sxmo/.ringmode)" in
-	Mute)
-		;;
-	Vibrate)
-		sxmo_vibrate 500
-		;;
-	Ring)
-		mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND" >/dev/null
-		;;
-	*) #Default: ring&vibrate
+# do nothing if active call
+if ! sxmo_modemcall.sh list_active_calls | grep -q active; then
+
+	if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.noring ]; then
 		mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND" >/dev/null &
+	fi
+
+	if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.novibrate ]; then
 		sxmo_vibrate 500
-		;;
-esac
+	fi
+
+fi
