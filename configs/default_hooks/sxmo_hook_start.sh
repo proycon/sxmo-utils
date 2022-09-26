@@ -20,6 +20,22 @@ sxmo_daemons.sh start daemon_manager superd -v
 
 sleep 2 # let time to superd to start correctly
 
+superctl start pipewire
+superctl start pipewire-pulse
+superctl start wireplumber
+
+# let pipewire load and settle
+count=0
+while ! pactl info; do
+	if [ "$count" -gt 10 ]; then
+		sxmo_log "ERR: NO SOUND"
+		continue
+	fi
+	count=$((count + 1))
+	sleep 1s
+done
+sleep 2
+
 case "$SXMO_WM" in
 	sway)
 		superctl start mako
@@ -56,13 +72,10 @@ if [ -f "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" ]; then
 	superctl start vvmd
 fi
 
+superctl start callaudiod
+
 # Start the desktop widget (e.g. clock)
 superctl start sxmo_desktop_widget
-
-# Periodically update some status bar components
-sxmo_hook_statusbar.sh all
-sxmo_daemons.sh start statusbar_periodics sxmo_run_aligned.sh 60 \
-	sxmo_hook_statusbar.sh periodics
 
 # Monitor the battery
 superctl start sxmo_battery_monitor
@@ -73,34 +86,24 @@ superctl start sxmo_networkmonitor
 # The daemon that display notifications popup messages
 superctl start sxmo_notificationmonitor
 
+# monitor for headphone for statusbar
+superctl start sxmo_soundmonitor
+
 # To setup initial lock state
 sxmo_hook_unlock.sh
 
-superctl start pipewire
-superctl start pipewire-pulse
-superctl start wireplumber
-
-(
-	sleep 5 # let some time to pipewire
-	superctl start callaudiod
-
-	# trick it into updating the status bar for volume
-	sleep 2
-	sxmo_hook_statusbar.sh volume
-
-	# monitor for headphone for statusbar
-	superctl start sxmo_soundmonitor
-
-	# this is also where you'd play a startup sound
-
-	# Turn on the dbus-monitors for modem-related tasks
-	sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh
-) &
+# Turn on the dbus-monitors for modem-related tasks
+sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh
 
 deviceprofile="$(command -v "sxmo_deviceprofile_$SXMO_DEVICE_NAME.sh")"
 
 [ -f "$deviceprofile" ] || sxmo_notify_user.sh --urgency=critical \
 	"No deviceprofile found $SXMO_DEVICE_NAME. See: https://sxmo.org/deviceprofile"
+
+# Periodically update some status bar components
+sxmo_hook_statusbar.sh all
+sxmo_daemons.sh start statusbar_periodics sxmo_run_aligned.sh 60 \
+	sxmo_hook_statusbar.sh periodics
 
 sxmo_migrate.sh state || sxmo_notify_user.sh --urgency=critical \
 	"Config needs migration" "$? file(s) in your sxmo configuration are out of date and disabled - using defaults until you migrate (run sxmo_migrate.sh)"
