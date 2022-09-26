@@ -269,11 +269,21 @@ set_battery() {
 }
 
 _volume() {
+	if sxmo_modemaudio.sh is_call_audio_mode; then
+		printf %s "$SPAN_GREEN"
+		sxmo_modemaudio.sh is_muted_mic && printf "%s " "$icon_mmc" || printf "%s " "$icon_mic"
+		sxmo_modemaudio.sh is_enabled_speaker && printf %s "$icon_spk" || printf %s "$icon_ear"
+		printf %s "$ENDSPAN"
+		return
+	fi
+
+	sxmo_audio.sh mic ismuted && printf "%s " "$icon_mmc" || printf "%s " "$icon_mic"
+
 	case "$(sxmo_audio.sh device get 2>/dev/null)" in
 		Speaker|"")
 			# nothing for default or pulse devices
 			;;
-		Headphones)
+		Headphones|Headphone)
 			printf "%s " "$icon_hdp"
 			;;
 		Earpiece)
@@ -282,13 +292,13 @@ _volume() {
 	esac
 
 	VOL="$(sxmo_audio.sh vol get)"
-	if [ -z "$VOL" ] || [ "$VOL" -eq 0 ]; then
+	if [ -z "$VOL" ] || [ "$VOL" = "muted" ]; then
 		printf "%s" "$icon_mut"
 	elif [ "$VOL" -gt 66 ]; then
 		printf "%s" "$icon_spk"
 	elif [ "$VOL" -gt 33 ]; then
 		printf "%s" "$icon_spm"
-	elif [ "$VOL" -gt 0 ]; then
+	elif [ "$VOL" -ge 0 ]; then
 		printf "%s" "$icon_spl"
 	fi
 }
