@@ -22,51 +22,99 @@ toggle_speaker() {
 }
 
 is_muted_mic() {
-	callaudiocli -S | grep -q "Mic muted: CALL_AUDIO_MIC_OFF"
+	dbus-send --session --print-reply --dest=org.mobian_project.CallAudio \
+		/org/mobian_project/CallAudio org.freedesktop.DBus.Properties.Get \
+		string:org.mobian_project.CallAudio string:MicState | \
+		tail -n1 | grep -q "uint32 0"
 }
 
 is_unmuted_mic() {
-	callaudiocli -S | grep -q "Mic muted: CALL_AUDIO_MIC_ON"
+	dbus-send --session --print-reply --dest=org.mobian_project.CallAudio \
+		/org/mobian_project/CallAudio org.freedesktop.DBus.Properties.Get \
+		string:org.mobian_project.CallAudio string:MicState | \
+		tail -n1 | grep -q "uint32 1"
 }
 
 mute_mic() {
-	callaudiocli -u 1 || sxmo_log "ERR: callaudiocli -u 1 failed"
+	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
+		/org/mobian_project/CallAudio org.mobian_project.CallAudio.MuteMic boolean:true
+
+	sxmo_hook_statusbar.sh volume
 }
 
 unmute_mic() {
-	callaudiocli -u 0 || sxmo_log "ERR: callaudiocli -u 0 failed"
+	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
+		/org/mobian_project/CallAudio org.mobian_project.CallAudio.MuteMic boolean:false
+
+	sxmo_hook_statusbar.sh volume
 }
 
 is_call_audio_mode() {
-	callaudiocli -S | grep -q "Selected mode: CALL_AUDIO_MODE_CALL"
+	dbus-send --session --print-reply --dest=org.mobian_project.CallAudio \
+		/org/mobian_project/CallAudio org.freedesktop.DBus.Properties.Get \
+		string:org.mobian_project.CallAudio string:AudioMode | \
+		tail -n1 | grep -q "uint32 1"
 }
 
 is_default_audio_mode() {
-	callaudiocli -S | grep -q "Selected mode: CALL_AUDIO_MODE_DEFAULT"
+	dbus-send --session --print-reply --dest=org.mobian_project.CallAudio \
+		/org/mobian_project/CallAudio org.freedesktop.DBus.Properties.Get \
+		string:org.mobian_project.CallAudio string:AudioMode | \
+		tail -n1 | grep -q "uint32 0"
 }
 
 enable_call_audio_mode() {
-	callaudiocli -m 1 || sxmo_log "ERR: callaudiocl -m 1 failed"
+	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
+		/org/mobian_project/CallAudio org.mobian_project.CallAudio.SelectMode uint32:1
+
+	# fixes bug where sometimes we start with speaker on and mic off
+	enable_speaker
+	disable_speaker
+	mute_mic
+	unmute_mic
+
+	sxmo_hook_statusbar.sh volume
 }
 
 disable_call_audio_mode() {
-	callaudiocli -m 0 || sxmo_log "ERR: callaudiocli -m 0 failed"
+	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
+		/org/mobian_project/CallAudio org.mobian_project.CallAudio.SelectMode uint32:0
+
+	# fixes bug where sometimes we leave call with speaker off and mic on
+	disable_speaker
+	enable_speaker
+	unmute_mic
+	mute_mic
+
+	sxmo_hook_statusbar.sh volume
 }
 
 is_enabled_speaker() {
-	callaudiocli -S | grep -q "Speaker enabled: CALL_AUDIO_SPEAKER_ON"
+	dbus-send --session --print-reply --dest=org.mobian_project.CallAudio \
+		/org/mobian_project/CallAudio org.freedesktop.DBus.Properties.Get \
+		string:org.mobian_project.CallAudio string:SpeakerState | \
+		tail -n1 | grep -q "uint32 1"
 }
 
 is_disabled_speaker() {
-	callaudiocli -S | grep -q "Speaker enabled: CALL_AUDIO_SPEAKER_OFF"
+	dbus-send --session --print-reply --dest=org.mobian_project.CallAudio \
+		/org/mobian_project/CallAudio org.freedesktop.DBus.Properties.Get \
+		string:org.mobian_project.CallAudio string:SpeakerState | \
+		tail -n1 | grep -q "uint32 0"
 }
 
 enable_speaker() {
-	callaudiocli -s 1 || sxmo_log "ERR: callaudiocli -s 1 failed"
+	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
+		/org/mobian_project/CallAudio org.mobian_project.CallAudio.EnableSpeaker boolean:true
+
+	sxmo_hook_statusbar.sh volume
 }
 
 disable_speaker() {
-	callaudiocli -s 0 || sxmo_log "ERR: callaudiocli -s 0 failed"
+	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
+		/org/mobian_project/CallAudio org.mobian_project.CallAudio.EnableSpeaker boolean:false
+
+	sxmo_hook_statusbar.sh volume
 }
 
 "$@"
