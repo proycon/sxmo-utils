@@ -69,7 +69,7 @@ fi
 
 # mpris compatible media player
 if command -v playerctl > /dev/null; then
-	if test "$(playerctl status)" = "Playing"; then
+	if test "$(playerctl status 2>/dev/null)" = "Playing"; then
 		lock_suspend_mutex "MPRIS client is playing"
 	else
 		free_suspend_mutex "MPRIS client is playing"
