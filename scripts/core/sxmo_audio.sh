@@ -152,15 +152,6 @@ $(_ringmodesubmenu)
 EOF
 }
 
-alsadetectdevice() {
-	for DEVICE in "$EARPIECE" "$HEADPHONE" "$SPEAKER"; do
-		if amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" sget "$DEVICE" | grep -qE '\[on\]'; then
-			printf %s "$DEVICE"
-			return
-		fi
-	done
-}
-
 alsacurrentdevice() {
 	if ! [ -f "$XDG_RUNTIME_DIR"/sxmo.audiocurrentdevice ]; then
 		alsadeviceset "$SPEAKER"
@@ -185,10 +176,6 @@ alsavoldown() {
 	amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$(alsacurrentdevice)" "${1:-5}%-" | amixerextractvol | notifyvol -
 }
 
-alsavolset() {
-	amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$(alsacurrentdevice)" "$1%" | amixerextractvol | notifyvol -
-}
-
 alsavolget() {
 	if [ -n "$(alsacurrentdevice)" ]; then
 		amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" get "$(alsacurrentdevice)" | amixerextractvol
@@ -207,33 +194,6 @@ alsadeviceget() {
 			printf "Earpiece"
 			;;
 	esac
-}
-
-alsadeviceset() {
-	amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$SPEAKER" mute >/dev/null
-	amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$HEADPHONE" mute >/dev/null
-	amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$EARPIECE" mute >/dev/null
-
-	case "$1" in
-		Speaker|speaker)
-			DEV="$SPEAKER"
-			;;
-		Headphones|headphones)
-			DEV="$HEADPHONE"
-			;;
-		Earpiece|earpiece)
-			DEV="$EARPIECE"
-			;;
-		*)
-			DEV=""
-			;;
-	esac
-	if [ "$DEV" ]; then
-		amixer -c "${SXMO_ALSA_CONTROL_NAME:-0}" set "$DEV" unmute >/dev/null
-	fi
-	printf '%s' "$DEV" > "$XDG_RUNTIME_DIR/sxmo.audiocurrentdevice"
-
-	sxmo_hook_statusbar.sh volume
 }
 
 alsamenuchoices() {
