@@ -113,6 +113,9 @@ list_active_calls() {
 }
 
 incall_menu() {
+	# Note that mute mic does NOT actually work:
+	# See: https://gitlab.com/mobian1/callaudiod/-/merge_requests/10
+
 	# We have an active call
 	while list_active_calls | grep -q . ; do
 		CHOICES="$(grep . <<EOF
@@ -154,12 +157,6 @@ $(
 EOF
 	)"
 
-		# Disabled cause no effect on pinephone
-		# https://gitlab.com/mobian1/callaudiod/-/merge_requests/10
-		# $icon_mic Mic $(sxmo_modemaudio.sh is_muted_mic \
-		# 	&& printf "%s ^ sxmo_modemaudio.sh unmute_mic " "$icon_tof" \
-		# 	|| printf "%s ^ sxmo_modemaudio.sh mute_mic" "$icon_ton"
-		# )
 
 		PICKED="$(
 			printf "%s\n" "$CHOICES" |
