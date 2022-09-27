@@ -159,9 +159,10 @@ pulsesinkset() {
 # get a list of sinks
 _pulsesinkssubmenu() {
 	[ -z "$1" ] && default_sink="$(pactl get-default-sink)" || default_sink="$1"
-	pamixer --list-sinks | tail -n+2 | while read -r _ name _ description; do
-		eval description="$description"
-		if [ "\"$default_sink\"" = "$name" ]; then
+	pactl --format=json list sinks | jq -r '.[] | .name, .description' | while read -r line; do
+		name="$line"
+		read -r description
+		if [ "$default_sink" = "$name" ]; then
 			printf "%s %s %s ^ pulsesinkset %s\n" "$icon_chk" "$icon_spk" "$description" "$name"
 		else
 			printf "  %s %s ^ pulsesinkset %s\n" "$icon_spk" "$description" "$name"
@@ -182,9 +183,10 @@ _pulseoutportssubmenu() {
 # get a list of input sources
 _pulsesourcessubmenu() {
 	[ -z "$1" ] && default_source="$(pactl get-default-source)" || default_source="$1"
-	pamixer --list-sources | tail -n+2 | grep -v "Monitor of " | while read -r _ name _ description; do
-		eval description="$description"
-		if [ "\"$default_source\"" = "$name" ]; then
+	pactl --format=json list sources | jq -r '.[] | select (.monitor_source == "") | .name, .description' | while read -r line; do
+		name="$line"
+		read -r description
+		if [ "$default_source" = "$name" ]; then
 			printf "%s %s %s ^ pulsesourceset %s\n" "$icon_chk" "$icon_mic" "$description" "$name"
 		else
 			printf "  %s %s ^ pulsesourceset %s\n" "$icon_mic" "$description" "$name"
@@ -330,8 +332,8 @@ EOF
 }
 
 ispulse() {
-	type pamixer > /dev/null 2>&1 || return 1
-	pamixer --list-sinks > /dev/null 2>&1 || return 1
+	type pactl > /dev/null 2>&1 || return 1
+	pactl info > /dev/null 2>&1 || return 1
 }
 
 if [ -z "$*" ]; then
