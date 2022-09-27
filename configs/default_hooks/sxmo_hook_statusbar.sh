@@ -111,8 +111,9 @@ _modem() {
 	fi
 
 	case "$MODEMSTATUS" in
-		"connected")
+		connected|registered)
 			printf " "
+			[ "$MODEMSTATUS" = "registered" ] && printf %s "$SPAN_RED"
 			USEDTECHS="$(printf %s "$MMCLI" | jq -r '.modem.generic."access-technologies"[]')"
 			case "$USEDTECHS" in
 				*5gnr*)
@@ -132,14 +133,15 @@ _modem() {
 					;;
 				*)
 					sxmo_log "WARNING: USEDTECHS: $USEDTECHS"
-					printf "<%s>" "$USEDTECHS"
+					printf "(%s)" "$USEDTECHS"
 					;;
 			esac
+			[ "$MODEMSTATUS" = "registered" ] && printf %s "$ENDSPAN"
 			;;
-		"connecting")
+		connecting)
 			printf " >>"
 			;;
-		"disconnecting")
+		disconnecting)
 			printf " <<"
 			;;
 	esac
