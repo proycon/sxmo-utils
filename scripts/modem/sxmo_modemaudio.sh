@@ -37,14 +37,14 @@ is_unmuted_mic() {
 
 mute_mic() {
 	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
-		/org/mobian_project/CallAudio org.mobian_project.CallAudio.MuteMic boolean:true
+		/org/mobian_project/CallAudio org.mobian_project.CallAudio.MuteMic boolean:true >/dev/null
 
 	sxmo_hook_statusbar.sh volume
 }
 
 unmute_mic() {
 	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
-		/org/mobian_project/CallAudio org.mobian_project.CallAudio.MuteMic boolean:false
+		/org/mobian_project/CallAudio org.mobian_project.CallAudio.MuteMic boolean:false >/dev/null
 
 	sxmo_hook_statusbar.sh volume
 }
@@ -66,7 +66,7 @@ is_default_audio_mode() {
 enable_call_audio_mode() {
 	pgrep -f callaudiod || callaudiod
 	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
-		/org/mobian_project/CallAudio org.mobian_project.CallAudio.SelectMode uint32:1
+		/org/mobian_project/CallAudio org.mobian_project.CallAudio.SelectMode uint32:1 >/dev/null
 
 	# fixes bug where sometimes we start with speaker on and mic off
 	enable_speaker
@@ -80,7 +80,7 @@ enable_call_audio_mode() {
 disable_call_audio_mode() {
 	pgrep -f callaudiod || callaudiod
 	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
-		/org/mobian_project/CallAudio org.mobian_project.CallAudio.SelectMode uint32:0
+		/org/mobian_project/CallAudio org.mobian_project.CallAudio.SelectMode uint32:0 >/dev/null
 
 	# fixes bug where sometimes we leave call with speaker off and mic on
 	disable_speaker
@@ -107,14 +107,14 @@ is_disabled_speaker() {
 
 enable_speaker() {
 	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
-		/org/mobian_project/CallAudio org.mobian_project.CallAudio.EnableSpeaker boolean:true
+		/org/mobian_project/CallAudio org.mobian_project.CallAudio.EnableSpeaker boolean:true >/dev/null
 
 	sxmo_hook_statusbar.sh volume
 }
 
 disable_speaker() {
 	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
-		/org/mobian_project/CallAudio org.mobian_project.CallAudio.EnableSpeaker boolean:false
+		/org/mobian_project/CallAudio org.mobian_project.CallAudio.EnableSpeaker boolean:false >/dev/null
 
 	sxmo_hook_statusbar.sh volume
 }
