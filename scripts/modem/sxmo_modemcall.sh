@@ -141,7 +141,7 @@ $(
 			*"(ringing-in)")
 				# TODO switch to this call
 				printf "%s Hangup %s ^ hangup %s\n" "$icon_phx" "$CONTACT" "$CALLID"
-				printf "%s Mute %s ^ mute %s\n" "$icon_phx" "$CONTACT" "$CALLID"
+				printf "%s Ignore %s ^ mute %s\n" "$icon_phx" "$CONTACT" "$CALLID"
 				;;
 			*"(held)")
 				# TODO switch to this call
@@ -216,7 +216,7 @@ incoming_call_menu() {
 			cat <<EOF | sxmo_dmenu.sh -i -H "$pickup_height" -p "$CONTACTNAME"
 $icon_phn Pickup
 $icon_phx Hangup
-$icon_mut Mute
+$icon_mut Ignore
 EOF
 		)" || exit
 
@@ -238,7 +238,7 @@ EOF
 			"$icon_phx Hangup")
 				hangup "$1"
 				;;
-			"$icon_mut Mute")
+			"$icon_mut Ignore")
 				mute "$1"
 				;;
 		esac
