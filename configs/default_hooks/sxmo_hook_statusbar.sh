@@ -161,8 +161,20 @@ set_modem_monitor() {
 
 set_wifi() {
 	case "$(cat "/sys/class/net/$2/operstate")" in
-		"up") sxmo_status.sh add "30-network-$2-status" "$icon_wif" ;;
-		*) sxmo_status.sh del "30-network-$2-status" ;;
+		"up")
+			# detect hotspot
+			if nmcli -g UUID c show --active | while read -r uuid; do
+				nmcli -g 802-11-wireless.mode c show "$uuid"
+			done | grep -q '^ap$'; then
+				sxmo_status.sh add "30-network-$2-status" "H"
+			else
+				sxmo_status.sh add "30-network-$2-status" "$icon_wif"
+			fi
+			;;
+		*)
+			sxmo_status.sh add "30-network-$2-status" "$SPAN_RED$icon_wif$ENDSPAN"
+			rfkill list wifi | grep -q "yes" && sxmo_status.sh add "30-network-$2-status" "$icon_wfo"
+			;;
 	esac
 }
 

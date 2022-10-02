@@ -119,6 +119,7 @@ icon_usr=""
 icon_vid="" #video
 icon_vim=''
 icon_wif=""
+icon_wfo="睊" # wifi off
 icon_win="" #window
 icon_wn2=""
 icon_wrh=""
