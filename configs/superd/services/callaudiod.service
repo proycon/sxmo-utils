@@ -1,9 +1,0 @@
-[Unit]
-Description=call audio routing daemon
-After=pipewire-pulse
-
-[Service]
-Type=simple
-Restart=always
-ExecStart=/usr/bin/callaudiod
-ExecOnFailure=/usr/bin/sxmo_notify_user.sh "superd failed to start callaudiod"

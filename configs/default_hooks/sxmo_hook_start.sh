@@ -13,8 +13,6 @@ echo "unlock" > "$SXMO_STATE"
 # Create xdg user directories, such as ~/Pictures
 xdg-user-dirs-update
 
-# Play a funky startup tune if you want (disabled by default)
-#mpv --quiet --no-video ~/welcome.ogg &
 
 sxmo_daemons.sh start daemon_manager superd -v
 
@@ -64,15 +62,18 @@ case "$SXMO_WM" in
 		;;
 esac
 
-if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
-	superctl start mmsd
-fi
+# callaudiod will start automatically
+# pipewire-pulse will start pipewire
+superctl start pipewire-pulse
+superctl start wireplumber
 
-if [ -f "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" ]; then
-	superctl start vvmd
-fi
+# Periodically update some status bar components
+sxmo_hook_statusbar.sh all
+sxmo_daemons.sh start statusbar_periodics sxmo_run_aligned.sh 60 \
+	sxmo_hook_statusbar.sh periodics
 
-superctl start callaudiod
+# Turn on the dbus-monitors for modem-related tasks
+sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh
 
 # Start the desktop widget (e.g. clock)
 superctl start sxmo_desktop_widget
@@ -92,9 +93,19 @@ superctl start sxmo_soundmonitor
 # To setup initial lock state
 sxmo_hook_unlock.sh
 
-# Turn on the dbus-monitors for modem-related tasks
-sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh
+# Play a funky startup tune if you want (disabled by default)
+#mpv --quiet --no-video ~/welcome.ogg &
 
+# mmsd and vvmd
+if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
+	superctl start mmsd
+fi
+
+if [ -f "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" ]; then
+	superctl start vvmd
+fi
+
+# add some warnings if things are not setup correctly
 deviceprofile="$(command -v "sxmo_deviceprofile_$SXMO_DEVICE_NAME.sh")"
 
 [ -f "$deviceprofile" ] || sxmo_notify_user.sh --urgency=critical \
