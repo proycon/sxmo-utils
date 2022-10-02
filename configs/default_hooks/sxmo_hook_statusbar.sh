@@ -76,10 +76,10 @@ _modem() {
 				printf "%s%s%s" "$SPAN_RED" "$icon_mdd" "$ENDSPAN"
 				;;
 			disabling)
-				printf ">%s" "$icon_mdd"
+				printf "%s%s%s" "$SPAN_ORANGE" "$icon_ena" "$ENDSPAN"
 				;;
 			enabling) # modem enabled but neither registered (cell) nor connected (data)
-				printf ">%s" "$icon_ena"
+				printf "%s%s%s" "$SPAN_GREEN" "$icon_ena" "$ENDSPAN"
 				;;
 			enabled)
 				printf "%s" "$icon_ena"
@@ -111,9 +111,11 @@ _modem() {
 	fi
 
 	case "$MODEMSTATUS" in
-		connected|registered)
+		connected|registered|connecting|disconnecting)
 			printf " "
 			[ "$MODEMSTATUS" = "registered" ] && printf %s "$SPAN_RED"
+			[ "$MODEMSTATUS" = "connecting" ] && printf %s "$SPAN_GREEN"
+			[ "$MODEMSTATUS" = "disconnecting" ] && printf %s "$SPAN_ORANGE"
 			USEDTECHS="$(printf %s "$MMCLI" | jq -r '.modem.generic."access-technologies"[]')"
 			case "$USEDTECHS" in
 				*5gnr*)
@@ -137,12 +139,8 @@ _modem() {
 					;;
 			esac
 			[ "$MODEMSTATUS" = "registered" ] && printf %s "$ENDSPAN"
-			;;
-		connecting)
-			printf " >>"
-			;;
-		disconnecting)
-			printf " <<"
+			[ "$MODEMSTATUS" = "connecting" ] && printf %s "$ENDSPAN"
+			[ "$MODEMSTATUS" = "disconnecting" ] && printf %s "$ENDSPAN"
 			;;
 	esac
 }
