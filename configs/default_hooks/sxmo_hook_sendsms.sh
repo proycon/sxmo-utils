@@ -6,8 +6,12 @@
 #You can use it to play a notification sound or forward the sms elsewhere
 
 #The following parameters are provided:
-#$1 = Number
-#$2 = Text
+# $1 = Contact Name or Number (if number not in contacts)
+# $2 = Text
+# mms / group chats will also include these parameters:
+# $3 = MMS payload ID
+# $4 = Group Contact Name or Number (if number not included in contacts)
+
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 

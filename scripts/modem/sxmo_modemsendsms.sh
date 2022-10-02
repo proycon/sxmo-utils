@@ -156,6 +156,12 @@ if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$SXMO_LOG
 	sxmo_mms.sh processmms "$MESSAGE_PATH" "Sent"
 	[ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ] && rm "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 
+	MMS_ID="$(echo "$MESSAGE_PATH" | rev | cut -d'/' -f1 | rev)"
+	CONTACTNAME="$(sxmo_contacts.sh --name "$NUMBER")"
+	[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$NUMBER"
+	sxmo_hook_sendsms.sh "$CONTACTNAME" "$TEXT" "$MMS_ID" "$CONTACTNAME"
+	info "Sent mms text to $CONTACTNAME with mms id ($MMS_ID) message ok"
+
 # we are dealing with a normal sms, so use mmcli
 else
 
@@ -179,8 +185,10 @@ else
 	printf %b "Sent SMS to $NUMBER at $TIME:\n$TEXT\n\n" >> "$SXMO_LOGDIR/$NUMBER/sms.txt"
 	printf "%s\tsent_txt\t%s\t%s chars\n" "$TIME" "$NUMBER" "$TEXTSIZE" >> "$SXMO_LOGDIR/modemlog.tsv"
 
+	CONTACTNAME="$(sxmo_contacts.sh --name "$NUMBER")"
+	[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$NUMBER"
+	sxmo_hook_sendsms.sh "$CONTACTNAME" "$TEXT"
+	info "Sent sms text to $CONTACTNAME message ok"
 fi
 
-sxmo_hook_sendsms.sh "$NUMBER" "$TEXT"
-info "Sent text to $NUMBER message ok"
 
