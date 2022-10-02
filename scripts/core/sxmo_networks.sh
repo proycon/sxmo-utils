@@ -236,12 +236,25 @@ networksmenu() {
 			rfkill list wifi | grep -q "yes" || WIFI_ENABLED=1
 
 			grep . << EOF | sxmo_dmenu.sh -p "Networks"
-$(connections)
+$(
+	if [ -z "$WIFI_ENABLED" ]; then
+		connections | grep -v "$icon_wif"
+	else
+		connections
+	fi
+)
 $icon_mod Add a GSM Network
 $([ -z "$WIFI_ENABLED" ] || printf "%s Add a WPA Network\n" "$icon_wif")
 $([ -z "$WIFI_ENABLED" ] || printf "%s Add a Wifi Hotspot\n" "$icon_wif")
 $icon_usb Add a USB Hotspot
 $icon_cls Delete a Network
+$(
+	if [ -z "$WIFI_ENABLED" ]; then
+		printf "%s Enable Wifi\n" "$icon_wif"
+	else
+		printf "%s Disable Wifi\n" "$icon_wif"
+	fi
+)
 $icon_cfg Nmtui
 $icon_cfg Ifconfig
 $([ -z "$WIFI_ENABLED" ] || printf "%s Scan Wifi Networks\n" "$icon_wif")
@@ -280,6 +293,13 @@ EOF
 				;;
 			*"Scan Wifi Networks" )
 				sxmo_terminal.sh watch -n 2 nmcli d wifi list || continue # Killeable
+				;;
+			*"Disable Wifi" )
+				doas sxmo_wifitoggle.sh
+				sxmo_hook_statusbar.sh network wifi wlan0
+				;;
+			*"Enable Wifi" )
+				doas sxmo_wifitoggle.sh
 				;;
 			*)
 				toggleconnection "$CHOICE"

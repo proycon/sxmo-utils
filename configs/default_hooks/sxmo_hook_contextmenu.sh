@@ -80,17 +80,6 @@ case "$WMCLASS" in
 				printf %b "$icon_tof" ||  printf %b "$icon_ton";
 				printf %b "^ 1 ^ doas sxmo_bluetoothtoggle.sh && sxmo_hook_statusbar.sh bluetooth"
 			)
-			$icon_wif Wifi $(
-				if rfkill list wifi | grep -q "yes"; then
-					printf %b "$icon_tof"
-					printf %b "^ 1 ^ doas sxmo_wifitoggle.sh"
-				else
-					printf %b "$icon_ton"
-					# fake trigger to update status bar
-					devicename="$(nmcli -t c show --active | grep '802-11-wireless' | cut -d':' -f4)"
-					printf %b "^ 1 ^ doas sxmo_wifitoggle.sh && sxmo_hook_statusbar.sh network wifi \"$devicename\""
-				fi
-			)
 			$(test "$SXMO_WM" = dwm && printf %b "$icon_cfg Invert Colors ^ 1 ^ xcalib -a -invert")
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			$icon_zzz Auto-suspend $(
