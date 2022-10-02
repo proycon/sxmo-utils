@@ -166,7 +166,7 @@ checkforincomingcalls() {
 checkforstucksms() {
 	stuck_messages="$(mmcli -m any --messaging-list-sms)"
 	if ! echo "$stuck_messages" | grep -q "^No sms messages were found"; then
-		sxmo_notify_user.sh "WARNING: $(echo "$stuck_messages" | wc -l) stuck sms found.  Run sxmo_modem.sh checkforlostsms view to view or delete to delete."
+		sxmo_notify_user.sh "WARNING: $(echo "$stuck_messages" | wc -l) stuck sms found.  Run sxmo_modem.sh checkforstucksms view to view or delete to delete."
 		case "$1" in
 			"delete")
 				mmcli -m any --messaging-list-sms | while read line; do
