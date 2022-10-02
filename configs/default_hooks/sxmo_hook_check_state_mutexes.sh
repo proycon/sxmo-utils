@@ -46,8 +46,16 @@ else
 	free_suspend_mutex "Hotspot is active"
 fi
 
+ssh_connected() {
+	netstat -tn | awk '
+		BEGIN { status = 1 }
+		$4 ~ /:22$/ { status = 0; exit }
+		END { exit status }
+		'
+}
+
 # active_ssh
-if netstat -tn | grep ESTABLISHED | cut -d':' -f2 | grep -q '^22 '; then
+if ssh_connected; then
 	lock_suspend_mutex "SSH is connected"
 else
 	free_suspend_mutex "SSH is connected"
