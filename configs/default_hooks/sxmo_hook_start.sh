@@ -13,27 +13,12 @@ echo "unlock" > "$SXMO_STATE"
 # Create xdg user directories, such as ~/Pictures
 xdg-user-dirs-update
 
-
 sxmo_daemons.sh start daemon_manager superd -v
-
 sleep 2 # let time to superd to start correctly
 
-superctl start pipewire
-superctl start pipewire-pulse
-superctl start wireplumber
-
-# let pipewire load and settle
-count=0
-while ! pactl info; do
-	if [ "$count" -gt 10 ]; then
-		sxmo_log "ERR: NO SOUND"
-		continue
-	fi
-	count=$((count + 1))
-	sleep 1s
-done
-sleep 2
-
+# mako/dunst are required for warnings.
+# load some other little things here too.
+# WARNING: Do not make any sounds yet!!
 case "$SXMO_WM" in
 	sway)
 		superctl start mako
@@ -62,6 +47,7 @@ case "$SXMO_WM" in
 		;;
 esac
 
+# Load our sound daemons
 # callaudiod will start automatically
 # pipewire-pulse will start pipewire
 superctl start pipewire-pulse
@@ -71,6 +57,9 @@ superctl start wireplumber
 sxmo_hook_statusbar.sh all
 sxmo_daemons.sh start statusbar_periodics sxmo_run_aligned.sh 60 \
 	sxmo_hook_statusbar.sh periodics
+
+# To setup initial lock state
+sxmo_hook_unlock.sh
 
 # Turn on the dbus-monitors for modem-related tasks
 sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh
@@ -90,9 +79,6 @@ superctl start sxmo_notificationmonitor
 # monitor for headphone for statusbar
 superctl start sxmo_soundmonitor
 
-# To setup initial lock state
-sxmo_hook_unlock.sh
-
 # Play a funky startup tune if you want (disabled by default)
 #mpv --quiet --no-video ~/welcome.ogg &
 
@@ -110,11 +96,6 @@ deviceprofile="$(command -v "sxmo_deviceprofile_$SXMO_DEVICE_NAME.sh")"
 
 [ -f "$deviceprofile" ] || sxmo_notify_user.sh --urgency=critical \
 	"No deviceprofile found $SXMO_DEVICE_NAME. See: https://sxmo.org/deviceprofile"
-
-# Periodically update some status bar components
-sxmo_hook_statusbar.sh all
-sxmo_daemons.sh start statusbar_periodics sxmo_run_aligned.sh 60 \
-	sxmo_hook_statusbar.sh periodics
 
 sxmo_migrate.sh state || sxmo_notify_user.sh --urgency=critical \
 	"Config needs migration" "$? file(s) in your sxmo configuration are out of date and disabled - using defaults until you migrate (run sxmo_migrate.sh)"
