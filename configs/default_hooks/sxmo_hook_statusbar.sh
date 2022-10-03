@@ -268,31 +268,34 @@ set_lockedby() {
 	sxmo_mutex.sh can_suspend list | sort -u | while read -r line; do
 		case "$line" in
 			"SSH"*|"Mosh"*)
-				printf "S"
+				printf "S\n"
 				;;
 			"Hotspot"*)
-				printf "H"
+				printf "H\n"
 				;;
 			"Camera postprocessing")
-				printf "C"
+				printf "C\n"
 				;;
 			"Proximity lock is running")
-				printf "P"
+				printf "P\n"
 				;;
 			"Ongoing call")
-				printf "O"
+				printf "O\n"
 				;;
 			"Modem is used")
-				printf "M"
+				printf "M\n"
 				;;
 			"Playing with leds"|"Checking some mutexes")
-				printf "*"
+				printf "*\n"
+				;;
+			*"is playing"*)
+				printf "%s\n" "$icon_mus"
 				;;
 			*)
-				printf %s "$line" | sed 's/\(.\{7\}\).*/\1…/g'
+				printf "%s\n" "$line" | sed 's/\(.\{7\}\).*/\1…/g'
 				;;
 		esac
-	done | sxmo_status.sh add 41-lockedby-status
+	done | sort -u | tr -d '\n' | sxmo_status.sh add 41-lockedby-status
 }
 
 set_battery() {
