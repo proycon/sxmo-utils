@@ -264,6 +264,37 @@ _battery() {
 	done
 }
 
+set_lockedby() {
+	sxmo_mutex.sh can_suspend list | sort -u | while read -r line; do
+		case "$line" in
+			"SSH"*|"Mosh"*)
+				printf "S"
+				;;
+			"Hotspot"*)
+				printf "H"
+				;;
+			"Camera postprocessing")
+				printf "C"
+				;;
+			"Proximity lock is running")
+				printf "P"
+				;;
+			"Ongoing call")
+				printf "O"
+				;;
+			"Modem is used")
+				printf "M"
+				;;
+			"Playing with leds"|"Checking some mutexes")
+				printf "*"
+				;;
+			*)
+				printf %s "$line" | sed 's/\(.\{7\}\).*/\1…/g'
+				;;
+		esac
+	done | sxmo_status.sh add 41-lockedby-status
+}
+
 set_battery() {
 	 _battery | sxmo_status.sh add 40-battery-status
 }
@@ -312,7 +343,7 @@ case "$1" in
 		shift
 		set_network "$@"
 		;;
-	time|call_duration|modem|modem_monitor|battery|volume|state)
+	time|call_duration|modem|modem_monitor|battery|volume|state|lockedby)
 		set_"$1"
 		;;
 	periodics|state_change) # 55 s loop and screenlock triggers
@@ -330,6 +361,7 @@ case "$1" in
 		set_battery
 		set_volume
 		set_state
+		set_lockedby
 		;;
 	*)
 		exit # swallow it !
