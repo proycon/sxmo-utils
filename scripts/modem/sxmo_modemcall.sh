@@ -66,6 +66,16 @@ pickup() {
 			;;
 		*)
 			sxmo_notify_user.sh --urgency=critical "Couldn't initialize call with callid <$CALLID>; unknown direction <$DIRECTION>"
+			# if we try to make an outgoing call while
+			# already on an outgoing call, it crashes the modem and
+			# gets us here.  We need to rm -rf
+			# $XDG_RUNTIME_DIR/sxmo_call/* before we can call
+			# again.
+			#
+			rm "$XDG_RUNTIME_DIR/sxmo_calls/"* 2>/dev/null || true
+			rm -f "$XDG_RUNTIME_DIR"/sxmo.ring.pid 2>/dev/null
+			rm -f "$SXMO_NOTIFDIR"/incomingcall* 2>/dev/null
+			return 1
 			;;
 	esac
 }
