@@ -151,14 +151,6 @@ set_modem() {
 	_modem | sxmo_status.sh add 10-modem-status
 }
 
-set_modem_monitor() {
-	if sxmo_daemons.sh running modem_monitor -q; then
-		sxmo_status.sh add 20-modem-monitor-status "$icon_mod"
-	else
-		sxmo_status.sh del 20-modem-monitor-status
-	fi
-}
-
 set_wifi() {
 	case "$(cat "/sys/class/net/$2/operstate")" in
 		"up")
@@ -374,7 +366,7 @@ case "$1" in
 		shift
 		set_network "$@"
 		;;
-	time|call_duration|modem|modem_monitor|battery|volume|state|lockedby|notifications)
+	time|call_duration|modem|battery|volume|state|lockedby|notifications)
 		set_"$1"
 		;;
 	periodics|state_change) # 55 s loop and screenlock triggers
@@ -388,7 +380,6 @@ case "$1" in
 		set_time
 		set_call_duration
 		set_modem
-		set_modem_monitor
 		set_battery
 		set_volume
 		set_state
