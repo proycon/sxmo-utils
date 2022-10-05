@@ -78,7 +78,7 @@ set_leds() {
 	wait
 }
 
-blink_led() {
+blink_leds() {
 	for color in green blue red white; do
 		percent="$(get_led "$color")"
 		eval "old_$color=$percent" # store old value
@@ -114,14 +114,12 @@ blink_led() {
 cmd="$1"
 shift
 case "$cmd" in
-	"set")
+	"set"|blink)
 		ensure_mutex
-		set_leds "$@"
+		"$cmd"_leds "$@"
 		free_mutex
 		;;
-	get|blink)
-		ensure_mutex
-		"$cmd"_led "$@"
-		free_mutex
+	get)
+		get_led "$@"
 		;;
 esac
