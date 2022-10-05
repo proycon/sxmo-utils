@@ -9,6 +9,13 @@
 set -e
 
 dial_number() {
+
+	# on pinepone if you attempt to make a call while in a call, modem crashes
+	if sxmo_modemcall.sh list_active_calls | grep -q .; then
+		sxmo_notify_user.sh "Cannot make call while in a call (for now)."
+		return 0
+	fi
+
 	NUMBER="$1"
 
 	CLEANEDNUMBER="$(pn find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
