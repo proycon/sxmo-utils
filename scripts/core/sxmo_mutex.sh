@@ -60,7 +60,7 @@ hold() {
 	NOTIFYPID=$!
 
 	finish() {
-		kill "$NOTIFYPID"
+		kill "$NOTIFYPID" 2>/dev/null
 		rm "$FIFO"
 		exit 0
 	}
@@ -75,7 +75,7 @@ hold() {
 
 holdexec() {
 	finish() {
-		kill "$HOLDPID"
+		kill "$HOLDPID" 2>/dev/null
 		exit
 	}
 	trap 'finish' TERM INT
