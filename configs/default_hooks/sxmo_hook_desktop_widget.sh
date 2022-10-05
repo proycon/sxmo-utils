@@ -11,13 +11,6 @@ pangodraw() {
 	date +"<big><big><b>%H</b>:%M</big></big>" #date with some pango markup syntax (https://docs.gtk.org/Pango/pango_markup.html)
 	date +"<small><small>%a %d %b %Y</small></small>"
 
-	cannot_suspend_reasons="$(sxmo_mutex.sh can_suspend list)"
-	if [ -n "$cannot_suspend_reasons" ]; then
-		printf "<small><small><small><small><small><span>\n</span>"
-		printf "%s" "$cannot_suspend_reasons" | awk '{print "• " $0}'
-		printf "</small></small></small></small></small>\n"
-	fi
-
 	# here you can output whatever you want to end up in the widget
 	# make sure to use pango markup syntax if you want colours etc, ANSI is not supported by wayout
 	# for instance, you can show details about the activated network connections:
