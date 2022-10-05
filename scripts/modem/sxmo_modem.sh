@@ -102,7 +102,6 @@ checkforfinishedcalls() {
 			if ! sxmo_modemaudio.sh reset_audio; then
 				sxmo_notify_user.sh --urgency=critical "We failed to reset call audio"
 			fi
-			setsid -f sh -c 'sleep 2; sxmo_hook_statusbar.sh call_duration'
 		else
 			# Or refresh the menu
 			sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incall_menu

@@ -43,22 +43,6 @@ set_state() {
 	fi
 }
 
-set_call_duration() {
-	if ! pgrep sxmo_modemcall.sh > /dev/null; then
-		sxmo_status.sh del 0-call-duration
-		return
-	fi
-
-	NOWS="$(date +"%s")"
-	CALLSTARTS="$(date +"%s" -d "$(
-		grep -aE 'call_start|call_pickup' "$XDG_DATA_HOME"/sxmo/modem/modemlog.tsv |
-		tail -n1 |
-		cut -f1
-	)")"
-	CALLSECONDS="$(printf "%s - %s" "$NOWS" "$CALLSTARTS" | bc)"
-	printf "%ss " "$CALLSECONDS" | sxmo_status.sh add 5-call-duration
-}
-
 _modem() {
 	MMCLI="$(mmcli -m any -J 2>/dev/null)"
 	MODEMSTATUS=""
@@ -366,7 +350,7 @@ case "$1" in
 		shift
 		set_network "$@"
 		;;
-	time|call_duration|modem|battery|volume|state|lockedby|notifications)
+	time|modem|battery|volume|state|lockedby|notifications)
 		set_"$1"
 		;;
 	periodics|state_change) # 55 s loop and screenlock triggers
@@ -378,7 +362,6 @@ case "$1" in
 	all)
 		sxmo_status.sh reset
 		set_time
-		set_call_duration
 		set_modem
 		set_battery
 		set_volume
