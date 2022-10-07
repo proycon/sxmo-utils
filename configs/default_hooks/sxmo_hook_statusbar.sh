@@ -323,6 +323,13 @@ set_battery() {
 	 _battery | sxmo_status.sh add 40-battery-status
 }
 
+set_notifications() {
+       [ "$SXMO_DISABLE_LEDS" = 0 ] && return
+       NOTIFS_NUM="$(ls -1 "$SXMO_NOTIFDIR" | wc -l)"
+       [ "$NOTIFS_NUM" = 0 ] && sxmo_status.sh del notifs && return
+       printf "$SPAN_RED !: $NOTIFS_NUM $ENDSPAN\n"  | sxmo_status.sh add notifs
+}
+
 _volume() {
 	if sxmo_modemaudio.sh is_call_audio_mode; then
 		printf %s "$SPAN_GREEN"
@@ -367,7 +374,7 @@ case "$1" in
 		shift
 		set_network "$@"
 		;;
-	time|call_duration|modem|modem_monitor|battery|volume|state|lockedby)
+	time|call_duration|modem|modem_monitor|battery|volume|state|lockedby|notifications)
 		set_"$1"
 		;;
 	periodics|state_change) # 55 s loop and screenlock triggers
@@ -385,6 +392,7 @@ case "$1" in
 		set_battery
 		set_volume
 		set_state
+		set_notifications
 		set_lockedby
 		;;
 	*)

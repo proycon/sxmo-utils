@@ -43,6 +43,9 @@ notificationmenu() {
 				fi
 			done
 		rm "$SXMO_NOTIFDIR"/*
+		# we must update statusbar here because this function depends
+		# on number of files in $SXMO_NOTIFDIR
+		sxmo_hook_statusbar.sh notifications
 		exit 1
 	fi
 
