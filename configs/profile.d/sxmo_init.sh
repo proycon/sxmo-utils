@@ -83,6 +83,7 @@ _sxmo_load_environments() {
 			touch "$XDG_CACHE_HOME"/sxmo/sxmo.nosuspend
 			touch "$XDG_CACHE_HOME"/sxmo/sxmo.noidle
 
+			SXMO_DEVICE_NAME=unknown
 		fi
 		unset deviceprofile
 	fi

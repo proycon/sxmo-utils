@@ -8,7 +8,7 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-monitor="${SXMO_MONITOR:-"DSI-1"}"
+monitor="${SXMO_MONITOR:-"$(swaymsg -t get_outputs | jq -r '.[0] | .name')"}"
 pwr="${SXMO_POWER_BUTTON:-"0:0:axp20x-pek"}"
 vols="${SXMO_VOLUME_BUTTON:-"1:1:1c21800.lradc"}"
 scale="${SXMO_SWAY_SCALE:-2}"
