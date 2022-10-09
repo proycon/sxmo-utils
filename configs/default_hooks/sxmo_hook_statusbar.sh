@@ -14,6 +14,7 @@
 #colours using pango markup
 if [ "$SXMO_WM" = "sway" ]; then
 	SPAN_RED="<span foreground=\"#ff5454\">"
+	SPAN_REDBG="<span foreground=\"#ffffff\" background=\"#ff5454\">"
 	SPAN_GREEN="<span foreground=\"#54ff54\">"
 	SPAN_ORANGE="<span foreground=\"#ffa954\">"
 	BOLD="<b>"
@@ -21,6 +22,7 @@ if [ "$SXMO_WM" = "sway" ]; then
 	ENDSPAN="</span>"
 else
 	SPAN_RED=""
+	SPAN_REDBG=""
 	SPAN_GREEN=""
 	SPAN_ORANGE=""
 	BOLD=""
@@ -37,7 +39,7 @@ set_state() {
 		sxmo_status.sh del 0-state
 	else
 		STATE_LABEL=$(tr '[:lower:]' '[:upper:]' < "$SXMO_STATE")
-		echo "${SPAN_RED}${BOLD}${STATE_LABEL}${ENDBOLD}${ENDSPAN}" | sxmo_status.sh add 0-state
+		printf "%b%b%s%b%b" "${SPAN_REDBG}" "${BOLD}" "${STATE_LABEL}" "${ENDBOLD}" "${ENDSPAN}" | sxmo_status.sh add 0-state
 	fi
 }
 
