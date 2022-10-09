@@ -301,6 +301,9 @@ set_lockedby() {
 			"Waiting for cronjob")
 				printf "W\n"
 				;;
+			"Manually disabled")
+				printf "N\n" #N = No suspend
+				;;
 			"Playing with leds"|"Checking some mutexes")
 				printf "*\n"
 				;;
