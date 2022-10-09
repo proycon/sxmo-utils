@@ -541,6 +541,17 @@ case "$WMCLASS" in
 		"
 		WINNAME=Firefox
 		;;
+	*vimb*)
+		CHOICES="
+			$icon_glb Navigate        ^ 0 ^ sxmo_type -k Escape o && sxmo_keyboard.sh open
+			$icon_zmi Zoom            ^ 1 ^ sxmo_type -k Escape zi
+			$icon_zmo Zoom            ^ 1 ^ sxmo_type -k Escape zo
+			$icon_arl History         ^ 1 ^ sxmo_type -M Ctrl o
+			$icon_arr History         ^ 1 ^ sxmo_type -M Ctrl i
+			$icon_rld Refresh         ^ 0 ^ sxmo_type -k Escape r
+		"
+		WINNAME=Vimb
+		;;
 	*geopard*)
 		# Geopard
 		CHOICES="
