@@ -15,7 +15,7 @@ sxmo_uniq_exec.sh sxmo_led.sh blink blue &
 LEDPID=$!
 sxmo_hook_statusbar.sh state_change
 
-swaymsg mode default
+[ "$SXMO_WM" = "sway" ] && swaymsg mode default
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen off
 superctl stop sxmo_hook_lisgd
