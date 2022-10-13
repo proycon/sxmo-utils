@@ -76,6 +76,13 @@ _sxmo_load_environments() {
 			printf "deviceprofile file %s loaded.\n" "$deviceprofile"
 		else
 			printf "WARNING: deviceprofile file not found for %s. Most device functions will not work. Please read: https://sxmo.org/deviceprofile \n" "$SXMO_DEVICE_NAME"
+
+			# on a new device, power button won't work
+			# so make sure we don't go into screenoff
+			# or suspend
+			touch "$XDG_CACHE_HOME"/sxmo/sxmo.nosuspend
+			touch "$XDG_CACHE_HOME"/sxmo/sxmo.noidle
+
 		fi
 		unset deviceprofile
 	fi
