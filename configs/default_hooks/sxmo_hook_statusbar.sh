@@ -295,6 +295,12 @@ set_lockedby() {
 			"Modem is used")
 				printf "M\n"
 				;;
+			"Executing cronjob")
+				printf "X\n"
+				;;
+			"Waiting for cronjob")
+				printf "W\n"
+				;;
 			"Playing with leds"|"Checking some mutexes")
 				printf "*\n"
 				;;
