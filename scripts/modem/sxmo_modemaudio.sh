@@ -93,11 +93,9 @@ disable_call_audio_mode() {
 	if ca_dbus_set_prop SelectMode uint32:0; then
 		sxmo_log "Successfully disabled call audio mode."
 		sxmo_log "Attempting hack to get things just right."
-		# fixes bug where sometimes we leave call with speaker off and mic on
+		# fixes bug where sometimes we leave call with speaker off
 		disable_speaker
 		enable_speaker
-		unmute_mic
-		mute_mic
 		sxmo_hook_statusbar.sh volume
 		return 0
 	else
