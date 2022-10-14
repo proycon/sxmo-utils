@@ -1,4 +1,5 @@
 #!/bin/sh
+# configversion: e2f1ec78788e8629c1aca0f36cb399a1
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
@@ -28,6 +29,7 @@ icon_bel=""
 icon_bok=""
 icon_btd="" # bluethooth device
 icon_bth="" # bluetooth
+icon_cal=""
 icon_cam=""
 icon_cfg="" #configuration cog
 icon_chk=""
