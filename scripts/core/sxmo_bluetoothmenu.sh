@@ -18,7 +18,7 @@ _device_list() {
 	bluetoothctl devices | \
 		cut -d" " -f2 | \
 		xargs -n1 bluetoothctl info | \
-		awk -v "bluetooth_icon=$icon_btd" '
+		awk '
 			function print_cached_device() {
 				print icon " " name " " mac
 				name=icon=mac=""
@@ -27,7 +27,22 @@ _device_list() {
 			/Device/ && name { print_cached_device() }
 			/Device/ { mac=$2 }
 			/Name:/ { $1="";$0=$0;$1=$1; name=$0 }
-			/Icon:/ { icon=bluetooth_icon }
+			/Icon: computer/ { icon="'$icon_com'" }
+			/Icon: phone/ { icon="'$icon_phn'" }
+			/Icon: modem/ { icon="'$icon_mod'" }
+			/Appearance: 0x00c2/ { icon="'$icon_wat'" }
+			/Icon: watch/ { icon="'$icon_wat'" }
+			/Icon: network-wireless/ { icon="'$icon_wif'" }
+			/Icon: audio-headset/ { icon="'$icon_hdp'" }
+			/Icon: audio-headphones/ { icon="'$icon_spk'" }
+			/Icon: camera-video/ { icon="'$icon_vid'" }
+			/Icon: audio-card/ { icon="'$icon_mus'" }
+			/Icon: input-gaming/ { icon="'$icon_gam'" }
+			/Icon: input-keyboard/ { icon="'$icon_kbd'" }
+			/Icon: input-tablet/ { icon="'$icon_drw'" }
+			/Icon: input-mouse/ { icon="'$icon_mse'" }
+			/Icon: printer/ { icon="'$icon_prn'" }
+			/Icon: camera-photo/ { icon="'$icon_cam'" }
 			END { print_cached_device() }
 		'
 }
