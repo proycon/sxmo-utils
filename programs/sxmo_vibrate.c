@@ -71,7 +71,14 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	fd = open("/dev/input/by-path/platform-vibrator-event", O_RDWR | O_CLOEXEC);
+	char *vibra_event_dev = "/dev/input/by-path/platform-vibrator-event";
+	/* set vibrator device event file from env */
+	char *tmp;
+	if (tmp = getenv("SXMO_VIBRATE_DEV"))
+		vibra_event_dev = strdup(tmp);
+
+	fd = open(vibra_event_dev, O_RDWR | O_CLOEXEC);
+
 	syscall_error(fd < 0, "Can't open vibrator event device");
 	ret = ioctl(fd, EVIOCGEFFECTS, &effects);
 	syscall_error(ret < 0, "EVIOCGEFFECTS failed");
