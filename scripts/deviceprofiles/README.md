@@ -92,7 +92,7 @@ SXMO_MONITOR		| Touch screen "Identifier" from `swaymsg -t get_inputs` command.
 ### General / Misc.
 SXMO_WIFI_MODULE		| The wifi kernel module used when switching scan intervals
 
-SXMO_SYS_FILES			| String of files for sxmo_setpermissions.sh to make +rw [see sxmo_setpermissions.sh.]
+SXMO_SYS_FILES			| String of files for sxmo_setpermissions.sh to make +rw (see sxmo_setpermissions.sh)
 
 SXMO_WAKEUPRTC			| RTC wakeup number in /sys/class/wakeup/wakeup<number>/ (see sxmo_suspend.sh) [default: 1]
 
@@ -101,3 +101,5 @@ SXMO_MODEMRTC			| Modem wakeup number in /sys/class/wakeup/wakeup<number>/ (see 
 SXMO_POWERRTC			| Power wakeup number in /sys/class/wakeup/wakeup<number>/ (see sxmo_suspend.sh) [default: 5]
 
 SXMO_COVERRTC			| Open cover wakeup number in /sys/class/wakeup/wakeup<number>/ (see sxmo_suspend.sh) [default: 9999]
+
+SXMO_VIBRATE_DEV		| Path to vibration device (see sxmo_vibrate.c and clickclack.c) [default: /dev/input/by-path/platform-vibrator-event]
