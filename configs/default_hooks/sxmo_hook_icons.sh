@@ -1,5 +1,4 @@
 #!/bin/sh
-# configversion: e2f1ec78788e8629c1aca0f36cb399a1
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
