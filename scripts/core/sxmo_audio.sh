@@ -21,7 +21,6 @@ notifyvol() {
 	else
 		dunstify -r 999 "♫ Volume $vol"
 	fi
-	sxmo_hook_statusbar.sh volume
 }
 
 # adjust *output* vol/mute
@@ -33,7 +32,6 @@ pulsevolup() {
 	else
 		pactl set-sink-volume @DEFAULT_SINK@ +"${1:-5}%"
 	fi
-	pulsevolget | notifyvol -
 }
 
 pulsevoldown() {
@@ -44,7 +42,6 @@ pulsevoldown() {
 	else
 		pactl set-sink-volume @DEFAULT_SINK@ -"${1:-5}%"
 	fi
-	pulsevolget | notifyvol -
 }
 
 pulsevoltogglemute() {
@@ -66,7 +63,6 @@ pulsevolget() {
 
 pulsevolset() {
 	pact set-sink-volume @DEFAULT_SINK@ "$1"%
-	pulsevolget | notifyvol
 }
 
 # adjust *input* vol/mute
@@ -78,7 +74,6 @@ pulsemicvolup() {
 	else
 		pactl set-source-volume @DEFAULT_SOURCE@ +"${1:-5}%"
 	fi
-	pulsemicvolget | notifyvol -
 }
 
 pulsemicvoldown() {
@@ -89,7 +84,6 @@ pulsemicvoldown() {
 	else
 		pactl set-source-volume @DEFAULT_SOURCE@ -"${1:-5}%"
 	fi
-	pulsemicvolget | notifyvol -
 }
 
 pulsemictogglemute() {
@@ -111,7 +105,6 @@ pulsemicvolget() {
 
 pulsemicvolset() {
 	pact set-source-volume @DEFAULT_SOURCE@ "$1"%
-	pulsevolget | notifyvol
 }
 
 # set the *active port* for output
@@ -387,5 +380,8 @@ case "$cmd" in
 		verb="$1"
 		shift
 		"$backend"device"$verb" "$1"
+		;;
+	notify)
+		notifyvol "$("${backend}volget")"
 		;;
 esac

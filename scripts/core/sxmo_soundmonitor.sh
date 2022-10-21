@@ -10,6 +10,7 @@ pactl subscribe | while read -r line; do
 	case "$line" in
 		"Event 'change' on sink"*)
 			sxmo_hook_statusbar.sh volume
+			sxmo_audio.sh notify
 			;;
 	esac
 done
