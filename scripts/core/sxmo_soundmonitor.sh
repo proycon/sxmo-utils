@@ -12,5 +12,9 @@ pactl subscribe | while read -r line; do
 			sxmo_hook_statusbar.sh volume
 			sxmo_audio.sh notify
 			;;
+		"Event 'change' on source"*)
+			sxmo_hook_statusbar.sh volume
+			sxmo_audio.sh micnotify
+			;;
 	esac
 done

@@ -380,4 +380,7 @@ case "$cmd" in
 	notify)
 		notifyvol "$("${backend}volget")"
 		;;
+	micnotify)
+		notifyvol "$("${backend}micvolget")"
+		;;
 esac
