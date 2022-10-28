@@ -158,7 +158,7 @@ $(
 				printf "%s Hangup %s ^ hangup %s\n" "$icon_phx" "$CONTACT" "$CALLID"
 				;;
 			*)
-				printf "%s DTMF Tones %s ^ dtmf_menu %s\n" "$icon_mus" "$CONTACT" "$CALLID"
+				printf "%s DTMF Tones %s ^ sxmo_terminal.sh sxmo_dtmf.sh %s\n" "$icon_mus" "$CONTACT" "$CALLID"
 				printf "%s Hangup %s ^ hangup %s\n" "$icon_phx" "$CONTACT" "$CALLID"
 				;;
 		esac
@@ -182,22 +182,6 @@ EOF
 		eval "$CMD" || exit 1
 	done & # To be killeable
 	wait
-}
-
-dtmf_menu() {
-	CALLID="$1"
-
-	sxmo_keyboard.sh close
-	KEYBOARD_ARGS="-o -l dialer" sxmo_keyboard.sh open | \
-		sxmo_splitchar | xargs -n1 printf "%s\n" | stdbuf -o0 grep '[0-9A-D*#]' | \
-		xargs -r -I{} -n1 mmcli -m any -o "$CALLID" --send-dtmf="{}" &
-
-	# Closed return to default menu
-	if ! printf "Close Menu\n" | sxmo_dmenu.sh -i -p "DTMF Tone"; then
-		sxmo_keyboard.sh close
-	fi
-
-	sxmo_keyboard.sh close
 }
 
 mute() {

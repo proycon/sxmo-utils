@@ -11,8 +11,7 @@ OPENRC:=1
 CC ?= $(CROSS_COMPILE)gcc
 PROGRAMS = \
 	programs/sxmo_aligned_sleep \
-	programs/sxmo_vibrate \
-	programs/sxmo_splitchar
+	programs/sxmo_vibrate
 
 all: $(PROGRAMS)
 
