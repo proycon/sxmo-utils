@@ -64,7 +64,6 @@ is_default_audio_mode() {
 }
 
 enable_call_audio_mode() {
-	pgrep -f callaudiod || callaudiod
 	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
 		/org/mobian_project/CallAudio org.mobian_project.CallAudio.SelectMode uint32:1 >/dev/null
 
@@ -78,7 +77,6 @@ enable_call_audio_mode() {
 }
 
 disable_call_audio_mode() {
-	pgrep -f callaudiod || callaudiod
 	dbus-send --session --print-reply --type=method_call --dest=org.mobian_project.CallAudio \
 		/org/mobian_project/CallAudio org.mobian_project.CallAudio.SelectMode uint32:0 >/dev/null
 
