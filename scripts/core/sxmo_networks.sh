@@ -294,11 +294,7 @@ EOF
 			*"Scan Wifi Networks" )
 				sxmo_terminal.sh watch -n 2 nmcli d wifi list || continue # Killeable
 				;;
-			*"Disable Wifi" )
-				doas sxmo_wifitoggle.sh
-				sxmo_hook_statusbar.sh network wifi wlan0
-				;;
-			*"Enable Wifi" )
+			*"Disable Wifi"|*"Enable Wifi" )
 				doas sxmo_wifitoggle.sh
 				;;
 			*)
