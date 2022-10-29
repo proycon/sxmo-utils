@@ -13,7 +13,7 @@ finish() {
 	kill "$AWKPID"
 	rm "$tmp"
 
-	if ! grep -q "$INITIALSTATE" "$SXMO_STATE"; then
+	if ! grep -q "^$INITIALSTATE\$" "$SXMO_STATE"; then
 		sxmo_hook_"$INITIALSTATE".sh
 	fi
 
