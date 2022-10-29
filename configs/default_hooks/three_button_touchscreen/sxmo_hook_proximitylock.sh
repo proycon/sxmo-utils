@@ -54,9 +54,9 @@ awk '
 AWKPID=$!
 
 initial_distance="$(cat "$prox_raw_bus")"
-if [ "$initial_distance" -gt 50 ] && [ "$INITIALSTATE" != "screenoff" ]; then
+if [ "$initial_distance" -gt "${SXMO_PROX_FALLING:-50}" ] && [ "$INITIALSTATE" != "screenoff" ]; then
 	sxmo_hook_screenoff.sh
-elif [ "$initial_distance" -lt 100 ] && [ "$INITIALSTATE" != "unlock" ]; then
+elif [ "$initial_distance" -lt "${SXMO_PROX_RISING:-100}" ] && [ "$INITIALSTATE" != "unlock" ]; then
 	sxmo_hook_unlock.sh
 fi
 
