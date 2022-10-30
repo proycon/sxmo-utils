@@ -17,6 +17,9 @@ scale="${SXMO_SWAY_SCALE:-2}"
 multikey_retrocompat() {
 	sxmo_multikey.sh clear
 
+	swaymsg -- input "$pwr" repeat_delay 200
+	swaymsg -- input "$pwr" repeat_rate 15
+
 	swaymsg -- bindsym --locked --input-device="$pwr" XF86PowerOff exec sxmo_multikey.sh \
 		powerbutton \
 		powerbutton_one \
