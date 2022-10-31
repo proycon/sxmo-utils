@@ -14,7 +14,11 @@ echo "unlock" > "$SXMO_STATE"
 xdg-user-dirs-update
 
 sxmo_daemons.sh start daemon_manager superd -v
-sleep 2 # let time to superd to start correctly
+
+# let time to superd to start correctly
+while ! superctl status > /dev/null 2>&1; do
+	sleep 0.1
+done
 
 # mako/dunst are required for warnings.
 # load some other little things here too.
