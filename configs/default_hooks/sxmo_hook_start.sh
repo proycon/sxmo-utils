@@ -20,9 +20,13 @@ while ! superctl status > /dev/null 2>&1; do
 	sleep 0.1
 done
 
+# Load our sound daemons
+# pipewire-pulse will start pipewire
+superctl start pipewire-pulse
+superctl start wireplumber
+
 # mako/dunst are required for warnings.
 # load some other little things here too.
-# WARNING: Do not make any sounds yet!!
 case "$SXMO_WM" in
 	sway)
 		superctl start mako
@@ -50,11 +54,6 @@ case "$SXMO_WM" in
 		[ -n "$SXMO_MONITOR" ] && xrandr --output "$SXMO_MONITOR" --primary
 		;;
 esac
-
-# Load our sound daemons
-# pipewire-pulse will start pipewire
-superctl start pipewire-pulse
-superctl start wireplumber
 
 # Periodically update some status bar components
 sxmo_hook_statusbar.sh all
