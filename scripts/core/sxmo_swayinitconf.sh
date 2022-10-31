@@ -11,7 +11,6 @@
 monitor="${SXMO_MONITOR:-"$(swaymsg -t get_outputs | jq -r '.[0] | .name')"}"
 pwr="${SXMO_POWER_BUTTON:-"0:0:axp20x-pek"}"
 vols="${SXMO_VOLUME_BUTTON:-"1:1:1c21800.lradc"}"
-scale="${SXMO_SWAY_SCALE:-2}"
 
 # Drop this when bonsai is available on 32 bits systems
 multikey_retrocompat() {
@@ -51,7 +50,9 @@ if [ -n "$SXMO_MODEM_GPIO_KEY_RI" ]; then
 	swaymsg -- input "$SXMO_MODEM_GPIO_KEY_RI" events disabled
 fi
 
-swaymsg -- output "$monitor" scale "$scale"
+if [ -n "$SXMO_SWAY_SCALE" ]; then
+	swaymsg -- output "$monitor" scale "$SXMO_SWAY_SCALE"
+fi
 
 focused_name="$(
 	swaymsg -t get_outputs | jq -r '.[] | select(.focused == true) | .name'

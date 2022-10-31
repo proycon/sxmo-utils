@@ -24,3 +24,4 @@ export SXMO_VOLUME_BUTTON="none"
 export SXMO_ROTATION_POLL_TIME="0" # the device already polls at 1s so a further 1s poll is pointless
 export SXMO_UNLOCK_IDLE_TIME="30"
 export SXMO_SPEAKER="Master"
+export SXMO_SWAY_SCALE="2"

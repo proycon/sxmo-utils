@@ -5,3 +5,4 @@
 # Samsung Galaxy S III
 export SXMO_POWER_BUTTON="0:0:max77693-muic/dock"
 export SXMO_VOLUME_BUTTON="1:1:gpio-keys"
+export SXMO_SWAY_SCALE="2"

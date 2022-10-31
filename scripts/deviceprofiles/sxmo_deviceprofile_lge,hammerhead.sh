@@ -9,4 +9,6 @@ export SXMO_VOLUME_BUTTON="1:1:soc:gpio-keys"
 export SXMO_MODEMRTC="9999" # No Modem RTC
 export SXMO_POWERRTC="11" # "battery"
 
+export SXMO_SWAY_SCALE="2"
+
 # export SXMO_TOUCHSCREEN_ID="" # TODO for xorg support.
