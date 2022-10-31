@@ -8,11 +8,11 @@
 
 pactl subscribe | while read -r line; do
 	case "$line" in
-		"Event 'change' on sink"*)
+		"Event 'change' on sink "*)
 			sxmo_hook_statusbar.sh volume
 			sxmo_audio.sh notify
 			;;
-		"Event 'change' on source"*)
+		"Event 'change' on source "*)
 			sxmo_hook_statusbar.sh volume
 			sxmo_audio.sh micnotify
 			;;
