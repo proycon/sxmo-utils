@@ -48,7 +48,6 @@ case "$SXMO_WM" in
 esac
 
 # Load our sound daemons
-# callaudiod will start automatically
 # pipewire-pulse will start pipewire
 superctl start pipewire-pulse
 superctl start wireplumber
