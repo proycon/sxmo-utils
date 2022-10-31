@@ -46,7 +46,6 @@ pulsevoldown() {
 
 pulsevoltogglemute() {
 	pactl set-sink-mute @DEFAULT_SINK@ toggle
-	sxmo_hook_statusbar.sh volume
 }
 
 pulsevolismuted() {
@@ -88,7 +87,6 @@ pulsemicvoldown() {
 
 pulsemictogglemute() {
 	pactl set-source-mute @DEFAULT_SOURCE@ toggle
-	sxmo_hook_statusbar.sh volume
 }
 
 pulsemicismuted() {
@@ -110,13 +108,11 @@ pulsemicvolset() {
 # set the *active port* for output
 pulsedeviceset() {
 	pactl set-sink-port @DEFAULT_SINK@ "[Out] $1"
-	sxmo_hook_statusbar.sh volume
 }
 
 # set the *active port* for input
 pulsedevicesetinput() {
 	pactl set-source-port @DEFAULT_SOURCE@ "[In] $1"
-	sxmo_hook_statusbar.sh volume
 }
 
 # get the *active port* for input
