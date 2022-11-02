@@ -24,7 +24,7 @@ programs/%: programs/%.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ $<
 
 clean:
-	rm -f programs/sxmo_aligned_sleep programs/sxmo_vibrate programs/sxmo_splitchar
+	rm -f programs/sxmo_aligned_sleep programs/sxmo_vibrate
 
 install: install-sway install-dwm install-scripts
 
@@ -73,7 +73,6 @@ install-scripts: $(PROGRAMS)
 
 	install -D programs/sxmo_aligned_sleep $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_vibrate $(DESTDIR)$(PREFIX)/bin/
-	install -D programs/sxmo_splitchar $(DESTDIR)$(PREFIX)/bin/
 
 	find $(DESTDIR)$(PREFIX)/share/sxmo/default_hooks/ -type f -exec ./setup_config_version.sh "{}" \;
 	find $(DESTDIR)$(PREFIX)/share/sxmo/appcfg/ -type f -exec ./setup_config_version.sh "{}" \;
