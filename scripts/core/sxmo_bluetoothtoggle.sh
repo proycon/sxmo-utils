@@ -24,7 +24,7 @@ on() {
 			rc-service bluetooth start
 			rc-update add bluetooth
 			;;
-		arch|archarm|nixos)
+		arch|archarm|nixos|debian)
 			systemctl start bluetooth
 			systemctl enable bluetooth
 			;;
@@ -37,7 +37,7 @@ off() {
 			rc-service bluetooth stop
 			rc-update del bluetooth
 			;;
-		arch|archarm|nixos)
+		arch|archarm|nixos|debian)
 			systemctl stop bluetooth
 			systemctl disable bluetooth
 			;;
