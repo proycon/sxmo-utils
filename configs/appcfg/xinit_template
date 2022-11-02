@@ -2,6 +2,8 @@
 
 dbus-update-activation-environment DISPLAY XDG_CURRENT_DESKTOP
 
+feh --bg-fill "$(xdg_data_path sxmo/background.jpg)"
+
 # Run actions on start
 # By default, setup audio over the main speaker
 # and set a sane default volume

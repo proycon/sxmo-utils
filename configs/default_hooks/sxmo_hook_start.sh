@@ -45,9 +45,6 @@ case "$SXMO_WM" in
 		fi
 		superctl start "$1"
 
-		# Set a pretty wallpaper
-		feh --bg-fill "$(xdg_data_path sxmo/background.jpg)"
-
 		superctl start autocutsel
 		superctl start autocutsel-primary
 		superctl start sxmo-x11-status
@@ -83,6 +80,8 @@ superctl start sxmo_soundmonitor
 
 # Play a funky startup tune if you want (disabled by default)
 #mpv --quiet --no-video ~/welcome.ogg &
+
+# Set a background image: edit ~/.config/sxmo/sway or ~/.config/sxmo/xinit
 
 # mmsd and vvmd
 if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
