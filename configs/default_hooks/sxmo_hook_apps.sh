@@ -37,6 +37,7 @@ write_line_app epiphany "$icon_glb Epiphany" "epiphany"
 write_line_app epy "$icon_bok Epy" "sxmo_terminal.sh epy"
 write_line_app evince "$icon_bok Evince" "evince"
 write_line_app firefox "$icon_ffx Firefox" "firefox"
+write_line_app firefox-esr "$icon_ffx Firefox ESR" "firefox-esr"
 write_line_app foliate "$icon_bok Foliate" "foliate"
 ( [ "$SXMO_WM" = sway ] && command -v foot >/dev/null) && \
 	write_line "$icon_trm Foot" "foot $SHELL"
