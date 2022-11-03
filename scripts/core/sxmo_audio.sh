@@ -289,7 +289,7 @@ alsavolget() {
 }
 
 alsamicismuted() {
-	echo "Not implemented"
+	echo "alsamicismuted: Not implemented">&2
 }
 
 alsadeviceget() {
