@@ -16,7 +16,7 @@ fi
 
 # the defaults are best guesses
 # users can override this in sxmo_deviceprofile_mydevice.sh
-files="${SXMO_SYS_FILES:-"/sys/power/state /sys/power/mem_sleep /sys/bus/usb/drivers/usb/unbind /sys/bus/usb/drivers/usb/bind /dev/rtc0"}"
+files="${SXMO_SYS_FILES:-"/sys/power/state /sys/power/mem_sleep /dev/rtc0"}"
 
 for file in $files; do
     [ -e "$file" ] && chmod a+rw "$file"
