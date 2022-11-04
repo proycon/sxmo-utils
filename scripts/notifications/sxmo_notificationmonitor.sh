@@ -51,6 +51,7 @@ syncled() {
 	else
 		sxmo_uniq_exec.sh sxmo_led.sh set green 0
 	fi
+	sxmo_hook_statusbar.sh notifications
 }
 
 monitorforaddordelnotifs() {

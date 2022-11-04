@@ -23,11 +23,11 @@ writenotification() {
 		NOTIFFILEPATHTOWRITE="$SXMO_NOTIFDIR/$NOTIFRANDOM"
 	fi
 	touch "$NOTIFFILEPATHTOWRITE"
-	sxmo_hook_statusbar.sh notifications
 	printf "%s\n%s\n%b\n" \
-		"sxmo_hook_statusbar.sh notifications; $ACTION" \
-		"$WATCHFILE" "$NOTIFMSG" > "$NOTIFFILEPATHTOWRITE"
+		"$ACTION" "$WATCHFILE" "$NOTIFMSG" \
+		> "$NOTIFFILEPATHTOWRITE"
 }
 
 [ "$#" -lt 4 ] && echo "Need >=4 args to create a notification" && exit 1
 writenotification
+sxmo_hook_statusbar.sh notifications

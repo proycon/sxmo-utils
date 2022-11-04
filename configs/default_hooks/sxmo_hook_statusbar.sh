@@ -300,7 +300,7 @@ set_battery() {
 }
 
 set_notifications() {
-       [ "$SXMO_DISABLE_LEDS" = 0 ] && return
+       [ -z "$SXMO_DISABLE_LEDS" ] && return
        NNOTIFICATIONS="$(find "$SXMO_NOTIFDIR" -type f | wc -l)"
        [ "$NNOTIFICATIONS" = 0 ] && sxmo_status.sh del notifs && return
        printf "%s!: %d%s\n" "$SPAN_RED" "$NNOTIFICATIONS" "$ENDSPAN" | sxmo_status.sh add notifs
