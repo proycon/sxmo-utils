@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
-export SXMO_EG25=0
 export SXMO_DISABLE_LEDS=1
 
 #   0:0:MELFAS_MMS345_Touchscreen

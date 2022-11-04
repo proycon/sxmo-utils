@@ -7,5 +7,4 @@ export SXMO_SYS_FILES="/sys/module/$SXMO_WIFI_MODULE/parameters/rtw_scan_interva
 export SXMO_TOUCHSCREEN_ID=8
 export SXMO_MONITOR="DSI-1"
 export SXMO_ALSA_CONTROL_NAME=PinePhone
-export SXMO_EG25=1
 export SXMO_SWAY_SCALE="2"

@@ -78,8 +78,7 @@ daemon_exists() {
 	esac
 }
 
-if [ "$SXMO_EG25" = 1 ]; then
-
+if command -v eg25-manager > /dev/null; then
 	if daemon_isrunning eg25-manager; then
 		sxmo_notify_user.sh "Already running eg25-manager..."
 	else

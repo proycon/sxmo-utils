@@ -10,6 +10,5 @@ export SXMO_VOLUME_BUTTON="1:1:adc-keys"
 export SXMO_MODEMRTC=12
 export SXMO_POWERRTC=5
 export SXMO_WAKEUPRTC=3
-export SXMO_EG25=1
 export SXMO_MODEM_GPIO_KEY_RI="1:1:gpio-key-ri"
 export SXMO_SWAY_SCALE="2"
