@@ -61,7 +61,7 @@ pulsevolget() {
 }
 
 pulsevolset() {
-	pact set-sink-volume @DEFAULT_SINK@ "$1"%
+	pactl set-sink-volume @DEFAULT_SINK@ "$1"%
 }
 
 # adjust *input* vol/mute
@@ -102,7 +102,7 @@ pulsemicvolget() {
 }
 
 pulsemicvolset() {
-	pact set-source-volume @DEFAULT_SOURCE@ "$1"%
+	pactl set-source-volume @DEFAULT_SOURCE@ "$1"%
 }
 
 # set the *active port* for output
