@@ -5,7 +5,7 @@
 export SXMO_SYS_FILES="/sys/power/state /sys/power/mem_sleep /dev/rtc0"
 export SXMO_TOUCHSCREEN_ID=7
 export SXMO_MONITOR="DSI-1"
-export SXMO_POWER_BUTTON="1:1:gpio-key-power"
+export SXMO_POWER_BUTTON="1:1:gpio-keys"
 export SXMO_VOLUME_BUTTON="1:1:adc-keys"
 export SXMO_MODEMRTC=12
 export SXMO_POWERRTC=5
