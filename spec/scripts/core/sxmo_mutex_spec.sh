@@ -1,7 +1,9 @@
 # shellcheck disable=SC2155
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
-export PATH="$PATH:$(pwd)/scripts/core"
+export PATH="$PATH:$(pwd)/scripts/core:$(pwd)/configs/default_hooks"
+XDG_RUNTIME_DIR="$(mktemp -d)"
+export XDG_RUNTIME_DIR
 
 Describe 'sxmo_mutex.sh'
 	# Make sure we're running in a somewhat clean environment
