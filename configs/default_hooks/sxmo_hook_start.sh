@@ -30,6 +30,11 @@ elif [ "$(command -v pipewire)" ]; then
 	superctl start wireplumber
 fi
 
+# Periodically update some status bar components
+sxmo_hook_statusbar.sh all
+sxmo_daemons.sh start statusbar_periodics sxmo_run_aligned.sh 60 \
+	sxmo_hook_statusbar.sh periodics
+
 # mako/dunst are required for warnings.
 # load some other little things here too.
 case "$SXMO_WM" in
@@ -56,11 +61,6 @@ case "$SXMO_WM" in
 		[ -n "$SXMO_MONITOR" ] && xrandr --output "$SXMO_MONITOR" --primary
 		;;
 esac
-
-# Periodically update some status bar components
-sxmo_hook_statusbar.sh all
-sxmo_daemons.sh start statusbar_periodics sxmo_run_aligned.sh 60 \
-	sxmo_hook_statusbar.sh periodics
 
 # To setup initial lock state
 sxmo_hook_unlock.sh
