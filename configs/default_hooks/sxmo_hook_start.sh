@@ -17,7 +17,7 @@ sxmo_daemons.sh start daemon_manager superd -v
 
 # let time to superd to start correctly
 while ! superctl status > /dev/null 2>&1; do
-	sleep 0.1
+	sleep 0.5
 done
 
 # Load our sound daemons
