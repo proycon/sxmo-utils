@@ -66,7 +66,8 @@ hold() {
 	}
 	trap 'finish' TERM INT EXIT
 
-	while read -r; do
+	# shellcheck disable=SC2034
+	while read -r _; do
 		if ! [ -s "$REASON_FILE" ]; then
 			exit 0
 		fi

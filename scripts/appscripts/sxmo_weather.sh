@@ -122,7 +122,8 @@ getweathertexttable() {
 		)"
 		tput rev; echo "$PLACE"; tput sgr0
 		printtables
-		read -r
+		# shellcheck disable=SC2034
+		read -r _
 	done
 }
 

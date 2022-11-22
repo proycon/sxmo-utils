@@ -321,7 +321,7 @@ EOF
 }
 
 ispulse() {
-	type pactl > /dev/null 2>&1 || return 1
+	command -v pactl > /dev/null 2>&1 || return 1
 	pactl info > /dev/null 2>&1 || return 1
 }
 

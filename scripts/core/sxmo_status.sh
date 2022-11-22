@@ -90,7 +90,8 @@ watch() {
 	trap 'finish' TERM INT
 
 	show
-	while read -r; do
+	# shellcheck disable=SC2034
+	while read -r _; do
 		show
 	done < "$FIFO"
 }

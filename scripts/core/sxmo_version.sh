@@ -34,7 +34,8 @@ uname -m
 . /etc/os-release
 printf "%s %s" "$NAME" "$VERSION"
 
+# shellcheck disable=SC2034
 if [ "$1" = "--block" ]; then
 	printf " (press return to exit)"
-	read -r
+	read -r _
 fi
