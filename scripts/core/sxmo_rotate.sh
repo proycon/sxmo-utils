@@ -117,7 +117,9 @@ isrotated() {
 }
 
 if [ -z "$1" ] || [ "rotate" = "$1" ]; then
-	shift
+	if [ $# -ne 0 ]; then
+		shift
+	fi
 	if isrotated; then
 		set -- rotnormal "$@"
 	else
