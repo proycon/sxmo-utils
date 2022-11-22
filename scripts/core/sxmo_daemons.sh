@@ -10,7 +10,7 @@ ROOT="$XDG_RUNTIME_DIR/sxmo_daemons"
 mkdir -p "$ROOT"
 
 list() {
-	find "$ROOT" -exec 'basename' '{}' ';' -mindepth 1
+	find "$ROOT" -mindepth 1 -exec 'basename' '{}' ';'
 }
 
 stop() {

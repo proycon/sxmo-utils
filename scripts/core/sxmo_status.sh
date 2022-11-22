@@ -11,7 +11,7 @@ ROOT="$XDG_RUNTIME_DIR/sxmo_status/${SXMO_STATUS_NAME:-default}"
 mkdir -p "$ROOT"
 
 _sorted_components_name() {
-	find "$ROOT" -exec 'basename' '{}' ';' -mindepth 1 | sort -n
+	find "$ROOT" -mindepth 1 -exec 'basename' '{}' ';' | sort -n
 }
 
 usage() {
