@@ -27,9 +27,19 @@ timerrun() {
 	done
 }
 
+stopwatchrun() {
+	start="$(date +%s)"
+	while true; do
+		time="$(($(date +%s) - start))"
+		printf '%s\r' "$(date -u -d "@$time" +%H:%M:%S)"
+	done
+	sleep 0.1
+}
+
 menu() {
 	TIMEINPUT="$(
 		echo "
+			Stopwatch
 			1h
 			10m
 			9m
@@ -45,8 +55,15 @@ menu() {
 			Close Menu
 		" | awk 'NF' | awk '{$1=$1};1' | sxmo_dmenu_with_kb.sh -p Timer
 	)" || exit 0
-	[ "Close Menu" = "$TIMEINPUT" ] && exit 0
-	sxmo_terminal.sh "$0" timerrun "$TIMEINPUT"
+	case "$TIMEINPUT" in
+	"Close Menu") exit 0 ;;
+	"Stopwatch")
+		sxmo_terminal.sh "$0" stopwatchrun
+		;;
+	*)
+		sxmo_terminal.sh "$0" timerrun "$TIMEINPUT"
+		;;
+	esac
 }
 
 if [ $# -gt 0 ]; then "$@"; else menu; fi
