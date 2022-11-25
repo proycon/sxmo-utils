@@ -113,13 +113,27 @@ xorgfocusedwindow() {
 }
 
 swayfocusedwindow() {
-	swaymsg -t get_tree \
-		| jq -r '
+	TREE="$(swaymsg -t get_tree)"
+	FOCUS="$(
+		printf %s "$TREE" | jq -r '
 			recurse(.nodes[]) |
-			select(.focused == true) |
+			select((.focused == true) and (.app_id != null)) |
 			{app_id: .app_id, name: .name} |
 			"app: " + .app_id, "title: " + .name
 		'
+	)"
+	if [ -z "$FOCUS" ]; then
+		#app_id is null, fall back to detect xwayland app:
+		FOCUS="$(
+			printf %s "$TREE" | jq -r '
+				recurse(.nodes[]) |
+				select((.focused == true) and (.shell == "xwayland")) |
+				{app_id: .window_properties.class, name: .window_properties.title} |
+				"app: " + .app_id, "title: " + .name
+			'
+		)"
+	fi
+	printf "%s\n" "$FOCUS"
 }
 
 swaypaste() {
