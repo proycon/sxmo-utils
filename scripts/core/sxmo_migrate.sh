@@ -259,6 +259,7 @@ sway() {
 	defaultconfig "$(xdg_data_path sxmo/appcfg/foot.ini)" "$XDG_CONFIG_HOME/foot/foot.ini" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/mako.conf)" "$XDG_CONFIG_HOME/mako/config" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/bonsai_tree.json)" "$XDG_CONFIG_HOME/sxmo/bonsai_tree.json" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/wob.ini)" "$XDG_CONFIG_HOME/wob/wob.ini" 644
 }
 
 xorg() {

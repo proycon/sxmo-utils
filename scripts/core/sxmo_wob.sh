@@ -8,14 +8,13 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-useable_width="$(swaymsg -t get_outputs -r | jq '.[] | select(.focused == true) | .rect.width')"
 wob_sock="$XDG_RUNTIME_DIR"/sxmo.wobsock
 rm -f "$wob_sock"
 mkfifo "$wob_sock"
 
 # By opening the socket as read-write it isn't closed after the first write
 # see https://unix.stackexchange.com/questions/392697
-wob -W "$((useable_width - 60))" -a top -a left -a right -M 10 <> "$wob_sock" &
+wob <> "$wob_sock" &
 WOBPID=$!
 
 finish() {
