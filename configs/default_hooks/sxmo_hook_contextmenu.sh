@@ -171,6 +171,19 @@ case "$WMCLASS" in
 		"
 		WINNAME=Sxiv
 		;;
+	*imv*)
+		# imv
+		CHOICES="
+			$icon_arr Next          ^ 1 ^ sxmo_type -k Right
+			$icon_arl Previous      ^ 1 ^ sxmo_type -k Left
+			$icon_zmi Zoom in       ^ 1 ^ sxmo_type -k i
+			$icon_zmo Zoom out      ^ 1 ^ sxmo_type -k minus
+			$icon_exp Zoom to fit   ^ 1 ^ sxmo_type -k r
+			$icon_ror Rotate        ^ 1 ^ sxmo_type -M ctrl r
+			$icon_inf Toggle filename ^ 1 ^ sxmo_type -k d
+		"
+		WINNAME=Imv
+		;;
 	*kasts*)
 		CHOICES="
 			$icon_mus Audio ^ 0 ^ sxmo_audio.sh
