@@ -5,7 +5,7 @@
 # shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
 . sxmo_hook_icons.sh
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 set -e
 
@@ -114,11 +114,16 @@ editcontact() {
 showcontact() {
 	number="$(printf %s "$1" | cut -d"	" -f2)"
 	name="$(printf %s "$1" | cut -d"	" -f1)"
-	ENTRIES="$(printf %b "$icon_ret Cancel\n$icon_lst List Messages\n$icon_msg Send a Message\n$icon_phn Call\n$icon_edt Edit\n$icon_del Delete")"
 
-	PICKED="$(
-		printf %b "$ENTRIES" |
-		dmenu -p "$icon_usr $name"
+	PICKED="$(dmenu -p "$icon_usr $name" <<EOF
+$icon_ret Cancel
+$icon_lst List Messages
+$icon_msg Send a Message
+$icon_phn Call
+$icon_itm View
+$icon_edt Edit
+$icon_del Delete
+EOF
 	)"
 
 	case "$PICKED" in
@@ -136,6 +141,17 @@ showcontact() {
 			;;
 		*"Edit")
 			editcontact "$1"
+			;;
+		*"View")
+			if formatted="$(pn format -f nat "$number" 2>/dev/null)"; then
+				text="$formatted"
+			else
+				text="$number"
+			fi
+
+			# shellcheck disable=SC2016
+			sxmo_terminal.sh sh -c 'printf "%s\n%s\n" "$1" "$2"; read -r _line' \
+				"show_number" "$name" "$text" || true
 			;;
 		*"Delete")
 			deletecontact "$1" || showcontact "$1"
