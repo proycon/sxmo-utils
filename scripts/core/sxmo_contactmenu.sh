@@ -122,22 +122,22 @@ showcontact() {
 	)"
 
 	case "$PICKED" in
-		 *"List Messages")
+		*"List Messages")
 			sxmo_hook_tailtextlog.sh  "$number"
 			exit
 			;;
-		 *"Send a Message")
+		*"Send a Message")
 			sxmo_modemtext.sh sendtextmenu  "$number"
 			exit
 			;;
-		 *"Call")
+		*"Call")
 			sxmo_modemdial.sh "$number"
 			exit
 			;;
-		 *"Edit")
+		*"Edit")
 			editcontact "$1"
 			;;
-		 *"Delete")
+		*"Delete")
 			deletecontact "$1" || showcontact "$1"
 			;;
 	esac
