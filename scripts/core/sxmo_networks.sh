@@ -142,16 +142,17 @@ addnetworkwpamenu() {
 		echo "$icon_cls Close Menu" |
 			sxmo_dmenu_with_kb.sh -p "Passphrase"
 	)"
-	[ -z "$PASSPHRASE" ] && return
+	if [ -z "$PASSPHRASE" ]; then
+		unset PASSPHRASE
+	fi
 	echo "$PASSPHRASE" | grep -q "Close Menu" && return
 
 	RES="$(nofail nmcli c add \
 		type wifi \
 		ifname wlan0 \
 		con-name "$SSID" \
-		802-11-wireless-security.key-mgmt wpa-psk \
 		ssid "$SSID" \
-		802-11-wireless-security.psk "$PASSPHRASE" 2>&1)"
+		${PASSPHRASE:+802-11-wireless-security.key-mgmt wpa-psk 802-11-wireless-security.psk "$PASSPHRASE"} 2>&1)"
 	stderr "$RES"
 	notify-send "$RES"
 }
