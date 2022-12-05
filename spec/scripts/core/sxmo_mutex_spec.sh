@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
+# shellcheck disable=SC2155
 export PATH="$PATH:$(pwd)/scripts/core:$(pwd)/configs/default_hooks"
 XDG_RUNTIME_DIR="$(mktemp -d)"
 export XDG_RUNTIME_DIR
