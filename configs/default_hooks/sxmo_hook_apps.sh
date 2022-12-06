@@ -20,6 +20,7 @@ write_line_app() {
 	fi
 }
 
+write_line_app jami-qt "$icon_msg Jami" "jami-qt"
 write_line_app aerc "$icon_eml Aerc" "sxmo_terminal.sh aerc"
 write_line_app amfora "$icon_glb Amfora" "sxmo_terminal.sh amfora"
 write_line_app alpine "$icon_eml Alpine" "sxmo_terminal.sh alpine"
