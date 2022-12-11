@@ -37,6 +37,7 @@ export SXMO_DISABLE_LEDS=1
 #     SW_LID
 export SXMO_POWER_BUTTON='0:0:pm8941_pwrkey'
 export SXMO_VOLUME_BUTTON='0:0:pm8941_resin 1:1:GPIO_Buttons'
+# TODO: change to output display
 export SXMO_MONITOR='0:0:MELFAS_MMS345_Touchscreen'
 
 # /sys/devices/platform/soc@0/200f000.spmi/spmi-0/0-00/200f000.spmi:pmic@0:pon@800/200f000.spmi:pmic@0:pon@800:resin/wakeup/wakeup3
