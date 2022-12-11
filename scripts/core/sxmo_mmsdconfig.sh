@@ -75,10 +75,10 @@ newfile() {
 
 mkdir -p "$MMS_BASE_DIR"
 
-superctl stop mmsd
+superctl stop mmsd-tng
 
 finish() {
-	superctl start mmsd
+	superctl start mmsd-tng
 }
 trap 'finish' EXIT
 

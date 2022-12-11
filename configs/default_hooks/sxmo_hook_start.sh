@@ -85,7 +85,7 @@ superctl start sxmo_soundmonitor
 
 # mmsd and vvmd
 if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
-	superctl start mmsd
+	superctl start mmsd-tng
 fi
 
 if [ -f "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" ]; then
