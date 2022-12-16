@@ -11,7 +11,6 @@ export LIBGL_ALWAYS_SOFTWARE=true
 export SXMO_TOUCHSCREEN_ID="10"
 export SXMO_STYLUS_ID="12"
 export SXMO_DISABLE_LEDS="1"
-export SXMO_WAKEUPRTC="2"
 export SXMO_MODEMRTC="9999" # we don't have one of course
 export SXMO_POWERRTC="5" # same as pinephone
 export SXMO_COVERRTC="8" 

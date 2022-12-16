@@ -47,7 +47,6 @@ export SXMO_MONITOR='0:0:MELFAS_MMS345_Touchscreen'
 # /sys/devices/virtual/wakeup/wakeup4
 # /sys/devices/virtual/wakeup/wakeup5
 export SXMO_WIFI_MODULE='wcn36xx'
-export SXMO_WAKEUPRTC=0
 export SXMO_MODEMRTC=9999
 export SXMO_POWERRTC=6
 export SXMO_COVERRTC=9999
