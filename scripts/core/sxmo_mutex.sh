@@ -59,6 +59,7 @@ hold() {
 	inotifywait -mq -e "close_write" "$ROOT_DIR" >> "$FIFO" &
 	NOTIFYPID=$!
 
+	# shellcheck disable=SC2317
 	finish() {
 		kill "$NOTIFYPID" 2>/dev/null
 		rm "$FIFO"
@@ -75,6 +76,7 @@ hold() {
 }
 
 holdexec() {
+	# shellcheck disable=SC2317
 	finish() {
 		kill "$HOLDPID" 2>/dev/null
 		exit

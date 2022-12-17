@@ -82,6 +82,7 @@ watch() {
 	inotifywait -mq -e "close_write,move,delete" "$ROOT" >> "$FIFO" &
 	NOTIFYPID=$!
 
+	# shellcheck disable=SC2317
 	finish() {
 		kill "$NOTIFYPID"
 		rm "$FIFO"

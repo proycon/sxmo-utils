@@ -102,7 +102,7 @@ rssreadmenu() {
 	DMENUIDX=1
 	while true; do
 		PICKED="$(printf %b "$CHOICES" |
-			sxmo_dmenu.sh --index $DMENUIDX -p "RSS ($TIMESPANABBR)")" || return 0
+			sxmo_dmenu.sh --index "$DMENUIDX" -p "RSS ($TIMESPANABBR)")" || return 0
 		DMENUIDX="$(echo "$CHOICES" | grep -m1 -F -n "$PICKED" | cut -d ':' -f1)"
 
 		case "$PICKED" in
