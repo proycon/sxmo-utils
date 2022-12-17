@@ -28,6 +28,7 @@ esac
 
 printf "superd "
 /usr/bin/superctl --version
+pactl info
 "$KEYBOARD" -v
 /usr/bin/mmcli --version | head -n 1
 uname -m

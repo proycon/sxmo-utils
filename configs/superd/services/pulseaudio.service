@@ -1,0 +1,7 @@
+[Unit]
+Description=general purpose sound server intended to run as a middleware between your applications and your hardware devices
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/pulseaudio

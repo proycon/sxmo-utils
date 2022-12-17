@@ -21,9 +21,14 @@ while ! superctl status > /dev/null 2>&1; do
 done
 
 # Load our sound daemons
-# pipewire-pulse will start pipewire
-superctl start pipewire-pulse
-superctl start wireplumber
+
+if [ "$(command -v pulseaudio)" ]; then
+	superctl start pulseaudio
+elif [ "$(command -v pipewire)" ]; then
+	# pipewire-pulse will start pipewire
+	superctl start pipewire-pulse
+	superctl start wireplumber
+fi
 
 # mako/dunst are required for warnings.
 # load some other little things here too.
