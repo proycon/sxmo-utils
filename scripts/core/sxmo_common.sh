@@ -17,23 +17,6 @@ alias dmenu="sxmo_dmenu.sh"
 alias bemenu="sxmo_dmenu.sh"
 alias jq="gojq" # better performances
 
-# Use native commands if busybox was compile without those apples (for example Debians busybox)
-if busybox pkill -l > /dev/null 2>&1; then
-	alias pkill="busybox pkill"
-	alias pgrep="busybox pgrep"
-fi
-alias bc="busybox bc"
-alias find="busybox find"
-alias grep="busybox grep"
-alias less="busybox less"
-alias more="busybox more"
-alias netstat="busybox netstat"
-alias tail="busybox tail"
-alias xargs="busybox xargs"
-alias rfkill="busybox rfkill"
-alias flock="busybox flock"
-alias sed="busybox sed"
-
 confirm_menu() {
 	printf "No\nYes\n" | \
 		dmenu "$@" | \
