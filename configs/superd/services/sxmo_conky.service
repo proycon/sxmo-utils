@@ -1,0 +1,7 @@
+[Unit]
+Description=Conky
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=conky -c "$XDG_CONFIG_HOME"/sxmo/conky.conf
