@@ -34,9 +34,9 @@ swaydpms() {
 	if [ -z "$1" ]; then
 		printf %s "$STATE"
 	elif [ "$1" = on ] && [ "$STATE" != on ]; then
-		swaymsg -- output '*' dpms false
+		swaymsg -- output '*' power false
 	elif [ "$1" = off ] && [ "$STATE" != off ] ; then
-		swaymsg -- output '*' dpms true
+		swaymsg -- output '*' power true
 	fi
 
 }
