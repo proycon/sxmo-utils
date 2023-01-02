@@ -175,7 +175,24 @@ else
 		mmcli -m any --messaging-create-sms="text=\"$SAFE_TEXT\",number=$NUMBER" |
 		grep -o "[0-9]*$"
 	)"
-	mmcli -s "${SMSNO}" --send --timeout="${SXMO_MM_TIMEOUT:-"30"}" || err "Couldn't send text message"
+
+	SMS_RES="$(mmcli -s "${SMSNO}" --send --timeout="${SXMO_MM_TIMEOUT:-"30"}" 2>&1)"
+	SMS_OK="$?"
+
+	if [ "$SMS_OK" = 1 ]; then
+		# if we fail to send due to a bad number, 
+		# clear it from the modem
+		if echo "$SMS_RES" | grep -q "Invalid number"; then
+			for i in $(mmcli -m any --messaging-list-sms | grep " (unknown)" | cut -f5 -d' '); do
+				mmcli -m any -s "$i" -K | grep -q "not requested" && mmcli -m any --messaging-delete-sms="$i"
+			done
+			err "Couldn't send text message: Invalid number."
+		else
+			err "Couldn't send text message ($SMS_RES)"
+		fi
+	fi
+
+	# we sent it successfully, but also clear it from the modem
 	for i in $(mmcli -m any --messaging-list-sms | grep " (sent)" | cut -f5 -d' ') ; do
 		mmcli -m any --messaging-delete-sms="$i"
 	done
