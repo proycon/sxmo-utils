@@ -12,12 +12,20 @@
 newstate="$2"
 # reason="$3" # 0 or 1
 
+sxmo_debug "$2 (old: $1 [reason: $3])"
+
 case "$newstate" in
 	"locked")
 		sxmo_log "State is locked.  Attempting to unlock."
 		if ! pgrep -f "sxmo_unlocksim.sh" >/dev/null; then
 			sxmo_unlocksim.sh
 		fi
+		;;
+	"enabling")
+		sxmo_log "State is enabling. Clearing stale call files."
+		rm "$XDG_RUNTIME_DIR"/sxmo_calls/* 2>/dev/null
+		rm -f "$XDG_RUNTIME_DIR"/sxmo.ring.pid 2>/dev/null
+		rm -f "$SXMO_NOTIFDIR"/incomingcall* 2>/dev/null
 		;;
 	"registered")
 		sxmo_log "State is registered.  Checking for calls and messages."
