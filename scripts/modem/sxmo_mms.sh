@@ -47,6 +47,7 @@ checkforlostmms() {
 	# we delete messages with status draft, and process those with sent 
 	# and received
 	if [ "$count" -gt 0 ]; then
+		sxmo_notify_user.sh "WARNING: Found $count 'lost' mms messages. See log."
 		stderr "WARNING! Found $count unprocessed mms messages."
 		while read -r line; do
 			stderr "... mms $line"
@@ -80,8 +81,6 @@ checkforlostmms() {
 		else 
 			stderr "Did not process anything. Run \"sxmo_mms.sh checkforlostmms --force\" to process, if you are sure."
 		fi
-	else
-		stderr "No unprocessed mms messages found.  Good job."
 	fi
 	rm "$ALL_MMS_TEMP"
 }

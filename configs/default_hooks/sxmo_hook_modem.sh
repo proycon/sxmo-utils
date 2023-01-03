@@ -36,6 +36,7 @@ case "$newstate" in
 		sxmo_modem.sh checkforfinishedcalls
 		sxmo_modem.sh checkforincomingcalls
 		sxmo_modem.sh checkfornewtexts
+		sxmo_modem.sh checkforstucksms
 		if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
 			sxmo_mms.sh checkforlostmms
 		fi

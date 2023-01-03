@@ -162,6 +162,29 @@ checkforincomingcalls() {
 	fi
 }
 
+# this function is called in the modem hook when the modem registers
+checkforstucksms() {
+	stuck_messages="$(mmcli -m any --messaging-list-sms)"
+	if ! echo "$stuck_messages" | grep -q "^No sms messages were found"; then
+		sxmo_notify_user.sh "WARNING: $(echo "$stuck_messages" | wc -l) stuck sms found.  Run sxmo_modem.sh checkforlostsms view to view or delete to delete."
+		case "$1" in
+			"delete")
+				mmcli -m any --messaging-list-sms | while read line; do
+					sms_number="$(echo "$line" | cut -d'/' -f6 | cut -d' ' -f1)"
+					sxmo_log "Deleting sms $sms_number"
+					mmcli -m any --messaging-delete-sms="$sms_number"
+				done
+				;;
+			"view")
+				mmcli -m any --messaging-list-sms | while read line; do
+					sms_number="$(echo "$line" | cut -d'/' -f6 | cut -d' ' -f1)"
+					mmcli -m any -s "$sms_number" -K
+				done
+				;;
+		esac
+	fi
+}
+
 checkfornewtexts() {
 	TEXTIDS="$(
 		mmcli -m any --messaging-list-sms |
