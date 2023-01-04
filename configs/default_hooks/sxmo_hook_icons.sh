@@ -52,6 +52,7 @@ icon_fbw=""
 icon_ffw="" #fast forward
 icon_ffx="" #firefox
 icon_fil="" #file
+icon_flk="" #falkon
 icon_fll="" #flashlight
 icon_flt="" #filter/pipe
 icon_fnd="" #search/find

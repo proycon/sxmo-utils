@@ -537,6 +537,23 @@ case "$WMCLASS" in
 		"
 		WINNAME=Surf
 		;;
+	*falkon*)
+		# Falkon
+		CHOICES="
+			$icon_flt Pipe URL          ^ 0 ^ sxmo_urlhandler.sh
+			$icon_tab New Tab           ^ 0 ^ sxmo_type -M Ctrl t
+			$icon_win New Window        ^ 0 ^ sxmo_type -M Ctrl n
+			$icon_cls Close Tab         ^ 0 ^ sxmo_type -M Ctrl w
+			$icon_zmi Zoom            ^ 1 ^ sxmo_type -M Ctrl -k plus
+			$icon_zmo Zoom            ^ 1 ^ sxmo_type -M Ctrl -k minus
+			$icon_arl History        ^ 1 ^ sxmo_type -M Alt -k Left
+			$icon_arr History        ^ 1 ^ sxmo_type -M Alt -k Right
+			$icon_win Home           ^ 0 ^ sxmo_type -M Alt -k Home
+			$icon_zmo Full Screen    ^ 0 ^ sxmo_type -k F11
+			$icon_rld Refresh     ^ 0 ^ sxmo_type -M Shift -M Ctrl r
+		"
+		WINNAME=Falkon
+		;;
 	*firefox*)
 		# Firefox
 		CHOICES="
