@@ -187,7 +187,7 @@ bar {
 
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
-    status_command sxmo_status.sh watch
+    status_command sxmo_status_watch.sh -o pango
 
     pango_markup enabled
 

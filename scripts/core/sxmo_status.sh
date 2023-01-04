@@ -17,35 +17,51 @@ _sorted_components_name() {
 usage() {
 	printf "Usage: %s [ACTIONS]\n" "$(basename "$0")" >&2
 	printf "ACTIONS:\n" >&2
-	printf "	show: the status content (default action)\n" >&2
-	printf "	watch: file events and stdout status content\n" >&2
-	printf "	add <id> <content>: add a bar component\n" >&2
-	printf "	add <id>: add a bar component from stdin\n" >&2
-	printf "	del <id>: remove a bar component\n" >&2
-	printf "	reset: remove all bar components\n" >&2
-	printf "	debug: the status content explained\n" >&2
-	printf "	help: this message\n" >&2
+	printf "	-s: the status content (default action)\n" >&2
+	printf "	-w: file events and stdout status content\n" >&2
+	printf "	-a <id> <priority> <content>: add a bar component\n" >&2
+	printf "	-d <id>: remove a bar component\n" >&2
+	printf "	-r: remove all bar components\n" >&2
+	printf "	-D: the status content explained\n" >&2
+	printf "	-h: this message\n" >&2
 }
 
 add() {
-	id="$1"
-	shift
+	id=
+	priority=
+	value=
 
-	if [ -z "$id" ]; then
-		printf "usage: %s add <id>\n" "$(basename "$0")" >&2
+	while [ -n "$*" ]; do
+		arg="$1"
+		shift
+
+		case "$arg" in
+			"-f"|"-b"|"-t"|"-e")
+				shift # we shallow this
+				;;
+			*)
+				if [ -z "$id" ]; then
+					id="$arg"
+				elif [ -z "$priority" ]; then
+					priority="$arg"
+				elif [ -z "$value" ]; then
+					value="$arg"
+				fi
+				;;
+		esac
+	done
+
+	if [ -z "$id" ] || [ -z "$priority" ] || [ -z "$value" ]; then
+		printf "usage: %s add <id> <priority> <value>\n" "$(basename "$0")" >&2
 		exit 1
 	fi
 
-	if [ -z "$*" ]; then
-		value="$(cat)"
-	else
-		value="$*"
-	fi
+	del "$id"
+
+	id="$priority-$id"
 
 	if [ -n "$value" ]; then
 		printf "%s" "$value" > "$ROOT"/"$id"
-	else
-		rm -f "$ROOT"/"$id"
 	fi
 }
 
@@ -58,7 +74,7 @@ del() {
 		exit 1
 	fi
 
-	rm -f "$ROOT"/"$id"
+	_sorted_components_name | grep -m1 "\-$id$" | xargs -rI{} rm -f "$ROOT"/"{}"
 }
 
 show() {
@@ -101,14 +117,29 @@ reset() {
 	find "$ROOT" -mindepth 1 -delete
 }
 
-case "$1" in
-	"")
+action="$1"
+shift
+
+case "$action" in
+	""|"-s")
 		show
 		;;
-	show|watch|reset|add|del|debug)
-		"$@"
+	"-w")
+		watch "$@"
 		;;
-	*)
+	"-r")
+		reset "$@"
+		;;
+	"-a")
+		add "$@"
+		;;
+	"-d")
+		del "$@"
+		;;
+	"-D")
+		debug "$@"
+		;;
+	"-h"|*)
 		usage
 		;;
 esac

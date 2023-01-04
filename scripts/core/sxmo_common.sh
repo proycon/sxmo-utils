@@ -17,6 +17,12 @@ alias dmenu="sxmo_dmenu.sh"
 alias bemenu="sxmo_dmenu.sh"
 alias jq="gojq" # better performances
 
+if ! command -v sxmobar > /dev/null; then
+	sxmobar() {
+		sxmo_status.sh "$@"
+	}
+fi
+
 confirm_menu() {
 	printf "No\nYes\n" | \
 		dmenu "$@" | \

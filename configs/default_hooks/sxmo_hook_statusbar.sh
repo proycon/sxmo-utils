@@ -11,128 +11,131 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-#colours using pango markup
-if [ "$SXMO_WM" = "sway" ]; then
-	SPAN_RED="<span foreground=\"#ff5454\">"
-	SPAN_REDBG="<span foreground=\"#ffffff\" background=\"#ff5454\">"
-	SPAN_GREEN="<span foreground=\"#54ff54\">"
-	SPAN_ORANGE="<span foreground=\"#ffa954\">"
-	BOLD="<b>"
-	ENDBOLD="</b>"
-	ENDSPAN="</span>"
-else
-	SPAN_RED=""
-	SPAN_REDBG=""
-	SPAN_GREEN=""
-	SPAN_ORANGE=""
-	BOLD=""
-	ENDBOLD=""
-	ENDSPAN=""
-fi
-
 set_time() {
-	date "+${SXMO_STATUS_DATE_FORMAT:-%H:%M}" | head -c -1 | sxmo_status.sh add 99-time
+	date "+${SXMO_STATUS_DATE_FORMAT:-%H:%M}" | while read -r date; do
+		sxmobar -a time 99 "$date"
+	done
 }
 
 set_state() {
 	if grep -q unlock "$SXMO_STATE"; then
-		sxmo_status.sh del 0-state
+		sxmobar -d state
 	else
 		STATE_LABEL=$(tr '[:lower:]' '[:upper:]' < "$SXMO_STATE")
-		printf "%b%b%s%b%b" "${SPAN_REDBG}" "${BOLD}" "${STATE_LABEL}" "${ENDBOLD}" "${ENDSPAN}" | sxmo_status.sh add 0-state
+		sxmobar -a -e bold -b red state 0 "$STATE_LABEL"
 	fi
 }
 
-_modem() {
+set_modem() {
 	MMCLI="$(mmcli -m any -J 2>/dev/null)"
-	MODEMSTATUS=""
+
+	MODEMSTATUSCMP=""
+	MODEMTECHCMP=""
+
+	bgcolor=default
+	fgcolor=default
+	style=normal
 
 	if [ -z "$MMCLI" ]; then
-		printf "%s" "$icon_cls"
+		MODEMSTATUSCMP="$icon_cls"
 	else
 		MODEMSTATUS="$(printf %s "$MMCLI" | jq -r .modem.generic.state)"
 		case "$MODEMSTATUS" in
 			locked)
-				printf "%s%s%s" "$SPAN_RED" "$icon_plk" "$ENDSPAN"
+				fgcolor=red
+				MODEMSTATUSCMP="$icon_plk"
 				;;
 			initializing)
-				printf "I"
+				MODEMSTATUSCMP="I"
 				;;
 			disabled) # low power state
-				printf "%s%s%s" "$SPAN_RED" "$icon_mdd" "$ENDSPAN"
+				fgcolor=red
+				MODEMSTATUSCMP="$icon_mdd"
 				;;
 			disabling)
-				printf "%s%s%s" "$SPAN_ORANGE" "$icon_ena" "$ENDSPAN"
+				fgcolor=orange
+				MODEMSTATUSCMP="$icon_ena"
 				;;
 			enabling) # modem enabled but neither registered (cell) nor connected (data)
-				printf "%s%s%s" "$SPAN_GREEN" "$icon_ena" "$ENDSPAN"
+				fgcolor=green
+				MODEMSTATUSCMP="$icon_ena"
 				;;
 			enabled)
-				printf "%s" "$icon_ena"
+				MODEMSTATUSCMP="$icon_ena"
 				;;
 			searching) # i.e. registering
-				printf "%s" "$icon_dot"
+				MODEMSTATUSCMP="$icon_dot"
 				;;
 			registered|connected|connecting|disconnecting)
 				MODEMSIGNAL="$(printf %s "$MMCLI" | jq -r '.modem.generic."signal-quality".value')"
 				if [ "$MODEMSIGNAL" -lt 20 ]; then
-					printf "%s%s" "$SPAN_RED" "$ENDSPAN"
+					fgcolor=red
+					MODEMSTATUSCMP=""
 				elif [ "$MODEMSIGNAL" -lt 40 ]; then
-					printf ""
+					MODEMSTATUSCMP=""
 				elif [ "$MODEMSIGNAL" -lt 60 ]; then
-					printf ""
+					MODEMSTATUSCMP=""
 				elif [ "$MODEMSIGNAL" -lt 80 ]; then
-					printf ""
+					MODEMSTATUSCMP=""
 				else
-					printf ""
+					MODEMSTATUSCMP=""
 				fi
 				;;
 			*)
 				# FAILED, UNKNOWN
 				# see https://www.freedesktop.org/software/ModemManager/doc/latest/ModemManager/ModemManager-Flags-and-Enumerations.html#MMModemState
 				sxmo_log "WARNING: MODEMSTATUS: $MODEMSTATUS"
-				printf "%s" "$MODEMSTATUS"
 				;;
 		esac
 	fi
 
+	sxmobar -a -f "$fgcolor" -b "$bgcolor" -t "$style" \
+		modem-icon 10 "$MODEMSTATUSCMP"
+
+	bgcolor=default
+	fgcolor=default
+	style=normal
+
 	case "$MODEMSTATUS" in
 		connected|registered|connecting|disconnecting)
-			printf " "
-			[ "$MODEMSTATUS" = "registered" ] && printf %s "$SPAN_RED"
-			[ "$MODEMSTATUS" = "connecting" ] && printf %s "$SPAN_GREEN"
-			[ "$MODEMSTATUS" = "disconnecting" ] && printf %s "$SPAN_ORANGE"
+			case "$MODEMSTATUS" in
+				registered)
+					fgcolor="red"
+					;;
+				connecting)
+					fgcolor="green"
+					;;
+				disconnecting)
+					fgcolor="orange"
+					;;
+			esac
 			USEDTECHS="$(printf %s "$MMCLI" | jq -r '.modem.generic."access-technologies"[]')"
 			case "$USEDTECHS" in
 				*5gnr*)
-					printf 5g # no icon yet
+					MODEMTECHCMP="5g" # no icon yet
 					;;
 				*lte*)
-					printf 4g # ﰒ is in the bad range
+					MODEMTECHCMP="4g" # ﰒ is in the bad range
 					;;
 				*umts*|*hsdpa*|*hsupa*|*hspa*|*1xrtt*|*evdo0*|*evdoa*|*evdob*)
-					printf 3g # ﰑ is in the bad range
+					MODEMTECHCMP="3g" # ﰑ is in the bad range
 					;;
 				*edge*)
-					printf E
+					MODEMTECHCMP="E"
 					;;
 				*pots*|*gsm*|*gprs*)
-					printf 2g # ﰐ is in the bad range
+					MODEMTECHCMP="2g" # ﰐ is in the bad range
 					;;
 				*)
 					sxmo_log "WARNING: USEDTECHS: $USEDTECHS"
-					printf "(%s)" "$USEDTECHS"
+					MODEMTECHCMP="($USEDTECHS)"
 					;;
 			esac
-			[ "$MODEMSTATUS" = "registered" ] && printf %s "$ENDSPAN"
-			[ "$MODEMSTATUS" = "connecting" ] && printf %s "$ENDSPAN"
-			[ "$MODEMSTATUS" = "disconnecting" ] && printf %s "$ENDSPAN"
 			;;
 	esac
-}
 
-set_modem() {
-	_modem | sxmo_status.sh add 10-modem-status
+	sxmobar -a -f "$fgcolor" -b "$bgcolor" -t "$style" \
+		modem-status 11 "$MODEMTECHCMP"
 }
 
 set_wifi() {
@@ -142,23 +145,26 @@ set_wifi() {
 			if nmcli -g UUID c show --active | while read -r uuid; do
 				nmcli -g 802-11-wireless.mode c show "$uuid"
 			done | grep -q '^ap$'; then
-				sxmo_status.sh add "30-network-$2-status" "$icon_wfh"
+				sxmobar -a "network-$2-status" 30 "$icon_wfh"
 			else
-				sxmo_status.sh add "30-network-$2-status" "$icon_wif"
+				sxmobar -a "network-$2-status" 30 "$icon_wif"
 			fi
 			;;
 		*)
-			sxmo_status.sh add "30-network-$2-status" "$SPAN_RED$icon_wif$ENDSPAN"
-			rfkill list wifi | grep -q "yes" && sxmo_status.sh add "30-network-$2-status" "$icon_wfo"
+			if rfkill list wifi | grep -q "yes"; then
+				sxmobar -a "network-$2-status" 30 "$icon_wif"
+			else
+				sxmobar -a -f red "network-$2-status" 30 "$icon_wif"
+			fi
 			;;
 	esac
 }
 
 set_vpn() {
 	if nmcli -g GENERAL.STATE device show "$2" | grep connected > /dev/null; then
-		sxmo_status.sh add "30-network-$2-status" "$icon_key"
+		sxmobar -a "network-$2-status" 30 "$icon_key"
 	else
-		sxmo_status.sh del "30-network-$2-status"
+		sxmobar -d "network-$2-status"
 	fi
 }
 
@@ -169,13 +175,19 @@ set_network() {
 		wifi) set_wifi "$@" ;;
 		wireguard|vpn) set_vpn "$@" ;;
 		# the type will be empty if the interface disappeared
-		"") sxmo_status.sh del "30-network-$2-status" ;;
+		"") sxmobar -d "network-$2-status" ;;
 	esac
 }
 
-_battery() {
-	count=0 # if multiple batteries, add space between them
+set_battery() {
+	count=0 # handle multiple batteries
 	for power_supply in /sys/class/power_supply/*; do
+		fgcolor=default
+		bgcolor=default
+		style=normal
+		BATCMP=
+
+
 		if [ "$(cat "$power_supply"/type)" = "Battery" ]; then
 			if [ -e "$power_supply"/capacity ]; then
 				PCT="$(cat "$power_supply"/capacity)"
@@ -187,9 +199,6 @@ _battery() {
 				continue
 			fi
 
-			if [ "$count" -gt 0 ]; then
-				printf " "
-			fi
 			count=$((count+1))
 
 			if [ -e "$power_supply"/status ]; then
@@ -202,52 +211,59 @@ _battery() {
 			# /sys/class/power_supply/ip5xxx-charger/capacity
 			# exists but returns 'Not a tty'
 			if [ -z "$PCT" ]; then
-				printf "ERR"
-				continue
-			fi
-
-			# Treat 'Full' status as same as 'Charging'
-			if [ "$BATSTATUS" = "C" ] || [ "$BATSTATUS" = "F" ]; then
+				BATCMP="ERR"
+			elif [ "$BATSTATUS" = "C" ] || [ "$BATSTATUS" = "F" ]; then
 				if [ "$PCT" -lt 20 ]; then
-					printf ""
+					BATCMP=""
 				elif [ "$PCT" -lt 30 ]; then
-					printf ""
+					BATCMP=""
 				elif [ "$PCT" -lt 40 ]; then
-					printf ""
+					BATCMP=""
 				elif [ "$PCT" -lt 60 ]; then
-					printf ""
+					BATCMP=""
 				elif [ "$PCT" -lt 80 ]; then
-					printf ""
+					BATCMP=""
 				elif [ "$PCT" -lt 90 ]; then
-					printf ""
+					BATCMP=""
 				else
-					printf "%s%s" "$SPAN_GREEN" "$ENDSPAN"
+					# Treat 'Full' status as same as 'Charging'
+					fgcolor=green
+					BATCMP=""
 				fi
 			else
 				if [ "$PCT" -lt 10 ]; then
-					printf "%s%s" "$SPAN_RED" "$ENDSPAN"
+					fgcolor=red
+					BATCMP=""
 				elif [ "$PCT" -lt 20 ]; then
-					printf "%s%s" "$SPAN_ORANGE" "$ENDSPAN"
+					fgcolor=orange
+					BATCMP=""
 				elif [ "$PCT" -lt 30 ]; then
-					printf ""
+					BATCMP=""
 				elif [ "$PCT" -lt 40 ]; then
-					printf ""
+					BATCMP=""
 				elif [ "$PCT" -lt 50 ]; then
-					printf ""
+					BATCMP=""
 				elif [ "$PCT" -lt 60 ]; then
-					printf ""
+					BATCMP=""
 				elif [ "$PCT" -lt 70 ]; then
-					printf ""
+					BATCMP=""
 				elif [ "$PCT" -lt 80 ]; then
-					printf ""
+					BATCMP=""
 				elif [ "$PCT" -lt 90 ]; then
-					printf ""
+					BATCMP=""
 				else
-					printf ""
+					BATCMP=""
 				fi
 			fi
 
-			[ -z "$SXMO_BAR_HIDE_BAT_PER" ] && printf " %s%%" "$PCT"
+			sxmobar -a -t "$style" -b "$bgcolor" -f "$fgcolor" \
+				battery-icon 40 "$BATCMP"
+
+			if [ -z "$SXMO_BAR_HIDE_BAT_PER" ]; then
+				 sxmobar -a battery-status 41 "$PCT%"
+			else
+				 sxmobar -d battery-status
+			fi
 		fi
 	done
 }
@@ -292,57 +308,69 @@ set_lockedby() {
 				printf "%s\n" "$line" | sed 's/\(.\{7\}\).*/\1…/g'
 				;;
 		esac
-	done | sort -u | tr -d '\n' | sxmo_status.sh add 41-lockedby-status
-}
-
-set_battery() {
-	 _battery | sxmo_status.sh add 40-battery-status
+	done | sort -u | tr -d '\n' | while read -r lockedby; do
+		sxmobar -a lockedby-status 44 "$lockedby"
+	done
 }
 
 set_notifications() {
 	[ -z "$SXMO_DISABLE_LEDS" ] && return
 	NNOTIFICATIONS="$(find "$SXMO_NOTIFDIR" -type f | wc -l)"
-	[ "$NNOTIFICATIONS" = 0 ] && sxmo_status.sh del notifs && return
-	printf "%s!: %d%s\n" "$SPAN_RED" "$NNOTIFICATIONS" "$ENDSPAN" | sxmo_status.sh add notifs
+	if [ "$NNOTIFICATIONS" = 0 ]; then
+		sxmobar -d notifs
+	else
+		sxmobar -a -f red notifs 5 "!: $NNOTIFICATIONS"
+	fi
 }
 
-_volume() {
+set_volume() {
+	VOLCMP=""
+
 	if sxmo_modemaudio.sh is_call_audio_mode; then
-		printf %s "$SPAN_GREEN"
-		sxmo_modemaudio.sh is_muted_mic && printf "%s " "$icon_mmc" || printf "%s " "$icon_mic"
-		sxmo_modemaudio.sh is_enabled_speaker && printf %s "$icon_spk" || printf %s "$icon_ear"
-		printf %s "$ENDSPAN"
-		return
+		if sxmo_modemaudio.sh is_muted_mic; then
+			VOLCMP="$icon_mmc"
+		else
+			VOLCMP="$icon_mic"
+		fi
+		if sxmo_modemaudio.sh is_enabled_speaker; then
+			VOLCMP="$VOLCMP $icon_spk"
+		else
+			VOLCMP="$VOLCMP $icon_ear"
+		fi
+		sxmobar -a -f green volume 50 "$VOLCMP"
+		return;
 	fi
 
-	sxmo_audio.sh mic ismuted && printf "%s " "$icon_mmc" || printf "%s " "$icon_mic"
+	if sxmo_audio.sh mic ismuted; then
+		VOLCMP="$icon_mmc"
+	else
+		VOLCMP="$icon_mic"
+	fi
 
 	case "$(sxmo_audio.sh device get 2>/dev/null)" in
 		Speaker|"")
 			# nothing for default or pulse devices
 			;;
 		Headphones|Headphone)
-			printf "%s " "$icon_hdp"
+			VOLCMP="$VOLCMP $icon_hdp"
 			;;
 		Earpiece)
-			printf "%s " "$icon_ear"
+			VOLCMP="$VOLCMP $icon_ear"
 			;;
 	esac
 
 	VOL="$(sxmo_audio.sh vol get)"
 	if [ -z "$VOL" ] || [ "$VOL" = "muted" ]; then
-		printf "%s" "$icon_mut"
+		VOLCMP="$VOLCMP $icon_mut"
 	elif [ "$VOL" -gt 66 ]; then
-		printf "%s" "$icon_spk"
+		VOLCMP="$VOLCMP $icon_spk"
 	elif [ "$VOL" -gt 33 ]; then
-		printf "%s" "$icon_spm"
+		VOLCMP="$VOLCMP $icon_spm"
 	elif [ "$VOL" -ge 0 ]; then
-		printf "%s" "$icon_spl"
+		VOLCMP="$VOLCMP $icon_spl"
 	fi
-}
 
-set_volume() {
-	 _volume | sxmo_status.sh add 50-volume
+	sxmobar -a volume 50 "$VOLCMP"
 }
 
 case "$1" in
@@ -360,7 +388,7 @@ case "$1" in
 		set_state
 		;;
 	all)
-		sxmo_status.sh reset
+		sxmobar -r
 		set_time
 		set_modem
 		set_battery
