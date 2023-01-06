@@ -371,9 +371,8 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=weechat
-		elif printf %s "$WMNAME" | grep -qi -w "sms"; then
-			# TODO: Ensure $number is valid.
-			number="$(printf %s "$WMNAME" | sed -e 's|^\"||' -e 's|\"$||' | cut -f1 -d' ')"
+		elif printf %s "$WMNAME" | grep -qi -w "sms\|missed call"; then
+			number="$(printf "%s\n" "$WMNAME" | xargs -0 pn find | head -n1)"
 			#sms
 			CHOICES="
 				$icon_msg Conversation   ^ 0 ^ sxmo_terminal.sh sxmo_modemtext.sh conversationloop $number

@@ -79,7 +79,10 @@ checkforfinishedcalls() {
 			#this is a missed call
 			# Add a notification for every missed call
 			sxmo_hook_statusbar.sh volume
-			stderr "Missed call from $FINISHEDNUMBER"
+
+			NOTIFMSG="Missed call from $CONTACT ($FINISHEDNUMBER)"
+
+			stderr "$NOTIFMSG"
 			printf %b "$TIME\tcall_missed\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 
 			stderr "Invoking missed call hook (async)"
@@ -87,7 +90,7 @@ checkforfinishedcalls() {
 
 			sxmo_notificationwrite.sh \
 				random \
-				"sxmo_terminal.sh -e sh -c \"echo 'Missed call from $CONTACT at $(date)' && read\"" \
+				"TERMNAME='$NOTIFMSG' sxmo_terminal.sh -e sh -c \"echo '$NOTIFMSG at $(date)' && read\"" \
 				none \
 				"Missed $icon_phn $CONTACT"
 		fi
