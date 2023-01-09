@@ -79,7 +79,10 @@ checkforfinishedcalls() {
 			#this is a missed call
 			# Add a notification for every missed call
 			sxmo_hook_statusbar.sh volume
-
+			
+			if [ "$CONTACT" = "$FINISHEDNUMBER" ]; then
+				CONTACT="Unknown"
+			fi
 			NOTIFMSG="Missed call from $CONTACT ($FINISHEDNUMBER)"
 
 			stderr "$NOTIFMSG"
@@ -90,9 +93,9 @@ checkforfinishedcalls() {
 
 			sxmo_notificationwrite.sh \
 				random \
-				"TERMNAME='$NOTIFMSG' sxmo_terminal.sh -e sh -c \"echo '$NOTIFMSG at $(date)' && read\"" \
+				"TERMNAME='$NOTIFMSG' sxmo_terminal.sh sh -c \"echo '$NOTIFMSG at $(date)' && read\"" \
 				none \
-				"Missed $icon_phn $CONTACT"
+				"Missed $icon_phn $CONTACT ($FINISHEDNUMBER)"
 		fi
 
 		# If it was the last call

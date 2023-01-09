@@ -395,7 +395,7 @@ case "$WMCLASS" in
 				$icon_ard Scroll down     ^ 1 ^ sxmo_type -M Shift -M Ctrl f
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
-			WINNAME=sms
+			WINNAME=phone
 		elif printf %s "$WMNAME" | grep -qi -w "cmus"; then
 			# cmus
 			# requires `:set set_term_title=false` in cmus to match the application
