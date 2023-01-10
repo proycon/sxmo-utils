@@ -12,8 +12,7 @@ printf lock > "$SXMO_STATE"
 # This hook is called when the system reaches a locked state
 
 sxmo_uniq_exec.sh sxmo_led.sh blink blue &
-LEDPID=$!
-sxmo_hook_statusbar.sh state_change
+sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 
 [ "$SXMO_WM" = "sway" ] && swaymsg mode default
 sxmo_wm.sh dpms off
@@ -22,8 +21,6 @@ superctl stop sxmo_hook_lisgd
 
 # avoid dangling purple blinking when usb wakeup + power button…
 sxmo_daemons.sh stop periodic_blink
-
-wait "$LEDPID"
 
 # Go to screenoff after 8 seconds of inactivity
 if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then

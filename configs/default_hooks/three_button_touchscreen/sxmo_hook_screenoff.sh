@@ -12,15 +12,12 @@ sxmo_log "transitioning to stage off"
 printf screenoff > "$SXMO_STATE"
 
 sxmo_uniq_exec.sh sxmo_led.sh blink blue red &
-LEDPID=$!
-sxmo_hook_statusbar.sh state_change
+sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 
 [ "$SXMO_WM" = "sway" ] && swaymsg mode default
 sxmo_wm.sh dpms on
 sxmo_wm.sh inputevent touchscreen off
 superctl stop sxmo_hook_lisgd
-
-wait "$LEDPID"
 
 case "$SXMO_WM" in
 	dwm)

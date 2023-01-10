@@ -12,8 +12,7 @@ sxmo_log "transitioning to stage unlock"
 printf unlock > "$SXMO_STATE"
 
 sxmo_uniq_exec.sh sxmo_led.sh blink red green &
-LEDPID=$!
-sxmo_hook_statusbar.sh state_change
+sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen on
@@ -21,8 +20,6 @@ superctl start sxmo_hook_lisgd
 
 # avoid dangling purple blinking when usb wakeup + power button…
 sxmo_daemons.sh stop periodic_blink
-
-wait "$LEDPID"
 
 NETWORKRTCSCAN="/sys/module/$SXMO_WIFI_MODULE/parameters/rtw_scan_interval_thr"
 if [ -w "$NETWORKRTCSCAN" ]; then

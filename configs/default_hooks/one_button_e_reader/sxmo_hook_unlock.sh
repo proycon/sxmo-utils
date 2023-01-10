@@ -11,7 +11,7 @@
 sxmo_log "transitioning to stage unlock"
 printf unlock > "$SXMO_STATE"
 
-sxmo_hook_statusbar.sh state_change
+sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen on
