@@ -66,7 +66,7 @@ esac
 sxmo_hook_unlock.sh
 
 # Turn on the dbus-monitors for modem-related tasks
-sxmo_daemons.sh start modem_monitor sxmo_modemmonitor.sh
+superctl start sxmo_modemmonitor
 
 # Start the desktop widget (e.g. clock)
 superctl start sxmo_desktop_widget

@@ -1,0 +1,7 @@
+[Unit]
+Description=daemon for monitoring modem-related dbuses (calls, sms, mms, etc.)
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/sxmo_modemmonitor.sh
