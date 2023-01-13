@@ -42,7 +42,7 @@ else
 fi
 
 # if multiple recipients or attachment, then send via mmsctl
-if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ] || [ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ]; then
+if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ] || [ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ]; then
 
 	MMS_BASE_DIR="${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}"
 	[ -d "$MMS_BASE_DIR" ] || err "MMS not configured."

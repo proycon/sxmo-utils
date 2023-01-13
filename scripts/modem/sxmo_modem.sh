@@ -16,12 +16,12 @@ stderr() {
 }
 
 cleanupnumber() {
-	if pn valid "$1"; then
+	if pnc valid "$1"; then
 		echo "$1"
 		return
 	fi
 
-	REFORMATTED="$(pn find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
+	REFORMATTED="$(pnc find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
 	if [ -n "$REFORMATTED" ]; then
 		echo "$REFORMATTED"
 		return

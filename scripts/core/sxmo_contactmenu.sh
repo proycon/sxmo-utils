@@ -143,7 +143,7 @@ EOF
 			editcontact "$1"
 			;;
 		*"View")
-			if formatted="$(pn format -f nat "$number" 2>/dev/null)"; then
+			if formatted="$(pnc format -f nat "$number" 2>/dev/null)"; then
 				text="$formatted"
 			else
 				text="$number"

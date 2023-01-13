@@ -75,9 +75,9 @@ sendtextmenu() {
 		fi
 
 		RECIPIENTS=
-		if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ]; then
+		if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ]; then
 			# shellcheck disable=SC2016
-			RECIPIENTS="$(printf %s "$NUMBER" | xargs pn find | xargs -I{} sh -c 'printf "  "$(sxmo_contacts.sh --name {})" :: {}\n"')"
+			RECIPIENTS="$(printf %s "$NUMBER" | xargs pnc find | xargs -I{} sh -c 'printf "  "$(sxmo_contacts.sh --name {})" :: {}\n"')"
 		fi
 
 		CHOICES="$(printf "%s Send to %s (%s)\n%b\n%s Add Recipient\n%b\n%s Add Attachment\n%s Edit '%s'\n%s Cancel\n" \
@@ -107,7 +107,7 @@ sendtextmenu() {
 				;;
 			# Remove Recipient
 			" "*)
-				if [ "$(printf %s "$NUMBER" | xargs pn find | wc -l)" -gt 1 ]; then 
+				if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ]; then
 					OLDNUMBER="$NUMBER"
 					RECIPIENT="$(printf %s "$CONFIRM" | awk -F' :: ' '{print $2}')"
 					NUMBER="$(printf %s "$OLDNUMBER" | sed "s/$RECIPIENT//")"
@@ -144,7 +144,7 @@ sendtextmenu() {
 				elif echo "$OLDNUMBER" | grep -q "$ADDEDNUMBER"; then
 					echo "Number already a recipient."
 				else
-					NUMBER="$(printf %s%s "$NUMBER" "$ADDEDNUMBER" | xargs pn find | sort -u | tr -d '\n')"
+					NUMBER="$(printf %s%s "$NUMBER" "$ADDEDNUMBER" | xargs pnc find | sort -u | tr -d '\n')"
 					mkdir -p "$SXMO_LOGDIR/$NUMBER"
 					DRAFT="$SXMO_LOGDIR/$NUMBER/draft.txt"
 					if [ -f "$SXMO_LOGDIR/$OLDNUMBER/draft.txt" ]; then

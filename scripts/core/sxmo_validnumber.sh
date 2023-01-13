@@ -10,17 +10,17 @@ returnvalid() {
 	exit
 }
 
-if [ "$(printf "%b\n" "$1" | xargs -0 pn find | xargs printf %s)" = "$1" ]; then
+if [ "$(printf "%b\n" "$1" | xargs -0 pnc find | xargs printf %s)" = "$1" ]; then
 	# a multiple formated phone number
 	returnvalid "$1"
 fi
 
-if pn valid "$1"; then
+if pnc valid "$1"; then
 	returnvalid "$1"
 fi
 
-REFORMATTED="$(pn find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
-if pn valid "$REFORMATTED"; then
+REFORMATTED="$(pnc find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
+if pnc valid "$REFORMATTED"; then
 	printf %s "$REFORMATTED"
 	exit
 fi

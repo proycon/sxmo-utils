@@ -18,7 +18,7 @@ dial_number() {
 
 	NUMBER="$1"
 
-	CLEANEDNUMBER="$(pn find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
+	CLEANEDNUMBER="$(pnc find ${DEFAULT_COUNTRY:+-c "$DEFAULT_COUNTRY"} "$1")"
 	if [ -n "$CLEANEDNUMBER" ] && [ "$NUMBER" != "$CLEANEDNUMBER" ]; then
 		NUMBER="$(cat <<EOF | sxmo_dmenu.sh -p "Rewrite ?"
 $NUMBER
