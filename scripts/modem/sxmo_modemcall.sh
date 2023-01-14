@@ -190,7 +190,7 @@ mute() {
 	# this signals that we muted this ring
 	touch "$XDG_RUNTIME_DIR/sxmo_calls/${CALLID}.mutedring"
 	sxmo_log "Invoking mute_ring hook (async)"
-	sxmo_hook_mute_ring.sh "$CONTACTNAME" &
+	sxmo_hook_mute_ring.sh &
 	log_event "ring_mute" "$1"
 }
 

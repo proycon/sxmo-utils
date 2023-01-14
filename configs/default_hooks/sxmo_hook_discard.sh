@@ -3,10 +3,8 @@
 # Copyright 2022 Sxmo Contributors
 
 # This script is executed (asynchronously) when you discard an incoming call
-# You can use it to play a ring tone
-
-# The following parameters are provided:
-# $1 = Contact Name or Number (if not in contacts)
+# i.e., click Hangup on Pickup menu when call is coming in (without picking 
+# up the call).
 
 # kill existing ring playback
 if [ -e "$XDG_RUNTIME_DIR/sxmo.ring.pid" ]; then
