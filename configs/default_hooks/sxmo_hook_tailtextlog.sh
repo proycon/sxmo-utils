@@ -15,7 +15,7 @@ TERMNAME="$NUMBER SMS"
 export TERMNAME
 
 # If it's already open, switch to it.
-if [ "$SXMO_WM" = "sway" ]; then
+if [ "$SXMO_WM" = "sway" ] && [ -z "$SSH_CLIENT" ]; then
 	regesc_termname="$(echo "$TERMNAME" | sed 's|+|\\+|g')"
 	swaymsg "[title=\"^$regesc_termname\$\"]" focus && exit 0
 fi
