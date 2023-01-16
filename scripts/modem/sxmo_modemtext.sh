@@ -194,9 +194,11 @@ conversationloop() {
 
 readtextmenu() {
 	# E.g. only display logfiles for directories that exist and join w contact name
-	ENTRIES="$(
-	printf %b "$icon_cls Close Menu\n$icon_edt Send a Text\n";
-		sxmo_contacts.sh --texted | xargs -IL echo "L logfile"
+	ENTRIES="$(cat <<EOF
+$icon_cls Close Menu
+$icon_edt Send a Text
+$(sxmo_contacts.sh --texted)
+EOF
 	)"
 	PICKED="$(printf %b "$ENTRIES" | sxmo_dmenu_with_kb.sh -p "Texts" -i)" || exit
 
@@ -205,7 +207,7 @@ readtextmenu() {
 	elif echo "$PICKED" | grep "Send a Text"; then
 		sendtextmenu
 	else
-		sxmo_hook_tailtextlog.sh "$(echo "$PICKED" | cut -d: -f2 | sed 's/^ //' | cut -d' ' -f1 )"
+		sxmo_hook_tailtextlog.sh "$(echo "$PICKED" | cut -d: -f2 | sed 's/^ //')"
 	fi
 }
 
