@@ -6,10 +6,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-# in case of weird crash
-echo "unlock" > "$SXMO_STATE"
-[ -f "$SXMO_UNSUSPENDREASONFILE" ] && rm -f "$SXMO_UNSUSPENDREASONFILE"
-
 # Create xdg user directories, such as ~/Pictures
 xdg-user-dirs-update
 
