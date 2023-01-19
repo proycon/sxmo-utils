@@ -13,7 +13,7 @@ mkdir -p "$XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME"
 [ -e off ] && mv off "$SXMO_DEVICE_NAME/sxmo_hook_screenoff.sh"
 [ -e unlock ] && mv unlock "$SXMO_DEVICE_NAME/sxmo_hook_unlock.sh"
 
-find . -type f -maxdepth 1 -exec basename {} \; \
+find . -maxdepth 1 -type f -exec basename {} \; \
 	| grep -v 'needs-migration$' \
 	| grep -v '^sxmo_hook_.*\.sh$' \
 	| xargs -I{} mv {} sxmo_hook_{}.sh

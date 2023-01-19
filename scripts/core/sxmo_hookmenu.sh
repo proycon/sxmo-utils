@@ -10,7 +10,7 @@ set -e
 
 # Find the hook by name in the current directory.
 filename() {
-	find "$SXMO_DEVICE_NAME/" . -name "sxmo_hook_$1.sh" -maxdepth 1 | head -n1
+	find "$SXMO_DEVICE_NAME/" . -maxdepth 1 -name "sxmo_hook_$1.sh" | head -n1
 }
 
 copy() {
@@ -20,7 +20,7 @@ copy() {
 	file="$(filename "$1")"
 	if [ ! -e "$file" ]; then
 		cd "$(xdg_data_path sxmo/default_hooks)" || return
-		file="$(find "$SXMO_DEVICE_NAME/" . -name "sxmo_hook_$1.sh" -maxdepth 1 | head -n1)"
+		file="$(find "$SXMO_DEVICE_NAME/" . -maxdepth 1 -name "sxmo_hook_$1.sh" | head -n1)"
 		[ -e "$file" ] && cp "$file" "$XDG_CONFIG_HOME/sxmo/hooks/$file"
 	fi
 }
