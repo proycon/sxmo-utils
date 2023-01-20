@@ -7,6 +7,7 @@ if [ -n "$WAYLAND_DISPLAY$DISPLAY" ]; then
 		wasopen="1"
 	fi
 	sxmo_keyboard.sh open
+	sleep .1 # give keyboard time to open
 fi
 
 OUTPUT="$(cat | sxmo_dmenu.sh "$@")"
