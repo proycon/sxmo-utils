@@ -373,7 +373,7 @@ case "$WMCLASS" in
 			"
 			WINNAME=weechat
 		elif printf %s "$WMNAME" | grep -qi -w "sms\|missed call"; then
-			number="$(printf "%s\n" "$WMNAME" | xargs -0 pnc find | head -n1)"
+			number="$(printf "%s\n" "$WMNAME" | xargs -0 pnc find | tr -d '\n')"
 			#sms
 			CHOICES="
 				$icon_msg Conversation   ^ 0 ^ sxmo_terminal.sh sxmo_modemtext.sh conversationloop $number
