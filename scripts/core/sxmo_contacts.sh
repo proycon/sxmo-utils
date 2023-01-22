@@ -3,7 +3,7 @@
 # Copyright 2022 Sxmo Contributors
 # This script prints in reverse chronological order unique entries from the
 # modem log merged with contact names defined in contacts file tsv.
-#   Wherein $CONTACTSFILE is tsv with two fields: number\tcontact name
+#   Wherein $SXMO_CONTACTFILE is tsv with two fields: number\tcontact name
 #   Wherein $LOGFILE is *sorted* tsv with three fields: date\tevt\tnumber
 #
 #   Most normal numbers should be a full phone number starting with + and the country number
@@ -13,17 +13,16 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
-CONTACTSFILE="$XDG_CONFIG_HOME"/sxmo/contacts.tsv
-LOGFILE="$XDG_DATA_HOME"/sxmo/modem/modemlog.tsv
+LOGFILE="$SXMO_LOGDIR"/modemlog.tsv
 
 prepare_contacts_list() {
 	cut -f3 |
 	tac |
 	awk '!($0 in a){a[$0]; print}' |
 	sed '/^[[:space:]]*$/d' |
-	awk -F '\t' -v CONTACTSFILE="$CONTACTSFILE" '
+	awk -F '\t' -v SXMO_CONTACTFILE="$SXMO_CONTACTFILE" '
 		function join(array, sep) {
 			result = ""
 			cs = ""
@@ -41,7 +40,7 @@ prepare_contacts_list() {
 			return a[num]
 		}
 
-		FILENAME == CONTACTSFILE {
+		FILENAME == SXMO_CONTACTFILE {
 			if (!length()) next;
 			a[$1] = $2;
 			next
@@ -66,7 +65,7 @@ prepare_contacts_list() {
 		{
 			print name_for_num($1) ": " $0
 		}
-	' "$CONTACTSFILE" -
+	' "$SXMO_CONTACTFILE" -
 }
 
 contacts() {
@@ -84,7 +83,7 @@ called_contacts() {
 all_contacts() {
 	awk -F'\t' '{
 		print $2 ": " $1
-	}' "$CONTACTSFILE" | sort -f -k 1
+	}' "$SXMO_CONTACTFILE" | sort -f -k 1
 }
 
 unknown_contacts() {
@@ -95,7 +94,7 @@ unknown_contacts() {
 		| sed 's/^ //'
 }
 
-[ -f "$CONTACTSFILE" ] || touch "$CONTACTSFILE"
+[ -f "$SXMO_CONTACTFILE" ] || touch "$SXMO_CONTACTFILE"
 
 if [ "$1" = "--all" ]; then
 	all_contacts
