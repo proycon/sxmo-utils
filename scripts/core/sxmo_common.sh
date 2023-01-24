@@ -24,12 +24,12 @@ confirm_menu() {
 }
 
 sxmo_log() {
-	printf "%s %s: %s\n" "$(date +%H:%M:%S)" "${0##*/}" "$*" >&2
+	printf "%s %s: %s\n" "$(date +%H:%M:%S)" "${0##*/}" "$*" >> "$XDG_STATE_HOME"/sxmo.log 2>&1
 }
 
 sxmo_debug() {
 	if [ -n "$SXMO_DEBUG" ]; then
-		printf "%s %s DEBUG: %s\n" "$(date +%H:%M:%S)" "${0##*/}" "$*" >&2
+		printf "%s %s DEBUG: %s\n" "$(date +%H:%M:%S)" "${0##*/}" "$*" >> "$XDG_STATE_HOME"/sxmo.log 2>&1
 	fi
 }
 
