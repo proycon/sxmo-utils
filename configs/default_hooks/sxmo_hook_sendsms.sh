@@ -15,4 +15,4 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-mpv --quiet --no-video "$(xdg_data_path sxmo/notify.ogg)"
+mpv --quiet --no-video "$(xdg_data_path sxmo/notify.ogg)" >> /dev/null 2>&1

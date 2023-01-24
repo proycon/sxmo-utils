@@ -20,7 +20,7 @@
 if ! sxmo_modemcall.sh list_active_calls | grep -q active; then
 
 	if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.noring ]; then
-		mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND" >/dev/null &
+		mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND" >> /dev/null 2>&1
 	fi
 
 	if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.novibrate ]; then
