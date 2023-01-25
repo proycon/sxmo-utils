@@ -9,6 +9,7 @@
 # define these in deviceprofile, or default to pinephone
 MODEMUPRTC="/sys/class/wakeup/wakeup${SXMO_MODEMRTC:-10}/active_count"
 POWERRTC="/sys/class/wakeup/wakeup${SXMO_POWERRTC:-5}/active_count"
+BATTERYRTC="/sys/class/wakeup/wakeup${SXMO_BATTERYRTC:-4}/active_count"
 COVERRTC="/sys/class/wakeup/wakeup${SXMO_COVERRTC:-9999}/active_count"
 
 OLD_MODEM_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.modem.count"
@@ -20,6 +21,7 @@ saveAllEventCounts() {
 	cat "$MODEMUPRTC" > "$OLD_MODEM_WAKECOUNT"
 	cat "$POWERRTC" > "$OLD_POWER_WAKECOUNT"
 	cat "$COVERRTC" > "$OLD_COVER_WAKECOUNT"
+	cat "$BATTERYRTC" > "$OLD_BATTERY_WAKECOUNT"
 }
 
 whichWake() {
@@ -36,6 +38,11 @@ whichWake() {
 
 	if [ -f "$COVERRTC" ] && [ "$(cat "$COVERRTC")" -gt "$(cat "$OLD_COVER_WAKECOUNT")" ] ;then
 		echo "cover"
+		return
+	fi
+
+	if [ -f "$BATTERYRTC" ] && [ "$(cat "$BATTERYRTC")" -gt "$(cat "$OLD_BATTERY_WAKECOUNT")" ] ;then
+		echo "battery"
 		return
 	fi
 
