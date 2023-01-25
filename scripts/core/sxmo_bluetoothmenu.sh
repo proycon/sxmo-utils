@@ -10,6 +10,8 @@
 
 set -e
 
+SIMPLE_MODE=yes
+
 _prompt() {
 	sxmo_dmenu.sh -i "$@"
 }
@@ -20,13 +22,15 @@ _device_list() {
 		xargs -n1 bluetoothctl info | \
 		awk '
 			function print_cached_device() {
-				print icon " " name " " mac
+				print icon linkedsep paired connected " " name " " mac
 				name=icon=mac=""
 			}
 			{ $1=$1 }
 			/Device/ && name { print_cached_device() }
-			/Device/ { mac=$2 }
+			/Device/ { mac=$2; paired=""; connected=""; linkedsep="" }
 			/Name:/ { $1="";$0=$0;$1=$1; name=$0 }
+			/Paired: yes/ { paired="'$icon_lnk'"; linkedsep=" " }
+			/Connected: yes/ { connected="'$icon_a2x'"; linkedsep=" " }
 			/Icon: computer/ { icon="'$icon_com'" }
 			/Icon: phone/ { icon="'$icon_phn'" }
 			/Icon: modem/ { icon="'$icon_mod'" }
@@ -96,6 +100,17 @@ _show_toggle() {
 		printf %s "$icon_ton"
 	else
 		printf %s "$icon_tof"
+	fi
+}
+
+toggle_connection() {
+	DEVICE="$1"
+	MAC="$(printf "%s\n" "$DEVICE" | awk '{print $NF}')"
+
+	if printf "%s\n" "$PICK" | grep -q "$icon_a2x"; then
+		_can_fail sxmo_terminal.sh bluetoothctl --timeout 7 disconnect "$MAC"
+	else
+		_can_fail sxmo_terminal.sh bluetoothctl --timeout 7 connect "$MAC"
 	fi
 }
 
@@ -188,6 +203,7 @@ main_loop() {
 $icon_cls Close Menu
 $icon_rld Refresh
 $icon_pwr Restart daemon
+Simple mode $(_show_toggle "$SIMPLE_MODE")
 Discovering $(_show_toggle "$DISCOVERING")
 $DEVICES
 EOF
@@ -207,6 +223,12 @@ EOF
 				INDEX=2
 				confirm_menu -p "Restart the daemon ?" && _restart_bluetooth
 				;;
+			"Simple mode $icon_ton")
+				SIMPLE_MODE=no
+				;;
+			"Simple mode $icon_tof")
+				SIMPLE_MODE=yes
+				;;
 			"Discovering $icon_ton")
 				INDEX=3
 				sxmo_daemons.sh stop bluetooth_scan
@@ -220,7 +242,12 @@ EOF
 				;;
 			*)
 				INDEX=0
-				device_loop "$PICK"
+
+				if [ "$SIMPLE_MODE" = no ]; then
+					device_loop "$PICK"
+				else
+					toggle_connection "$PICK"
+				fi
 				;;
 		esac
 	done
