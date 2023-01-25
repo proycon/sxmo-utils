@@ -15,6 +15,7 @@ COVERRTC="/sys/class/wakeup/wakeup${SXMO_COVERRTC:-9999}/active_count"
 OLD_MODEM_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.modem.count"
 OLD_POWER_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.power.count"
 OLD_COVER_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.cover.count"
+OLD_BATTERY_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.battery.count"
 
 saveAllEventCounts() {
 	#these help us determine the reason of the next wakeup
