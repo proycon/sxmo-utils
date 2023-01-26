@@ -12,11 +12,10 @@ UNSUSPENDREASON="$1"
 #periodic wakeup) or "button". You will likely want to check against this and
 #decide what to do
 
-if [ "$UNSUSPENDREASON" != "modem" ]; then
-	NETWORKRTCSCAN="/sys/module/$SXMO_WIFI_MODULE/parameters/rtw_scan_interval_thr"
-	if [ -w "$NETWORKRTCSCAN" ]; then
-		echo 1200 > "$NETWORKRTCSCAN"
-	fi
+# see the comments in sxmo_hook_lock.sh
+# and https://todo.sr.ht/~mil/sxmo-tickets/150
+if [ 1 = "$SXMO_RTW_SCAN_INTERVAL" ]; then
+	echo 1200 > "/sys/module/$SXMO_WIFI_MODULE/parameters/rtw_scan_interval_thr"
 fi
 
 if grep -q screenoff "$XDG_RUNTIME_DIR/sxmo.state"; then

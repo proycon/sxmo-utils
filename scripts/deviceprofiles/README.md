@@ -91,6 +91,8 @@ SXMO_MONITOR		| Display "Output" from `swaymsg -t get_outputs`. Should be the sa
 ### General / Misc.
 SXMO_WIFI_MODULE		| The wifi kernel module used when switching scan intervals
 
+SXMO_RTW_SCAN_INTERVAL	| Does the wifi kernel module offer a rtw_scan_interval_thr interface ? [default: 0]
+
 SXMO_SYS_FILES			| String of files for sxmo_setpermissions.sh to make +rw (see sxmo_setpermissions.sh)
 
 SXMO_MODEMRTC			| Modem wakeup number in /sys/class/wakeup/wakeup<number>/ (see sxmo_suspend.sh) [default: 10]
