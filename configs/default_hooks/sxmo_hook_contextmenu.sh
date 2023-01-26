@@ -44,7 +44,7 @@ case "$WMCLASS" in
 		CHOICES="
 			$icon_plk Modem PIN                ^ 0 ^ sxmo_unlocksim.sh
 			$icon_phn Modem Monitor $(
-				superd_service_isrunning modem_monitor &&
+				superd_service_isrunning sxmo_modemmonitor &&
 				printf %b "$icon_ton ^ 1 ^ superctl stop sxmo_modemmonitor" ||
 				printf %b "$icon_tof ^ 1 ^ superctl start sxmo_modemmonitor"
 			) && sxmo_hook_statusbar.sh modem_monitor
