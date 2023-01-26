@@ -33,7 +33,7 @@ handlenewnotiffile(){
 		[ -e "$NOTIFWATCHFILE" ] && (
 			inotifywait -q "$NOTIFWATCHFILE" && \
 				rm -f "$NOTIFFILE" && \
-				syncled
+				notifications_hook
 		) &
 	fi
 }
@@ -45,13 +45,8 @@ recreateexistingnotifs() {
 	done
 }
 
-syncled() {
-	if [ "$(find "$SXMO_NOTIFDIR"/ -type f | wc -l)" -gt 0 ]; then
-		sxmo_uniq_exec.sh sxmo_led.sh set green 100
-	else
-		sxmo_uniq_exec.sh sxmo_led.sh set green 0
-	fi
-	sxmo_hook_statusbar.sh notifications
+notifications_hook() {
+	sxmo_hook_notifications.sh "$(find "$SXMO_NOTIFDIR"/ -type f | wc -l)"
 }
 
 monitorforaddordelnotifs() {
@@ -73,7 +68,7 @@ monitorforaddordelnotifs() {
 		if echo "$INOTIFYEVENTTYPE" | grep -E "CREATE|MOVED_TO|ATTRIB"; then
 			handlenewnotiffile "$NOTIFFOLDER/$NOTIFFILE"
 		fi
-		syncled
+		notifications_hook
 	done < "$FIFO"
 
 	wait "$NOTIFYPID"
@@ -81,5 +76,5 @@ monitorforaddordelnotifs() {
 
 rm -f "$SXMO_NOTIFDIR"/incomingcall
 recreateexistingnotifs
-syncled
+notifications_hook
 monitorforaddordelnotifs
