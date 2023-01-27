@@ -24,6 +24,7 @@ finish() {
 	printf 6553 > "$prox_path/events/in_proximity_thresh_rising_value"
 
 	sxmo_mutex.sh can_suspend free "Proximity lock is running"
+	sxmo_hook_statusbar.sh lockedby
 	exit 0
 }
 
@@ -31,6 +32,7 @@ INITIALSTATE="$(cat "$SXMO_STATE")"
 trap 'finish' TERM INT
 
 sxmo_mutex.sh can_suspend lock "Proximity lock is running"
+sxmo_hook_statusbar.sh lockedby
 
 # Permissions for these set by udev rules.
 prox_raw_bus="$(find /sys/devices/platform/soc -name 'in_proximity_raw' | head -n1)"

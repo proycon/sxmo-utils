@@ -288,5 +288,7 @@ processmms() {
 }
 
 sxmo_mutex.sh can_suspend lock "Modem is used"
+sxmo_hook_statusbar.sh lockedby
 "$@"
 sxmo_mutex.sh can_suspend free "Modem is used"
+sxmo_hook_statusbar.sh lockedby

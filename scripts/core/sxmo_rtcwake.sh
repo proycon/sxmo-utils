@@ -10,9 +10,11 @@
 # We can have multiple cronjobs at the same time
 sxmo_mutex.sh can_suspend lock "Executing cronjob"
 sxmo_mutex.sh can_suspend free "Waiting for cronjob"
+sxmo_hook_statusbar.sh lockedby
 
 finish() {
 	sxmo_mutex.sh can_suspend free "Executing cronjob"
+	sxmo_hook_statusbar.sh lockedby
 	exit 0
 }
 

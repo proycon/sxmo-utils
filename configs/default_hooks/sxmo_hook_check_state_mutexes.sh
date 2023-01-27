@@ -24,6 +24,7 @@ free_suspend_mutex() {
 
 cleanup_main_mutex() {
 	free_suspend_mutex "Checking some mutexes"
+	sxmo_hook_statusbar.sh lockedby
 	exit 0
 }
 

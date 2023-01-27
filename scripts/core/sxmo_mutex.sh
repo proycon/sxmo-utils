@@ -22,7 +22,6 @@ lock() {
 	flock "$LOCKFILE" env "REASON=$1" "REASON_FILE=$REASON_FILE" sh -c '
 		printf "%s\n" "$REASON" >> "$REASON_FILE"
 	' # flock drops the lock when the program it's running finishes
-	sxmo_hook_statusbar.sh lockedby
 }
 
 free() {
@@ -32,7 +31,6 @@ free() {
 			cut -d: -f1 | \
 			xargs -r -I{} sed -i '{}d' "$REASON_FILE"
 	' # flock drops the lock when the program it's running finishes
-	sxmo_hook_statusbar.sh lockedby
 }
 
 lockedby() {
