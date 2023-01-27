@@ -15,7 +15,11 @@ sxmo_keyboard.sh close
 pkill -INT mpv #if any audio/video is playing, kill it (it might stutter otherwise)
 
 case "$SXMO_WM" in
+	sway)
+		makoctl dismiss -a # close all popups
+		;;
 	dwm)
 		sxmo_dmenu.sh close
+		dunstctl close all # close all popups
 		;;
 esac
