@@ -554,7 +554,7 @@ case "$WMCLASS" in
 		"
 		WINNAME=Falkon
 		;;
-	*firefox*)
+	*firefox*|*navigator*)
 		# Firefox
 		CHOICES="
 			$icon_flt Pipe URL          ^ 0 ^ sxmo_urlhandler.sh
