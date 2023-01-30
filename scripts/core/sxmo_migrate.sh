@@ -265,6 +265,7 @@ sway() {
 xorg() {
 	defaultconfig "$(xdg_data_path sxmo/appcfg/xinit_template)" "$XDG_CONFIG_HOME/sxmo/xinit" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/dunst.conf)" "$XDG_CONFIG_HOME/dunst/dunstrc" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/xob_styles.cfg)" "$XDG_CONFIG_HOME/xob/styles.cfg" 644
 }
 
 
