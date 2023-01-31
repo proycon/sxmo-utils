@@ -210,6 +210,4 @@ include /etc/sway/config.d/*
 
 exec 'printf %s "$SWAYSOCK" > "$XDG_RUNTIME_DIR"/sxmo.swaysock'
 
-output * bg /usr/share/sxmo/background.jpg fill
-
 exec sxmo_hook_start.sh

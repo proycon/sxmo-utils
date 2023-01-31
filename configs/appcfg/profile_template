@@ -65,3 +65,6 @@ export SXMO_RINGNUMER=10
 
 #Set to the default text for a new text message.
 export SXMO_DEFAULT_DRAFT="Enter new message here."
+
+#Set background image
+export SXMO_BG_IMG="$(xdg_data_path sxmo/background.jpeg)"
