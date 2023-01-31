@@ -23,6 +23,8 @@ with_dbus() {
 }
 
 start() {
+	[ -f "$XDG_STATE_HOME"/sxmo.log ] && mv "$XDG_STATE_HOME"/sxmo.log "$XDG_STATE_HOME"/sxmo.log.old
+
 	if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
 		dbus-run-session -- "$0" "with_dbus"
 	else
