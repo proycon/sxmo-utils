@@ -22,7 +22,7 @@ Describe 'sxmo_status.sh'
 	End
 
 	It 'add a foo component'
-		When call add 1-foo 'foo'
+		When call add foo 1 'foo'
 		The status should be success
 	End
 
@@ -32,7 +32,7 @@ Describe 'sxmo_status.sh'
 	End
 
 	It 'add a bar second component'
-		When call add 2-bar 'bar'
+		When call add bar 2 'bar'
 		The status should be success
 	End
 
@@ -46,7 +46,7 @@ Describe 'sxmo_status.sh'
 	End
 
 	It 'add a toot third component from stdin'
-		When call add 3-toot
+		When call add toot 3 ""
 		The status should be success
 	End
 
@@ -56,7 +56,7 @@ Describe 'sxmo_status.sh'
 	End
 
 	It 'del the bar second component'
-		When call del 2-bar
+		When call del bar
 		The status should be success
 	End
 
