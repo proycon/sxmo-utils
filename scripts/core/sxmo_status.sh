@@ -52,7 +52,7 @@ add() {
 	done
 
 	if [ -z "$id" ] || [ -z "$priority" ] || [ -z "$value" ]; then
-		printf "usage: %s add <id> <priority> <value>\n" "$(basename "$0")" >&2
+		printf "usage: %s -a <id> <priority> <value>\n" "$(basename "$0")" >&2
 		exit 1
 	fi
 
@@ -70,7 +70,7 @@ del() {
 	shift
 
 	if [ -z "$id" ]; then
-		printf "usage: %s del <id>\n" "$(basename "$0")" >&2
+		printf "usage: %s -d <id>\n" "$(basename "$0")" >&2
 		exit 1
 	fi
 
