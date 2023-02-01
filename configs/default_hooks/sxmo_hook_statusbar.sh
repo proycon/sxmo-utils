@@ -308,7 +308,7 @@ set_lockedby() {
 				printf "%s\n" "$line" | sed 's/\(.\{7\}\).*/\1…/g'
 				;;
 		esac
-	done | sort -u | tr -d '\n' | while read -r lockedby; do
+	done | sort -u | tr -d '\n' | xargs -0 printf "%s\n" | while read -r lockedby; do
 		sxmobar -a lockedby-status 44 "$lockedby"
 	done
 }
