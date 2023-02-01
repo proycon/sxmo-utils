@@ -11,6 +11,11 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
+# You can modify the statusbar ordering and feel here.
+# Note that order number runs from 0 (far left) to 100 (far
+# right). Our preference is to have "static" icons on the
+# right and "variable" icons (that come and go) on the left.
+
 set_time() {
 	date "+${SXMO_STATUS_DATE_FORMAT:-%H:%M}" | while read -r date; do
 		sxmobar -a time 99 "$date"
@@ -18,164 +23,259 @@ set_time() {
 }
 
 set_state() {
-	if grep -q unlock "$SXMO_STATE"; then
-		sxmobar -d state
-	else
-		STATE_LABEL=$(tr '[:lower:]' '[:upper:]' < "$SXMO_STATE")
-		sxmobar -a -e bold -b red state 0 "$STATE_LABEL"
+	if [ ! -f "$SXMO_STATE" ]; then
+		return
 	fi
+
+	STATE_LABEL="$(cat "$SXMO_STATE")"
+	case "$STATE_LABEL" in
+		proximity*)
+			sxmobar -a -e bold -f orange state 90 "$icon_dop" # circle with dot
+			;;
+		screenoff)
+			sxmobar -a -e bold -f red state 90 "$icon_don" # filled circle
+			;;
+		lock)
+			sxmobar -a -e bold -f red state 90 "$icon_dof" # open circle
+			;;
+		unlock)
+			sxmobar -a -e bold state 90 "$icon_dof" # open circle
+			;;
+	esac
 }
 
+# from right to left: indicate signal, technologies, mm state
 set_modem() {
 	MMCLI="$(mmcli -m any -J 2>/dev/null)"
-
-	MODEMSTATUSCMP=""
-	MODEMTECHCMP=""
 
 	bgcolor=default
 	fgcolor=default
 	style=normal
 
 	if [ -z "$MMCLI" ]; then
-		MODEMSTATUSCMP="$icon_cls"
+		MODEMSTATE="nomodem"
 	else
-		MODEMSTATUS="$(printf %s "$MMCLI" | jq -r .modem.generic.state)"
-		case "$MODEMSTATUS" in
-			locked)
-				fgcolor=red
-				MODEMSTATUSCMP="$icon_plk"
-				;;
-			initializing)
-				MODEMSTATUSCMP="I"
-				;;
-			disabled) # low power state
-				fgcolor=red
-				MODEMSTATUSCMP="$icon_mdd"
-				;;
-			disabling)
-				fgcolor=orange
-				MODEMSTATUSCMP="$icon_ena"
-				;;
-			enabling) # modem enabled but neither registered (cell) nor connected (data)
-				fgcolor=green
-				MODEMSTATUSCMP="$icon_ena"
-				;;
-			enabled)
-				MODEMSTATUSCMP="$icon_ena"
-				;;
-			searching) # i.e. registering
-				MODEMSTATUSCMP="$icon_dot"
-				;;
-			registered|connected|connecting|disconnecting)
-				MODEMSIGNAL="$(printf %s "$MMCLI" | jq -r '.modem.generic."signal-quality".value')"
-				if [ "$MODEMSIGNAL" -lt 20 ]; then
-					fgcolor=red
-					MODEMSTATUSCMP=""
-				elif [ "$MODEMSIGNAL" -lt 40 ]; then
-					MODEMSTATUSCMP=""
-				elif [ "$MODEMSIGNAL" -lt 60 ]; then
-					MODEMSTATUSCMP=""
-				elif [ "$MODEMSIGNAL" -lt 80 ]; then
-					MODEMSTATUSCMP=""
-				else
-					MODEMSTATUSCMP=""
-				fi
-				;;
-			*)
-				# FAILED, UNKNOWN
-				# see https://www.freedesktop.org/software/ModemManager/doc/latest/ModemManager/ModemManager-Flags-and-Enumerations.html#MMModemState
-				sxmo_log "WARNING: MODEMSTATUS: $MODEMSTATUS"
-				;;
-		esac
+		MODEMSTATE="$(printf %s "$MMCLI" | jq -r .modem.generic.state)"
 	fi
 
-	sxmobar -a -f "$fgcolor" -b "$bgcolor" -t "$style" \
-		modem-icon 10 "$MODEMSTATUSCMP"
+	case "$MODEMSTATE" in
+		nomodem)
+			fgcolor=red
+			MODEMSTATECMP="$icon_modem_nomodem"
+			;;
+		locked)
+			fgcolor=red
+			MODEMSTATECMP="$icon_modem_locked"
+			;;
+		initializing)
+			fgcolor=red
+			MODEMSTATECMP="$icon_modem_initializing"
+			;;
+		disabled) # low power state
+			fgcolor=red
+			MODEMSTATECMP="$icon_modem_disabled"
+			;;
+		disabling)
+			fgcolor=red
+			MODEMSTATECMP="$icon_modem_disabling"
+			;;
+		enabling) # modem enabled but neither registered (cell) nor connected (data)
+			fgcolor=red
+			MODEMSTATECMP="$icon_modem_enabling"
+			;;
+		enabled)
+			fgcolor=red
+			MODEMSTATECMP="$icon_modem_enabled"
+			;;
+		searching) # i.e. registering
+			fgcolor=red
+			MODEMSTATECMP="$icon_modem_searching"
+			;;
+		registered) # i.e. phone but no data
+			fgcolor=orange
+			MODEMSTATECMP="$icon_modem_registered"
+			;;
+		connecting)
+			fgcolor=orange
+			MODEMSTATECMP="$icon_modem_connecting"
+			;;
+		disconnecting) # i.e., going back to registered state
+			fgcolor=orange
+			MODEMSTATECMP="$icon_modem_disconnecting"
+			;;
+		connected)
+			MODEMSTATECMP="$icon_modem_connected"
+			;;
+		*)
+			# FAILED, UNKNOWN
+			# see https://www.freedesktop.org/software/ModemManager/doc/latest/ModemManager/ModemManager-Flags-and-Enumerations.html#MMModemState
+			fgcolor=red
+			MODEMSTATECMP="$icon_modem_failed" # cell with !
+			sxmo_log "WARNING: MODEMSTATE: $MODEMSTATE"
+			;;
+	esac
 
+	sxmobar -a -f "$fgcolor" -b "$bgcolor" -t "$style" \
+		modem-state 10 "$MODEMSTATECMP"
+
+	if [ "$MODEMSTATE" = nomodem ]; then
+		sxmobar -d modem-tech
+		sxmobar -d modem-signal
+		return
+	fi
+
+	MODEMTECHCMP="$icon_modem_notech"
 	bgcolor=default
 	fgcolor=default
 	style=normal
 
-	case "$MODEMSTATUS" in
-		connected|registered|connecting|disconnecting)
-			case "$MODEMSTATUS" in
-				registered)
-					fgcolor="red"
-					;;
-				connecting)
-					fgcolor="green"
-					;;
-				disconnecting)
-					fgcolor="orange"
-					;;
-			esac
-			USEDTECHS="$(printf %s "$MMCLI" | jq -r '.modem.generic."access-technologies"[]')"
-			case "$USEDTECHS" in
-				*5gnr*)
-					MODEMTECHCMP="5g" # no icon yet
-					;;
-				*lte*)
-					MODEMTECHCMP="4g" # ﰒ is in the bad range
-					;;
-				*umts*|*hsdpa*|*hsupa*|*hspa*|*1xrtt*|*evdo0*|*evdoa*|*evdob*)
-					MODEMTECHCMP="3g" # ﰑ is in the bad range
-					;;
-				*edge*)
-					MODEMTECHCMP="E"
-					;;
-				*pots*|*gsm*|*gprs*)
-					MODEMTECHCMP="2g" # ﰐ is in the bad range
-					;;
-				*)
-					sxmo_log "WARNING: USEDTECHS: $USEDTECHS"
-					MODEMTECHCMP="($USEDTECHS)"
-					;;
-			esac
-			;;
+	# see https://www.freedesktop.org/software/ModemManager/api/latest/ModemManager-Flags-and-Enumerations.html#MMModemAccessTechnology
+	USEDTECHS="$(printf %s "$MMCLI" | jq -r '.modem.generic."access-technologies"[]')"
+		case "$USEDTECHS" in
+			*5gnr*)
+				MODEMTECHCMP="$icon_modem_fiveg"
+				;;
+			*lte*) # lte, lte_nb_iot, lte_cat_m
+				MODEMTECHCMP="$icon_modem_fourg"
+				;;
+			*umts*)
+				MODEMTECHCMP="$icon_modem_threeg"
+				;;
+			*hsupa*)
+				MODEMTECHCMP="$USEDTECHS" # 3g
+				;;
+			*hsdpa*)
+				MODEMTECHCMP="$USEDTECHS" # 3g
+				;;
+			*1xrtt*)
+				MODEMTECHCMP="$USEDTECHS" # 3g
+				;;
+			*evdo*) # evdo0, evdoa, evdob
+				MODEMTECHCMP="$USEDTECHS" # 3g
+				;;
+			*hspa_plus*)
+				MODEMTECHCMP="$icon_modem_hspa_plus" # 3g
+				;;
+			*hspa*)
+				MODEMTECHCMP="$icon_modem_hspa" # 3g
+				;;
+			*edge*)
+				MODEMTECHCMP="E" # 2G+
+				;;
+			*pots*)
+				MODEMTECHCMP="P" # 0G
+				;;
+			*gsm*) # gsm, gsm_compact
+				MODEMTECHCMP="$icon_modem_twog"
+				;;
+			*gprs*)
+				MODEMTECHCMP="G" # 2G
+				;;
+			*)
+				sxmo_log "WARNING: USEDTECHS: $USEDTECHS"
+				fgcolor=red
+				;;
+		esac
+
+	sxmobar -a -f "$fgcolor" -b "$bgcolor" -t "$style" \
+		modem-tech 11 "$MODEMTECHCMP"
+
+	MODEMSIGNALCMP="$icon_modem_signal_0"
+	bgcolor=default
+	fgcolor=default
+	style=normal
+
+	case "$MODEMSTATE" in
+		registered|connected|connecting|disconnecting)
+			MODEMSIGNAL="$(printf %s "$MMCLI" | jq -r '.modem.generic."signal-quality".value')"
+			if [ "$MODEMSIGNAL" -lt 33 ]; then
+				MODEMSIGNALCMP="$icon_modem_signal_1"
+			elif [ "$MODEMSIGNAL" -lt 66 ]; then
+				MODEMSIGNALCMP="$icon_modem_signal_2"
+			else
+				MODEMSIGNALCMP="$icon_modem_signal_3"
+			fi
+		;;
 	esac
 
 	sxmobar -a -f "$fgcolor" -b "$bgcolor" -t "$style" \
-		modem-status 11 "$MODEMTECHCMP"
+		modem-signal 12 "$MODEMSIGNALCMP"
 }
 
+# $1 = type (wifi, tun)
+# $2 = interface name (wlan0, tun0)
 set_wifi() {
-	case "$(cat "/sys/class/net/$2/operstate")" in
-		"up")
-			# detect hotspot
-			if nmcli -g UUID c show --active | while read -r uuid; do
-				nmcli -g 802-11-wireless.mode c show "$uuid"
-			done | grep -q '^ap$'; then
-				sxmobar -a "network-$2-status" 30 "$icon_wfh"
-			else
-				sxmobar -a "network-$2-status" 30 "$icon_wif"
-			fi
-			;;
-		*)
-			if rfkill list wifi | grep -q "yes"; then
-				sxmobar -a "network-$2-status" 30 "$icon_wif"
-			else
-				sxmobar -a -f red "network-$2-status" 30 "$icon_wif"
-			fi
-			;;
-	esac
-}
 
-set_vpn() {
-	if nmcli -g GENERAL.STATE device show "$2" | grep connected > /dev/null; then
-		sxmobar -a "network-$2-status" 30 "$icon_key"
-	else
-		sxmobar -d "network-$2-status"
+	if rfkill list wifi | grep -q "yes"; then
+		sxmobar -d wifi-status
+		return
 	fi
+
+	CONN="$(nmcli -t con show --active)"
+
+	if ! printf %b "$CONN" | cut -d':' -f3 | grep -q wireless; then
+		sxmobar -a -f red wifi-status 30 "$icon_wifi_disconnected"
+		return
+	fi
+
+	# we simply assume Hotspot as first bit of name
+	# for hotspot as this is what we create.
+	if printf %b "$CONN" | grep -q ^Hotspot; then
+		sxmobar -a wifi-status 30 "$icon_wfh"
+		return
+	fi
+
+	# if they have a vpn nmcli c shown --active should also list:
+	# tun0              ef5fcce9-fdae-4ffe-a540-b16fc7b42852  tun   tun0   
+	if printf %b "$CONN" | cut -d':' -f3 | grep -q ^tun$; then
+		wifivpn=1
+	else
+		wifivpn=0
+	fi
+
+	wifi_signal="$(nmcli -f IN-USE,SIGNAL,SSID device wifi | awk '/^\*/{if (NR!=1) {print $2}}')"
+	if [ -z "$wifi_signal" ]; then
+		icon_wif="$icon_wifi_signal_exclam"
+	elif [ "$wifi_signal" -lt 20 ]; then
+		if [ "$wifivpn" -eq 1 ]; then
+			icon_wif="$icon_wifi_key_signal_0"
+		else
+			icon_wif="$icon_wifi_signal_0"
+		fi
+	elif [ "$wifi_signal" -lt 40 ]; then
+		if [ "$wifivpn" -eq 1 ]; then
+			icon_wif="$icon_wifi_key_signal_1"
+		else
+			icon_wif="$icon_wifi_signal_1"
+		fi
+	elif [ "$wifi_signal" -lt 60 ]; then
+		if [ "$wifivpn" -eq 1 ]; then
+			icon_wif="$icon_wifi_key_signal_2"
+		else
+			icon_wif="$icon_wifi_signal_2"
+		fi
+	elif [ "$wifi_signal" -lt 80 ]; then
+		if [ "$wifivpn" -eq 1 ]; then
+			icon_wif="$icon_wifi_key_signal_3"
+		else
+			icon_wif="$icon_wifi_signal_3"
+		fi
+	else
+		if [ "$wifivpn" -eq 1 ]; then
+			icon_wif="$icon_wifi_key_signal_4"
+		else
+			icon_wif="$icon_wifi_signal_4"
+		fi
+	fi
+
+	sxmobar -a wifi-status 30 "$icon_wif"
 }
 
-# $1: type (reported by nmcli)
-# $2: interface name
+# $1: type (reported by nmcli, e.g., wifi, tun)
+# $2: interface name (reported by nmcli, e.g., wlan0, tun0)
 set_network() {
 	case "$1" in
-		wifi) set_wifi "$@" ;;
-		wireguard|vpn) set_vpn "$@" ;;
-		# the type will be empty if the interface disappeared
-		"") sxmobar -d "network-$2-status" ;;
+		wifi|tun) set_wifi "$@" ;;
 	esac
 }
 
@@ -259,10 +359,10 @@ set_battery() {
 			sxmobar -a -t "$style" -b "$bgcolor" -f "$fgcolor" \
 				battery-icon 40 "$BATCMP"
 
-			if [ -z "$SXMO_BAR_HIDE_BAT_PER" ]; then
-				 sxmobar -a battery-status 41 "$PCT%"
-			else
+			if [ -z "$SXMO_BAR_SHOW_BAT_PER" ]; then
 				 sxmobar -d battery-status
+			else
+				 sxmobar -a battery-status 41 "$PCT%"
 			fi
 		fi
 	done
@@ -328,6 +428,7 @@ set_volume() {
 	sxmobar -a volume 50 "$VOLCMP"
 }
 
+sxmo_debug "$@"
 case "$1" in
 	network)
 		shift
@@ -341,6 +442,7 @@ case "$1" in
 		set_modem
 		set_battery
 		set_state
+		set_network wifi wlan0
 		;;
 	all)
 		sxmobar -r
@@ -350,6 +452,7 @@ case "$1" in
 		set_volume
 		set_state
 		set_notifications
+		set_network wifi wlan0
 		;;
 	*)
 		exit # swallow it !

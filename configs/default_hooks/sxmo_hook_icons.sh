@@ -47,7 +47,6 @@ icon_drw="" # Drawing tablet
 icon_ear="" # earpiece
 icon_edt="" #editor
 icon_eml="" #email
-icon_ena="" # enabled
 icon_exp="" #expand
 icon_fbw=""
 icon_ffw="" #fast forward
@@ -138,3 +137,47 @@ icon_zmi=""
 icon_zmo=""
 icon_zzz="" #sleep/suspend/crust
 
+# modem states
+
+icon_modem_nomodem="󰥍" # cell with x
+icon_modem_locked="󰥏" # cell with lock
+icon_modem_initializing="󰥑" # cell with gear
+icon_modem_disabled="󰥐" # cell with slash
+icon_modem_disabling="$icon_arr$icon_modem_disabled" # -> disabled
+icon_modem_enabled="󱟽" # cell with check
+icon_modem_enabling="$icon_arr$icon_modem_enabled" # -> enabled
+icon_modem_registered="󱋘" # cell with wifi with slash
+icon_modem_searching="$icon_arr$icon_modem_registered" # -> registered
+icon_modem_connected="󰺐" # cell with wifi
+icon_modem_connecting="$icon_aru$icon_modem_connected" # up arrow connected
+icon_modem_disconnecting="$icon_ard$icon_modem_connected" # down arrow connected
+icon_modem_failed="󰽁" # cell with !
+
+# modem techs
+icon_modem_fiveg="󰩯" # 5gnr
+icon_modem_fourg="󰜔" # lte
+icon_modem_threeg="󰜓" # a lot (see sxmo_hook_statusbar.sh)
+icon_modem_hspa="󰜕" # hspa
+icon_modem_hspa_plus="󰜖" # hspa plus
+icon_modem_twog="󰜒" # edge, pots, gsm, gprs, etc.
+icon_modem_notech="ﲁ" # disabled cell bars
+
+# modem signal strengths
+icon_modem_signal_0="󰢿"
+icon_modem_signal_1="󰢼"
+icon_modem_signal_2="󰢽"
+icon_modem_signal_3="󰢾"
+
+# wifi signal strengths
+icon_wifi_signal_exclam="󰤫"
+icon_wifi_key_signal_0="󰤬"
+icon_wifi_signal_0="󰤯"
+icon_wifi_key_signal_1="󰤡"
+icon_wifi_signal_1="󰤟"
+icon_wifi_key_signal_2="󰤤"
+icon_wifi_signal_2="󰤢"
+icon_wifi_key_signal_3="󰤧"
+icon_wifi_signal_3="󰤥"
+icon_wifi_key_signal_4="󰤪"
+icon_wifi_signal_4="󰤨"
+icon_wifi_disconnected="󰤮"
