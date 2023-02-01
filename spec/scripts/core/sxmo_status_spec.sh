@@ -41,12 +41,8 @@ Describe 'sxmo_status.sh'
 		The output should equal 'foo bar'
 	End
 
-	Data
-		#|toot
-	End
-
-	It 'add a toot third component from stdin'
-		When call add toot 3 ""
+	It 'add a toot third component'
+		When call add toot 3 "toot"
 		The status should be success
 	End
 
