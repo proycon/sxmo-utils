@@ -128,7 +128,7 @@ mainloop() {
 
 	if [ -z "$CMD" ]; then
 		printf "%s\n" "sxmo_appmenu: Fallback: unknown choice <$PICKED> to contextmenu_fallback hook">&2
-		sxmo_hooks.sh contextmenu_fallback "$WINNAME" "$PICKED"
+		sxmo_hook_contextmenu_fallback.sh "$WINNAME" "$PICKED"
 		quit
 	fi
 
