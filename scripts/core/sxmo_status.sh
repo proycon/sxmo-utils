@@ -51,7 +51,7 @@ add() {
 		esac
 	done
 
-	if [ -z "$id" ] || [ -z "$priority" ] || [ -z "$value" ]; then
+	if [ -z "$id" ] || [ -z "$priority" ]; then
 		printf "usage: %s -a <id> <priority> <value>\n" "$(basename "$0")" >&2
 		exit 1
 	fi
