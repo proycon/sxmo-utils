@@ -139,7 +139,7 @@ case "$action" in
 	"-D")
 		debug "$@"
 		;;
-	"-h"|*)
+	"-h")
 		usage
 		;;
 esac
