@@ -117,8 +117,10 @@ reset() {
 	find "$ROOT" -mindepth 1 -delete
 }
 
-action="$1"
-shift
+if [ -n "$*" ]; then
+	action="$1"
+	shift
+fi
 
 case "$action" in
 	""|"-s")
