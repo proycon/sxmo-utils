@@ -79,26 +79,22 @@ daemon_exists() {
 }
 
 if command -v eg25-manager > /dev/null; then
-	if daemon_isrunning eg25-manager; then
-		sxmo_notify_user.sh "Already running eg25-manager..."
-	else
-		sxmo_notify_user.sh "Starting eg25-manager..."
-		daemon_start eg25-manager
-		sleep 30
-	fi
+	sxmo_notify_user.sh "Stopping eg25-manager..."
+	daemon_stop eg25-manager
+	sleep 2
+	sxmo_notify_user.sh "Starting eg25-manager..."
+	daemon_start eg25-manager
 	if ! daemon_isrunning eg25-manager; then
 		sxmo_notify_user.sh --urgency=critical "The eg25-manager failed to start!"
 		exit 1
 	fi
 fi
 
-if daemon_isrunning modemmanager; then
-	sxmo_notify_user.sh "Already running modemmanager..."
-else
-	sxmo_notify_user.sh "Starting modemmanager..."
-	daemon_start modemmanager
-	sleep 5
-fi
+sxmo_notify_user.sh "Stopping modemmanager..."
+daemon_stop modemmanager
+sleep 2
+sxmo_notify_user.sh "Starting modemmanager..."
+daemon_start modemmanager
 if ! daemon_isrunning modemmanager; then
 	sxmo_notify_user.sh --urgency=critical "The modemmanager failed to start!"
 	exit 1
