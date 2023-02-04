@@ -25,23 +25,11 @@ notifyvol() {
 
 # adjust *output* vol/mute
 pulsevolup() {
-	cur_vol="$(pulsevolget)"
-	[ "$cur_vol" = "muted" ] && return
-	if [ "$cur_vol" -gt "$((100 - ${1:-5}))" ]; then
-		pactl set-sink-volume @DEFAULT_SINK@ 100%
-	else
-		pactl set-sink-volume @DEFAULT_SINK@ +"${1:-5}%"
-	fi
+	pactl set-sink-volume @DEFAULT_SINK@ +"${1:-5}%"
 }
 
 pulsevoldown() {
-	cur_vol="$(pulsevolget)"
-	[ "$cur_vol" = "muted" ] && return
-	if [ "$cur_vol" -lt "$((0 + ${1:-5}))" ]; then
-		pactl set-sink-volume @DEFAULT_SINK@ 0%
-	else
-		pactl set-sink-volume @DEFAULT_SINK@ -"${1:-5}%"
-	fi
+	pactl set-sink-volume @DEFAULT_SINK@ -"${1:-5}%"
 }
 
 pulsevoltogglemute() {
@@ -66,23 +54,11 @@ pulsevolset() {
 
 # adjust *input* vol/mute
 pulsemicvolup() {
-	cur_vol="$(pulsemicvolget)"
-	[ "$cur_vol" = "muted" ] && return
-	if [ "$cur_vol" -gt "$((100 - ${1:-5}))" ]; then
-		pactl set-source-volume @DEFAULT_SOURCE@ 100%
-	else
-		pactl set-source-volume @DEFAULT_SOURCE@ +"${1:-5}%"
-	fi
+	pactl set-source-volume @DEFAULT_SOURCE@ +"${1:-5}%"
 }
 
 pulsemicvoldown() {
-	cur_vol="$(pulsemicvolget)"
-	[ "$cur_vol" = "muted" ] && return
-	if [ "$cur_vol" -lt "$((0 + ${1:-5}))" ]; then
-		pactl set-source-volume @DEFAULT_SOURCE@ 0%
-	else
-		pactl set-source-volume @DEFAULT_SOURCE@ -"${1:-5}%"
-	fi
+	pactl set-source-volume @DEFAULT_SOURCE@ -"${1:-5}%"
 }
 
 pulsemictogglemute() {
