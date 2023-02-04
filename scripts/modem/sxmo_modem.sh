@@ -169,14 +169,14 @@ checkforstucksms() {
 		sxmo_notify_user.sh "WARNING: $(echo "$stuck_messages" | wc -l) stuck sms found.  Run sxmo_modem.sh checkforstucksms view to view or delete to delete."
 		case "$1" in
 			"delete")
-				mmcli -m any --messaging-list-sms | while read line; do
+				mmcli -m any --messaging-list-sms | while read -r line; do
 					sms_number="$(echo "$line" | cut -d'/' -f6 | cut -d' ' -f1)"
 					sxmo_log "Deleting sms $sms_number"
 					mmcli -m any --messaging-delete-sms="$sms_number"
 				done
 				;;
 			"view")
-				mmcli -m any --messaging-list-sms | while read line; do
+				mmcli -m any --messaging-list-sms | while read -r line; do
 					sms_number="$(echo "$line" | cut -d'/' -f6 | cut -d' ' -f1)"
 					mmcli -m any -s "$sms_number" -K
 				done
