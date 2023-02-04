@@ -61,7 +61,7 @@ export SXMO_RINGTIME=20
 
 #Set RINGNUMBER to number of times phone will ring or repeat ringtone
 #(whichever of SXMO_RINGTIME or SXMO_RINGNUMBER runs less will limit how long phone rings)
-export SXMO_RINGNUMER=10
+export SXMO_RINGNUMBER=10
 
 #Set to the default text for a new text message.
 export SXMO_DEFAULT_DRAFT="Enter new message here."
