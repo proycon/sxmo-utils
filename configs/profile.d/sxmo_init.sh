@@ -9,9 +9,9 @@
 _sxmo_is_running() {
 	unset SXMO_WM
 
-	if [ -f "${XDG_RUNTIME_DIR:-/dev/shm/user/$(id -u)}"/sxmo.swaysock ]; then
+	if [ -f "${XDG_RUNTIME_DIR}"/sxmo.swaysock ]; then
 		unset SWAYSOCK
-		if SWAYSOCK="$(cat "${XDG_RUNTIME_DIR:-/dev/shm/user/$(id -u)}"/sxmo.swaysock)" \
+		if SWAYSOCK="$(cat "${XDG_RUNTIME_DIR}"/sxmo.swaysock)" \
 			swaymsg 2>/dev/null; then
 			printf "Detected the Sway environment\n" >&2
 			export SXMO_WM=sway
@@ -29,6 +29,22 @@ _sxmo_is_running() {
 	return 1
 }
 
+_sxmo_find_runtime_dir() {
+	# Take what we gave to you
+	if [ -n "$XDG_RUNTIME_DIR" ]; then
+		printf %s "$XDG_RUNTIME_DIR"
+		return
+	fi
+
+	if [ -d "/var/run/user/$(id -u)" ]; then
+		printf "/var/run/user/%s" "$(id -u)"
+		return
+	fi
+
+	# Fallback to a shared memory location
+	printf "/dev/shm/user/%s" "$(id -u)"
+}
+
 _sxmo_load_environments() {
 	# Determine current operating system see os-release(5)
 	# https://www.linux.org/docs/man5/os-release.html
@@ -44,7 +60,8 @@ _sxmo_load_environments() {
 	export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 	export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 	export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-	export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/dev/shm/user/$(id -u)}"
+	XDG_RUNTIME_DIR="$(_sxmo_find_runtime_dir)"
+	export XDG_RUNTIME_DIR
 	export XDG_DATA_DIRS="${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
 	export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 
@@ -103,7 +120,10 @@ $PATH"
 }
 
 _sxmo_grab_session() {
+	XDG_RUNTIME_DIR="$(_sxmo_find_runtime_dir)"
+	export XDG_RUNTIME_DIR
 	if ! _sxmo_is_running; then
+		unset XDG_RUNTIME_DIR
 		return
 	fi
 
