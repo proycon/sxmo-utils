@@ -130,19 +130,21 @@ addnetworkgsmmenu() {
 }
 
 addnetworkwpamenu() {
-	SSID="$(
-		nmcli d wifi list | tail -n +2 | grep -v '^\*' | awk -F'  ' '{ print $6 }' | grep -v '\-\-' |
-		xargs -0 printf "$icon_cls Close Menu\n%s" |
-		sxmo_dmenu_with_kb.sh -p "SSID"
+	SSID="$(cat <<EOF | sxmo_dmenu_with_kb.sh -p "SSID"
+$icon_cls Close Menu
+$(nmcli d wifi list | tail -n +2 | grep -v '^\*' | awk -F'  ' '{ print $6 }' | grep -v '\-\-')
+EOF
 	)"
 	[ -z "$SSID" ] && return
 	echo "$SSID" | grep -q "Close Menu" && return
 
-	PASSPHRASE="$(
-		echo "$icon_cls Close Menu" |
-			sxmo_dmenu_with_kb.sh -p "Passphrase"
+	PASSPHRASE="$(cat <<EOF | sxmo_dmenu_with_kb.sh -p "Passphrase"
+$icon_cls Close Menu
+None
+EOF
 	)"
-	if [ -z "$PASSPHRASE" ]; then
+
+	if [ -z "$PASSPHRASE" ] || [ "None" = "$PASSPHRASE" ]; then
 		unset PASSPHRASE
 	fi
 	echo "$PASSPHRASE" | grep -q "Close Menu" && return
