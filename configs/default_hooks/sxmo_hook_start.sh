@@ -63,8 +63,10 @@ esac
 # To setup initial lock state
 sxmo_hook_unlock.sh
 
-# Turn on the dbus-monitors for modem-related tasks
-superctl start sxmo_modemmonitor
+if [ "$(command -v ModemManager)" ]; then
+	# Turn on the dbus-monitors for modem-related tasks
+	superctl start sxmo_modemmonitor
+fi
 
 # Start the desktop widget (e.g. clock)
 superctl start sxmo_desktop_widget
