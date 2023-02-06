@@ -51,7 +51,6 @@ install-scripts: $(PROGRAMS)
 	fi
 
 	install -D -m 0644 -t $(DESTDIR)/usr/lib/udev/rules.d/ configs/udev/*.rules
-	install -D -m 0644 -t $(DESTDIR)/etc/sway/config.d/ configs/sway/*
 
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ configs/xdg/mimeapps.list
 
