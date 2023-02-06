@@ -6,7 +6,7 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-UNSUSPENDREASON="$1"
+# UNSUSPENDREASON="$1"
 
 #The UNSUSPENDREASON can be "usb power", "modem", "rtc" (real-time clock
 #periodic wakeup) or "button". You will likely want to check against this and
