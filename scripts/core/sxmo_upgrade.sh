@@ -34,8 +34,12 @@ update_nixos() {
 	echo "Upgrade complete - reboot for all changes to take effect"
 }
 
+sxmo_mutex.sh can_suspend lock "Upgrading"
+
 case "$OS" in
 	alpine|postmarketos) update_apk;;
 	arch|archarm) update_pacman;;
 	nixos) update_nixos;;
 esac
+
+sxmo_mutex.sh can_suspend free "Upgrading"
