@@ -57,7 +57,6 @@ checkforfinishedcalls() {
 		elif [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
 			sxmo_notify_user.sh "Call with $CONTACT terminated"
-			sxmo_hook_statusbar.sh volume
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		elif [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.hangedupcall" ]; then
@@ -68,7 +67,6 @@ checkforfinishedcalls() {
 		elif [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.initiatedcall" ]; then
 			#this call was hung up by the contact
 			sxmo_notify_user.sh "Call with $CONTACT terminated"
-			sxmo_hook_statusbar.sh volume
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		elif [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.mutedring" ]; then
@@ -78,7 +76,6 @@ checkforfinishedcalls() {
 		else
 			#this is a missed call
 			# Add a notification for every missed call
-			sxmo_hook_statusbar.sh volume
 
 			NOTIFMSG="Missed call from $CONTACT ($FINISHEDNUMBER)"
 			stderr "$NOTIFMSG"
