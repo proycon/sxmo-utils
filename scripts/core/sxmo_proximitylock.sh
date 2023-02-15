@@ -20,6 +20,7 @@ finish() {
 	printf 6553 > "$prox_path/events/in_proximity_thresh_rising_value"
 
 	sxmo_mutex.sh can_suspend free "Proximity lock is running"
+	sxmo_hook_statusbar.sh lockedby
 	sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 
 	exec sxmo_hook_"$INITIALSTATE".sh

@@ -43,7 +43,7 @@ XPROPOUT="$(sxmo_wm.sh focusedwindow)"
 WMCLASS="$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
 WMNAME="$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
 
-sxmo_debug "ACTION: $ACTION WMCLASS: $WMCLASS WMNAME: $WMNAME XPROPOUT: $XPROPOUT"
+sxmo_debug "STATE: $(cat "$SXMO_STATE") ACTION: $ACTION WMCLASS: $WMCLASS WMNAME: $WMNAME XPROPOUT: $XPROPOUT"
 
 if ! grep -q unlock "$SXMO_STATE"; then
 	case "$ACTION" in
@@ -386,6 +386,9 @@ case "$ACTION" in
 		exit 0
 		;;
 	"bottomleftcorner")
+		if grep -q proximity "$SXMO_STATE"; then
+			exit
+		fi
 		sxmo_dmenu.sh close
 		if [ -n "$WMCLASS" ]; then
 			sxmo_hook_lock.sh
