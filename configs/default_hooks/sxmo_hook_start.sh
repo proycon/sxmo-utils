@@ -55,6 +55,7 @@ case "$SXMO_WM" in
 		superctl start autocutsel
 		superctl start autocutsel-primary
 		superctl start sxmo-x11-status
+		superctl start bonsaid
 		[ -n "$SXMO_MONITOR" ] && xrandr --output "$SXMO_MONITOR" --primary
 		feh --bg-fill "$SXMO_BG_IMG"
 		;;

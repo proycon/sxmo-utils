@@ -13,6 +13,11 @@ case "$SXMO_WM" in
 		/usr/bin/dwm -v
 		/usr/bin/dmenu -v
 		/usr/bin/st -v
+		if ! command -v bonsaictl > /dev/null; then
+			echo "no bonsai"
+		else
+			which bonsaictl
+		fi
 		;;
 	sway)
 		/usr/bin/sway -v
