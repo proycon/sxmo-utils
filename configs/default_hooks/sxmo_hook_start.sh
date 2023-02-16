@@ -63,6 +63,9 @@ esac
 # To setup initial lock state
 sxmo_hook_unlock.sh
 
+# Turn on lisgd
+superctl start sxmo_hook_lisgd
+
 if [ "$(command -v ModemManager)" ]; then
 	# Turn on the dbus-monitors for modem-related tasks
 	superctl start sxmo_modemmonitor

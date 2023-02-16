@@ -17,7 +17,6 @@ sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 [ "$SXMO_WM" = "sway" ] && swaymsg mode default
 sxmo_wm.sh dpms on
 sxmo_wm.sh inputevent touchscreen off
-superctl stop sxmo_hook_lisgd
 
 case "$SXMO_WM" in
 	dwm)

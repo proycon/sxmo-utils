@@ -17,7 +17,6 @@ sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 [ "$SXMO_WM" = "sway" ] && swaymsg mode default
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen off
-superctl stop sxmo_hook_lisgd
 
 # avoid dangling purple blinking when usb wakeup + power button…
 sxmo_daemons.sh stop periodic_blink
