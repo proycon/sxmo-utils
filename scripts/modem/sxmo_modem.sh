@@ -139,10 +139,7 @@ checkforincomingcalls() {
 		mkdir -p "$SXMO_LOGDIR"
 		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 
-		# do not duplicate proximity lock if already running
-		if ! (sxmo_daemons.sh running proximity_lock -q || sxmo_daemons.sh running calling_proximity_lock -q); then
-			sxmo_daemons.sh start calling_proximity_lock sxmo_hook_proximitylock.sh
-		fi
+		sxmo_daemons.sh start calling_proximity_lock sxmo_hook_proximitylock.sh
 
 		# If we already got an active call
 		if sxmo_modemcall.sh list_active_calls \
