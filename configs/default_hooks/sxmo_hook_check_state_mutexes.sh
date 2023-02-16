@@ -28,6 +28,9 @@ cleanup_main_mutex() {
 	exit 0
 }
 
+exec 3<> "${XDG_RUNTIME_DIR:-$HOME}/sxmo.checkstatemutexes.lock"
+flock -x 3
+
 lock_suspend_mutex "Checking some mutexes"
 trap 'cleanup_main_mutex' TERM INT EXIT
 
