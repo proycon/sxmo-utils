@@ -11,6 +11,11 @@ ACTION="$1"
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
+stop_proximity_lock() {
+	sxmo_daemons.sh stop proximity_lock
+	sxmo_hook_statusbar.sh lockedby
+}
+
 # this action will move the lock state $1 levels higher
 lock_screen_action() {
 	count="${1:-1}"
@@ -45,8 +50,15 @@ if ! grep -q unlock "$SXMO_STATE"; then
 		"powerbutton_one")
 			lock_screen_action
 			;;
-		"powerbutton_two"|"powerbutton_three")
+		"powerbutton_two")
 			lock_screen_action 2
+			;;
+		"powerbutton_three")
+			if grep -q proximity "$SXMO_STATE"; then
+				stop_proximity_lock
+			else
+				lock_screen_action 2
+			fi
 			;;
 		"voldown_one")
 			sxmo_audio.sh vol down 5
@@ -249,7 +261,11 @@ case "$ACTION" in
 		exit 0
 		;;
 	"powerbutton_three")
-		sxmo_terminal.sh
+		if grep -q proximity "$SXMO_STATE"; then
+			stop_proximity_lock
+		else
+			sxmo_terminal.sh
+		fi
 		exit 0
 		;;
 	"voldown_one")

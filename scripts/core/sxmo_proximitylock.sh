@@ -10,12 +10,8 @@
 
 finish() {
 	kill "$EVENTMONITORPID"
-	kill "$AWKPID"
+	kill "$TAILPID"
 	rm "$tmp"
-
-	if ! grep -q "^$INITIALSTATE\$" "$SXMO_STATE"; then
-		sxmo_hook_"$INITIALSTATE".sh
-	fi
 
 	# De-activate thresholds
 	printf 0 > "$prox_path/events/in_proximity_thresh_falling_value"
@@ -24,45 +20,75 @@ finish() {
 	printf 6553 > "$prox_path/events/in_proximity_thresh_rising_value"
 
 	sxmo_mutex.sh can_suspend free "Proximity lock is running"
-	sxmo_hook_statusbar.sh lockedby
-	exit 0
+	sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
+
+	exec sxmo_hook_"$INITIALSTATE".sh
 }
 
+near() {
+	sxmo_debug "near"
+	sxmo_wm.sh dpms on
+	sxmo_wm.sh inputevent touchscreen off
+	printf proximitylock > "$SXMO_STATE"
+}
+
+far() {
+	sxmo_debug "far"
+	sxmo_wm.sh dpms off
+	sxmo_wm.sh inputevent touchscreen on
+	printf proximityunlock > "$SXMO_STATE"
+}
+
+exec 3<> "$SXMO_STATE.lock"
+flock -x 3
+
+sxmo_log "transitioning to stage proximitylock"
 INITIALSTATE="$(cat "$SXMO_STATE")"
+printf proximitylock > "$SXMO_STATE"
+
 trap 'finish' TERM INT
+
+sxmo_daemons.sh stop idle_locker
 
 sxmo_mutex.sh can_suspend lock "Proximity lock is running"
 sxmo_hook_statusbar.sh lockedby
+sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 
-# Permissions for these set by udev rules.
-prox_raw_bus="$(find /sys/devices/platform/soc -name 'in_proximity_raw' | head -n1)"
+# find the device
+if [ -z "$SXMO_PROX_RAW_BUS" ]; then
+	prox_raw_bus="$(find /sys/devices/platform/soc -name 'in_proximity_raw' | head -n1)"
+else
+	prox_raw_bus="$SXMO_PROX_RAW_BUS"
+fi
 prox_path="$(dirname "$prox_raw_bus")"
 prox_name="$(cat "$prox_path/name")" # e.g. stk3310
 
+# set some sane defaults
 printf "%d" "${SXMO_PROX_FALLING:-50}" > "$prox_path/events/in_proximity_thresh_falling_value"
 printf "%d" "${SXMO_PROX_RISING:-100}" > "$prox_path/events/in_proximity_thresh_rising_value"
 
-tmp="$(mktemp -u)"
-mkfifo "$tmp"
+tmp="$(mktemp)"
 
 # TODO: stdbuf not needed with linux-tools-iio >=5.17
 stdbuf -o L iio_event_monitor "$prox_name" >> "$tmp" &
 EVENTMONITORPID=$!
 
-awk '
-	/rising/{system("sxmo_hook_screenoff.sh")}
-	/falling/{system("sxmo_hook_unlock.sh")}
-' "$tmp" &
-AWKPID=$!
+tail -f "$tmp" | while read -r line; do
+	if echo "$line" | grep -q rising; then
+		near
+	elif echo "$line" | grep -q falling; then
+		far
+	fi
+done &
+TAILPID=$!
 
 initial_distance="$(cat "$prox_raw_bus")"
-if [ "$initial_distance" -gt "${SXMO_PROX_FALLING:-50}" ] && [ "$INITIALSTATE" != "screenoff" ]; then
-	sxmo_hook_screenoff.sh
-elif [ "$initial_distance" -lt "${SXMO_PROX_RISING:-100}" ] && [ "$INITIALSTATE" != "unlock" ]; then
-	sxmo_hook_unlock.sh
+if [ "$initial_distance" -gt "${SXMO_PROX_FALLING:-50}" ]; then
+	near
+elif [ "$initial_distance" -lt "${SXMO_PROX_RISING:-100}" ]; then
+	far
 fi
 
-wait "$EVENTMONITORPID"
-wait "$AWKPID"
+wait
 
 finish

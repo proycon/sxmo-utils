@@ -41,6 +41,7 @@ icon_del="﫧" #delete
 icon_dir="" #directory folder
 icon_dof="" # dot off
 icon_don="" # dot on
+icon_dop="" # dot point
 icon_dot="" # searching, connecting, etc.
 icon_drw="" # Drawing tablet
 icon_ear="" # earpiece

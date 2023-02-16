@@ -96,7 +96,7 @@ checkforfinishedcalls() {
 			# Cleanup
 			sxmo_vibrate 1000 &
 			sxmo_daemons.sh stop incall_menu
-			sxmo_daemons.sh stop calling_proximity_lock
+			sxmo_daemons.sh stop proximity_lock
 
 			if ! sxmo_modemaudio.sh reset_audio; then
 				sxmo_notify_user.sh --urgency=critical "We failed to reset call audio"
@@ -139,7 +139,7 @@ checkforincomingcalls() {
 		mkdir -p "$SXMO_LOGDIR"
 		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 
-		sxmo_daemons.sh start calling_proximity_lock sxmo_hook_proximitylock.sh
+		sxmo_daemons.sh start proximity_lock sxmo_proximitylock.sh
 
 		# If we already got an active call
 		if sxmo_modemcall.sh list_active_calls \
