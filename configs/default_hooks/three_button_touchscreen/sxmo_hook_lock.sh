@@ -11,7 +11,7 @@ printf lock > "$SXMO_STATE"
 
 # This hook is called when the system reaches a locked state
 
-sxmo_uniq_exec.sh sxmo_led.sh blink blue &
+sxmo_led.sh blink blue &
 sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 
 [ "$SXMO_WM" = "sway" ] && swaymsg mode default

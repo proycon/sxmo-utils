@@ -7,8 +7,8 @@
 # $1 is the number of notifications on the system (0 if none).
 
 if [ "$1" -eq 0 ]; then
-	sxmo_uniq_exec.sh sxmo_led.sh set green 0
+	sxmo_led.sh set green 0
 else
-	sxmo_uniq_exec.sh sxmo_led.sh set green 100
+	sxmo_led.sh set green 100
 fi
 sxmo_hook_statusbar.sh notifications

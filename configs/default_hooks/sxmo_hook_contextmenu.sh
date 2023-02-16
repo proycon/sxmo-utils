@@ -645,7 +645,7 @@ case "$WMCLASS" in
 			$(
 				if [ -z "$SXMO_DISABLE_LEDS" ]; then
 					printf "%s Flashlight " "$icon_fll"
-					sxmo_uniq_exec.sh sxmo_led.sh get white | grep -vq ^100$ &&
+					sxmo_led.sh get white | grep -vq ^100$ &&
 						printf %b "$icon_tof" ||  printf %b "$icon_ton";
 					printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 				fi

@@ -56,7 +56,7 @@ saveAllEventCounts
 
 sxmo_hook_presuspend.sh
 
-sxmo_uniq_exec.sh sxmo_led.sh blink red
+sxmo_led.sh blink red
 
 if suspend_time="$(sxmo_hook_mnc.sh)"; then
 	sxmo_log "calling suspend with suspend_time <$suspend_time>"
