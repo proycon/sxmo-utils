@@ -15,7 +15,7 @@ sxmo_log "transitioning to stage unlock"
 printf unlock > "$SXMO_STATE"
 
 sxmo_led.sh blink red green &
-sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
+sxmo_hook_statusbar.sh state_change &
 
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen on
@@ -53,3 +53,5 @@ fi
 
 sxmo_daemons.sh start periodic_state_mutex_check \
 	sxmo_run_aligned.sh 60 sxmo_hook_check_state_mutexes.sh
+
+wait

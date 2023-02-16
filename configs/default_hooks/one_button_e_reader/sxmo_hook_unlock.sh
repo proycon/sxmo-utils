@@ -11,7 +11,7 @@
 sxmo_log "transitioning to stage unlock"
 printf unlock > "$SXMO_STATE"
 
-sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
+sxmo_hook_statusbar.sh state_change &
 
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen on
@@ -27,3 +27,5 @@ if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.nosuspend" ]; then
 		timeout "$((${SXMO_UNLOCK_IDLE_TIME:-120}+10))" 'sxmo_daemons.sh start periodic_state_mutex_check sxmo_run_periodically.sh 10 sxmo_hook_check_state_mutexes.sh' \
 		resume 'sxmo_daemons.sh stop periodic_state_mutex_check'
 fi
+
+wait

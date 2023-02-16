@@ -15,7 +15,7 @@ sxmo_log "transitioning to stage off"
 printf screenoff > "$SXMO_STATE"
 
 sxmo_led.sh blink blue red &
-sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
+sxmo_hook_statusbar.sh state_change &
 
 [ "$SXMO_WM" = "sway" ] && swaymsg mode default
 sxmo_wm.sh dpms on
@@ -41,3 +41,5 @@ sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
 	resume 'sxmo_daemons.sh stop periodic_blink' \
 	timeout 12 'sxmo_daemons.sh start periodic_state_mutex_check sxmo_run_periodically.sh 10 sxmo_hook_check_state_mutexes.sh' \
 	resume 'sxmo_daemons.sh stop periodic_state_mutex_check'
+
+wait

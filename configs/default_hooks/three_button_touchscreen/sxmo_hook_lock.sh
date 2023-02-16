@@ -15,7 +15,7 @@ printf lock > "$SXMO_STATE"
 # This hook is called when the system reaches a locked state
 
 sxmo_led.sh blink blue &
-sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
+sxmo_hook_statusbar.sh state_change &
 
 [ "$SXMO_WM" = "sway" ] && swaymsg mode default
 sxmo_wm.sh dpms off
@@ -29,3 +29,5 @@ if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
 	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
 		timeout 8 "sxmo_hook_screenoff.sh"
 fi
+
+wait
