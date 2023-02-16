@@ -6,6 +6,9 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
+exec 3<> "$SXMO_STATE.lock"
+flock -x 3
+
 sxmo_log "transitioning to stage lock"
 printf lock > "$SXMO_STATE"
 

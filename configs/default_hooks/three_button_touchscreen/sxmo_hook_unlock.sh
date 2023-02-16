@@ -8,6 +8,9 @@
 
 # This hook is called when the system becomes unlocked again
 
+exec 3<> "$SXMO_STATE.lock"
+flock -x 3
+
 sxmo_log "transitioning to stage unlock"
 printf unlock > "$SXMO_STATE"
 

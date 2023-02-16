@@ -8,6 +8,9 @@
 
 # This hook is called when the system reaches a off state (screen off)
 
+exec 3<> "$SXMO_STATE.lock"
+flock -x 3
+
 sxmo_log "transitioning to stage off"
 printf screenoff > "$SXMO_STATE"
 
