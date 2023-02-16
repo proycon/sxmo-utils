@@ -67,4 +67,4 @@ export SXMO_RINGNUMBER=10
 export SXMO_DEFAULT_DRAFT="Enter new message here."
 
 #Set background image
-export SXMO_BG_IMG="$(xdg_data_path sxmo/background.jpeg)"
+export SXMO_BG_IMG="$(xdg_data_path sxmo/background.jpg)"
