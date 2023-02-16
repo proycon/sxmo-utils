@@ -4,10 +4,13 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 ROOT="$XDG_RUNTIME_DIR/sxmo_daemons"
 mkdir -p "$ROOT"
+
+exec 3<> "$ROOT/daemons.lock"
+flock -x 3
 
 list() {
 	find "$ROOT" -mindepth 1 -exec 'basename' '{}' ';'
@@ -79,8 +82,13 @@ start() {
 	fi
 
 	sxmo_debug "start $id"
-	"$@" &
-	printf "%s\n" "$!" > "$ROOT"/"$id"
+	(
+		# We need a subshell so we can close the lock fd, without
+		# releasing the lock
+		exec 3<&-
+		"$@" &
+		printf "%s\n" "$!" > "$ROOT"/"$id"
+	)
 }
 
 running() {
