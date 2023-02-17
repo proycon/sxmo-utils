@@ -51,17 +51,15 @@ sxmo_daemons.sh start network_monitor_device \
 				sxmo_hook_statusbar.sh network "$devicetype" "$devicename"
 				;;
 			"deactivating")
-				sxmo_log "$devicename pre-down"
 				sxmo_hook_network_pre_down.sh "$devicename" "$devicetype"
 				sxmo_hook_statusbar.sh network "$devicetype" "$devicename"
 				;;
 			"connecting")
-				sxmo_log "$devicename pre-up"
 				sxmo_hook_network_pre_up.sh "$devicename" "$devicetype"
 				sxmo_hook_statusbar.sh network "$devicetype" "$devicename"
 				;;
 			*)
-				sxmo_log "$devicename unknown state $newstate"
+				sxmo_log "$devicename unknown state: $newstate"
 				;;
 		esac
 	done
