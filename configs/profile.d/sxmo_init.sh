@@ -106,10 +106,15 @@ _sxmo_load_environments() {
 	fi
 
 	if [ -n "$SXMO_DEVICE_NAME" ]; then
+		_device_hooks_path="$(xdg_data_path "sxmo/default_hooks/$SXMO_DEVICE_NAME" 0 ':')"
+		if [ -z "$_device_hooks_path" ]; then
+			_device_hooks_path="$(xdg_data_path "sxmo/default_hooks/three_button_touchscreen" 0 ':')"
+		fi
+
 		PATH="\
 $XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME:\
 $XDG_CONFIG_HOME/sxmo/hooks:\
-$(xdg_data_path "sxmo/default_hooks/$SXMO_DEVICE_NAME" 0 ':'):\
+$_device_hooks_path:\
 $(xdg_data_path "sxmo/default_hooks" 0 ':'):\
 $PATH"
 		export PATH
