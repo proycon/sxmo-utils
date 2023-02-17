@@ -6,3 +6,4 @@ Type=simple
 Restart=always
 ExecStart=/usr/bin/pipewire
 ExecOnFailure=/usr/bin/sxmo_notify_user.sh "superd failed to start pipewire"
+RestartSec=1s

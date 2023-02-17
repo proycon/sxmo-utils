@@ -7,3 +7,4 @@ Type=simple
 Restart=always
 ExecStart=/usr/bin/wireplumber
 ExecOnFailure=/usr/bin/sxmo_notify_user.sh "superd failed to start wireplumber"
+RestartSec=1s

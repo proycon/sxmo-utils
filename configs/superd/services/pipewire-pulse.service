@@ -7,3 +7,4 @@ Type=simple
 Restart=always
 ExecStart=/usr/bin/pipewire -c pipewire-pulse.conf
 ExecOnFailure=/usr/bin/sxmo_notify_user.sh "superd failed to start pipewire-pulse"
+RestartSec=1s
