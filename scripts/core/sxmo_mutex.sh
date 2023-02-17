@@ -21,6 +21,7 @@ lock() {
 	flock 3
 	REASON="$1"
 	printf "%s\n" "$REASON" >> "$REASON_FILE"
+	sxmo_log "lock \"$MUTEX_NAME\", total: $(wc -l < "$REASON_FILE"), \"$REASON\""
 }
 
 free() {
@@ -29,6 +30,7 @@ free() {
 	grep -xnm1 "$REASON" "$REASON_FILE" | \
 		cut -d: -f1 | \
 		xargs -r -I{} sed -i '{}d' "$REASON_FILE"
+	sxmo_log "free \"$MUTEX_NAME\", total: $(wc -l < "$REASON_FILE"), \"$REASON\""
 }
 
 lockedby() {
@@ -39,6 +41,7 @@ lockedby() {
 freeall() {
 	printf "" > "$REASON_FILE"
 	sxmo_hook_statusbar.sh lockedby
+	sxmo_log "freeall($MUTEX_NAME)"
 }
 
 list() {
