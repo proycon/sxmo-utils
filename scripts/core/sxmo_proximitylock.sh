@@ -56,7 +56,7 @@ sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 
 # find the device
 if [ -z "$SXMO_PROX_RAW_BUS" ]; then
-	prox_raw_bus="$(find /sys/devices/platform/soc -name 'in_proximity_raw' | head -n1)"
+	prox_raw_bus="$(find /sys/devices/platform -name 'in_proximity_raw' | head -n1)"
 else
 	prox_raw_bus="$SXMO_PROX_RAW_BUS"
 fi
