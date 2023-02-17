@@ -58,7 +58,7 @@ xdg_data_path() {
 
 	IFS=':'
 	instance=0
-	for dir in $XDG_DATA_DIRS /usr/share
+	for dir in ${XDG_DATA_DIRS:-/usr/local/share:/usr/share}
 	do
 		if [ -e "$dir/$filepath" ]; then
 			if [ "$instance" -ge "$instance_count" ] && [ "$instance_count" != "0" ]; then
