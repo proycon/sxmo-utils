@@ -42,9 +42,7 @@ else
 fi
 
 # hotspot active
-if nmcli --get-values UUID connection show --active 2>/dev/null | while read -r uuid; do
-	nmcli --get-values 802-11-wireless.mode connection show "$uuid" 2>/dev/null
-done | grep -q '^ap$'; then
+if nmcli -t c show --active | grep ^Hotspot; then
 	lock_suspend_mutex "Hotspot is active"
 else
 	free_suspend_mutex "Hotspot is active"
