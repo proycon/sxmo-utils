@@ -31,7 +31,7 @@ cleanupnumber() {
 }
 
 checkforfinishedcalls() {
-	exec 3<> "${XDG_RUNTIME_DIR:-HOME}/sxmo_modem.checkfornewtexts.lock"
+	exec 3<> "${XDG_RUNTIME_DIR:-HOME}/sxmo_modem.checkforfinishedcalls.lock"
 	flock -x 3
 	#find all finished calls
 	for FINISHEDCALLID in $(
