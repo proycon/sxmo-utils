@@ -64,7 +64,7 @@ else
 fi
 
 # active_mosh
-if pgrep -f mosh-server > /dev/null; then
+if command -v mosh-server > /dev/null && pgrep -f mosh-server > /dev/null; then
 	lock_suspend_mutex "Mosh is listening"
 else
 	free_suspend_mutex "Mosh is listening"
