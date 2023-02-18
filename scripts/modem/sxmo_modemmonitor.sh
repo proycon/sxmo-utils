@@ -61,20 +61,20 @@ mainloop() {
 	# Monitor for incoming texts
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem.Messaging',type='signal',member='Added'" |
 		while read -r line; do
-			echo "$line" | grep -qE "^signal" && sxmo_uniq_exec.sh sxmo_modem.sh checkfornewtexts
+			echo "$line" | grep -qE "^signal" && sxmo_modem.sh checkfornewtexts
 		done &
 
 	# Check for new texts periodically
-	sxmo_run_aligned.sh 300 sxmo_uniq_exec.sh sxmo_modem.sh checkfornewtexts &
+	sxmo_run_aligned.sh 300 sxmo_modem.sh checkfornewtexts &
 
 	# Monitor for finished calls
 	dbus-monitor --system "interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',arg0='org.freedesktop.ModemManager1.Call'" |
 		while read -r line; do
-			echo "$line" | grep -qE "^signal" && sxmo_uniq_exec.sh sxmo_modem.sh checkforfinishedcalls
+			echo "$line" | grep -qE "^signal" && sxmo_modem.sh checkforfinishedcalls
 		done &
 
 	# Periodically remove finished calls
-	sxmo_run_aligned.sh 300 sxmo_uniq_exec.sh sxmo_modem.sh checkforfinishedcalls &
+	sxmo_run_aligned.sh 300 sxmo_modem.sh checkforfinishedcalls &
 
 	# Monitor for modem state change
 	dbus-monitor --system "interface='org.freedesktop.ModemManager1.Modem',type='signal',member='StateChanged'" |
