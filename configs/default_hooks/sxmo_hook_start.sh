@@ -77,7 +77,7 @@ if [ "$(command -v ModemManager)" ]; then
 fi
 
 # Start the desktop widget (e.g. clock)
-superctl start sxmo_desktop_widget
+superctl start sxmo_conky
 
 # Monitor the battery
 superctl start sxmo_battery_monitor

@@ -73,9 +73,9 @@ resolvedifference() {
 			;;
 		[3uU]*)
 			#update configversion automatically
-			refversion="$(grep -e "^[#;]\\s*configversion\\s*[:=]" "$defaultfile" |  tr -d "\n")"
-			if grep -qe "^[#;]\\s*configversion\\s*[:=].*" "$userfile"; then
-				sed -i "s/^[#;]\\s*configversion\\s*[:=].*/$refversion/" "$userfile" || abort=1
+			refversion="$(grep -e "^[#;-]\+\\s*configversion\\s*[:=]" "$defaultfile" |  tr -d "\n")"
+			if grep -qe "^[#;-]\+\\s*configversion\\s*[:=].*" "$userfile"; then
+				sed -i "s/^[#;-]\+\\s*configversion\\s*[:=].*/$refversion/" "$userfile" || abort=1
 			else
 				# fall back in case the userfile doesn't contain a configversion at all yet
 				sed -i "2i$refversion" "$userfile" || abort=1
@@ -105,7 +105,7 @@ checkconfigversion() {
 		return 0
 	fi
 
-	refversion=$(grep -e "^[#;]\\s*configversion\\s*[:=]" "$reffile" |  tr -d '#;:=[:space:]')
+	refversion=$(grep -e "^[#;-]\+\\s*configversion\\s*[:=]" "$reffile" | sed 's/.*configversion: \(.*\)/\1/')
 	if [ -z "$refversion" ]; then
 		#no ref version found, check file diff instead
 		if diff "$reffile" "$userfile" > /dev/null; then
@@ -115,11 +115,11 @@ checkconfigversion() {
 		fi
 	fi
 
-	userversion=$(grep -e "^[#;]\\s*configversion\\s*[:=]" "$userfile" |  tr -d '#;:=[:space:]')
+	userversion=$(grep -e "^[#;-]\+\\s*configversion\\s*[:=]" "$userfile" | sed 's/.*configversion: \(.*\)/\1/')
 	if [ -z "$userversion" ]; then
 		#no user version found, check file contents instead
 		tmpreffile="${XDG_RUNTIME_DIR}/versioncheck"
-		grep -ve "^[#;]\\s*configversion\\s*[:=]" "$reffile" > "$tmpreffile"
+		grep -ve "^[#;-]\+\\s*configversion\\s*[:=]" "$reffile" > "$tmpreffile"
 		if diff "$tmpreffile" "$userfile" > /dev/null; then
 			rm "$tmpreffile"
 			return 0
@@ -260,12 +260,14 @@ sway() {
 	defaultconfig "$(xdg_data_path sxmo/appcfg/mako.conf)" "$XDG_CONFIG_HOME/mako/config" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/bonsai_tree.json)" "$XDG_CONFIG_HOME/sxmo/bonsai_tree.json" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/wob.ini)" "$XDG_CONFIG_HOME/wob/wob.ini" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/conky.conf)" "$XDG_CONFIG_HOME/sxmo/conky.conf" 644
 }
 
 xorg() {
 	defaultconfig "$(xdg_data_path sxmo/appcfg/xinit_template)" "$XDG_CONFIG_HOME/sxmo/xinit" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/dunst.conf)" "$XDG_CONFIG_HOME/dunst/dunstrc" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/xob_styles.cfg)" "$XDG_CONFIG_HOME/xob/styles.cfg" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/conky.conf)" "$XDG_CONFIG_HOME/sxmo/conky.conf" 644
 }
 
 

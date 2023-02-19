@@ -3,6 +3,7 @@
 # Copyright 2022 Sxmo Contributors
 
 # This hook launches a desktop widget (e.g. a clock) (blocking)
+# It could be used on Wayland
 
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
@@ -19,25 +20,19 @@ pangodraw() {
 	echo
 }
 
-if [ -n "$WAYLAND_DISPLAY" ] && command -v wayout > /dev/null; then
-	trap 'kill -- $WAYOUT' TERM INT EXIT
+trap 'kill -- $WAYOUT' TERM INT EXIT
 
-	# For wayland we use wayout:
-	(
-		sleep 1 # wayout misses output sent to it as it's starting
-		while : ; do
-			pangodraw
-			sxmo_aligned_sleep 60
-		done
-	) | wayout --font "FiraMono Nerd Font" \
-		--foreground-color "#ffffff" \
-		--fontsize "60" \
-		--height 500  \
-		--feed-par &
-	WAYOUT="$!"
-	wait
-elif [ -n "$DISPLAY" ] && command -v conky > /dev/null; then
-	# For X we use conky (if not already running):
-	exec conky -c "$(xdg_data_path sxmo/appcfg/conky24h.conf)" #24 hour clock
-	#exec conky -c "$(xdg_data_path sxmo/appcfg/conky.conf)" #12 hour clock (am/pm)
-fi
+# For wayland we use wayout:
+(
+	sleep 1 # wayout misses output sent to it as it's starting
+	while : ; do
+		pangodraw
+		sxmo_aligned_sleep 60
+	done
+) | wayout --font "FiraMono Nerd Font" \
+	--foreground-color "#ffffff" \
+	--fontsize "60" \
+	--height 500  \
+	--feed-par &
+WAYOUT="$!"
+wait
