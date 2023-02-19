@@ -17,6 +17,10 @@ smartdiff() {
 	fi
 }
 
+fetchversion() {
+	head -n5 "$1" | grep -m1 "configversion: " | sed 's|.*configversion: \(.*\)|\1|'
+}
+
 resolvedifference() {
 	userfile="$1"
 	defaultfile="$2"
@@ -73,12 +77,14 @@ resolvedifference() {
 			;;
 		[3uU]*)
 			#update configversion automatically
-			refversion="$(grep -e "^[#;-]\+\\s*configversion\\s*[:=]" "$defaultfile" |  tr -d "\n")"
-			if grep -qe "^[#;-]\+\\s*configversion\\s*[:=].*" "$userfile"; then
-				sed -i "s/^[#;-]\+\\s*configversion\\s*[:=].*/$refversion/" "$userfile" || abort=1
-			else
+			refversion="$(fetchversion "$reffile")"
+			userversion="$(fetchversion "$userfile")"
+			if [ -n "$userversion" ]; then
+				sed -i "s/configversion: $userversion/configversion: $refversion/" "$userfile" || abort=1
+			elif [ -n "$refversion" ]; then
+				refline="$(head -n5 "$reffile" | grep -m1 "configversion: ")"
 				# fall back in case the userfile doesn't contain a configversion at all yet
-				sed -i "2i$refversion" "$userfile" || abort=1
+				sed -i "2i$refline" "$userfile" || abort=1
 			fi
 			;;
 		*)
@@ -105,7 +111,7 @@ checkconfigversion() {
 		return 0
 	fi
 
-	refversion=$(grep -e "^[#;-]\+\\s*configversion\\s*[:=]" "$reffile" | sed 's/.*configversion: \(.*\)/\1/')
+	refversion="$(fetchversion "$reffile")"
 	if [ -z "$refversion" ]; then
 		#no ref version found, check file diff instead
 		if diff "$reffile" "$userfile" > /dev/null; then
@@ -115,11 +121,11 @@ checkconfigversion() {
 		fi
 	fi
 
-	userversion=$(grep -e "^[#;-]\+\\s*configversion\\s*[:=]" "$userfile" | sed 's/.*configversion: \(.*\)/\1/')
+	userversion="$(fetchversion "$userfile")"
 	if [ -z "$userversion" ]; then
 		#no user version found, check file contents instead
 		tmpreffile="${XDG_RUNTIME_DIR}/versioncheck"
-		grep -ve "^[#;-]\+\\s*configversion\\s*[:=]" "$reffile" > "$tmpreffile"
+		grep -v "configversion: " "$reffile" > "$tmpreffile"
 		if diff "$tmpreffile" "$userfile" > /dev/null; then
 			rm "$tmpreffile"
 			return 0
