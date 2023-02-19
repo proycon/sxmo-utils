@@ -3,7 +3,9 @@
 # shellcheck disable=SC2155
 export PATH="$PATH:$(pwd)/scripts/core:$(pwd)/configs/default_hooks"
 XDG_RUNTIME_DIR="$(mktemp -d)"
+XDG_STATE_HOME="$(mktemp -d)"
 export XDG_RUNTIME_DIR
+export XDG_STATE_HOME
 
 Describe 'sxmo_mutex.sh'
 	# Make sure we're running in a somewhat clean environment
