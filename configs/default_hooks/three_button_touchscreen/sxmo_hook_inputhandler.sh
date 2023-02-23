@@ -431,6 +431,7 @@ case "$ACTION" in
 			exit
 		fi
 		sxmo_dmenu.sh close
+		sxmo_keyboard.sh close
 		if [ -n "$WMCLASS" ]; then
 			sxmo_hook_lock.sh
 		else
