@@ -288,4 +288,4 @@ processmms() {
 
 sxmo_wakelock.sh lock mms_processing 30000000000
 "$@"
-sxmo_wakelock.sh unlock mms_processing 30000000000
+sxmo_wakelock.sh unlock mms_processing
