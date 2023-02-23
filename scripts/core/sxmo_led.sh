@@ -109,15 +109,16 @@ blink_leds() {
 [ -z "$SXMO_DISABLE_LEDS" ] || exit 1
 
 exec 3<> "${XDG_RUNTIME_DIR:-$HOME}/sxmo.led.lock"
-flock -x 3
 
 cmd="$1"
 shift
 case "$cmd" in
 	"set"|blink)
+		flock -x 3
 		"$cmd"_leds "$@"
 		;;
 	get)
+		flock -s 3
 		get_led "$@"
 		;;
 esac
