@@ -268,6 +268,7 @@ set_battery() {
 	done
 }
 
+<<<<<<< HEAD
 set_lockedby() {
 	sxmo_mutex.sh can_suspend list | sort -u | while read -r line; do
 		case "$line" in
@@ -313,6 +314,8 @@ set_lockedby() {
 	done
 }
 
+=======
+>>>>>>> b23b8d74 (statusbar: drop lockedby)
 set_notifications() {
 	[ -z "$SXMO_DISABLE_LEDS" ] && return
 	NNOTIFICATIONS="$(find "$SXMO_NOTIFDIR" -type f | wc -l)"
@@ -378,7 +381,7 @@ case "$1" in
 		shift
 		set_network "$@"
 		;;
-	time|modem|battery|volume|state|lockedby|notifications)
+	time|modem|battery|volume|state|notifications)
 		set_"$1"
 		;;
 	periodics|state_change) # 55 s loop and screenlock triggers
@@ -395,7 +398,6 @@ case "$1" in
 		set_volume
 		set_state
 		set_notifications
-		set_lockedby
 		;;
 	*)
 		exit # swallow it !

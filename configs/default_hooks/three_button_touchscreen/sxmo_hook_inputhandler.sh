@@ -13,7 +13,6 @@ ACTION="$1"
 
 stop_proximity_lock() {
 	sxmo_daemons.sh stop proximity_lock
-	sxmo_hook_statusbar.sh lockedby
 }
 
 # this action will move the lock state $1 levels higher
