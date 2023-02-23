@@ -78,8 +78,12 @@ unlock() {
 }
 
 debug() {
-	tr " " "\n" < /sys/power/wake_lock | grep .
-	tail -f "$XDG_STATE_HOME"/sxmo.log | grep "${0##*/}"
+	if [ "$1" = "watch" ]; then
+		watch -n1 cat /sys/power/wake_lock
+	else
+		tr " " "\n" < /sys/power/wake_lock | grep .
+		tail -f "$XDG_STATE_HOME"/sxmo.log | grep "${0##*/}"
+	fi
 }
 
 cmd="$1"
