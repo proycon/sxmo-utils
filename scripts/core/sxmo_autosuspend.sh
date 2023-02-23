@@ -6,50 +6,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-# define these in deviceprofile, or default to pinephone
-MODEMUPRTC="/sys/class/wakeup/wakeup${SXMO_MODEMRTC:-10}/active_count"
-POWERRTC="/sys/class/wakeup/wakeup${SXMO_POWERRTC:-5}/active_count"
-BATTERYRTC="/sys/class/wakeup/wakeup${SXMO_BATTERYRTC:-4}/active_count"
-COVERRTC="/sys/class/wakeup/wakeup${SXMO_COVERRTC:-9999}/active_count"
-
-OLD_MODEM_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.modem.count"
-OLD_POWER_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.power.count"
-OLD_COVER_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.cover.count"
-OLD_BATTERY_WAKECOUNT="$XDG_RUNTIME_DIR/wakeup.battery.count"
-
-saveAllEventCounts() {
-	#these help us determine the reason of the next wakeup
-	cat "$MODEMUPRTC" > "$OLD_MODEM_WAKECOUNT"
-	cat "$POWERRTC" > "$OLD_POWER_WAKECOUNT"
-	cat "$COVERRTC" > "$OLD_COVER_WAKECOUNT"
-	cat "$BATTERYRTC" > "$OLD_BATTERY_WAKECOUNT"
-}
-
-whichWake() {
-	#attempt to find the reason why we woke up:
-	if [ -f "$POWERRTC" ] && [ "$(cat "$POWERRTC")" -gt "$(cat "$OLD_POWER_WAKECOUNT")" ] ; then
-		echo "usb power"
-		return
-	fi
-
-	if [ -f "$MODEMUPRTC" ] && [ "$(cat "$MODEMUPRTC")" -gt "$(cat "$OLD_MODEM_WAKECOUNT")" ] ; then
-		echo "modem"
-		return
-	fi
-
-	if [ -f "$COVERRTC" ] && [ "$(cat "$COVERRTC")" -gt "$(cat "$OLD_COVER_WAKECOUNT")" ] ;then
-		echo "cover"
-		return
-	fi
-
-	if [ -f "$BATTERYRTC" ] && [ "$(cat "$BATTERYRTC")" -gt "$(cat "$OLD_BATTERY_WAKECOUNT")" ] ;then
-		echo "battery"
-		return
-	fi
-
-	echo "button"
-}
-
 finish() {
 	if [ -n "$INITIAL" ]; then
 		echo "$INITIAL" > /sys/power/autosleep

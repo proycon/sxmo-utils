@@ -95,10 +95,4 @@ SXMO_RTW_SCAN_INTERVAL	| Does the wifi kernel module offer a rtw_scan_interval_t
 
 SXMO_SYS_FILES			| String of files for sxmo_setpermissions.sh to make +rw (see sxmo_setpermissions.sh)
 
-SXMO_MODEMRTC			| Modem wakeup number in /sys/class/wakeup/wakeup<number>/ (see sxmo_suspend.sh) [default: 10]
-
-SXMO_POWERRTC			| Power wakeup number in /sys/class/wakeup/wakeup<number>/ (see sxmo_suspend.sh) [default: 5]
-
-SXMO_COVERRTC			| Open cover wakeup number in /sys/class/wakeup/wakeup<number>/ (see sxmo_suspend.sh) [default: 9999]
-
 SXMO_VIBRATE_DEV		| Path to vibration device (see sxmo_vibrate.c and clickclack.c) [default: /dev/input/by-path/platform-vibrator-event]
