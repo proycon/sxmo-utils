@@ -50,39 +50,53 @@ whichWake() {
 	echo "button"
 }
 
-sxmo_log "going to suspend to crust"
-
-saveAllEventCounts
-
-sxmo_hook_presuspend.sh
-
-sxmo_led.sh blink red
-
-if suspend_time="$(sxmo_hook_mnc.sh)"; then
-	sxmo_log "calling suspend with suspend_time <$suspend_time>"
-
-	start="$(date "+%s")"
-	sxmo_hook_suspend.sh "$suspend_time"
-
-	#We woke up again
-	time_spent="$(( $(date "+%s") - start ))"
-
-	if [ "$suspend_time" -gt 0 ] && [ "$((time_spent + 10))" -ge "$suspend_time" ]; then
-		UNSUSPENDREASON="rtc"
-	else
-		UNSUSPENDREASON="$(whichWake)"
+finish() {
+	if [ -n "$INITIAL" ]; then
+		echo "$INITIAL" > /sys/power/autosleep
 	fi
-else
-	sxmo_log "fake suspend (suspend_time ($suspend_time) less than zero)"
-	UNSUSPENDREASON=rtc # we fake the crust for those seconds
+	kill "$WAKEPID"
+	exit
+}
+
+autosuspend() {
+	YEARS8_TO_SEC=268435455
+
+	INITIAL="$(cat /sys/power/autosleep)"
+	trap 'finish' TERM INT EXIT
+
+	while : ; do
+		# necessary?
+		echo "$INITIAL" > /sys/power/autosleep
+
+		suspend_time=99999999 # far away
+		mnc="$(sxmo_hook_mnc.sh)"
+		if [ -n "$mnc" ] && [ "$mnc" -gt 0 ] && [ "$mnc" -lt "$YEARS8_TO_SEC" ]; then
+			if [ "$mnc" -le 15 ]; then # cronjob imminent
+				echo "waiting_cronjob" | doas tee -a /sys/power/wake_lock > /dev/null
+				suspend_time=$((mnc + 1)) # to arm the following one
+			else
+				suspend_time=$((mnc - 10))
+			fi
+		fi
+
+		sxmo_wakeafter "$suspend_time" "sxmo_autosuspend.sh wokeup" &
+		WAKEPID=$!
+		sleep 1 # wait for it to epoll pwait
+
+		echo mem > /sys/power/autosleep
+		wait
+	done
+}
+
+wokeup() {
+	# 10s basic hold
+	echo "woke_up 10000000000" | doas tee -a /sys/power/wake_lock > /dev/null
+
+	sxmo_hook_postwake.sh
+}
+
+if [ -z "$*" ]; then
+	set -- autosuspend
 fi
 
-echo "$UNSUSPENDREASON" > "$SXMO_UNSUSPENDREASONFILE"
-
-sxmo_log "woke up from crust (reason=$UNSUSPENDREASON)"
-
-if [ "$UNSUSPENDREASON" = "rtc" ]; then
-	sxmo_mutex.sh can_suspend lock "Waiting for cronjob"
-fi
-
-sxmo_hook_postwake.sh "$UNSUSPENDREASON"
+"$@"

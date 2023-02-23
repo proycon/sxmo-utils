@@ -14,9 +14,9 @@ UNSUSPENDREASON="$1"
 
 # stay awake if modem has crashed for 30s to give modem time to recover
 modemloop() {
-	sxmo_mutex.sh can_suspend lock "! Modem crashed."
+	echo "modem_crashed" | doas tee -a /sys/power/wake_lock > /dev/null
 	sleep 30s
-	sxmo_mutex.sh can_suspend free "! Modem crashed."
+	echo "modem_crashed" | doas tee -a /sys/power/wake_unlock > /dev/null
 }
 
 if [ "$UNSUSPENDREASON" = "modem" ]; then

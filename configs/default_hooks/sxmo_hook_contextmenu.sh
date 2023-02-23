@@ -85,7 +85,7 @@ case "$WMCLASS" in
 			$icon_clk Change Timezone            ^ 1 ^ sxmo_timezonechange.sh
 			$icon_zzz Auto-suspend $(
 				[ -e "$XDG_CACHE_HOME"/sxmo/sxmo.nosuspend ] && printf "%s" "$icon_tof" || printf "%s" "$icon_ton"
-			) ^ 1 ^ (rm $XDG_CACHE_HOME/sxmo/sxmo.nosuspend || touch $XDG_CACHE_HOME/sxmo/sxmo.nosuspend); sxmo_hook_check_state_mutexes.sh
+			) ^ 1 ^ (rm $XDG_CACHE_HOME/sxmo/sxmo.nosuspend || touch $XDG_CACHE_HOME/sxmo/sxmo.nosuspend)
 			$icon_zzz Auto-screen-off $(
 				[ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ] && printf "%s" "$icon_tof" || printf "%s" "$icon_ton"
 			) ^ 1 ^ (rm $XDG_CACHE_HOME/sxmo/sxmo.noidle || touch $XDG_CACHE_HOME/sxmo/sxmo.noidle) && sxmo_hook_unlock.sh
@@ -109,7 +109,6 @@ case "$WMCLASS" in
 		CHOICES="
 			$icon_lck Lock               ^ 0 ^ sxmo_hook_lock.sh
 			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_hook_screenoff.sh
-			$icon_zzz Suspend            ^ 0 ^ sxmo_hook_screenoff.sh && sxmo_suspend.sh
 			$icon_out Logout             ^ 0 ^ confirm Logout && sxmo_power.sh logout
 			$([ -f "$(xdg_data_path xsessions/sxmo.desktop)" ] &&
 				[ -f "$(xdg_data_path wayland-sessions/swmo.desktop)" ] &&

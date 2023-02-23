@@ -8,13 +8,11 @@
 . sxmo_common.sh
 
 # We can have multiple cronjobs at the same time
-sxmo_mutex.sh can_suspend lock "Executing cronjob"
-sxmo_mutex.sh can_suspend free "Waiting for cronjob"
-sxmo_hook_statusbar.sh lockedby
+echo "executing_cronjob" | doas tee -a /sys/power/wake_lock > /dev/null
+echo "waiting_cronjob" | doas tee -a /sys/power/wake_unlock > /dev/null
 
 finish() {
-	sxmo_mutex.sh can_suspend free "Executing cronjob"
-	sxmo_hook_statusbar.sh lockedby
+	echo "executing_cronjob" | doas tee -a /sys/power/wake_unlock > /dev/null
 	exit 0
 }
 

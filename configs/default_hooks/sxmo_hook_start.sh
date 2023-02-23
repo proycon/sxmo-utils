@@ -63,6 +63,11 @@ esac
 # To setup initial lock state
 sxmo_hook_unlock.sh
 
+# Turn on auto-suspend
+if [ -w "/sys/power/autosleep" ] && [ -f "/sys/power/wake_lock" ]; then
+	superctl start sxmo_autosuspend
+fi
+
 # Turn on lisgd
 superctl start sxmo_hook_lisgd
 

@@ -6,12 +6,12 @@
 . sxmo_common.sh
 
 free_mutex() {
-	sxmo_mutex.sh can_suspend free "Playing with leds"
+	echo "playing_with_leds" | doas tee -a /sys/power/wake_unlock > /dev/null
 	exit
 }
 
 ensure_mutex() {
-	sxmo_mutex.sh can_suspend lock "Playing with leds"
+	echo "playing_with_leds" | doas tee -a /sys/power/wake_lock > /dev/null
 	trap 'free_mutex' TERM INT
 }
 

@@ -12,6 +12,10 @@ flock -x 3
 sxmo_log "transitioning to stage lock"
 printf lock > "$SXMO_STATE"
 
+if [ -f /sys/power/wake_lock ]; then
+	echo not_screenoff | doas tee -a /sys/power/wake_lock > /dev/null
+fi
+
 # This hook is called when the system reaches a locked state
 
 sxmo_led.sh blink blue &

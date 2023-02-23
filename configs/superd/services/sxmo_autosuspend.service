@@ -1,0 +1,7 @@
+[Unit]
+Description=daemon for autosuspending
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/sxmo_autosuspend.sh

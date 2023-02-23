@@ -5,46 +5,43 @@
 # This hook goal is to setup mutexes if the device must be considered
 # as idle or not, if it can go to crust or not
 
-# WARNING: if you remove an entry, be sure to run `sxmo_mutex.sh can_suspend
-# free "entry name"` afterwards.
-
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
 lock_suspend_mutex() {
-	if ! sxmo_mutex.sh can_suspend lockedby "$1"; then
-		sxmo_mutex.sh can_suspend lock "$1"
-	fi
+	echo "$1" | doas tee -a /sys/power/wake_lock > /dev/null
+	sxmo_debug "lock \"$1\""
 }
 
 free_suspend_mutex() {
-	sxmo_mutex.sh can_suspend free "$1"
+	echo "$1" | doas tee -a /sys/power/wake_unlock > /dev/null 2>&1
+	sxmo_debug "free \"$1\""
 }
 
 cleanup_main_mutex() {
-	free_suspend_mutex "Checking some mutexes"
+	free_suspend_mutex "checking_mutexes"
 	exit 0
 }
 
 exec 3<> "${XDG_RUNTIME_DIR:-$HOME}/sxmo.checkstatemutexes.lock"
 flock -x 3
 
-lock_suspend_mutex "Checking some mutexes"
+lock_suspend_mutex "checking_mutexes"
 trap 'cleanup_main_mutex' TERM INT EXIT
 
 # ongoing_call
 if pgrep -f sxmo_modemcall.sh > /dev/null; then
-	lock_suspend_mutex "Ongoing call"
+	lock_suspend_mutex "ongoing_call"
 else
-	free_suspend_mutex "Ongoing call"
+	free_suspend_mutex "ongoing_call"
 fi
 
 # hotspot active
 if nmcli -t c show --active | grep ^Hotspot; then
-	lock_suspend_mutex "Hotspot is active"
+	lock_suspend_mutex "hotspot_active"
 else
-	free_suspend_mutex "Hotspot is active"
+	free_suspend_mutex "hotspot_active"
 fi
 
 ssh_connected() {
@@ -57,44 +54,44 @@ ssh_connected() {
 
 # active_ssh
 if ssh_connected; then
-	lock_suspend_mutex "SSH is connected"
+	lock_suspend_mutex "ssh_connected"
 else
-	free_suspend_mutex "SSH is connected"
+	free_suspend_mutex "ssh_connected"
 fi
 
 # active_mosh
 if command -v mosh-server > /dev/null && pgrep -f mosh-server > /dev/null; then
-	lock_suspend_mutex "Mosh is listening"
+	lock_suspend_mutex "mosh_listening"
 else
-	free_suspend_mutex "Mosh is listening"
+	free_suspend_mutex "mosh_listening"
 fi
 
 # playing_mpc
 if command -v mpc > /dev/null && mpc status 2>/dev/null | grep -q '\[playing\]'; then
-	lock_suspend_mutex "MPD is playing music"
+	lock_suspend_mutex "mpd_playing"
 else
-	free_suspend_mutex "MPD is playing music"
+	free_suspend_mutex "mpd_playing"
 fi
 
 # mpris compatible media player
 if command -v playerctl > /dev/null; then
 	if test "$(playerctl status 2>/dev/null)" = "Playing"; then
-		lock_suspend_mutex "MPRIS client is playing"
+		lock_suspend_mutex "mpris_playing"
 	else
-		free_suspend_mutex "MPRIS client is playing"
+		free_suspend_mutex "mpris_playing"
 	fi
 fi
 
 # photos_processing
 if pgrep -f postprocess > /dev/null; then
-	lock_suspend_mutex "Camera postprocessing"
+	lock_suspend_mutex "camera_postprocessing"
 else
-	free_suspend_mutex "Camera postprocessing"
+	free_suspend_mutex "camera_postprocessing"
 fi
 
 # auto_suspend
 if [ -e "$XDG_CACHE_HOME/sxmo/sxmo.nosuspend" ]; then
-	lock_suspend_mutex "Manually disabled"
+	lock_suspend_mutex "manually_disabled"
 else
-	free_suspend_mutex "Manually disabled"
+	free_suspend_mutex "manually_disabled"
 fi

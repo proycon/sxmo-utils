@@ -19,7 +19,7 @@ finish() {
 	# (see static const int stk3310_ps_max[4])
 	printf 6553 > "$prox_path/events/in_proximity_thresh_rising_value"
 
-	sxmo_mutex.sh can_suspend free "Proximity lock is running"
+	echo "proximity_lock_running" | doas tee -a /sys/power/wake_unlock > /dev/null
 	sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 
 	exec sxmo_hook_"$INITIALSTATE".sh
@@ -50,8 +50,7 @@ trap 'finish' TERM INT
 
 sxmo_daemons.sh stop idle_locker
 
-sxmo_mutex.sh can_suspend lock "Proximity lock is running"
-sxmo_hook_statusbar.sh lockedby
+echo "proximity_lock_running" | doas tee -a /sys/power/wake_lock > /dev/null
 sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 
 # find the device

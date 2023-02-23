@@ -260,8 +260,6 @@ checkfornewtexts() {
 	done
 }
 
-sxmo_mutex.sh can_suspend lock "Modem is used"
-sxmo_hook_statusbar.sh lockedby
+echo "modem_used" | doas tee -a /sys/power/wake_lock > /dev/null
 "$@"
-sxmo_mutex.sh can_suspend free "Modem is used"
-sxmo_hook_statusbar.sh lockedby
+echo "modem_used" | doas tee -a /sys/power/wake_unlock > /dev/null
