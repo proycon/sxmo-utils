@@ -28,7 +28,7 @@ autosuspend() {
 		mnc="$(sxmo_hook_mnc.sh)"
 		if [ -n "$mnc" ] && [ "$mnc" -gt 0 ] && [ "$mnc" -lt "$YEARS8_TO_SEC" ]; then
 			if [ "$mnc" -le 15 ]; then # cronjob imminent
-				echo "waiting_cronjob" | doas tee -a /sys/power/wake_lock > /dev/null
+				sxmo_wakelock.sh lock waiting_cronjob infinite
 				suspend_time=$((mnc + 1)) # to arm the following one
 			else
 				suspend_time=$((mnc - 10))
@@ -46,7 +46,7 @@ autosuspend() {
 
 wokeup() {
 	# 10s basic hold
-	echo "woke_up 10000000000" | doas tee -a /sys/power/wake_lock > /dev/null
+	sxmo_wakelock.sh lock woke_up 10000000000
 
 	sxmo_hook_postwake.sh
 }

@@ -11,9 +11,7 @@
 sxmo_log "transitioning to stage unlock"
 printf unlock > "$SXMO_STATE"
 
-if [ -f /sys/power/wake_lock ]; then
-	echo "stay_awake ${SXMO_UNLOCK_IDLE_TIME:-120}000000000" | doas tee -a /sys/power/wake_lock > /dev/null
-fi
+sxmo_wakelock.sh lock stay_awake "${SXMO_UNLOCK_IDLE_TIME:-120}000000000"
 
 sxmo_hook_statusbar.sh state_change &
 
@@ -27,6 +25,6 @@ sxmo_daemons.sh start periodic_state_mutex_check sxmo_run_periodically.sh 10 sxm
 # suspend after if no activity after 120s
 sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
 	timeout "1" '' \
-	resume "echo \"stay_awake ${SXMO_UNLOCK_IDLE_TIME:-120}000000000\" | doas tee -a /sys/power/wake_lock > /dev/null"
+	resume "sxmo_wakelock.sh lock stay_awake \"${SXMO_UNLOCK_IDLE_TIME:-120}000000000\""
 
 wait

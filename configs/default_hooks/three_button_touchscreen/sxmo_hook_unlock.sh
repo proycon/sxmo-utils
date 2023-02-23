@@ -14,9 +14,7 @@ flock -x 3
 sxmo_log "transitioning to stage unlock"
 printf unlock > "$SXMO_STATE"
 
-if [ -f /sys/power/wake_lock ]; then
-	echo not_screenoff | doas tee -a /sys/power/wake_lock > /dev/null
-fi
+sxmo_wakelock.sh lock not_screenoff infinite
 
 sxmo_led.sh blink red green &
 sxmo_hook_statusbar.sh state_change &

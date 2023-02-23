@@ -34,7 +34,7 @@ update_nixos() {
 	echo "Upgrade complete - reboot for all changes to take effect"
 }
 
-echo "upgrading" | doas tee -a /sys/power/wake_lock > /dev/null
+sxmo_wakelock.sh lock upgrading infinite
 
 case "$OS" in
 	alpine|postmarketos) update_apk;;
@@ -42,4 +42,4 @@ case "$OS" in
 	nixos) update_nixos;;
 esac
 
-echo "upgrading" | doas tee -a /sys/power/wake_unlock > /dev/null
+sxmo_wakelock.sh unlock upgrading

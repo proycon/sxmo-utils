@@ -6,25 +6,10 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-UNSUSPENDREASON="$1"
-
-#The UNSUSPENDREASON can be "usb power", "modem", "rtc" (real-time clock
-#periodic wakeup) or "button". You will likely want to check against this and
-#decide what to do
-
-# stay awake if modem has crashed for 30s to give modem time to recover
-modemloop() {
-	echo "modem_crashed" | doas tee -a /sys/power/wake_lock > /dev/null
-	sleep 30s
-	echo "modem_crashed" | doas tee -a /sys/power/wake_unlock > /dev/null
-}
-
-if [ "$UNSUSPENDREASON" = "modem" ]; then
-	MMCLI="$(mmcli -m any -J 2>/dev/null)"
-	if [ -z "$MMCLI" ]; then
-		sxmo_notify_user.sh --urgency=critical "Modem crashed! 30s recovery."
-		modemloop &
-	fi
+MMCLI="$(mmcli -m any -J 2>/dev/null)"
+if [ -z "$MMCLI" ]; then
+	sxmo_notify_user.sh --urgency=critical "Modem crashed! 30s recovery."
+	sxmo_wakelock.sh lock modem_crashed 30000000000
 fi
 
 # see the comments in sxmo_hook_lock.sh

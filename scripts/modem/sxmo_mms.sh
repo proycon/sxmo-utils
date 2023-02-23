@@ -286,6 +286,6 @@ processmms() {
 	fi
 }
 
-echo "mms_processing" | doas tee -a /sys/power/wake_lock > /dev/null
+sxmo_wakelock.sh lock mms_processing 30000000000
 "$@"
-echo "mms_processing" | doas tee -a /sys/power/wake_unlock > /dev/null
+sxmo_wakelock.sh unlock mms_processing 30000000000

@@ -260,6 +260,6 @@ checkfornewtexts() {
 	done
 }
 
-echo "modem_used" | doas tee -a /sys/power/wake_lock > /dev/null
+sxmo_wakelock.sh lock modem_used 30000000000
 "$@"
-echo "modem_used" | doas tee -a /sys/power/wake_unlock > /dev/null
+sxmo_wakelock.sh unlock modem_used

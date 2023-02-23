@@ -8,11 +8,11 @@
 . sxmo_common.sh
 
 # We can have multiple cronjobs at the same time
-echo "executing_cronjob" | doas tee -a /sys/power/wake_lock > /dev/null
-echo "waiting_cronjob" | doas tee -a /sys/power/wake_unlock > /dev/null
+sxmo_wakelock.sh lock executing_cronjob infinite
+sxmo_wakelock.sh unlock waiting_cronjob
 
 finish() {
-	echo "executing_cronjob" | doas tee -a /sys/power/wake_unlock > /dev/null
+	sxmo_wakelock.sh unlock executing_cronjob
 	exit 0
 }
 
