@@ -25,6 +25,7 @@ _validint() {
 
 lock() {
 	if [ "$#" -ne 2 ]; then
+		sxmo_log "warning: sxmo_wakelock.sh $*"
 		usage
 		exit 1
 	fi
@@ -64,6 +65,7 @@ lock() {
 unlock() {
 	if [ "$#" -ne 1 ]; then
 		usage
+		sxmo_log "warning: sxmo_wakelock.sh $*"
 		exit 1
 	fi
 
@@ -86,5 +88,7 @@ case "$cmd" in
 	lock) lock "$@";;
 	unlock) unlock "$@";;
 	debug) debug "$@";;
-	*) usage; exit 1;;
+	*) 
+		sxmo_log "warning: sxmo_wakelock.sh $*"
+		usage; exit 1;;
 esac
