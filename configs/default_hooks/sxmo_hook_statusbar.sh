@@ -268,54 +268,6 @@ set_battery() {
 	done
 }
 
-<<<<<<< HEAD
-set_lockedby() {
-	sxmo_mutex.sh can_suspend list | sort -u | while read -r line; do
-		case "$line" in
-			"SSH"*|"Mosh"*)
-				printf "S\n"
-				;;
-			"Hotspot"*)
-				printf "H\n"
-				;;
-			"Camera postprocessing")
-				printf "C\n"
-				;;
-			"Proximity lock is running")
-				printf "P\n"
-				;;
-			"Ongoing call")
-				printf "O\n"
-				;;
-			"Modem is used")
-				printf "M\n"
-				;;
-			"Executing cronjob")
-				printf "X\n"
-				;;
-			"Waiting for cronjob")
-				printf "W\n"
-				;;
-			"Manually disabled")
-				printf "N\n" #N = No suspend
-				;;
-			"Playing with leds"|"Checking some mutexes")
-				printf "*\n"
-				;;
-			*"is playing"*)
-				printf "%s\n" "$icon_mus"
-				;;
-			*)
-				printf "%s\n" "$line" | sed 's/\(.\{7\}\).*/\1…/g'
-				;;
-		esac
-	done | sort -u | tr -d '\n' | xargs -0 printf "%s\n" | while read -r lockedby; do
-		sxmobar -a lockedby-status 44 "$lockedby"
-	done
-}
-
-=======
->>>>>>> b23b8d74 (statusbar: drop lockedby)
 set_notifications() {
 	[ -z "$SXMO_DISABLE_LEDS" ] && return
 	NNOTIFICATIONS="$(find "$SXMO_NOTIFDIR" -type f | wc -l)"
