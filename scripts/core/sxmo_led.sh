@@ -5,16 +5,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-free_mutex() {
-	sxmo_wakelock.sh unlock playing_with_leds
-	exit
-}
-
-ensure_mutex() {
-	sxmo_wakelock.sh lock playing_with_leds 2000000000
-	trap 'free_mutex' TERM INT
-}
-
 get_type() {
 	# Get type from variable name created dynamically from the color,
 	# e.g. $SXMO_LED_RED_TYPE
@@ -78,11 +68,20 @@ set_leds() {
 	wait
 }
 
+finish_blinking() {
+	sxmo_wakelock.sh unlock playing_with_leds
+	eval set_leds green '$'old_green blue '$'old_blue red '$'old_red ${white:+white '$'old_white}
+	exit
+}
+
 blink_leds() {
 	for color in green blue red white; do
 		percent="$(get_led "$color")"
 		eval "old_$color=$percent" # store old value
 	done
+
+	sxmo_wakelock.sh lock playing_with_leds 2000000000
+	trap 'finish_blinking' TERM INT EXIT
 
 	while [ -n "$1" ]; do
 		case "$1" in
@@ -105,8 +104,6 @@ blink_leds() {
 	set_leds green 0 blue 0 red 0 ${white:+white 0}
 
 	sleep 0.1 # Make blink noticable
-
-	eval set_leds green '$'old_green blue '$'old_blue red '$'old_red ${white:+white '$'old_white}
 }
 
 [ -z "$SXMO_DISABLE_LEDS" ] || exit 1
@@ -118,9 +115,7 @@ cmd="$1"
 shift
 case "$cmd" in
 	"set"|blink)
-		ensure_mutex
 		"$cmd"_leds "$@"
-		free_mutex
 		;;
 	get)
 		get_led "$@"
