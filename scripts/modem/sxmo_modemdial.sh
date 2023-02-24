@@ -63,7 +63,7 @@ dial_menu() {
 		grep . <<EOF | sxmo_dmenu_with_kb.sh -p Number -i
 Close Menu
 More contacts
-$(sxmo_contacts.sh)
+$(sxmo_contacts.sh --no-groups)
 EOF
 	)"
 
@@ -72,7 +72,7 @@ EOF
 		NUMBER="$(
 			grep . <<EOF | sxmo_dmenu_with_kb.sh -p Number -i
 Close Menu
-$(sxmo_contacts.sh --all)
+$(sxmo_contacts.sh --all --no-groups)
 EOF
 		)"
 	fi

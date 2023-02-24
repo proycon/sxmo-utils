@@ -97,7 +97,13 @@ unknown_contacts() {
 [ -f "$SXMO_CONTACTFILE" ] || touch "$SXMO_CONTACTFILE"
 
 if [ "$1" = "--all" ]; then
-	all_contacts
+	if [ "$2" = "--no-groups" ]; then
+		all_contacts | grep -v '+.*+'
+	else
+		all_contacts
+	fi
+elif [ "$1" = "--no-groups" ]; then
+	contacts | grep -v '+.*+'
 elif [ "$1" = "--unknown" ]; then
 	unknown_contacts
 elif [ "$1" = "--texted" ]; then
