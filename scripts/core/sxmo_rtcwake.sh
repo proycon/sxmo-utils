@@ -8,11 +8,11 @@
 . sxmo_common.sh
 
 # We can have multiple cronjobs at the same time
-sxmo_wakelock.sh lock executing_cronjob infinite
+sxmo_wakelock.sh lock executing_cronjob_$$ infinite
 sxmo_wakelock.sh unlock waiting_cronjob
 
 finish() {
-	sxmo_wakelock.sh unlock executing_cronjob
+	sxmo_wakelock.sh unlock executing_cronjob_$$
 	exit 0
 }
 
