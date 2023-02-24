@@ -64,7 +64,7 @@ esac
 sxmo_hook_unlock.sh
 
 # Turn on auto-suspend
-if [ -w "/sys/power/autosleep" ] && [ -f "/sys/power/wake_lock" ]; then
+if [ -w "/sys/power/wakeup_count" ] && [ -f "/sys/power/wake_lock" ]; then
 	superctl start sxmo_autosuspend
 fi
 

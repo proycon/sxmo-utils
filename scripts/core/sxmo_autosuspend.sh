@@ -6,53 +6,30 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-finish() {
-	if [ -n "$INITIAL" ]; then
-		echo "$INITIAL" > /sys/power/autosleep
+set -e
+# TODO: debugging only
+set -x
+
+while true; do
+	# Make sure it's fresh before checking locks, reading wakeup_count will
+	# block so we can't poll it here
+	sxmo_hook_check_state_mutexes.sh
+
+	# Reading from wakeup_count blocks until there are no wakelocks
+	wakeup_count=$(cat /sys/power/wakeup_count)
+
+	# If the wakeup count has changed since we read it, this will fail so we
+	# know to try again. If something takes a wake_lock after we do this, it
+	# will cause the kernel to abort suspend.
+	echo "$wakeup_count" > /sys/power/wakeup_count || continue
+
+	# If sxmo_suspend failed then we didn't enter suspend, it should be safe
+	# to retry immediately. There's a delay so we don't eat up all the
+	# system resoures if the kernel can't suspend.
+	if ! sxmo_suspend.sh; then
+		sleep 1
+		continue
 	fi
-	kill "$WAKEPID"
-	exit
-}
 
-autosuspend() {
-	YEARS8_TO_SEC=268435455
-
-	INITIAL="$(cat /sys/power/autosleep)"
-	trap 'finish' TERM INT EXIT
-
-	while : ; do
-		# necessary?
-		echo "$INITIAL" > /sys/power/autosleep
-
-		suspend_time=99999999 # far away
-		mnc="$(sxmo_hook_mnc.sh)"
-		if [ -n "$mnc" ] && [ "$mnc" -gt 0 ] && [ "$mnc" -lt "$YEARS8_TO_SEC" ]; then
-			if [ "$mnc" -le 15 ]; then # cronjob imminent
-				sxmo_wakelock.sh lock waiting_cronjob infinite
-				suspend_time=$((mnc + 1)) # to arm the following one
-			else
-				suspend_time=$((mnc - 10))
-			fi
-		fi
-
-		sxmo_wakeafter "$suspend_time" "sxmo_autosuspend.sh wokeup" &
-		WAKEPID=$!
-		sleep 1 # wait for it to epoll pwait
-
-		echo mem > /sys/power/autosleep
-		wait
-	done
-}
-
-wokeup() {
-	# 10s basic hold
-	sxmo_wakelock.sh lock woke_up 10000000000
-
-	sxmo_hook_postwake.sh
-}
-
-if [ -z "$*" ]; then
-	set -- autosuspend
-fi
-
-"$@"
+	sleep 10
+done

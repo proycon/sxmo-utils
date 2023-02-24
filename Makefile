@@ -11,8 +11,7 @@ OPENRC:=1
 CC ?= $(CROSS_COMPILE)gcc
 PROGRAMS = \
 	programs/sxmo_aligned_sleep \
-	programs/sxmo_vibrate \
-	programs/sxmo_wakeafter
+	programs/sxmo_vibrate
 
 all: $(PROGRAMS)
 
@@ -23,9 +22,6 @@ shellcheck:
 
 programs/%: programs/%.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ $<
-
-programs/sxmo_wakeafter: programs/sxmo_wakeafter.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -Wl,--no-as-needed -lcap -o $@ $<
 
 clean:
 	rm -f programs/sxmo_aligned_sleep programs/sxmo_vibrate
@@ -77,8 +73,6 @@ install-scripts: $(PROGRAMS)
 
 	install -D programs/sxmo_aligned_sleep $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_vibrate $(DESTDIR)$(PREFIX)/bin/
-	install -D programs/sxmo_wakeafter $(DESTDIR)$(PREFIX)/bin/
-	setcap 'cap_block_suspend=p cap_wake_alarm=p' $(DESTDIR)$(PREFIX)/bin/sxmo_wakeafter
 
 	find $(DESTDIR)$(PREFIX)/share/sxmo/default_hooks/ -type f -exec ./setup_config_version.sh "{}" \;
 	find $(DESTDIR)$(PREFIX)/share/sxmo/appcfg/ -type f -exec ./setup_config_version.sh "{}" \;
