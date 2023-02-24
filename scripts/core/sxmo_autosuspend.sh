@@ -7,8 +7,6 @@
 . sxmo_common.sh
 
 set -e
-# TODO: debugging only
-set -x
 
 while true; do
 	# Make sure it's fresh before checking locks, reading wakeup_count will
