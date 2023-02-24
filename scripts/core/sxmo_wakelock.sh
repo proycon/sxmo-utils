@@ -37,7 +37,7 @@ lock() {
 	case "$2" in
 		infinite)
 			sxmo_debug "lock $1 infinite"
-			echo "$1" | doas tee -a /sys/power/wake_lock > /dev/null
+			echo "sxmo_$1" | doas tee -a /sys/power/wake_lock > /dev/null
 			exit
 			;;
 		*ms)
