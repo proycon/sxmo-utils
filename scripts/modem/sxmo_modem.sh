@@ -264,6 +264,6 @@ checkfornewtexts() {
 	done
 }
 
-sxmo_wakelock.sh lock modem_used 30000000000
+sxmo_wakelock.sh lock modem_used 30s
 "$@"
 sxmo_wakelock.sh unlock modem_used

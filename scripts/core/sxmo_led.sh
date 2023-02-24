@@ -80,7 +80,7 @@ blink_leds() {
 		eval "old_$color=$percent" # store old value
 	done
 
-	sxmo_wakelock.sh lock playing_with_leds 2000000000
+	sxmo_wakelock.sh lock playing_with_leds 2s
 	trap 'finish_blinking' TERM INT EXIT
 
 	while [ -n "$1" ]; do

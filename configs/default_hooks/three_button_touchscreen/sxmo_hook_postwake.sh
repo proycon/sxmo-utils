@@ -9,7 +9,7 @@
 MMCLI="$(mmcli -m any -J 2>/dev/null)"
 if [ -z "$MMCLI" ]; then
 	sxmo_notify_user.sh --urgency=critical "Modem crashed! 30s recovery."
-	sxmo_wakelock.sh lock modem_crashed 30000000000
+	sxmo_wakelock.sh lock modem_crashed 30s
 fi
 
 # see the comments in sxmo_hook_lock.sh
