@@ -44,4 +44,5 @@ sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
 
 wait
 
+sxmo_wakelock.sh lock hold_a_bit 3s # avoid immediate suspension
 sxmo_wakelock.sh unlock not_screenoff
