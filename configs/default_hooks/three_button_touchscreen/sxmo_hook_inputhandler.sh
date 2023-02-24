@@ -227,6 +227,18 @@ case "$WMCLASS" in
 						;;
 				esac
 				;;
+			*'gomuks'*)
+				case "$ACTION" in
+					*"oneup")
+						sxmo_type.sh -k Page_Down
+						exit 0
+						;;
+					*"onedown")
+						sxmo_type.sh -k Page_Up
+						exit 0
+						;;
+				esac
+				;;
 		esac
 		# Now we try generic actions for terminal
 		case "$ACTION" in
