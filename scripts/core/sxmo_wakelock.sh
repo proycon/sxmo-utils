@@ -92,7 +92,7 @@ case "$cmd" in
 	lock) lock "$@";;
 	unlock) unlock "$@";;
 	debug) debug "$@";;
-	*) 
+	*)
 		sxmo_log "warning: sxmo_wakelock.sh $*"
 		usage; exit 1;;
 esac
