@@ -44,6 +44,4 @@ sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
 
 wait
 
-if [ -f /sys/power/wake_unlock ]; then
-	sxmo_wakelock.sh unlock not_screenoff
-fi
+sxmo_wakelock.sh unlock not_screenoff

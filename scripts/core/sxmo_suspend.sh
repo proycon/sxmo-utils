@@ -8,24 +8,27 @@
 
 sxmo_log "going to suspend to crust"
 
-if suspend_time="$(sxmo_hook_mnc.sh)"; then
-	sxmo_log "calling suspend with suspend_time <$suspend_time>"
+YEARS8_TO_SEC=268435455
+suspend_time=99999999 # far away
 
-	start="$(date "+%s")"
-	rtcwake -m mem -s "$suspend_time" || exit 1
-
-	#We woke up again
-	time_spent="$(( $(date "+%s") - start ))"
-
-	if [ "$suspend_time" -gt 0 ] && [ "$((time_spent + 10))" -ge "$suspend_time" ]; then
-		UNSUSPENDREASON="rtc"
+mnc="$(sxmo_hook_mnc.sh)"
+if [ -n "$mnc" ] && [ "$mnc" -gt 0 ] && [ "$mnc" -lt "$YEARS8_TO_SEC" ]; then
+	if [ "$mnc" -le 15 ]; then # cronjob imminent
+		sxmo_wakelock.sh lock waiting_cronjob infinite
+		exit 1
+	else
+		suspend_time=$((mnc - 10))
 	fi
-else
-	sxmo_log "fake suspend (suspend_time ($suspend_time) less than zero)"
-	UNSUSPENDREASON=rtc # we fake the crust for those seconds
 fi
 
-if [ "$UNSUSPENDREASON" = "rtc" ]; then
+sxmo_log "calling suspend with suspend_time <$suspend_time>"
+
+start="$(date "+%s")"
+rtcwake -m mem -s "$suspend_time" || exit 1
+#We woke up again
+time_spent="$(( $(date "+%s") - start ))"
+
+if [ "$((time_spent + 15))" -ge "$suspend_time" ]; then
 	sxmo_wakelock.sh lock waiting_cronjob infinite
 fi
 
