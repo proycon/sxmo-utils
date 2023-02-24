@@ -18,9 +18,4 @@ if [ 1 = "$SXMO_RTW_SCAN_INTERVAL" ]; then
 	echo 1200 > "/sys/module/$SXMO_WIFI_MODULE/parameters/rtw_scan_interval_thr"
 fi
 
-if grep -q screenoff "$XDG_RUNTIME_DIR/sxmo.state"; then
-	# We stopped it in presuspend
-	sxmo_daemons.sh start periodic_blink sxmo_run_periodically.sh 2 sxmo_uniq_exec.sh sxmo_led.sh blink red blue
-fi
-
 # Add here whatever you want to do
