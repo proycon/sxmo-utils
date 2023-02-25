@@ -75,12 +75,7 @@ is_default_audio_mode() {
 enable_call_audio_mode() {
 	if ca_dbus_set_prop SelectMode uint32:1; then
 		sxmo_log "Successfully enabled call audio mode."
-		sxmo_log "Attempting hack to get things just right."
-		# fixes bug where sometimes we start with speaker on and mic off
-		enable_speaker
-		disable_speaker
-		mute_mic
-		unmute_mic
+		sxmo_hook_call_audio.sh "enable"
 		sxmo_hook_statusbar.sh volume
 		return 0
 	else
@@ -92,10 +87,7 @@ enable_call_audio_mode() {
 disable_call_audio_mode() {
 	if ca_dbus_set_prop SelectMode uint32:0; then
 		sxmo_log "Successfully disabled call audio mode."
-		sxmo_log "Attempting hack to get things just right."
-		# fixes bug where sometimes we leave call with speaker off
-		disable_speaker
-		enable_speaker
+		sxmo_hook_call_audio.sh "disable"
 		sxmo_hook_statusbar.sh volume
 		return 0
 	else
