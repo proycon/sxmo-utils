@@ -99,3 +99,5 @@ if ! daemon_isrunning modemmanager; then
 	sxmo_notify_user.sh --urgency=critical "The modemmanager failed to start!"
 	exit 1
 fi
+# we want 120s before sleeping again
+sxmo_wakelock.sh lock modem_manually_reset 120s

@@ -74,6 +74,10 @@ superctl start sxmo_hook_lisgd
 if [ "$(command -v ModemManager)" ]; then
 	# Turn on the dbus-monitors for modem-related tasks
 	superctl start sxmo_modemmonitor
+
+	# place a wakelock for 120s to allow the modem to fully warm up (eg25 +
+	# elogind/systemd would do this for us, but we don't use those.)
+	sxmo_wakelock.sh lock modem_warming_up 120s
 fi
 
 # Start the desktop widget (e.g. clock)
