@@ -30,7 +30,7 @@ else
 fi
 
 # hotspot active
-if nmcli -t c show --active | grep ^Hotspot; then
+if nmcli -t c show --active | grep -q ^Hotspot; then
 	sxmo_wakelock.sh lock hotspot_active "$DEFAULT_DURATION"
 else
 	sxmo_wakelock.sh unlock hotspot_active
