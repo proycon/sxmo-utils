@@ -145,8 +145,7 @@ $(
 	list_active_calls | while read -r line; do
 		CALLID="$(printf %s "$line" | cut -d" " -f1 | xargs basename)"
 		NUMBER="$(vid_to_number "$CALLID")"
-		CONTACT="$(sxmo_contacts.sh --name "$NUMBER")"
-		[ "$CONTACT" = "???" ] && CONTACT="$NUMBER"
+		CONTACT="$(sxmo_contacts.sh --name-or-number "$NUMBER")"
 		case "$line" in
 			*"(ringing-in)")
 				# TODO switch to this call
@@ -196,8 +195,7 @@ mute() {
 
 incoming_call_menu() {
 	NUMBER="$(vid_to_number "$1")"
-	CONTACTNAME="$(sxmo_contacts.sh --name "$NUMBER")"
-	[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$NUMBER"
+	CONTACTNAME="$(sxmo_contacts.sh --name-or-number "$NUMBER")"
 
 	if [ "$SXMO_WM" = "sway" ]; then
 		pickup_height="40"

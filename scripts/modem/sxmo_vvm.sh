@@ -19,8 +19,7 @@ processvvm() {
 	VVM_ID="$3" # unique id assigned to voice mail from vvmd
 	VVM_ATTACHMENT="$4" # full path + filename of amr file
 	VVM_FILE="$SXMO_LOGDIR/$VVM_SENDER/attachments/$(basename "$VVM_ATTACHMENT")"
-	VVM_SENDER_NAME="$(sxmo_contacts.sh --name "$VVM_SENDER")"
-	[ "$VVM_SENDER_NAME" = "???" ] && VVM_SENDER_NAME="$VVM_SENDER"
+	VVM_SENDER_NAME="$(sxmo_contacts.sh --name-or-number "$VVM_SENDER")"
 
 	mkdir -p "$SXMO_LOGDIR/$VVM_SENDER/attachments"
 

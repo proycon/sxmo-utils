@@ -108,6 +108,14 @@ elif [ "$1" = "--me" ]; then
 	all_contacts \
 		| grep "^Me: " \
 		| sed 's|^Me: ||'
+elif [ "$1" = "--name-or-number" ]; then
+	if [ -z "$2" ]; then
+		printf "???\n"
+	else
+		contact="$(sxmo_contacts.sh --name "$2")"
+		[ "$contact" = "???" ] && contact="$2"
+		printf %s "$contact"
+	fi
 elif [ "$1" = "--name" ]; then
 	if [ -z "$2" ]; then
 		printf "???\n"

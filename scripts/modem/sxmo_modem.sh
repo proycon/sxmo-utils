@@ -46,8 +46,7 @@ checkforfinishedcalls() {
 
 		rm -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.monitoredcall"
 
-		CONTACT="$(sxmo_contacts.sh --name "$FINISHEDNUMBER")"
-		[ "$CONTACT" = "???" ] && CONTACT="$FINISHEDNUMBER"
+		CONTACT="$(sxmo_contacts.sh --name-or-number "$FINISHEDNUMBER")"
 
 		TIME="$(date +%FT%H:%M:%S%z)"
 		mkdir -p "$SXMO_LOGDIR"
@@ -126,7 +125,6 @@ checkforincomingcalls() {
 	stderr "Incoming Call..."
 	INCOMINGNUMBER=$(sxmo_modemcall.sh vid_to_number "$VOICECALLID")
 	INCOMINGNUMBER="$(cleanupnumber "$INCOMINGNUMBER")"
-	CONTACTNAME=$(sxmo_contacts.sh --name "$INCOMINGNUMBER")
 
 	TIME="$(date +%FT%H:%M:%S%z)"
 	if cut -f1 "$SXMO_BLOCKFILE" 2>/dev/null | grep -q "^$INCOMINGNUMBER$"; then
@@ -135,7 +133,7 @@ checkforincomingcalls() {
 		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$SXMO_BLOCKDIR/modemlog.tsv"
 	else
 		stderr "Invoking ring hook (async)"
-		[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$INCOMINGNUMBER"
+		CONTACTNAME=$(sxmo_contacts.sh --name-or-number "$INCOMINGNUMBER")
 		sxmo_hook_ring.sh "$CONTACTNAME" &
 
 		mkdir -p "$SXMO_LOGDIR"
@@ -210,7 +208,6 @@ checkfornewtexts() {
 			grep sms.content.number |
 			sed -E 's/^sms\.content\.number\s+:\s+//'
 		)"
-		NUM="$(cleanupnumber "$NUM")"
 
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 		TIME="$(date +%FT%H:%M:%S%z -d "$TIME")"
@@ -224,7 +221,7 @@ checkfornewtexts() {
 		if cut -f1 "$SXMO_BLOCKFILE" 2>/dev/null | grep -q "^$NUM$"; then
 			mkdir -p "$SXMO_BLOCKDIR/$NUM"
 			stderr "BLOCKED text from number: $NUM (TEXTID: $TEXTID)"
-			printf %b "Received from $NUM at $TIME:\n$TEXT\n\n" >> "$SXMO_BLOCKDIR/$NUM/sms.txt"
+			sxmo_hook_smslog.sh "Received" "SMS" "$NUM" "$TIME" "$TEXT" >> "$SXMO_BLOCKDIR/$NUM/sms.txt"
 			printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$SXMO_BLOCKDIR/modemlog.tsv"
 			mmcli -m any --messaging-delete-sms="$TEXTID"
 			continue
@@ -242,11 +239,10 @@ checkfornewtexts() {
 
 		mkdir -p "$SXMO_LOGDIR/$NUM"
 		stderr "Text from number: $NUM (TEXTID: $TEXTID)"
-		printf %b "Received SMS from $NUM at $TIME:\n$TEXT\n\n" >> "$SXMO_LOGDIR/$NUM/sms.txt"
+		sxmo_hook_smslog.sh "Received" "SMS" "$NUM" "$TIME" "$TEXT" >> "$SXMO_LOGDIR/$NUM/sms.txt"
 		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		mmcli -m any --messaging-delete-sms="$TEXTID"
-		CONTACTNAME=$(sxmo_contacts.sh --name "$NUM")
-		[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$NUM"
+		CONTACTNAME=$(sxmo_contacts.sh --name-or-number "$NUM")
 
 		if [ -z "$SXMO_DISABLE_SMS_NOTIFS" ]; then
 			sxmo_notificationwrite.sh \

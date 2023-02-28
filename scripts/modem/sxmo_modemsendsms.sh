@@ -157,8 +157,7 @@ if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ] || [ -f "$SXMO_LO
 	[ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ] && rm "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 
 	MMS_ID="$(echo "$MESSAGE_PATH" | rev | cut -d'/' -f1 | rev)"
-	CONTACTNAME="$(sxmo_contacts.sh --name "$NUMBER")"
-	[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$NUMBER"
+	CONTACTNAME="$(sxmo_contacts.sh --name-or-number "$NUMBER")"
 	sxmo_hook_sendsms.sh "$CONTACTNAME" "$TEXT" "$MMS_ID" "$CONTACTNAME"
 	info "Sent mms text to $CONTACTNAME with mms id ($MMS_ID) message ok"
 
@@ -199,11 +198,10 @@ else
 
 	TIME="$(date +%FT%H:%M:%S%z)"
 	mkdir -p "$SXMO_LOGDIR/$NUMBER"
-	printf %b "Sent SMS to $NUMBER at $TIME:\n$TEXT\n\n" >> "$SXMO_LOGDIR/$NUMBER/sms.txt"
+	sxmo_hook_smslog.sh "Sent" "SMS" "$NUMBER" "$TIME" "$TEXT" >> "$SXMO_LOGDIR/$NUMBER/sms.txt"
 	printf "%s\tsent_txt\t%s\t%s chars\n" "$TIME" "$NUMBER" "$TEXTSIZE" >> "$SXMO_LOGDIR/modemlog.tsv"
 
-	CONTACTNAME="$(sxmo_contacts.sh --name "$NUMBER")"
-	[ "$CONTACTNAME" = "???" ] && CONTACTNAME="$NUMBER"
+	CONTACTNAME="$(sxmo_contacts.sh --name-or-number "$NUMBER")"
 	sxmo_hook_sendsms.sh "$CONTACTNAME" "$TEXT"
 	info "Sent sms text to $CONTACTNAME message ok"
 fi

@@ -148,9 +148,9 @@ extractmmsattachement() {
 		fi
 
 		if [ "$ACTYPE" != "text/plain" ]; then
-			printf "$icon_att %s\n" \
+			printf "%s\n" \
 				"$(basename "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$OUTFILE")" \
-				>> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
+				>> "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.attachments.txt"
 
 			printf "%s\0" "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$OUTFILE"
 		fi
@@ -199,37 +199,31 @@ processmms() {
 		FROM_NUM="$(printf %s "$MESSAGE" | jq -r '.attrs.Sender')"
 	fi
 
-	FROM_NAME="$(sxmo_contacts.sh --name "$FROM_NUM")"
 	TO_NUMS="$(printf %s "$MESSAGE" | jq -r '.attrs.Recipients | join("\n")')"
-	# generate string of contact names, e.g., "BOB, SUZIE, SAM"
-	TO_NAMES="$(printf %s "$TO_NUMS" | xargs -n1 sxmo_contacts.sh --name | tr '\n' '\0' | xargs -0 printf "%s, " | sed 's/, $//')"
 
+	# Determine if this is a GroupMMS
 	count="$(printf "%s" "$TO_NUMS" | wc -l)"
+
+	# Calculate the LOGDIRNUM:
+	# For GroupMMS, the LOGDIRNUM will be all numbers in the group except
+	# your own, sorted numerically
 	if [ "$count" -gt 0 ]; then
-		# a group chat.  LOGDIRNUM = all numbers except one's own, sorted numerically
 		LOGDIRNUM="$(printf "%b\n%s\n" "$TO_NUMS" "$FROM_NUM" | grep -v "^$MYNUM$" | sort -u | grep . | xargs printf %s)"
-		mkdir -p "$SXMO_LOGDIR/$LOGDIRNUM"
-		printf "%s Group MMS from %s to %s at %s:\n" "$MESSAGE_TYPE" "$FROM_NAME" "$TO_NAMES" "$DATE" >> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
 	else
-		# not a group chat
 		if [ "$MESSAGE_TYPE" = "Sent" ]; then
 			LOGDIRNUM="$TO_NUMS"
 		elif [ "$MESSAGE_TYPE" = "Received" ]; then
 			LOGDIRNUM="$FROM_NUM"
 		fi
-		mkdir -p "$SXMO_LOGDIR/$LOGDIRNUM"
-		printf "%s MMS from %s at %s:\n" "$MESSAGE_TYPE" "$FROM_NAME" "$DATE" >> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
 	fi
+	mkdir -p "$SXMO_LOGDIR/$LOGDIRNUM"
 
-	stderr "$MESSAGE_TYPE MMS ($MMS_FILE) from number $LOGDIRNUM"
-
+	# check if blocked
 	if cut -f1 "$SXMO_BLOCKFILE" 2>/dev/null | grep -q "^$LOGDIRNUM$"; then
 		mkdir -p "$SXMO_BLOCKDIR/$LOGDIRNUM"
-		stderr "BLOCKED mms from number: $LOGDIRNUM ($MMS_FILE)."
+		stderr "BLOCKED mms $LOGDIRNUM ($MMS_FILE)."
 		SXMO_LOGDIR="$SXMO_BLOCKDIR"
 	fi
-
-	mkdir -p "$SXMO_LOGDIR/$LOGDIRNUM/attachments"
 
 	if [ "$MESSAGE_TYPE" = "Received" ]; then
 		printf "%s\trecv_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> "$SXMO_LOGDIR/modemlog.tsv"
@@ -239,7 +233,8 @@ processmms() {
 		stderr "Unknown message type: $MESSAGE_TYPE for $MMS_FILE"
 	fi
 
-	# process 'content' of mms payload
+	# process 'content' of mms payload (in order to extract at least the content of the message, if not more)
+	mkdir -p "$SXMO_LOGDIR/$LOGDIRNUM/attachments"
 	OPEN_ATTACHMENTS_CMD="$(printf %s "$MESSAGE" | extractmmsattachement | xargs -0 printf "sxmo_open.sh '%s'; " | sed "s/sxmo_open.sh ''; //")"
 	if [ -f "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.txt" ]; then
 		TEXT="$(cat "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.txt")"
@@ -248,17 +243,23 @@ processmms() {
 		TEXT="<Empty>"
 	fi
 
-	printf "%b\n\n" "$TEXT" >> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
+	# write to sms.txt
+	if [ "$count" -gt 0 ]; then
+		sxmo_hook_smslog.sh "$MESSAGE_TYPE" "GroupMMS" "$FROM_NUM $TO_NUMS" "$DATE" "$TEXT" "$MMS_FILE" >> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
+	else
+		sxmo_hook_smslog.sh "$MESSAGE_TYPE" "MMS" "$FROM_NUM" "$DATE" "$TEXT" "$MMS_FILE" >> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
+	fi
 
+	# handle notification
 	if [ "$MESSAGE_TYPE" = "Received" ]; then
-		[ "$FROM_NAME" = "???" ] && FROM_NAME="$FROM_NUM"
+		FROM_NAME="$(sxmo_contacts.sh --name-or-num "$FROM_NUM")"
 		if [ -z "$SXMO_DISABLE_SMS_NOTIFS" ]; then
 			[ -n "$OPEN_ATTACHMENTS_CMD" ] && TEXT="$icon_att $TEXT"
 			sxmo_notificationwrite.sh \
 				random \
 				"${OPEN_ATTACHMENTS_CMD}sxmo_hook_tailtextlog.sh \"$LOGDIRNUM\"" \
 				"$SXMO_LOGDIR/$LOGDIRNUM/sms.txt" \
-				"$FROM_NAME: $TEXT ($MMS_FILE)"
+				"$FROM_NAME: $TEXT"
 		fi
 
 		if grep -q screenoff "$SXMO_STATE"; then
@@ -266,8 +267,7 @@ processmms() {
 		fi
 
 		if [ "$count" -gt 0 ]; then
-			GROUPNAME="$(sxmo_contacts.sh --name "$LOGDIRNUM")"
-			[ "$GROUPNAME" = "???" ] && GROUPNAME="$LOGDIRNUM"
+			GROUPNAME="$(sxmo_contacts.sh --name-or-num "$LOGDIRNUM")"
 			sxmo_hook_sms.sh "$FROM_NAME" "$TEXT" "$MMS_FILE" "$GROUPNAME"
 		else
 			sxmo_hook_sms.sh "$FROM_NAME" "$TEXT" "$MMS_FILE"
