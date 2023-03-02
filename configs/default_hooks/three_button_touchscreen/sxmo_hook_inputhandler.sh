@@ -215,6 +215,18 @@ case "$WMCLASS" in
 						;;
 				esac
 				;;
+			*'irssi'*)
+				case "$ACTION" in
+					"onedown")
+						sxmo_type.sh -M Alt p
+						exit 0
+						;;
+					"oneup")
+						sxmo_type.sh -M Alt n
+						exit 0
+						;;
+				esac
+				;;
 		esac
 		# Now we try generic actions for terminal
 		case "$ACTION" in
