@@ -444,6 +444,10 @@ case "$WMCLASS" in
 						$icon_ard Scroll down     ^ 1 ^ sxmo_type -M Shift -k Next
 						$icon_lnk URL Mode        ^ 0 ^ sxmo_type -M Shift -M Ctrl -k u
 						$icon_kbd Hotkeys         ^ 0 ^ sxmo_appmenu.sh sthotkeys
+						$icon_fnd Search Field	  ^ 0 ^ sxmo_type -M Ctrl -M Shift -k r
+						$icon_aru Search Back	  ^ 0 ^ sxmo_type -M Ctrl -k r
+						$icon_ard Search Forward  ^ 0 ^ sxmo_type -M Ctrl -k s
+						$icon_itm Search Extend	  ^ 0 ^ sxmo_type -M Ctrl -k w
 					"
 					WINNAME=Foot
 					;;
