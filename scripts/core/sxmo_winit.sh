@@ -38,6 +38,7 @@ cleanup() {
 	sxmo_daemons.sh stop all
 	pkill bemenu
 	pkill wvkbd
+	pkill superd
 }
 
 init() {
@@ -54,6 +55,7 @@ init() {
 	# shellcheck disable=SC1090,SC1091
 	. "$XDG_CONFIG_HOME/sxmo/profile"
 
+	cleanup
 	start
 	cleanup
 	sxmo_hook_stop.sh
