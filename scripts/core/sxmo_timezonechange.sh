@@ -4,7 +4,7 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 change_alpine() {
 	echo "Changing timezone to $1"
@@ -15,7 +15,7 @@ change_alpine() {
 	echo "Timezone changed ok"
 }
 
-change_arch() {
+change_systemd() {
 	echo "Changing timezone to $1"
 
 	timedatectl set-timezone "$1"
@@ -41,7 +41,7 @@ if [ $# -gt 0 ]; then
 
 	case "$OS" in
 		alpine|postmarketos) change_alpine "$@";;
-		arch|archarm) change_arch "$@";;
+		arch|archarm|debian) change_systemd "$@";;
 		nixos) echo "Change the timezone in configuration.nix with time.timeZone = \"[timezone]\"";;
 		*) echo "Changing the timezone isn't implemented on your distro yet";;
 	esac
