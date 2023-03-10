@@ -2,39 +2,29 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
+# This handles most of the mms-related tasks. Note that some functions, e.g.,
+# checkforlostmms() can be run from the commandline.
+
 # include common definitions
 # shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
 . sxmo_hook_icons.sh
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
-stderr() {
+info() {
 	sxmo_log "$*"
+	printf "%s\n" "$*" # some functions run from commandline
 }
 
-# This function checks to see if there are orphaned mms messages on the server.
-# This shouldn't happen if SXMO_MMS_AUTO_DELETE is set to 1 (default).
-# However, it sometimes will, for instance, during a crash.  This function run
-# whenever the modem is REGISTERED in sxmo_modemmonitor.sh.  If the argument
-# "--force" is passed then it will *actually* process these files, otherwise it
-# will just report them.  I do not recommend automatically running these, since
-# there might be a race condition.  Hence, to manually process these files,
-# run: sxmo_mms.sh checkforlostmms --force
-#
+# We attempt to delete all objects from mmsd-tng after we receive/send them.
+# However, sometimes (e.g., a crash) there are stuck or "lost" mms, i.e.,
+# mmsd-tng still has objects in its database.  Often mmsd-tng will resolve this
+# issue itself, given enough time. If you pass --force to this function, it will
+# process/delete them.
 checkforlostmms() {
-	# only run if SXMO_MMS_AUTO_DELETE is set to 1 (default)
-	[ "${SXMO_MMS_AUTO_DELETE:-1}" -eq 1 ] || exit
-
-	if [ "$1" = "--force" ]; then
-		FORCE=1
-	else
-		FORCE=0
-	fi
-
 	# generate a list of all messages on the server
 	if ! RES="$(dbus-send --dest=org.ofono.mms --print-reply /org/ofono/mms/modemmanager org.ofono.mms.Service.GetMessages)"; then
-		stderr "dbus-send to org.ofono.mms failed."
-		stderr "mmsdtng is busy or something is broken."
+		info "mmsdtng is busy or something is broken."
 		return 1
 	fi
 
@@ -43,70 +33,44 @@ checkforlostmms() {
 
 	count="$(wc -l < "$ALL_MMS_TEMP")"
 
-	# loop through messages and report (or process if FORCE=1) them
-	# we delete messages with status draft, and process those with sent 
-	# and received
+	# loop through messages and report (or process if --force or
+	# --delete-drafts) them we delete messages with status draft, and
+	# process those with sent and received
 	if [ "$count" -gt 0 ]; then
-		sxmo_notify_user.sh "WARNING: Found $count 'lost' mms messages. See log."
-		stderr "WARNING! Found $count unprocessed mms messages."
+		sxmo_notify_user.sh "WARNING: Found $count unprocessed mms. Run $0 checkforlostmms --force to process them."
+		info "Found the following $count unprocessed mms:"
 		while read -r line; do
-			stderr "... mms $line"
 			MESSAGE_STATUS="$(mmsctl -M -o "/org/ofono/mms/modemmanager/$line" | jq -r '.attrs.Status')"
 			case "$MESSAGE_STATUS" in
-				sent)
-					stderr "This mms is status:sent."
-					[ "$FORCE" -eq 1 ] && processmms "/org/ofono/mms/modemmanager/$line" "Sent"
+				sent|received)
+					info "* $line (status:$MESSAGE_STATUS)."
+					if [ "$1" = "--force" ]; then
+						info "Processing."
+						processmms "/org/ofono/mms/modemmanager/$line"
+					fi
 					;;
-				draft)
-					stderr "This mms is status:draft."
-					[ "$FORCE" -eq 1 ] && dbus-send --dest=org.ofono.mms --print-reply "/org/ofono/mms/modemmanager/$line" org.ofono.mms.Message.Delete
-					;;
-				received)
-					stderr "This mms is status:received."
-					[ "$FORCE" -eq 1 ] && processmms "/org/ofono/mms/modemmanager/$line" "Received"
-
-					;;
-				expired)
-					stderr "This mms is status:expired."
-					[ "$FORCE" -eq 1 ] && processmms "/org/ofono/mms/modemmanager/$line" "Expired"
+				draft|expired)
+					info "* $line (status:$MESSAGE_STATUS)."
+					if [ "$1" = "--force" ] || [ "$1" = "--delete-drafts" ]; then
+						info "Deleting."
+						dbus-send --dest=org.ofono.mms --print-reply "/org/ofono/mms/modemmanager/$line" org.ofono.mms.Message.Delete
+					fi
 					;;
 				*)
-					stderr "This mms has a bad message type: '$MESSAGE_STATUS'. Bailing."
+					info "* $line (status:$MESSAGE_STATUS). WARNING: UNKNOWN STATUS!"
 					;;
 			esac
 		done < "$ALL_MMS_TEMP"
-		stderr "Done."
-		if [ "$FORCE" -eq 1 ]; then
-			stderr "Processed."
+		if [ "$1" = "--force" ] || [ "$1" = "--delete-drafts" ]; then
+			info "Finished."
 		else 
-			stderr "Did not process anything. Run \"sxmo_mms.sh checkforlostmms --force\" to process, if you are sure."
+			info "Run $0 checkforlostmms --force to process (if sent or received) or delete (if expired or draft)."
 		fi
 	fi
 	rm "$ALL_MMS_TEMP"
 }
 
-# called from sxmo_modemsendsms.sh, deletes *all* drafts
-deletedrafts() {
-	# generate a list of all messages
-	ALL_MMS_TEMP="$(mktemp)"
-	dbus-send --dest=org.ofono.mms --print-reply /org/ofono/mms/modemmanager org.ofono.mms.Service.GetMessages | grep "object path" | cut -d'"' -f2 | rev | cut -d'/' -f1 | rev | sort -u > "$ALL_MMS_TEMP"
-	count="$(wc -l < "$ALL_MMS_TEMP")"
-	if [ "$count" -gt 0 ]; then
-		stderr "Found $count unprocessed mms messages. Deleting all drafts, if any."
-		while read -r line; do
-			if mmsctl -M -o "/org/ofono/mms/modemmanager/$line" | jq -r '.attrs.Status' | grep -q "draft"; then
-				stderr "This mms ($line) is a draft. Deleting it."
-				dbus-send --dest=org.ofono.mms --print-reply "/org/ofono/mms/modemmanager/$line" org.ofono.mms.Message.Delete
-			fi
-		done < "$ALL_MMS_TEMP"
-		stderr "Done"
-	else
-		stderr "No unprocessed mms messages found. Doing nothing."
-	fi
-	rm "$ALL_MMS_TEMP"
-}
-
-# stdout extracted mms file paths
+# extract mms payload
 extractmmsattachement() {
 	jq -r '.attrs.Attachments[] | join(",")' | while read -r aline; do
 		ACTYPE="$(printf %s "$aline" | cut -d',' -f2 | cut -d';' -f1 | sed 's|^Content-Type: "\(.*\)"$|\1|')"
@@ -133,7 +97,7 @@ extractmmsattachement() {
 				;;
 		esac
 
-		MMS_BASE_DIR="${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}" 
+		MMS_BASE_DIR="${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}"
 		if [ -f "$MMS_BASE_DIR/$MMS_FILE" ]; then
 			OUTFILE="$MMS_FILE.$DATA_EXT"
 			count=0
@@ -147,95 +111,60 @@ extractmmsattachement() {
 				bs=1 >/dev/null 2>&1
 		fi
 
-		if [ "$ACTYPE" != "text/plain" ]; then
-			printf "%s\n" \
-				"$(basename "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$OUTFILE")" \
-				>> "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.attachments.txt"
-
-			printf "%s\0" "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$OUTFILE"
-		fi
 	done
 }
 
+# We process both sent and received mms here.
 processmms() {
 	MESSAGE_PATH="$1"
-	MESSAGE_TYPE="$2" # Sent or Received
+
 	MESSAGE="$(mmsctl -M -o "$MESSAGE_PATH")"
-	stderr "Processing mms ($MESSAGE_PATH)."
-
-	# If a message expires on the server-side, just chuck it
-	if printf %s "$MESSAGE" | grep -q "Accept-Charset (deprecated): Message not found"; then
-		stderr "The mms ($MESSAGE_PATH) states: 'Message not found'. Deleting."
-		dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
-		printf "%s\tdebug_mms\t%s\t%s\n" "$(date +%FT%H:%M:%S%z)" "NULL" "ERROR: Message not found." >> "$SXMO_LOGDIR/modemlog.tsv"
-		return
-	fi
-
-	if [ "$MESSAGE_TYPE" = "Expired" ]; then
-		stderr "The mms ($MESSAGE_PATH) has status:expired! Deleting."
-		dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
-		printf "%s\tdebug_mms\t%s\t%s\n" "$(date +%FT%H:%M:%S%z)" "NULL" "expired" >> "$SXMO_LOGDIR/modemlog.tsv"
-		return
-	fi
-
 	MMS_FILE="$(printf %s "$MESSAGE_PATH" | rev | cut -d'/' -f1 | rev)"
+
+	STATUS="$(printf %s "$MESSAGE" | jq -r '.attrs.Status')" # sent or received
+	if [ "$STATUS" = "received" ]; then
+		STATUS="recv"
+	elif [ "$STATUS" = "sent" ]; then
+		STATUS="sent"
+	else
+		sxmo_log "Warning: unknown status: $STATUS on $MESSAGE_PATH."
+		return
+	fi
+	sxmo_log "Processing $STATUS mms ($MESSAGE_PATH)."
+
 	DATE="$(printf %s "$MESSAGE" | jq -r '.attrs.Date')"
 	DATE="$(date +%FT%H:%M:%S%z -d "$DATE")"
+	# everyone to whom the message was sent (including you). This will be a
+	# string e.g. +12345678+123455+39898988
+	RECIPIENTS="$(printf %s "$MESSAGE" | jq -r '.attrs.Recipients | join("")')"
 
 	MYNUM="$(printf %s "$MESSAGE" | jq -r '.attrs."Modem Number"')"
 	if [ -z "$MYNUM" ]; then
+		sxmo_log "The mms file does not have a 'Modem Number'. Falling back to Me contact."
 		MYNUM="$(sxmo_contacts.sh --me)"
 		if [ -z "$MYNUM" ]; then
-			stderr "The mms ($MMS_FILE) does not have a 'Modem Number'."
-			stderr "This probably means you need to configure the Me contact."
-			stderr "We will use a fake number in the meanwhile: +12345670000."
+			sxmo_log "You do not have a Me contact. Falling back to fake number: +12345670000"
 			MYNUM="+12345670000"
 		fi
 	fi
 
-	if [ "$MESSAGE_TYPE" = "Sent" ]; then
-		FROM_NUM="$MYNUM"
-	elif [ "$MESSAGE_TYPE" = "Received" ]; then
-		FROM_NUM="$(printf %s "$MESSAGE" | jq -r '.attrs.Sender')"
-	fi
+	SENDER="$(printf %s "$MESSAGE" | jq -r '.attrs.Sender')" # note this will be null if I am the sender
+	sxmo_debug "SENDER: $SENDER MYNUM: $MYNUM RECIPIENTS: $RECIPIENTS"
+	sxmo_debug "MESSAGE: $MESSAGE"
+	[ "$SENDER" = "null" ] && SENDER="$MYNUM"
 
-	TO_NUMS="$(printf %s "$MESSAGE" | jq -r '.attrs.Recipients | join("\n")')"
-
-	# Determine if this is a GroupMMS
-	count="$(printf "%s" "$TO_NUMS" | wc -l)"
-
-	# Calculate the LOGDIRNUM:
-	# For GroupMMS, the LOGDIRNUM will be all numbers in the group except
-	# your own, sorted numerically
-	if [ "$count" -gt 0 ]; then
-		LOGDIRNUM="$(printf "%b\n%s\n" "$TO_NUMS" "$FROM_NUM" | grep -v "^$MYNUM$" | sort -u | grep . | xargs printf %s)"
-	else
-		if [ "$MESSAGE_TYPE" = "Sent" ]; then
-			LOGDIRNUM="$TO_NUMS"
-		elif [ "$MESSAGE_TYPE" = "Received" ]; then
-			LOGDIRNUM="$FROM_NUM"
-		fi
-	fi
-	mkdir -p "$SXMO_LOGDIR/$LOGDIRNUM"
+	# Generates a unique LOGDIRNUM: all the recipients, plus the sender, minus you
+	LOGDIRNUM="$(printf %s%s "$RECIPIENTS" "$SENDER" | xargs pnc find | grep -v "^$MYNUM$" | sort -u | grep . | xargs printf %s)"
 
 	# check if blocked
 	if cut -f1 "$SXMO_BLOCKFILE" 2>/dev/null | grep -q "^$LOGDIRNUM$"; then
-		mkdir -p "$SXMO_BLOCKDIR/$LOGDIRNUM"
-		stderr "BLOCKED mms $LOGDIRNUM ($MMS_FILE)."
+		sxmo_log "BLOCKED mms $LOGDIRNUM ($MMS_FILE)."
 		SXMO_LOGDIR="$SXMO_BLOCKDIR"
 	fi
 
-	if [ "$MESSAGE_TYPE" = "Received" ]; then
-		printf "%s\trecv_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> "$SXMO_LOGDIR/modemlog.tsv"
-	elif [ "$MESSAGE_TYPE" = "Sent" ]; then
-		printf "%s\tsent_mms\t%s\t%s\n" "$DATE" "$LOGDIRNUM" "$MMS_FILE" >> "$SXMO_LOGDIR/modemlog.tsv"
-	else
-		stderr "Unknown message type: $MESSAGE_TYPE for $MMS_FILE"
-	fi
-
-	# process 'content' of mms payload (in order to extract at least the content of the message, if not more)
 	mkdir -p "$SXMO_LOGDIR/$LOGDIRNUM/attachments"
-	OPEN_ATTACHMENTS_CMD="$(printf %s "$MESSAGE" | extractmmsattachement | xargs -0 printf "sxmo_open.sh '%s'; " | sed "s/sxmo_open.sh ''; //")"
+	printf "%s" "$MESSAGE" | extractmmsattachement
+
 	if [ -f "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.txt" ]; then
 		TEXT="$(cat "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.txt")"
 		rm -f "$SXMO_LOGDIR/$LOGDIRNUM/attachments/$MMS_FILE.txt"
@@ -243,47 +172,44 @@ processmms() {
 		TEXT="<Empty>"
 	fi
 
-	# write to sms.txt
-	if [ "$count" -gt 0 ]; then
-		sxmo_hook_smslog.sh "$MESSAGE_TYPE" "GroupMMS" "$FROM_NUM $TO_NUMS" "$DATE" "$TEXT" "$MMS_FILE" >> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
-	else
-		sxmo_hook_smslog.sh "$MESSAGE_TYPE" "MMS" "$FROM_NUM" "$DATE" "$TEXT" "$MMS_FILE" >> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
-	fi
+	dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
+	sxmo_log "Finished processing $MMS_FILE. Deleting it."
 
-	# handle notification
-	if [ "$MESSAGE_TYPE" = "Received" ]; then
-		FROM_NAME="$(sxmo_contacts.sh --name-or-num "$FROM_NUM")"
+	printf "%s\t%s_mms\t%s\t%s\n" "$DATE" "$STATUS" "$LOGDIRNUM" "$MMS_FILE" >> "$SXMO_LOGDIR/modemlog.tsv"
+	sxmo_hook_smslog.sh "$STATUS" "$LOGDIRNUM" "$SENDER" "$DATE" "$TEXT" "$MMS_FILE" >> "$SXMO_LOGDIR/$LOGDIRNUM/sms.txt"
+
+	if [ "$STATUS" = "recv" ] && [ ! "$SXMO_LOGDIR" = "$SXMO_BLOCKDIR" ]; then
+		SENDER_NAME="$(sxmo_contacts.sh --name-or-number "$SENDER")"
+		# Determine if this is a GroupMMS
+		NUM_RECIPIENTS="$(printf "%s" "$RECIPIENTS" | xargs pnc find |  wc -l)"
 		if [ -z "$SXMO_DISABLE_SMS_NOTIFS" ]; then
+			OPEN_ATTACHMENTS_CMD=
+			for attachment in "$SXMO_LOGDIR/$LOGDIRNUM/attachments/${MMS_FILE}".*; do
+				[ -f "$attachment" ] && OPEN_ATTACHMENTS_CMD="$(printf "sxmo_open.sh '%s'; %s" "$attachment" "$OPEN_ATTACHMENTS_CMD")"
+			done
+			sxmo_log "OPEN_ATTACHMENTS_CMD: $OPEN_ATTACHMENTS_CMD"
 			[ -n "$OPEN_ATTACHMENTS_CMD" ] && TEXT="$icon_att $TEXT"
+			[ "$NUM_RECIPIENTS" -gt 1 ] && TEXT="$icon_grp $TEXT"
+
 			sxmo_notificationwrite.sh \
 				random \
 				"${OPEN_ATTACHMENTS_CMD}sxmo_hook_tailtextlog.sh \"$LOGDIRNUM\"" \
 				"$SXMO_LOGDIR/$LOGDIRNUM/sms.txt" \
-				"$FROM_NAME: $TEXT"
+				"$SENDER_NAME: $TEXT"
 		fi
 
 		if grep -q screenoff "$SXMO_STATE"; then
 			sxmo_hook_lock.sh
 		fi
 
-		if [ "$count" -gt 0 ]; then
-			GROUPNAME="$(sxmo_contacts.sh --name-or-num "$LOGDIRNUM")"
-			sxmo_hook_sms.sh "$FROM_NAME" "$TEXT" "$MMS_FILE" "$GROUPNAME"
+		if [ "$NUM_RECIPIENTS" -gt 1 ]; then
+			GROUP_NAME="$(sxmo_contacts.sh --name-or-number "$LOGDIRNUM")"
+			sxmo_hook_sms.sh "$SENDER_NAME" "$TEXT" "$MMS_FILE" "$GROUP_NAME"
 		else
-			sxmo_hook_sms.sh "$FROM_NAME" "$TEXT" "$MMS_FILE"
+			sxmo_hook_sms.sh "$SENDER_NAME" "$TEXT" "$MMS_FILE"
 		fi
 	fi
 
-	if [ "${SXMO_MMS_AUTO_DELETE:-1}" -eq 1 ]; then
-		# keep the mms payload file (useful for debugging)
-		if [ "${SXMO_MMS_KEEP_MMSFILE:-1}" -eq 1 ]; then
-			MMS_BASE_DIR="${SXMO_MMS_BASE_DIR-"$HOME"/.mms/modemmanager}" 
-			mkdir -p "$MMS_BASE_DIR/bak"
-			cp "$MMS_BASE_DIR/$MMS_FILE" "$MMS_BASE_DIR/bak/$MMS_FILE"
-		fi
-		dbus-send --dest=org.ofono.mms --print-reply "$MESSAGE_PATH" org.ofono.mms.Message.Delete
-		stderr "Finished processing $MMS_FILE. Deleting it."
-	fi
 }
 
 sxmo_wakelock.sh lock mms_processing 30s

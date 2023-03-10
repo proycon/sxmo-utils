@@ -32,7 +32,8 @@ processvvm() {
 		exit 1
 	fi
 
-	printf "Received Voice Mail from %s at %s:\n%s %s\n\n" "$VVM_SENDER_NAME" "$VVM_DATE" "$icon_att" "$(basename "$VVM_FILE")" >> "$SXMO_LOGDIR/$VVM_SENDER/sms.txt"
+	sxmo_hook_smslog "recv" "$VVM_SENDER" "$VVM_SENDER" "$VVM_DATE" \
+		"$icon_phn $(basename "$VVM_FILE")" >> "$SXMO_LOGDIR/$VVM_SENDER/sms.txt"
 
 	if [ -z "$SXMO_DISABLE_SMS_NOTIFS" ]; then
 		sxmo_notificationwrite.sh \

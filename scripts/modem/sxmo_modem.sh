@@ -221,7 +221,7 @@ checkfornewtexts() {
 		if cut -f1 "$SXMO_BLOCKFILE" 2>/dev/null | grep -q "^$NUM$"; then
 			mkdir -p "$SXMO_BLOCKDIR/$NUM"
 			stderr "BLOCKED text from number: $NUM (TEXTID: $TEXTID)"
-			sxmo_hook_smslog.sh "Received" "SMS" "$NUM" "$TIME" "$TEXT" >> "$SXMO_BLOCKDIR/$NUM/sms.txt"
+			sxmo_hook_smslog.sh "recv" "$NUM" "$NUM" "$TIME" "$TEXT" >> "$SXMO_BLOCKDIR/$NUM/sms.txt"
 			printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$SXMO_BLOCKDIR/modemlog.tsv"
 			mmcli -m any --messaging-delete-sms="$TEXTID"
 			continue
@@ -239,7 +239,7 @@ checkfornewtexts() {
 
 		mkdir -p "$SXMO_LOGDIR/$NUM"
 		stderr "Text from number: $NUM (TEXTID: $TEXTID)"
-		sxmo_hook_smslog.sh "Received" "SMS" "$NUM" "$TIME" "$TEXT" >> "$SXMO_LOGDIR/$NUM/sms.txt"
+		sxmo_hook_smslog.sh "recv" "$NUM" "$NUM" "$TIME" "$TEXT" >> "$SXMO_LOGDIR/$NUM/sms.txt"
 		printf %b "$TIME\trecv_txt\t$NUM\t${#TEXT} chars\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		mmcli -m any --messaging-delete-sms="$TEXTID"
 		CONTACTNAME=$(sxmo_contacts.sh --name-or-number "$NUM")
@@ -250,6 +250,7 @@ checkfornewtexts() {
 				"sxmo_hook_tailtextlog.sh '$NUM'" \
 				"$SXMO_LOGDIR/$NUM/sms.txt" \
 				"$CONTACTNAME: $TEXT"
+
 		fi
 
 		if grep -q screenoff "$SXMO_STATE"; then
