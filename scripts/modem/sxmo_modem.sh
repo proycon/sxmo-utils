@@ -227,7 +227,7 @@ checkfornewtexts() {
 			continue
 		fi
 
-		if [ "$TEXT" = "--" ]; then
+		if [ "$TEXT" = "--" ] && [ ! "$NUM" = "+223344556678" ]; then
 			stderr "Text from $NUM (TEXTID: $TEXTID) with '--'.  I will assume this is an MMS."
 			printf %b "$TIME\tdebug_mms\t$NUM\t$TEXT\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 			if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
