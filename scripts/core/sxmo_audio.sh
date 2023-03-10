@@ -203,6 +203,7 @@ cur_mic_vol="$(pulsemicvolget)"
 default_sink_name="$(pulsedevicegetdefaultsink)"
 default_source_name="$(pulsedevicegetdefaultsource)"
 grep . <<EOF
+$icon_cls Close Menu  ^ exit
 Output:
 $(_pulsesinkssubmenu "$default_sink_name")
 $(
@@ -230,7 +231,6 @@ $(_pulseinportssubmenu "$default_source_name")
 Call Options:
 $(_callaudiodsubmenu)
 $(_ringmodesubmenu)
-$icon_cls Close Menu  ^ exit
 EOF
 }
 
