@@ -1,0 +1,10 @@
+[Unit]
+Description=Pipewire filter chain
+After=pipewire
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/pipewire -c filter-chain.conf
+ExecOnFailure=/usr/bin/sxmo_notify_user.sh "superd failed to start pipewire-filter-chain"
+RestartSec=1s
