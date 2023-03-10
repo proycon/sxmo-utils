@@ -237,6 +237,7 @@ networksmenu() {
 			rfkill list wifi | grep -q "yes" || WIFI_ENABLED=1
 
 			grep . << EOF | sxmo_dmenu.sh -p "Networks"
+$icon_cls Close Menu
 $(
 	if [ -z "$WIFI_ENABLED" ]; then
 		connections | grep -v "$icon_wif"
@@ -259,15 +260,10 @@ $(
 $icon_cfg Nmtui
 $icon_cfg Ifconfig
 $([ -z "$WIFI_ENABLED" ] || printf "%s Scan Wifi Networks\n" "$icon_wif")
-$icon_mnu System Menu
-$icon_cls Close Menu
 EOF
 		)" || exit
 
 		case "$CHOICE" in
-			*"System Menu" )
-				sxmo_appmenu.sh sys && exit
-				;;
 			*"Close Menu" )
 				exit
 				;;
