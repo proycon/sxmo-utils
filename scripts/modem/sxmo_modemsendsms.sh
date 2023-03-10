@@ -1,6 +1,7 @@
 #!/bin/sh
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
+# shellcheck disable=SC3045
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
@@ -8,25 +9,63 @@
 
 info() {
 	sxmo_log "$*"
+	printf "%s\n" "$*"
 }
 
 err() {
-	info "ERR: $*"
+	info "$*"
 	exit 1
 }
 
 usage() {
-	err "Usage: $(basename "$0") number or contact [-|message]"
+	printf "Usage: %s number|contact [-|message]\n" "$(basename "$0")"
+	exit 1
 }
 
 [ 0 -eq $# ] && usage
 NUMBER="$1"
 
-# if $1 is not a number, then assume its a contact and look up number
-if ! echo "$NUMBER" | grep -q '+'; then
+make_attachments_arg() {
+	LOGDIRNUM="$1"
+	MAX_SIZE="$(grep "^TotalMaxAttachmentSize" "$MMS_BASE_DIR/mms" | cut -d'=' -f2)"
+	MAX_NUMBER="$(grep "^MaxAttachments" "$MMS_BASE_DIR/mms" | cut -d'=' -f2)"
+	[ -z "$MAX_NUMBER" ] && MAX_NUMBER="25"
+	[ -z "$MAX_SIZE" ] && MAX_SIZE="1100000"
+
+	ATT_NUM=0
+	TOTAL_SIZE=0
+	while read -r ATTACHMENT; do
+		[ -f "$ATTACHMENT" ] || err "Attachment ($ATTACHMENT) not found!"
+		CTYPE=$(file -b --mime-type "$ATTACHMENT")
+		# The 'file' command returns longer mime-types than mmsctl
+		# likes, so convert those (if any) here. I have only tested mp3
+		# (which needs to be converted) and jpeg (which does not).
+		case "$CTYPE" in
+			"audio/mpegapplication/octet-stream")
+				CTYPE="audio/mpeg"
+				;;
+		esac
+
+		# basic mms error checking (since mmsctl does not do it)
+		ATT_NUM="$((ATT_NUM+1))"
+		TOTAL_SIZE="$((TOTAL_SIZE+$(wc -c < "$ATTACHMENT")))"
+		if [ "$ATT_NUM" -gt "$MAX_NUMBER" ]; then
+			err "Number of attachments ($ATT_NUM) greater than MaxAttachments ($MAX_NUMBER)."
+		fi
+		if [ "$ATT_NUM" -ge 1 ] && [ "$TOTAL_SIZE" -gt "$MAX_SIZE" ]; then
+			err "Total size of attachments ($TOTAL_SIZE) greater than TotalMaxAttachmentSize ($MAX_SIZE)."
+		fi
+		printf " -a '%s' -c '%s'" "$ATTACHMENT" "$CTYPE"
+	done < "$SXMO_LOGDIR/$LOGDIRNUM/draft.attachments.txt"
+}
+
+# if number does not start with + assume it is a contact name, and if it isn't
+# in our contacts book, then alert the user but continue anyway, e.g., one
+# might send a message to "2600" or something.
+if ! echo "$NUMBER" | grep -q '^+'; then
 	ACTUAL_NUMBER="$(sxmo_contacts.sh --all | grep "^$NUMBER:" | cut -d':' -f2 | sed 's/^ //')"
 	if [ -z "$ACTUAL_NUMBER" ]; then
-		info "$NUMBER does not look like a number, but it isn't in your contacts either.  Continuing anyway..."
+		info "WARNING: $NUMBER does not look like a phone number or a contact."
 	else
 		NUMBER="$ACTUAL_NUMBER"
 	fi
@@ -47,119 +86,62 @@ if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ] || [ -f "$SXMO_LO
 	MMS_BASE_DIR="${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}"
 	[ -d "$MMS_BASE_DIR" ] || err "MMS not configured."
 
-	# generate mmsctl args for attachments found in draft.attachments.txt (one per line)
-	count=0
-	total_size=0
-	ATTACHMENTS=
-	if [ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ]; then
-		# shellcheck disable=SC2141
-		IFS='\n'
-		while read -r line; do
-			[ -f "$line" ] || err "File not found!"
-			CTYPE=$(file -b --mime-type "$line")
-			# file returns longer mime-types than mmsctl likes 
-			# TODO: I have only tested jpeg and mp3
-			case "$CTYPE" in
-				"audio/mpegapplication/octet-stream")
-					CTYPE="audio/mpeg"
-					;;
-			esac
-			ATTACHMENTS="$(printf "%s -a '%s' -c '%s'" "$ATTACHMENTS" "$line" "$CTYPE")" # argument for mmsctl
-			count="$((count+1))"
-			total_size="$((total_size+$(wc -c < "$line")))"
-		done < "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
-	fi
+	# ensure we use the correct LOGDIRNUM (e.g., if multiple recipients, sort numerically)
+	NUMBER="$(printf %s "$NUMBER" | xargs pnc find | sort -u | grep . | xargs printf %s)"
 
-	# basic mms error checking (since mmsctl does not do it)
-	TOT_MAX_ATTACHMENT_SIZE="$(grep "^TotalMaxAttachmentSize" "$MMS_BASE_DIR/mms" | cut -d'=' -f2)"
-	MAX_ATTACHMENTS="$(grep "^MaxAttachments" "$MMS_BASE_DIR/mms" | cut -d'=' -f 2)"
-	[ -z "$MAX_ATTACHMENTS" ] && MAX_ATTACHMENTS="25"
-	[ -z "$TOT_MAX_ATTACHMENT_SIZE" ] && TOT_MAX_ATTACHMENT_SIZE="1100000"
-	[ "$count" -gt "$MAX_ATTACHMENTS" ] && err "Number of attachments ($count) greater than MaxAttachments ($MAX_ATTACHMENTS)."
-	[ "$count" -ge 1 ] && [ "$total_size" -gt "$TOT_MAX_ATTACHMENT_SIZE" ] && err "Total size of attachments ($total_size) greater than TotalMaxAttachmentSize ($TOT_MAX_ATTACHMENT_SIZE)."
+	# generate mmsctl arguments
 
-	# generate recipients arguments
-	RECIPIENTS="$(echo "$NUMBER" | sed 's/+/ -r +/g' | sed 's/^ //')"
-
-	# make unique attachment argument for text message
-	TMPFILE="$(mktemp)"
+	# -a 'tmpfile' for message content
+	TMPFILE="$(mktemp)" # we remove this after we attempt run mmsctl
 	printf %s "$TEXT" > "$TMPFILE"
-	ATTACHMENTS="$(printf "%s '%s'%s" "-a" "$TMPFILE" "$ATTACHMENTS")"
+	ATTACHMENTS_ARG="$(printf "-a '%s' %s" "$TMPFILE" "$ATTACHMENTS_ARG")"
 
-	# First, send it via mmsctl.  mmsctl does the equivalent of:
-	# dbus-send --dest=org.ofono.mms --print-reply /org/ofono/mms/modemmanager \
-	# org.ofono.mms.Service.SendMessage string:"+1234560000" variant:smil \
-	# string:"cid-1,text/plain,foobar.txt"
-	info "DEBUG: Launching mmsctl -S $RECIPIENTS $ATTACHMENTS"
-	MMSCTL_RES="$(printf "%s %s %s" "-S" "$RECIPIENTS" "$ATTACHMENTS" | xargs mmsctl 2>&1)"
+	# -a 'filename' -c 'content/type' -a 'filename2' -c 'content/type'
+	[ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ] && ATTACHMENTS_ARG="$(make_attachments_arg "$NUMBER" | sed 's/^ //')"
+
+	# -r +123 -r +345
+	RECIPIENTS_ARG="$(printf %s "$NUMBER" | sed 's/+/ -r +/g' | sed 's/^ //')"
+
+	# Send it to mmsd-tng via mmsctl.  We can't use dbus-send since
+	# dbus-send doesn't recognize a(sss) types.
+	info "mmsctl -S $RECIPIENTS_ARG $ATTACHMENTS_ARG..."
+	MMSCTL_RES="$(printf "-S %s %s" "$RECIPIENTS_ARG" "$ATTACHMENTS_ARG" | xargs mmsctl 2>&1)"
 	MMSCTL_OK="$?"
 	rm "$TMPFILE"
-	# Possible results:
-	#
-	# syntax error) "mmsctl: unrecognized option:"
-	#
-	# mmsdtng not running) "DBus error: The name org.ofono.mms was not
-	# provided by any .service files"
-	#
-	# not sure) "DBus error: Did not receive a reply.  Possible causes
-	# include: the remote application did not send a reply, the message bus
-	# security policy blocked the reply, the reply timeout expered, or the
-	# network connection was broken."
-        #
-	# Note that mmsctl will (wrongly) return success with bad filename,
-	# attachment size too big, and max attachments too large.  Hence, I check 
-	# for those above.  
-	#
-	# Note also that mmsctl will send a success only if it reaches mmsdtng, and
-	# so it will not tell us if the message was actually sent.
-	if [ "$MMSCTL_OK" -ne 0 ]; then
-		if echo "$MMSCTL_RES" | grep -q "unrecognized option"; then
-			err "mmsctl syntax error!"
-		elif echo "$MMSCTL_RES" | grep -q "was not provied"; then
-			err "mmsdtng down ($MMSCTL_RES)!"
-		else
-			info "DEBUG: Unknown mmsctl error: $MMSCTL_RES"
-			# Note that *sometimes* mmsctl will still create a draft in this case.
-			# Hence, we continue to cleanup draft and do not exit here..
-		fi
-	else
-		info "DEBUG: mmsctl returned success.  Checking for sent status..."
-	fi
+	[ "$MMSCTL_OK" -ne 0 ] && err "mmsctl failed with \"$MMSCTL_RES\""
 
-	# Second, check to see if it actually sent. mmsdtng creates a 
-	# new message with the status 'draft' and once it *actually*
-	# sends it it changes the status to 'sent'.  Hence, here we 
-	# sit on PropertyChanged and detect if status changes to sent.
-	NAMED_PIPE="$(mktemp -u)"
-	mkfifo "$NAMED_PIPE"
-	# 60 second timeout because on dns errors, mmsdtng takes this long sometimes
-	timeout 60 dbus-monitor "interface='org.ofono.mms.Message',type='signal',member='PropertyChanged'" > "$NAMED_PIPE" &
+	# mmsd-tng should immediately add a message of status 'draft' and then
+	# after a few beats it will send it and transform that message to
+	# 'sent'.
+	info "Waiting for mmsd-tng to send..."
+	MMS_PIPE="$(mktemp -u)"
+	mkfifo "$MMS_PIPE"
+	timeout 60 dbus-monitor "interface='org.ofono.mms.Message',type='signal',member='PropertyChanged'" > "$MMS_PIPE" &
+	MMS_PIPE_PID="$!"
 	while read -r line; do
-		if echo "$line" | grep -q 'member=PropertyChanged'; then
+		if printf %s "$line" | grep -q 'member=PropertyChanged'; then
 			MESSAGE_PATH="$(echo "$line" | cut -d'=' -f6 | cut -d';' -f1)"
 		fi
-		if echo "$line" | grep -q "string \"sent\""; then
+		if printf %s "$line" | grep -q "string \"sent\""; then
 			SENT_SUCCESS=1
 			break
 		fi
-	done < "$NAMED_PIPE"
+	done < "$MMS_PIPE"
 	rm -f "$NAMED_PIPE"
+	kill "$MMS_PIPE_PID"
 
-	# we failed to send!
-	if [ -z "$SENT_SUCCESS" ]; then
-		# Delete all drafts.
-		sxmo_mms.sh deletedrafts
-		err "Couldn't send text message.  Check mmsd log for errors."
-	fi
+	[ -z "$SENT_SUCCESS" ] && err "mmsd-tng did not send the draft."
 
-	# we sent!  process it and cleanup
+	[ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ] && rm -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
+
+	# process it just like any other mms (this will handle logging it)
 	sxmo_mms.sh processmms "$MESSAGE_PATH"
-	[ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ] && rm "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 
-	MMS_ID="$(echo "$MESSAGE_PATH" | rev | cut -d'/' -f1 | rev)"
+	MMS_FILE="$(printf %s "$MESSAGE_PATH" | rev | cut -d'/' -f1 | rev)"
 	CONTACTNAME="$(sxmo_contacts.sh --name-or-number "$NUMBER")"
-	sxmo_hook_sendsms.sh "$CONTACTNAME" "$TEXT" "$MMS_ID" "$CONTACTNAME"
-	info "Sent mms text to $CONTACTNAME with mms id ($MMS_ID) message ok"
+	sxmo_hook_sendsms.sh "$CONTACTNAME" "$TEXT" "$MMS_FILE" "$CONTACTNAME"
+
+	info "Sent mms text to $CONTACTNAME."
 
 # we are dealing with a normal sms, so use mmcli
 else
@@ -183,7 +165,7 @@ else
 		# clear it from the modem
 		if echo "$SMS_RES" | grep -q "Invalid number"; then
 			for i in $(mmcli -m any --messaging-list-sms | grep " (unknown)" | cut -f5 -d' '); do
-				mmcli -m any -s "$i" -K | grep -q "not requested" && mmcli -m any --messaging-delete-sms="$i"
+				mmcli -m any -s "$i" -K | grep -q "not requested" && mmcli -m any --messaging-delete-sms="$i" >/dev/null
 			done
 			err "Couldn't send text message: Invalid number."
 		else
@@ -193,7 +175,7 @@ else
 
 	# we sent it successfully, but also clear it from the modem
 	for i in $(mmcli -m any --messaging-list-sms | grep " (sent)" | cut -f5 -d' ') ; do
-		mmcli -m any --messaging-delete-sms="$i"
+		mmcli -m any --messaging-delete-sms="$i" > /dev/null
 	done
 
 	TIME="$(date +%FT%H:%M:%S%z)"
@@ -203,7 +185,7 @@ else
 
 	CONTACTNAME="$(sxmo_contacts.sh --name-or-number "$NUMBER")"
 	sxmo_hook_sendsms.sh "$CONTACTNAME" "$TEXT"
-	info "Sent sms text to $CONTACTNAME message ok"
+	info "Sent sms text to $CONTACTNAME."
 fi
 
 

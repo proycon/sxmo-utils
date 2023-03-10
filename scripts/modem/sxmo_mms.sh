@@ -33,9 +33,9 @@ checkforlostmms() {
 
 	count="$(wc -l < "$ALL_MMS_TEMP")"
 
-	# loop through messages and report (or process if --force or
-	# --delete-drafts) them we delete messages with status draft, and
-	# process those with sent and received
+	# loop through messages and report (or process if --force) them we
+	# delete messages with status draft, and process those with sent and
+	# received
 	if [ "$count" -gt 0 ]; then
 		sxmo_notify_user.sh "WARNING: Found $count unprocessed mms. Run $0 checkforlostmms --force to process them."
 		info "Found the following $count unprocessed mms:"
@@ -51,7 +51,7 @@ checkforlostmms() {
 					;;
 				draft|expired)
 					info "* $line (status:$MESSAGE_STATUS)."
-					if [ "$1" = "--force" ] || [ "$1" = "--delete-drafts" ]; then
+					if [ "$1" = "--force" ]; then
 						info "Deleting."
 						dbus-send --dest=org.ofono.mms --print-reply "/org/ofono/mms/modemmanager/$line" org.ofono.mms.Message.Delete
 					fi
@@ -61,7 +61,7 @@ checkforlostmms() {
 					;;
 			esac
 		done < "$ALL_MMS_TEMP"
-		if [ "$1" = "--force" ] || [ "$1" = "--delete-drafts" ]; then
+		if [ "$1" = "--force" ]; then
 			info "Finished."
 		else 
 			info "Run $0 checkforlostmms --force to process (if sent or received) or delete (if expired or draft)."

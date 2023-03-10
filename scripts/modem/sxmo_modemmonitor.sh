@@ -91,14 +91,14 @@ mainloop() {
 		done &
 
 	if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
-		# monitor for mms
+		# monitor for received mms
 		dbus-monitor "interface='org.ofono.mms.Service',type='signal',member='MessageAdded'" |
 			while read -r line; do
 				if echo "$line" | grep -q '^object path'; then
 					MESSAGE_PATH="$(echo "$line" | cut -d\" -f2)"
 				fi
 				if echo "$line" | grep -q 'string "received"'; then
-					sxmo_mms.sh processmms "$MESSAGE_PATH" "Received"
+					sxmo_mms.sh processmms "$MESSAGE_PATH"
 				fi
 			done &
 	fi
