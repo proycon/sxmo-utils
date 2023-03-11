@@ -11,7 +11,7 @@ set -e
 while true; do
 	# Make sure it's fresh before checking locks, reading wakeup_count will
 	# block so we can't poll it here
-	sxmo_hook_check_state_mutexes.sh
+	sxmo_hook_wakelocks.sh
 
 	# Reading from wakeup_count blocks until there are no wakelocks
 	wakeup_count=$(cat /sys/power/wakeup_count)

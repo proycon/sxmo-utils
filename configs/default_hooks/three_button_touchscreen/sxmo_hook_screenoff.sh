@@ -31,14 +31,13 @@ case "$SXMO_WM" in
 		;;
 esac
 
-sxmo_hook_check_state_mutexes.sh
+sxmo_hook_wakelocks.sh
 
-# Start a periodic daemon (8s) "try to go to crust" after 8 seconds
-# Start a periodic daemon (2s) blink after 5 seconds
-# Resume tasks stop daemons
+# Start a periodic daemon (10s) to check wakelocks and go to suspend
+# Start a periodic daemon (2s) to blink leds
 sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
-	timeout 10 'sxmo_daemons.sh start periodic_state_mutex_check sxmo_run_periodically.sh 10 sxmo_hook_check_state_mutexes.sh' \
-	resume 'sxmo_daemons.sh stop periodic_state_mutex_check'
+	timeout 10 'sxmo_daemons.sh start periodic_wakelock_check sxmo_run_periodically.sh 10 sxmo_hook_wakelocks.sh' \
+	resume 'sxmo_daemons.sh stop periodic_wakelock_check'
 
 wait
 

@@ -2,25 +2,27 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
-# This hook goal is to setup mutexes if the device must be considered
-# as idle or not, if it can go to crust or not
-
+# This hook is called in screenoff, launched as a 10s repeating daemon in
+# screenoff, and also sxmo_autosleep.sh.  It will check to see if any custom
+# things would like to block suspend.
+#
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-cleanup_main_mutex() {
-	sxmo_wakelock.sh unlock checking_mutexes
+finish() {
+	sxmo_wakelock.sh unlock checking_wakelocks
 	exit 0
 }
 
-exec 3<> "${XDG_RUNTIME_DIR:-$HOME}/sxmo.checkstatemutexes.lock"
+exec 3<> "${XDG_RUNTIME_DIR:-$HOME}/sxmo.checkwakelocks.lock"
 flock -x 3
 
 DEFAULT_DURATION=30s # to be sure to not lock indefinitely
 
-sxmo_wakelock.sh lock checking_mutexes "$DEFAULT_DURATION"
-trap 'cleanup_main_mutex' TERM INT EXIT
+sxmo_wakelock.sh lock checking_wakelocks "$DEFAULT_DURATION"
+
+trap 'finish' TERM INT EXIT
 
 # ongoing_call
 if pgrep -f sxmo_modemcall.sh > /dev/null; then
