@@ -28,7 +28,7 @@ get_title() {
 if [ -f "$XDG_CONFIG_HOME/sxmo/userscripts" ]; then
 	cat "$XDG_CONFIG_HOME/sxmo/userscripts"
 elif [ -d "$XDG_CONFIG_HOME/sxmo/userscripts" ]; then
-	find "$XDG_CONFIG_HOME/sxmo/userscripts" -type f -o -type l | sort -f | while read -r script; do
+	find -L "$XDG_CONFIG_HOME/sxmo/userscripts" -type f -o -type l | sort -f | while read -r script; do
 		title="$(get_title "$script")"
 		write_line "$title" "$script"
 	done
