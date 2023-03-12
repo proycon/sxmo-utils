@@ -23,7 +23,6 @@ sxmo_hook_statusbar.sh state_change &
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen off
 
-# avoid dangling purple blinking when usb wakeup + power button…
 sxmo_daemons.sh stop periodic_blink
 
 # Go to screenoff after 8 seconds of inactivity
