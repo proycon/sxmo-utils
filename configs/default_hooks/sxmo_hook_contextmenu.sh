@@ -203,7 +203,7 @@ case "$WMCLASS" in
 		"
 		WINNAME=St
 		;;
-	*foot*|*st*|*terminal*)
+	*foot*|*st*|*terminal*|org.gnome.vte.application)
 		# First we try to handle the app running inside the terminal:
 		WMNAME="${1:-$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
 		if printf %s "$WMNAME" | grep -qi -E -w "(vi|vim|vis|nvim|neovim|kakoune)"; then
@@ -451,7 +451,7 @@ case "$WMCLASS" in
 					"
 					WINNAME=Foot
 					;;
-				*terminal*)
+				*terminal*|org.gnome.vte.application)
 					CHOICES="$icon_kbd Hotkeys ^ 0 ^ sxmo_appmenu.sh sthotkeys"
 					WINNAME=Terminal
 					;;
