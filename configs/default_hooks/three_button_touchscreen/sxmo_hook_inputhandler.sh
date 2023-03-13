@@ -110,7 +110,7 @@ case "$WMCLASS" in
 				;;
 		esac
 		;;
-	*"foot"*|*"st"*|*"vte"*)
+	*"foot"*|*"st"*|*"vte"*|"terminal")
 		# First we try to handle the app running inside st:
 		case "$WMNAME" in
 			*"weechat"*)
@@ -262,6 +262,24 @@ case "$WMCLASS" in
 						;;
 					*"st"*)
 						sxmo_type.sh -M Ctrl -M Shift -k f
+						exit 0
+						;;
+				esac
+				;;
+			"uprightedge")
+				case "$WMCLASS" in
+					"org.gnome.vte.application"|"terminal")
+						# For VTE, fallback to doing nothing,
+						# you're probably dragging the scrollbar
+						exit 0
+						;;
+				esac
+				;;
+			"downrightedge")
+				case "$WMCLASS" in
+					"org.gnome.vte.application"|"terminal")
+						# For VTE, fallback to doing nothing,
+						# you're probably dragging the scrollbar
 						exit 0
 						;;
 				esac
