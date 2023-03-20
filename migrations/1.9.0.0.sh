@@ -15,5 +15,5 @@ mkdir -p "$XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME"
 
 find . -maxdepth 1 -type f -exec basename {} \; \
 	| grep -v 'needs-migration$' \
-	| grep -v '^sxmo_hook_.*\.sh$' \
+	| grep -v '^sxmo_hook_.*\..*$' \
 	| xargs -I{} mv {} sxmo_hook_{}.sh
