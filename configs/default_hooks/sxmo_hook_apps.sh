@@ -105,6 +105,7 @@ write_line_app com.github.bleakgrey.tootle "$icon_msg Tootle" "com.github.bleakg
 write_line_app totem "$icon_mvi Totem" "totem"
 write_line_app tuir "$icon_red Tuir" "sxmo_terminal.sh tuir"
 write_line_app tut "$icon_msg Tut" "sxmo_terminal.sh tut"
+write_line_app waydroid "$icon_and Waydroid" "waydroid show-full-ui"
 write_line_app weechat "$icon_msg Weechat" "sxmo_terminal.sh weechat"
 write_line_app pavucontrol "$icon_mus Pavucontrol" "pavucontrol"
 write_line_app w3m "$icon_glb W3m" "sxmo_terminal.sh w3m duck.com"
