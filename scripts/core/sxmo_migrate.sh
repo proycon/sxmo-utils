@@ -258,6 +258,7 @@ checkhooks() {
 
 common() {
 	defaultconfig "$(xdg_data_path sxmo/appcfg/profile_template)" "$XDG_CONFIG_HOME/sxmo/profile" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/fontconfig.conf)" "$XDG_CONFIG_HOME/fontconfig/conf.d/50-sxmo.conf" 644
 }
 
 sway() {

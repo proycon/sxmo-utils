@@ -8,13 +8,18 @@ case "$1" in
 		exit
 esac
 
-comment="#"
 case "$(busybox head -n1 "$1")" in
+	"#"*)
+		comment="#"
+		;;
 	!*)
 		comment="!"
 		;;
 	--*)
 		comment="--"
+		;;
+	*)
+		exit # we skip this file
 		;;
 esac
 

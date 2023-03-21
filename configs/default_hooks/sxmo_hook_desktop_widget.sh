@@ -29,7 +29,7 @@ trap 'kill -- $WAYOUT' TERM INT EXIT
 		pangodraw
 		sxmo_aligned_sleep 60
 	done
-) | wayout --font "FiraMono Nerd Font" \
+) | wayout --font "Sxmo" \
 	--foreground-color "#ffffff" \
 	--fontsize "60" \
 	--height 500  \

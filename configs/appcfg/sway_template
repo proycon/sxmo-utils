@@ -20,6 +20,8 @@ set $term sxmo_terminal.sh
 # on the original workspace that the command was run on.
 set $menu bemenu-run
 
+font "Sxmo"
+
 exec_always sxmo_swayinitconf.sh
 
 exec_always dbus-update-activation-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
@@ -195,7 +197,7 @@ bar {
         statusline #ffffff
         background #323232
         inactive_workspace #32323200 #32323200 #5c5c5c
-        font "Mono"
+        font "Sxmo"
     }
 }
 
