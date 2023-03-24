@@ -20,7 +20,7 @@ set $term sxmo_terminal.sh
 # on the original workspace that the command was run on.
 set $menu bemenu-run
 
-font "Sxmo"
+font "Sxmo 10"
 
 exec_always sxmo_swayinitconf.sh
 
