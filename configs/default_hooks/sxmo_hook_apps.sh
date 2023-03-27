@@ -73,6 +73,7 @@ write_line_app marble "$icon_map Marble" "marble"
 write_line_app micro "$icon_edt Micro" "sxmo_terminal.sh micro"
 write_line_app midori "$icon_glb Midori" "midori"
 write_line_app mutt "$icon_eml Mutt" "sxmo_terminal.sh mutt"
+write_line_app mumble "$icon_grp Mumble" mumble
 write_line_app nano "$icon_edt Nano" "sxmo_terminal.sh nano"
 write_line_app navit "$icon_gps Navit" "navit"
 write_line_app ncmpcpp "$icon_mus Ncmpcpp" "sxmo_terminal.sh ncmpcpp"
