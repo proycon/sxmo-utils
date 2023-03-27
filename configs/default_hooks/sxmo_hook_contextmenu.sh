@@ -637,6 +637,7 @@ case "$WMCLASS" in
 		CHOICES="
 			$icon_grd Scripts                                            ^ 0 ^ sxmo_appmenu.sh scripts
 			$icon_grd Apps                                               ^ 0 ^ sxmo_appmenu.sh applications
+			$icon_grd Binaries                                           ^ 0 ^ sxmo_brun.sh
 			$icon_dir Files                                              ^ 0 ^ sxmo_files.sh
 			$icon_phn Dialer                                             ^ 0 ^ sxmo_modemdial.sh
 			$icon_msg Texts                                              ^ 0 ^ sxmo_modemtext.sh
