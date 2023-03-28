@@ -37,8 +37,8 @@ DATESEDCMD="s/at.*${TODAY}T/today at /; s/at.*${YESTERDAY}T/yesterday at /; s/at
 #ALIGNSEDCMD="s/^Sent/<right align>/;s/^Received/<left align>/;"
 
 # Colorize Sent and Received lines
-RECEIVED_COLOR="033"
-SENT_COLOR="245"
+RECEIVED_COLOR="2"
+SENT_COLOR="3"
 COLORSEDCMD="s#^\(Sent.*\)#$(tput setaf "$SENT_COLOR")\1$(tput op)#;s#^\(Received.*\)#$(tput setaf "$RECEIVED_COLOR")\1$(tput op)#;"
 
 # Replace phone numbers in the filename with contacts from contact book
