@@ -191,3 +191,9 @@ icon_bat_0="󰂎"
 icon_bat_1="󱊡"
 icon_bat_2="󱊢"
 icon_bat_3="󱊣"
+
+# sxmo state indicators
+icon_state_proximity=""
+icon_state_screenoff=""
+icon_state_lock=""
+icon_state_unlock=""

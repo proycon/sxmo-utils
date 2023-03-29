@@ -30,16 +30,16 @@ set_state() {
 	STATE_LABEL="$(cat "$SXMO_STATE")"
 	case "$STATE_LABEL" in
 		proximity*)
-			sxmobar -a -e bold -f orange state 90 "$icon_dop" # circle with dot
+			sxmobar -a -e bold -f orange state 90 "$icon_state_proximity" # circle with dot
 			;;
 		screenoff)
-			sxmobar -a -e bold -f red state 90 "$icon_don" # filled circle
+			sxmobar -a -e bold -f red state 90 "$icon_state_screenoff" # filled circle
 			;;
 		lock)
-			sxmobar -a -e bold -f red state 90 "$icon_dof" # open circle
+			sxmobar -a -e bold -f red state 90 "$icon_state_lock" # open circle with slash
 			;;
 		unlock)
-			sxmobar -a -e bold state 90 "$icon_dof" # open circle
+			sxmobar -a -e bold state 90 "$icon_state_unlock" # open circle
 			;;
 	esac
 }
