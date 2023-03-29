@@ -271,6 +271,7 @@ sway() {
 }
 
 xorg() {
+	defaultconfig "$(xdg_data_path sxmo/appcfg/Xresources)" "$HOME/.Xresources" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/xinit_template)" "$XDG_CONFIG_HOME/sxmo/xinit" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/dunst.conf)" "$XDG_CONFIG_HOME/dunst/dunstrc" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/bonsai_tree.json)" "$XDG_CONFIG_HOME/sxmo/bonsai_tree.json" 644

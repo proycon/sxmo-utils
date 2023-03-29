@@ -1,3 +1,10 @@
+! Space to setup configversion
+
+dmenu.font: Sxmo:size=14
+dwm.font: Sxmo:size=10
+st.font: Sxmo:size=10
+svkbd.font: Sxmo:size=12
+
 ! Author: Andre Ramnitz
 ! based on Seth House` dotfiles
 ! https://github.com/whiteinge/dotfiles/blob/master/.Xresources
@@ -89,4 +96,10 @@ xcalc*ti.button55.foreground: rgb:c/c/c
 xcalc*ti.button3.label: sqrt
 xcalc*ti.button21.label: \434
 xcalc*ti.button35.label: \367
+
+Xft.dpi: 192
+Xft.antialias: true
+Xft.rgba: rgb
+Xft.hinting: true
+Xft.hintstyle: hintslight
 

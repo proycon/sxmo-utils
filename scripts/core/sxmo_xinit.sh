@@ -18,9 +18,6 @@ defaults() {
 	xmodmap "$(xdg_data_path sxmo/appcfg/xmodmap_caps_esc)"
 	xsetroot -mod 29 29 -fg '#0b3a4c' -bg '#082430'
 	xset s off -dpms
-	for xr in "$(xdg_data_path sxmo/appcfg)"/*.xr; do
-		xrdb -merge "$xr"
-	done
 	[ -e "$HOME"/.Xresources ] && xrdb -merge "$HOME"/.Xresources
 	SCREENWIDTH=$(xrandr | grep "Screen 0" | cut -d" " -f 8)
 	SCREENHEIGHT=$(xrandr | grep "Screen 0" | cut -d" " -f 10 | tr -d ",")
