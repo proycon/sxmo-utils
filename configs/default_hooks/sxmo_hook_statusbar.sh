@@ -326,7 +326,15 @@ set_battery() {
 			else
 				if [ "$PCT" -lt 25 ]; then
 					fgcolor=red
-					BATCMP="$icon_bat_0"
+					if [ "$PCT" -lt 5 ]; then
+						BATCMP="$icon_bat_0"
+					elif [ "$PCT" -lt 10 ]; then
+						BATCMP="$icon_bat_1"
+					elif [ "$PCT" -lt 15 ]; then
+						BATCMP="$icon_bat_2"
+					else
+						BATCMP="$icon_bat_3"
+					fi
 				elif [ "$PCT" -lt 50 ]; then
 					fgcolor=orange
 					BATCMP="$icon_bat_1"
