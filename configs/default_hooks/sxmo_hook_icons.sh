@@ -181,3 +181,13 @@ icon_wifi_signal_3="󰤥"
 icon_wifi_key_signal_4="󰤪"
 icon_wifi_signal_4="󰤨"
 icon_wifi_disconnected="󰤮"
+
+# battery indicators
+icon_bat_c_0="󰢟"
+icon_bat_c_1="󱊤"
+icon_bat_c_2="󱊥"
+icon_bat_c_3=""
+icon_bat_0="󰂎"
+icon_bat_1="󱊡"
+icon_bat_2="󱊢"
+icon_bat_3="󱊣"

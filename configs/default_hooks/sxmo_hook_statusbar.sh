@@ -313,46 +313,27 @@ set_battery() {
 			if [ -z "$PCT" ]; then
 				BATCMP="ERR"
 			elif [ "$BATSTATUS" = "C" ] || [ "$BATSTATUS" = "F" ]; then
-				if [ "$PCT" -lt 20 ]; then
-					BATCMP=""
-				elif [ "$PCT" -lt 30 ]; then
-					BATCMP=""
-				elif [ "$PCT" -lt 40 ]; then
-					BATCMP=""
-				elif [ "$PCT" -lt 60 ]; then
-					BATCMP=""
-				elif [ "$PCT" -lt 80 ]; then
-					BATCMP=""
-				elif [ "$PCT" -lt 90 ]; then
-					BATCMP=""
+				if [ "$PCT" -lt 25 ]; then
+					BATCMP="$icon_bat_c_0"
+				elif [ "$PCT" -lt 50 ]; then
+					BATCMP="$icon_bat_c_1"
+				elif [ "$PCT" -lt 75 ]; then
+					BATCMP="$icon_bat_c_2"
 				else
 					# Treat 'Full' status as same as 'Charging'
-					fgcolor=green
-					BATCMP=""
+					BATCMP="$icon_bat_c_3"
 				fi
 			else
-				if [ "$PCT" -lt 10 ]; then
+				if [ "$PCT" -lt 25 ]; then
 					fgcolor=red
-					BATCMP=""
-				elif [ "$PCT" -lt 20 ]; then
-					fgcolor=orange
-					BATCMP=""
-				elif [ "$PCT" -lt 30 ]; then
-					BATCMP=""
-				elif [ "$PCT" -lt 40 ]; then
-					BATCMP=""
+					BATCMP="$icon_bat_0"
 				elif [ "$PCT" -lt 50 ]; then
-					BATCMP=""
-				elif [ "$PCT" -lt 60 ]; then
-					BATCMP=""
-				elif [ "$PCT" -lt 70 ]; then
-					BATCMP=""
-				elif [ "$PCT" -lt 80 ]; then
-					BATCMP=""
-				elif [ "$PCT" -lt 90 ]; then
-					BATCMP=""
+					fgcolor=orange
+					BATCMP="$icon_bat_1"
+				elif [ "$PCT" -lt 75 ]; then
+					BATCMP="$icon_bat_2"
 				else
-					BATCMP=""
+					BATCMP="$icon_bat_3"
 				fi
 			fi
 
