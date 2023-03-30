@@ -11,8 +11,8 @@ timeout="$1"
 shift
 
 finish() {
-	kill "$CMDPID"
-	kill "$SLEEPPID"
+	[ -n "$CMDPID" ] && kill "$CMDPID"
+	[ -n "$SLEEPPID" ] && kill "$SLEEPPID"
 	exit 0
 }
 
@@ -22,14 +22,17 @@ if [ -n "$waitfirst" ]; then
 	sleep "$timeout" &
 	SLEEPPID="$!"
 	wait "$SLEEPPID"
+	unset SLEEPPID
 fi
 
 while : ; do
 	"$@" &
 	CMDPID="$!"
 	wait "$CMDPID"
+	unset CMDPID
 
 	sleep "$timeout" &
 	SLEEPPID="$!"
 	wait "$SLEEPPID"
+	unset SLEEPPID
 done
