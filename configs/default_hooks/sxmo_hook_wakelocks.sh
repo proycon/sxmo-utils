@@ -18,7 +18,7 @@ finish() {
 exec 3<> "${XDG_RUNTIME_DIR:-$HOME}/sxmo.checkwakelocks.lock"
 flock -x 3
 
-DEFAULT_DURATION=30s # to be sure to not lock indefinitely
+DEFAULT_DURATION=120s # to be sure to not lock indefinitely
 
 sxmo_wakelock.sh lock checking_wakelocks "$DEFAULT_DURATION"
 
