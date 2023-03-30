@@ -23,6 +23,7 @@ sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen on
 
 sxmo_daemons.sh stop periodic_blink
+sxmo_daemons.sh stop periodic_wakelock_check
 
 # see https://todo.sr.ht/~mil/sxmo-tickets/150
 # We set the scan interval threshold here to

@@ -24,6 +24,7 @@ sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen off
 
 sxmo_daemons.sh stop periodic_blink
+sxmo_daemons.sh stop periodic_wakelock_check
 
 # Go to screenoff after 8 seconds of inactivity
 if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then

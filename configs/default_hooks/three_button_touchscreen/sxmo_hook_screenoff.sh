@@ -31,13 +31,7 @@ case "$SXMO_WM" in
 		;;
 esac
 
-sxmo_hook_wakelocks.sh
-
-# Start a periodic daemon (10s) to check wakelocks and go to suspend
-# Start a periodic daemon (2s) to blink leds
-sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
-	timeout 10 'sxmo_daemons.sh start periodic_wakelock_check sxmo_run_periodically.sh 10 sxmo_hook_wakelocks.sh' \
-	resume 'sxmo_daemons.sh stop periodic_wakelock_check'
+sxmo_daemons.sh start periodic_wakelock_check sxmo_run_periodically.sh 10 sxmo_hook_wakelocks.sh
 
 wait
 
