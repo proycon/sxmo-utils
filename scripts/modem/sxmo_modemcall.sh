@@ -205,7 +205,7 @@ incoming_call_menu() {
 
 	(
 		PICKED="$(
-			cat <<EOF | sxmo_dmenu.sh -i -H "$pickup_height" -p "$CONTACTNAME"
+			cat <<EOF | sxmo_dmenu.sh -i -H "$pickup_height" -p "$CONTACTNAME" -l 3
 $icon_phn Pickup
 $icon_phx Hangup
 $icon_mut Ignore
