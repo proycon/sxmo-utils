@@ -51,7 +51,7 @@ if [ -n "$WAYLAND_DISPLAY" ]; then
 
 	bemenu -l "$(sxmo_rotate.sh isrotated > /dev/null && \
 		printf %s "${SXMO_BEMENU_LANDSCAPE_LINES:-8}" || \
-		printf %s "${SXMO_BEMENU_PORTRAIT_LINES:-15}")" "$@"
+		printf %s "${SXMO_BEMENU_PORTRAIT_LINES:-16}")" "$@"
 	returned=$?
 
 	cleanmode
