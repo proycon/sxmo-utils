@@ -10,8 +10,22 @@
 ROOT="$XDG_RUNTIME_DIR/sxmo_status/${SXMO_STATUS_NAME:-default}"
 mkdir -p "$ROOT"
 
+exec 3> "$XDG_RUNTIME_DIR/sxmo_status/sxmo_status.lock"
+
 _sorted_components_name() {
 	find "$ROOT" -mindepth 1 -exec 'basename' '{}' ';' | sort -n
+}
+
+lock_ex() {
+	flock -x 3
+}
+
+lock_sh() {
+	flock -s 3
+}
+
+free() {
+	flock -u 3
 }
 
 usage() {
@@ -30,6 +44,8 @@ add() {
 	id=
 	priority=
 	value=
+
+	lock_ex
 
 	while [ -n "$*" ]; do
 		arg="$1"
@@ -63,9 +79,12 @@ add() {
 	if [ -n "$value" ]; then
 		printf "%s" "$value" > "$ROOT"/"$id"
 	fi
+
+	free
 }
 
 del() {
+	lock_ex
 	id="$1"
 	shift
 
@@ -75,21 +94,26 @@ del() {
 	fi
 
 	_sorted_components_name | grep -m1 "\-$id$" | xargs -rI{} rm -f "$ROOT"/"{}"
+	free
 }
 
 show() {
+	lock_sh
 	_sorted_components_name | while read -r id; do
 		tr '\n' ' ' < "$ROOT/$id"
 		printf " "
 	done | head -c -1 | tr '\n' '\0' | xargs -0 -n1 printf "%s\n"
+	free
 }
 
 debug() {
+	lock_sh
 	_sorted_components_name | while read -r id; do
 		printf "%s\n>" "$id"
 		tr '\n' ' ' < "$ROOT/$id"
 		printf "<\n"
 	done
+	free
 }
 
 watch() {
@@ -114,7 +138,9 @@ watch() {
 }
 
 reset() {
+	lock_ex
 	find "$ROOT" -mindepth 1 -delete
+	free
 }
 
 if [ -n "$*" ]; then
@@ -123,25 +149,11 @@ if [ -n "$*" ]; then
 fi
 
 case "$action" in
-	""|"-s")
-		show
-		;;
-	"-w")
-		watch "$@"
-		;;
-	"-r")
-		reset "$@"
-		;;
-	"-a")
-		add "$@"
-		;;
-	"-d")
-		del "$@"
-		;;
-	"-D")
-		debug "$@"
-		;;
-	"-h")
-		usage
-		;;
+	""|"-s") show ;;
+	"-w") watch "$@" ;;
+	"-r") reset "$@" ;;
+	"-a") add "$@" ;;
+	"-d") del "$@" ;;
+	"-D") debug "$@" ;;
+	"-h") usage ;;
 esac
