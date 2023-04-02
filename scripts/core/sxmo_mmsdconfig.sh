@@ -15,19 +15,13 @@ MMSCONFIG="$MMS_BASE_DIR/mms"
 defaultconfig() {
 	cat <<EOF
 [Modem Manager]
-CarrierMMSC=http://wholesale.mmsmvno.com/mms/wapenc
-MMS_APN=Ultra
+CarrierMMSC=http://mms.invalid
+MMS_APN=apn.invalid
 CarrierMMSProxy=NULL
 DefaultModemNumber=NULL
 AutoProcessOnConnection=true
 AutoProcessSMSWAP=true
-
-[Settings]
-UseDeliveryReports=false
-AutoCreateSMIL=false
-ForceCAres=false
-TotalMaxAttachmentSize=1100000
-MaxAttachments=25
+IMSI=invalid
 EOF
 }
 
