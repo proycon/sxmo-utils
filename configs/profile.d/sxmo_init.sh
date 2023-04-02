@@ -73,7 +73,6 @@ _sxmo_load_environments() {
 	export SXMO_STATE="${SXMO_STATE:-$XDG_RUNTIME_DIR/sxmo.state}"
 	export SXMO_LOGDIR="${SXMO_LOGDIR:-$XDG_DATA_HOME/sxmo/modem}"
 	export SXMO_NOTIFDIR="${SXMO_NOTIFDIR:-$XDG_DATA_HOME/sxmo/notifications}"
-	export SXMO_UNSUSPENDREASONFILE="${SXMO_UNSUSPENDREASONFILE:-$XDG_RUNTIME_DIR/sxmo.suspend.reason}"
 
 	export BEMENU_OPTS="${BEMENU_OPTS:---fn 'Sxmo 14' --scrollbar autohide -s -n -w -c -l8 -M 40 -H 20 --cb "#222222" --cf "#bbbbbb" --tb "#005577" --tf "#eeeeee" --fb "#222222" --ff "#bbbbbb" --nb "#222222" --af "#bbbbbb" --ab "#222222" --nf "#bbbbbb" --hb "#005577" --hf "#eeeeee" --scb "#005577" --scf "#eeeeee" --fbb "#eeeeee" --fbf "#222222"}"
 

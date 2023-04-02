@@ -4,7 +4,7 @@ sxmo(7)
 
 sxmo - a simple X mobile operating system
 
-# DESCRIPTION
+# SYNOPSIS
 
 *sxmo* is a collection of simple and suckless programs and scripts used together
 to create a fully functional mobile user interface adhering to the Unix philosophy. We focus
@@ -15,70 +15,105 @@ Sxmo >= 1.6.0 runs both on Xorg (using dwm) as well as on Wayland (using sway).
 The X in our name historically referred to Xorg, but is now open to whatever
 interpretation you prefer (eXtensible, eXcellent, eXperimental, etc...)
 
-A brief overview of Sxmo's features:
+A brief overview of sxmo's features (in order of presentation):
 
-- *Hardware buttons action*: press hardware buttons different number of times
-  for different actions (like launching terminals, browsers, and window
-  management)
-- *Swipe gestures*: (via _lisgd_(1)) move between workspaces, move windows between
-  workspaces, and raise/lower volume via swipe gestures
-- *Menu interfaces*: (via _bemenu_(1) or _dmenu_(1)) use the Pinephone hardware buttons to
-  select menu entries (e.g. volume up/volume down/select translates to
-  previous/next/select)
-- *Onscreen keyboard*: (via _svkbd_(1) or _wvkbd_(1)) Multiple layer responsive onscreen
-  keyboard that autoadjusts WM space
-- *Window Managment*: (via _sway_(1) or _dwm_(1)) Arrange windows (in classic dwm layouts
-  like monocle, tile, and bstack), kill clients, and cycle window focus using
-  Pinephone buttons
-- *Calls & Texting*: (via _mmcli_(1) and _mmsdtng_(1)) Compose texts,
-  send group texts and add attachments, read texts, make and receive 
-  calls.
-- *Incoming Text/Call notifications*: (via _sxmo_notifications_(1)) Vibrate phone & blink led
-  when there is an incoming call/text
-- *Lock Screen*: (via custom script) Disable screen input, toggle screen on/off
-  for listening to music / pocket use, automatic deep sleep when idle
-- *Menu Scripts*: Web Search, Files, Countdown Timer, Youtube audio and video
-  (mpv-based), Weather, RSS
-- *Web browser*: (e.g. firefox) Browse the web while saving screenspace and
-  includes Pinephone buttons (via dmenu) based link-following
-- *Terminal*: (via foot or st) Excellent terminal support with scrollback,
-  copy-paste, and color invert
-- *Camera* (via megapixels) Take photos and videos
-- *System-menus*: Control Volume, Brightness, Wifi, Logout, Modem Info,
-  Launching Apps, and more
-- *Application-specific context menus*: Increase font-size, zoom, paste, on
-  per-application level via dmenu scripts
-- *Auto Login*: (via _tinydm_(1))
+- *Autologin*: sxmo uses _tinydm_(1) to automatically log you into the window
+  manager of your choice. See DESCRIPTION.
+- *Customizable hooks*: sxmo has many hooks (small shell scripts) which allow
+  the user to override almost any behavior. See HOOKS.
+- *Customizable statusbar*: sxmo uses _sxmobar_(1) to offer an informative,
+  compact, and customizable statusbar. See STATUSBAR.
+- *Multiple forms of input*: sxmo handles input from hardware buttons, gestures,
+  touchscreen, stylus, and hardware and onscreen keyboards. See INPUT.
+- *Fully customizable menus*: sxmo uses _bemenu_(1) or _dmenu_(1) for fully
+  customizable menus which are context-sensitive (if in an application, it will
+  open a menu of options for that application). As well, sxmo comes bundled with
+  an *Apps Menu* and a *Scripts Menu* which are also customizable; a *Files
+  Menu* which allows you to browser your filesystem via _sxmo_files_(1); and
+  more. See MENUS.
+- *Autosuspend, screen blanking, and input locking*: sxmo states allow sxmo to
+  automatically suspend when idle unless certain programs block it; to offer 
+  protection from accidental wakeups; and to blank the screen and lock the input
+  while in a phone call and the phone is near your face. See STATES.
+- *Smart cronjobs*: sxmo uses _crond_(1) to handle cronjobs and a special
+  program called _mnc_(1) to wake the phone up in time to execute cron jobs.
+  See CRONJOBS.
+- *Calls and texting*: sxmo allows you to compose both sms and mms (group texts,
+  attachments), and receive and make phone calls. See CALLS AND TEXTING.
+- *Contact management*: sxmo has a script called _sxmo_contacts.sh_(1) which
+  allows you to manage contacts. See CONTACTS.
+- *Wifi support*: sxmo has a *Networks Menu* which uses _nmcli_(1) to setup
+  wifi, including hotspots. See WIFI.
+- *Audio support*: sxmo has full audio support via _pipewire_(1) and
+  _pulseaudio_(1), and routes audio while a phone call via _callaudiod_(1). See
+  AUDIO.
+- *Bluetooth support*: sxmo has a *Bluetooth Menu* which uses _bluetoothctl_(1)
+  to manage bluetooth devices.
+- *Easily updated*: sxmo has a migration tool called _sxmo_migrate.sh_(1) which
+  allows you to easily keep your custom hooks and configs up-to-date. See UPDATING.
+- *Notifications system*: sxmo has an internal notifications system for texts and
+  missed calls, including popups, led management, and sounds. See NOTIFICATIONS.
+- *Multiple devices*: sxmo supports many different kinds of devices, and users
+  can easily add more. See DEVICES.
+- *Customizable environmental variables*: sxmo has a lot of environmental
+  variables users can override. See ENVIRONMENT.
+
+And more (not documented here):
 - *SSH as a first class citizen*: Log into your phone over ssh and have full
   access to all sxmo menus and functionality.
 - *Alpine Linux / PmOS Based Images*: postmarketOS's infrastructure bakes
-  images that bundle Sxmo and pmOS (based on Alpine Linux) which keeps things
+  images that bundle sxmo and pmOS (based on Alpine Linux) which keeps things
   small, simple, and pragmatic
 
 Sxmo 1.4.1 was presented at AlpineConf 2021, you can watch the video.
 
-A screenshot of the interface: TODO
+# DESCRIPTION
 
-# INTERFACE \& BASICS
+Sxmo uses _tinydm_(1) to automatically launch the window manager of your
+choice (_sway_(1) or _dwm_(1)). Note: You can configure the UID in
+*/etc/conf.d/tinydm*. Make sure to change this if you create a custom user. 
+You may switch between the two window managers in the *Power Menu*.
 
-After login, you will be presented the SXMO interface as follows:
-
-![screenshot](assets/screenshot.jpg)
-
-Sxmo runs on either X11 or Wayland, with different but very similar software to
-make it possible. You may switch between the two environment via the *Toggle WM*
-option in the *Power* menu (provided you have both installed).
-
-Regardless of the environment you use Sxmo consists in a large set of POSIX
-shell scripts that glue all these tools together. All these shell scripts comply
-to the pattern *sxmo_\*.sh* and can be found in your */usr/bin/* directory. A
-lot of functionality is also contained in hooks *sxmo_hook_\*.sh* and can be found in
-*/usr/share/sxmo/default_hooks/* or *~/.config/sxmo/hooks/*.
-
+Once the window manager launches, it will execute _sxmo_hook_start.sh_. Sxmo
+relies on _superd_(1) and _sxmo_daemons.sh_(1) to launch various applications
+from this start hook. You can edit the start hook directly and also edit
+*~/.config/sxmo/profile* and *~/.profile* to override certain common
+environmental variables such as background image (see ENVIRONMENT).
 Note that sxmo respects the xdg specification, e.g., $XDG_CACHE_HOME,
 $XDG_CONFIG_HOME, etc.
 
-## STATUSBAR
+Regardless of the environment you use sxmo consists in a large set of POSIX
+shell scripts that glue all these tools together. All these shell scripts comply
+to the pattern *sxmo_\*.sh* and most can be found in your */usr/bin/* directory.
+
+HOOKS: _sxmo_hook_start.sh_ (what executes on startup)
+
+SEE ALSO: _tinydm_(1), _superd_(1), _sxmo_daemons.sh_(1)
+
+# HOOKS
+
+A lot of functionality is also contained in hooks (*sxmo_hook_\*.sh*). Sxmo uses
+PATH to determine which hook executes. It will look first for hooks in 
+*~/.config/sxmo/hooks/* before it looks in */usr/share/sxmo/default_hooks/*. 
+For example, if you pickup 
+a call and *~/.config/sxmo/hooks/sxmo_hook_pickup.sh* does not exist, 
+*/usr/share/sxmo/default_hooks/sxmo_hook_pickup.sh* will be run.
+
+Note that some hooks are in a subdirectory under the *hooks/* main
+directory which will allow you to have hooks associated with a certain
+device. See DEVICES. For instance, in */usr/share/sxmo/default_hooks/* there 
+are several device subdirectories, one of which will be your $SXMO_DEVICE_NAME. 
+It should be a symlink to another subdirectory, e.g., *one_button_ereader* or 
+*three_button_touchscreen*. Device-specific hooks go here.
+
+Note also that hooks do not have their own man pages. We have documented each
+hook in the comments of that hook.
+
+# STATUSBAR
+
+After login, you will be presented the sxmo interface as follows:
+
+https://sxmo.org/assets/screenshot.jpg
 
 The statusbar relies upon _sxmobar_(1). It has space for the following information 
 (from left to right) has icons for:
@@ -94,10 +129,20 @@ The statusbar relies upon _sxmobar_(1). It has space for the following informati
 - An icon also represents what "state" the device is in: unlock (open circle), lock (circle with slash), screenoff (filled circle), or proximity lock (circle with dot)
 - Time.
 
-HOOKS: _sxmo_hook_statusbar.sh_(1) (override look and feel of the statusbar),
-_sxmo_hook_icons.sh_(1) (adjust icons)
+HOOKS: _sxmo_hook_statusbar.sh_ (override look and feel of the statusbar),
+_sxmo_hook_icons.sh_ (adjust icons)
 
-## HARDWARE INPUT
+SEE ALSO: _sxmobar_(1)
+
+# INPUT
+
+The main forms of input are *Hardware buttons* (power, raise volume, lower
+volume), *Touchscreen* (i.e., touching the screen), and *Gestures* (i.e., swipes).
+Sxmo also allows input for a *Hardware keyboard* (e.g., the pinephone keyboard
+case or a bluetooth keyboard) and a *Stylus*. Sxmo also supports a virtual
+keyboard (_svkbd_(1) or _wvkbd_(1)).
+
+## Hardware buttons
 
 On devices with three buttons (power, volume raise, volume lower), the default
 button bindings are:
@@ -114,24 +159,30 @@ button bindings are:
 	- *2 taps*: Transition to state after next state
 	- *3 taps (or hold)*: Launch terminal
 
-On devices with one button (power), the default button bindings are:
-TODO
+On devices with one button (power), the default button bindings are different.
+Please refer to _sxmo_hook_inputhandler.sh_ for the exact details.
 
-HOOKS: _sxmo_hook_inputhandler.sh_(1) (override input handling behavior)
+HOOKS: _sxmo_hook_inputhandler.sh_ (override input handling behavior)
 
-## SWIPE GESTURES
+## Touchscreen
 
-In addition to the button bindings, a custom application called *lisgd* was
-developed to provide touchscreen swipe gestures within Sxmo. These gestures are
-sensitive to the edge of the screen where the gesture is initiated or where they
-end up, and some are sensitive to the length/distance of the swipe. Gestures in
-the main part of the screen, staying clear of the edges, are usually not
-interpreted and passed to the underlying application unmodified (assuming it has
-gesture support).
+Sxmo relies on _sway_(1) or _dwm_(1) to handle the touchscreen. You can
+enable/disable touchscreen input via *Config*.
 
-The SXMO gestures are visualized in the following schematic:
+## Gestures
 
-![gestures](assets/sxmo_gestures.png)
+Sxmo relies on _lisgd_(1) for gestures. You can enable/disable gestures via
+*Config*.
+
+These gestures are sensitive to the edge of the screen where the gesture is
+initiated or where they end up, and some are sensitive to the length/distance of
+the swipe. Gestures in the main part of the screen, staying clear of the edges,
+are usually not interpreted and passed to the underlying application unmodified
+(assuming it has gesture support).
+
+The default gestures are visualized in the following schematic:
+
+https://sxmo.org/assets/sxmo_gestures.png
 
 The default swipe gestures are:
 - *1 finger right-to-left from right edge*: Focus next tag/workspace
@@ -162,11 +213,28 @@ keyboard:
 - *1 finger right-to-left along the bottom edge*: Send Backspace
 - *1 finger left-to-right along the bottom edge*: Send Return
 
-HOOKS: _sxmo_hook_lisgdstart.sh_(1) (controls how lisgd is started)
+HOOKS: _sxmo_hook_lisgdstart.sh_ (controls how lisgd is started and what the
+default gestures are)
 
 SEE ALSO: _lisgd_(1)
 
-## MENUS
+## Hardware keyboard
+
+If you have the pinephone keyboard case this should work ootb. If you have a
+bluetooth keyboard, see BLUETOOTH.
+
+TODO: Describe dwm/sway bindings?
+
+## Stylus
+
+Sxmo relies on _dwm_(1) and _sway_(1) to handle stylus input. You can
+enable/disable stylus input from *Config*.
+
+## Virtual keyboards
+
+SEE ALSO: _svkbd_(1) or _wvkbd_(1).
+
+# MENUS
 
 Menus are a central feature of sxmo and are navigable through using hardware
 buttons. On three button devices like the pinephone:
@@ -177,21 +245,87 @@ buttons. On three button devices like the pinephone:
 You can also simply use the touchscreen to tap your selection if you'd like as well.
 
 In addition to a Main Menu, each application can have its own Context Menu
-associated with it.
+associated with it which defines functions unique to that application (e.g.,
+zoom in, zoom out, etc.).
 
-If no application is open, swiping down from the top of the screen, or pressing
+If no application is focused, swiping down from the top of the screen, or pressing
 the volume raise button once, will bring up the Main Menu.  If an application is
-open, this will bring up the Context Menu instead.  (To access the Main Menu
-while in an application, press the volume raise button twice.)
+focused, this will bring up the application's Context Menu instead.  (To access the 
+Main Menu while an application is focussed, press the volume raise button twice.)
 
-You can close any open menu with a gesture, swipe straight up (vertically) onto
-the top edge of the screen and all the open menus will close.
+You can close any open menu with a gesture: swipe straight up (vertically) onto
+the top edge of the screen and all the open menus will close. See INPUT.
 
-HOOKS: _sxmo_hook_apps.sh_(1) (what shows up on Apps submenu),
-_sxmo_hook_scripts.sh_(1) (what shows up in Scripts submenu),
-_sxmo_hook_contextmenu.sh_(1) (controls the content of all the menus, including
+HOOKS: _sxmo_hook_apps.sh_ (what shows up on Apps submenu),
+_sxmo_hook_scripts.sh_ (what shows up in Scripts submenu),
+_sxmo_hook_contextmenu.sh_ (controls the content of all the menus, including
 contextmenus),
-_sxmo_hook_icons.sh_(1) (icons)
+_sxmo_hook_icons.sh_ (icons)
+
+## SCRIPTS MENU
+
+Some included Scripts:
+- *Web Search*: Search duckduckgo with the query provided by the user (bangs work too)
+- *Timer*: A simple countdown timer script that vibrates the phones upon completion
+- *Youtube*: Search youtube by keyword in dmenu and then view in mpv (script based on [idiotbox](https://codemadness.org/idiotbox.html))
+- *Youtube (audio)*: Search youtube by keyword in dmenu and then listen in mpv (script based on [idiotbox](https://codemadness.org/idiotbox.html))
+- *Weather*: United States weather forecast (by zipcode) dmenu script
+- *RSS*: Aggregates RSS feeds and let's you view by timespan dmenu script (based on [sfeed](https://codemadness.org/sfeed-simple-feed-parser.html))
+
+To add your own custom userscripts, you have two options: edit the
+*~/.config/sxmo/userscripts* file or
+place a shell script in the *~/.config/sxmo/userscripts/* directory.
+
+- Option 1. Edit *~/.config/sxmo/userscripts* and write your entries in it,
+  following the appmenu format *<name> ^ <should-return-to-menu> ^
+  <script-path-or-command>* one entry per line. Example: 
+
+```
+ Weather ^ 0 ^ sxmo_terminal.sh -f "Sxmo:size=5" sh -c "curl http://wttr.in/ | less -SR"
+```
+
+- Option 2. Create the *~/.config/sxmo/userscripts/* directory and place your
+  scripts in it. Note, Userscripts should be set to be executable. You can set a
+  title for the script by adding a comment line of the following ofrmat near the
+  top of the file:
+
+```
+# title="$icon_glb My World"
+```
+
+For examples of scripts sxmo users have made for their mobile devices, see:
+
+https://git.sr.ht/~anjan/sxmo-userscripts
+
+HOOKS: _sxmo_hook_scripts.sh_ (control how userscripts are loaded)
+
+## APPS MENU
+
+Some Supported Applications:
+- *St*: The suckless terminal
+- *Foot*: The minimalistic wayland terminal
+- *Firefox*: The infamous FOSS browser often symbolized by a fox
+- *Surf*: The suckless minimalistic browser based on Webkit
+- *Netsurf*: An alternative minimalistic browser that renders really fast
+- *Lagrange*: A gemini browser
+- *Sacc*: A great minimalistic gopher browser; launches by default to a good phlog aggregator (optional)
+- *Vim/Neovim/Vis*: A modal terminal-based text editor
+- *Feh/Sxiv*: Image viewers for X
+- *Mpv*: Video player
+- *Nano*: A simple text-based text editor
+- *Mutt/Neomutt*:  A text-based mail client
+- *W3m*: A text-based browser with vim-like keybindings
+- *Weechat*: A text-based IRC client and much more
+- *Ncmpcpp*: A text-based music client for MPD
+- *Cmus*: Another terminal-based music player
+- *Aerc*:  A simple terminal-based mail client
+- *Xcalc*: A nice (and fast) calculator app
+
+HOOKS: _sxmo_hook_apps.sh_ (control list of apps)
+
+## FILE BROWSER
+
+SEE _sxmo_files.sh_(1).
 
 # STATES
 
@@ -201,12 +335,12 @@ Sxmo recognizes five basic states:
 - *lock*: Screen is on; touchscreen is disabled.
 - *screenoff*: Screen is off; touchscreen is disabled. There is a short purple blink while in this state.
 - *suspend or CRUST*: This is the kernel CRUST, where the modem will still be
-active to monitor incoming calls/texts but everything else will be suspended..
+  active to monitor incoming calls/texts but everything else will be suspended..
 - *Proximity Mode*: This is a special state when one is in a phone call. If you
-bring it close to your face, it will lock input and blank the screen, and if you
-move it away from your face, it will unlock input and unblank the screen.
+  bring it close to your face, it will lock input and blank the screen, and if you
+  move it away from your face, it will unlock input and unblank the screen.
 
-![schema of the lock states when pressing power](schemas/lock-power-states.png)
+https://sxmo.org/assets/lock-power-states.png)
 
 The usual workflow is this. If the phone is in the "unlock" state and you wish
 to suspend it, click the power button once. This will transition to the
@@ -217,18 +351,23 @@ more to move to "unlock" state.
 
 Sxmo also handles automatic transitions from some states to others.
 
-- It will automatically transition rom unlock -> screenoff after a certain amount of time (120s).
-- It will automatically transition from lock -> screenoff after a certain amount of time (8s).
-- It will automatically transition from screenoff -> suspend after a certain amount of time unless something is blocking it (2s).
+- It will automatically transition from unlock -> screenoff after a certain
+  amount of idleness (120s).
+- It will automatically transition from lock -> screenoff after a certain 
+  amount of time (8s).
+- It will automatically transition from screenoff -> suspend after a certain 
+  amount of time unless something is blocking (3s).
 
 You can set up suspend blockers in the wakelocks hook.
 
+Note that several of these hooks are device-specific. See DEVICES.
+
 HOOKS:
-_sxmo_hook_postwake.sh_(1) (what to do after waking up from suspend state)
-_sxmo_hook_lock.sh_(1) (what to do when transitioning into lock state)
-_sxmo_hook_screenoff.sh_(1) (what to do when transitioning into screenoff state)
-_sxmo_hook_unlock.sh_(1) (what to do when transitioning into unlock state)
-_sxmo_hook_wakelocks.sh_(1) (set what block suspend)
+_sxmo_hook_postwake.sh_ (what to do after waking up from suspend state),
+_sxmo_hook_lock.sh_ (what to do when transitioning into lock state),
+_sxmo_hook_screenoff.sh_ (what to do when transitioning into screenoff state),
+_sxmo_hook_unlock.sh_ (what to do when transitioning into unlock state),
+_sxmo_hook_wakelocks.sh_ (set what block suspend)
 
 # CRONJOBS
 
@@ -254,7 +393,9 @@ variables, e.g.:
 */15 * * * * sxmo_wm.sh execwait sleep 20
 ```
 
-HOOKS: _sxmo_hook_mnc.sh_(1) (change the program that calculates when to wakeup)
+HOOKS: _sxmo_hook_mnc.sh_ (change the program that calculates when to wakeup)
+
+SEE ALSO: _sxmo_rtcwake.sh_(1), _mnc_(1)
 
 # CALLS AND TEXTING
 
@@ -268,18 +409,17 @@ The scripting behind the scenes works via _mmcli_(1).
 ## UNLOCKING THE SIM
 
 As long as your SIM is locked, a lock icon should appear in the status bar.
-SXMO automatically asks for your SIM's PIN code using a menu (since sxmo 1.4.1).
-
+Sxmo automatically asks for your SIM's PIN code using a menu (since sxmo 1.4.1).
 Alternatively, you can do so from the command-line as follows:
 
 ```
 mmcli -i 0 --pin 1234
 ```
 
-You could put this in _sxmo_hook_modem.sh_(1), but there is of course a
+You could put this in _sxmo_hook_modem.sh_, but there is of course a
 significant security risk involved if your device gets compromised!
 
-HOOKS: _sxmo_hook_modem.sh_(1) (what to do when modem chanes states)
+HOOKS: _sxmo_hook_modem.sh_ (what to do when modem chanes states)
 
 ## CALLING
 
@@ -290,7 +430,7 @@ will automatically be launched which let's you send DTMF or Hang Up.
 A proximity lock is automatically enabled that will lock and turn off your
 screen during a call if you have the phone close to your ear. See STATES.
 
-HOOKS: _sxmo_hook_call_audio.sh_(1) (launch programs when a call is initiated and
+HOOKS: _sxmo_hook_call_audio.sh_ (launch programs when a call is initiated and
 finished)
 
 ## SENDING TEXTS
@@ -303,7 +443,9 @@ your message is as you'd like it, exit the editor using `ZZ`/`:wq!`.  You
 will now be taken to a new menu to confirm your message from which you can
 edit/send/add recipients/add attachments/cancel the message.
 
-HOOKS: _sxmo_hook_sendsms.sh_(1) (what to do when sending sms/mms)
+HOOKS: _sxmo_hook_sendsms.sh_ (what to do when sending sms/mms)
+
+SEE ALSO: _sxmo_modemsendsms.sh_(1)
 
 ## READING TEXTS
 
@@ -321,7 +463,7 @@ open your editor and the virtual keyboard to type your sms. Save and close the
 file to send the sms. A new editor will be openned again to type a new
 message.
 
-HOOKS: _sxmo_hook_tailtextlog.sh_(1) (controls look and feel of view of message text, e.g., colors, etc.)
+HOOKS: _sxmo_hook_tailtextlog.sh_ (controls look and feel of view of message text, e.g., colors, etc.)
 
 ## MONITORING FOR INCOMING CALLS AND TEXTS
 
@@ -340,13 +482,14 @@ While a call is incoming:
   menu entry will only be visible while the other party's line is ringing
 
 HOOKS:
-_sxmo_hook_call_audio.sh_(1) (adjust volume level when starting/ending call)
-_sxmo_hook_discard.sh_(1) (if you hangup without answering)
-_sxmo_hook_hangup.sh_(1) (if you hangup)
-_sxmo_hook_missed_call.sh_(1) (if you miss the call)
-_sxmo_hook_mute_ring.sh_(1) (if you click ignore to ignore the call, i.e., mute the ringing)
-_sxmo_hook_pickup.sh_(1) (if you pickup)
-_sxmo_hook_ring.sh_(1) (what to do when ringing)
+_sxmo_hook_call_audio.sh_ (adjust volume level when starting/ending call),
+_sxmo_hook_discard.sh_ (if you hangup without answering),
+_sxmo_hook_hangup.sh_ (if you hangup),
+_sxmo_hook_missed_call.sh_ (if you miss the call),
+_sxmo_hook_mute_ring.sh_ (if you click ignore to ignore the call, i.e., mute the
+ringing),
+_sxmo_hook_pickup.sh_ (if you pickup),
+_sxmo_hook_ring.sh_ (what to do when ringing)
 
 When a new text message comes in:
 - The phone will play a notification sound and vibrate(unless you disabled these in the [Audio menu](#strongincluded-menustrong)).
@@ -358,23 +501,29 @@ _sxmo_hook_sms.sh_(1) (what to do when an sms/mms is received)
 
 ## CONFIGURING THE GSM
 
-To have a working gsm connection you can use the dedicated Networks submenu entry
-"Add a GSM Network". You then must type the APN your provider gave you. You can
-then toggle this GSM entry as other network manager ones.
+To configure the GSM, go to *Networks*.
+
+## MOBILE DATA
+
+Mobile data can be simarly added via the Networks Menu. It will ask for an APN, you may also
+consult the https://wiki.postmarketos.org/wiki/PINE64_PinePhone_(pine64-pinephone)#Modem pinephone
+documentation for that aspect.
 
 ## CONFIGURING MMS
 
+To configure MMS, go to *Config*.
+
 MMS messaging should work just like regular text messaging.  When you *Send a
 Text* there will be the option to add multiple recipients or attachments.  To
-make mms work, sxmo relies on [mmsd-tng](https://gitlab.com/kop316/mmsd).  The
-main configuration will be located in ~/.mms/modemmanager/mms. To make things
-easier in sxmo, we have a dedicated menu entry in *Configuration* called
+make mms work, sxmo relies on _mmsd-tng_(1).  The
+main configuration will be located in *~/.mms/modemmanager/mms*. To make things
+easier in sxmo, we have a dedicated menu entry in *Config* called
 *Config MMS*. This menu will create a default config and you then can edit
 fields one by one.  The script should take care of restarting mmsd when closed.
 
 *Note* that you likely will *not* have to configure mmsd-tng, if your settings
-are already in [the
-database](https://wiki.gnome.org/Projects/NetworkManager/MobileBroadband/ServiceProviders).
+are already in 
+https://wiki.gnome.org/Projects/NetworkManager/MobileBroadband/ServiceProviders.
 Consider contributing your own if it is not.
 
 *Note* that your carrier's nameserver must be present in `/etc/resolv.conf` in
@@ -391,15 +540,15 @@ TODO
 
 # CONTACTS
 
-The Sxmo contacts system based on a plain TSV file that can be placed at
-~/.config/sxmo/contacts.tsv`.  This TSV file is expected to have
+The sxmo contacts system based on a plain TSV file that can be placed at
+*~/.config/sxmo/contacts.tsv*.  This TSV file is expected to have
 two tab separated columns: phonenumber, and contactname. Upon receiving a call if you
 have a contact stored associated with the incoming number, the contact
 name will appear instead of the number. Also contact names will appear
 in the Texts and Dialer menus if they are present in the contacts TSV
-file. If no `contacts.tsv` is present, or the number is missing from
-this file; the contact in menus will show up as `???`.
-An `contacts.tsv` example might look like:
+file. If no *contacts.tsv* is present, or the number is missing from
+this file; the contact in menus will show up as *???*.
+A *contacts.tsv* example might look like:
 
 ```
 +122345628	John Smith
@@ -407,58 +556,7 @@ An `contacts.tsv` example might look like:
 +31612345678	Jan Janssen
 ```
 
-# SCRIPTS AND APPLICATIONS
-
-In App and Scripts menu there are some included scripts. You can edit these in
-_sxmo_hook_apps.sh_(1) and _sxmo_hook_scripts.sh_(1).
-
-Some Included Scripts:
-- *Web Search*: Search duckduckgo with the query provided by the user (bangs work too)
-- *Timer*: A simple countdown timer script that vibrates the phones upon completion
-- *Youtube*: Search youtube by keyword in dmenu and then view in mpv (script based on [idiotbox](https://codemadness.org/idiotbox.html))
-- *Youtube (audio)*: Search youtube by keyword in dmenu and then listen in mpv (script based on [idiotbox](https://codemadness.org/idiotbox.html))
-- *Weather*: United States weather forecast (by zipcode) dmenu script
-- *RSS*: Aggregates RSS feeds and let's you view by timespan dmenu script (based on [sfeed](https://codemadness.org/sfeed-simple-feed-parser.html))
-
-User scripts are custom scripts the user can run via the Scripts Menu.
-To add your own custom
-userscript, you have two options: edit the `userscripts` file or
-place a shell script in the `userscripts` directory.
-
-- Option 1. Edit `$XDG_CONFIG_HOME/sxmo/userscripts` and write your entries
-in it, following the appmenu format `<name> ^ <should-return-to-menu> ^ <script-path-or-command>`
-one entry per line. Example: ` Weather ^ 0 ^ sxmo_terminal.sh -f "monospace:size=5" sh -c "curl http://wttr.in/ | less -SR"`
-- Option 2. Create the ~/.config/sxmo/userscripts` directory and place your
-*.sh* scripts in the `userscripts` directory. Note, Userscripts should be set to
-be executable. You can set a title for the script by adding a comment line of the following ofrmat near the top of the file:
-
-```
-# title="$icon_glb My World"
-```
-
-For examples of scripts Sxmo users have made for their mobile devices, see:
-
-- [~anjan/sxmo-userscripts](https://git.sr.ht/~anjan/sxmo-userscripts).
-
-Some Supported Applications:
-- *St*: The suckless terminal
-- *Foot*: The minimalistic wayland terminal
-- *Firefox*: The infamous FOSS browser often symbolized by a fox
-- *Surf*: The suckless minimalistic browser based on Webkit
-- *Netsurf*: An alternative minimalistic browser that renders really fast
-- *Lagrange*: A gemini browser
-- *Sacc*: A great minimalistic gopher browser; launches by default to a good phlog aggregator (optional)
-- *Vim/Neovim/Vis*: A modal terminal-based text editor
-- *Feh/Sxiv*: Image viewers for X
-- *Mpv*: Video player
-- *Nano*: A simple text-based text editor
-- *Mutt/Neomutt*:  A text-based mail client
-- *W3m*: A text-based browser with vim-like keybindings
-- *Weechat*: A text-based IRC client and much more
-- *Ncmpcpp*: A text-based music client for MPD
-- *Cmus*: Another terminal-based music player
-- *Aerc*:  A simple terminal-based mail client
-- *Xcalc*: A nice (and fast) calculator app
+SEE ALSO: _sxmo_contacts.sh_(1)
 
 # WIFI
 
@@ -466,22 +564,28 @@ There is a menu entry in the Networks Menu to add an APN and connect to wifi.
 This is essentially this is just a wrapper to launch _nmtui_(1)..
 If your phone has a wifi killswitch (like the Pinephone or Librem 5), make sure it is in the enabled position.
 
-# MOBILE DATA
-
-Mobile data can be simarly added via the Networks Menu. It will ask for an APN, you may also
-consult the [postmarketOS](https://wiki.postmarketos.org/wiki/PINE64_PinePhone_(pine64-pinephone)#Modem) pinephone
-documentation for that aspect.
+HOOKS: _sxmo_hook_network_up.sh_ (what to do when network goes up),
+_sxmo_hook_network_down.sh_ (what to do when network goes down),
+_sxmo_hook_network_preup.sh_,
+_sxmo_hook_network_predown.sh_
 
 # AUDIO
 
-You can use the Audio Menu to toggle which audio output you want to send sound to.
-
-Sxmo uses pipewire and pulseaudio nowadays. You can access an Audio menu and a Bluetooth menu from the main menu. We use callaudiod to route audio during a phone call.
+You can use the *Audio Menu* to toggle which audio output you want to send sound to.
+Sxmo uses _pipewire_(1) and _pulseaudio_(1).
+We use _callaudiod_(1) to route audio during a phone call.
 
 Currently, bluetooth audio during phone calls does not work. Please see:
 
 - https://gitlab.com/mobian1/issues/-/issues/345
 - https://gitlab.com/mobian1/callaudiod/-/issues/12
+
+SEE ALSO: _sxmo_hook_call_audio.sh_ (adjust volume after/before a call)
+
+# BLUETOOTH
+
+To enable bluetooth, toggle it in *Config*. A *Bluetooth Menu* will appear in
+the *Main Menu*.
 
 # UPDATING
 
@@ -495,152 +599,18 @@ apk update
 apk upgrade -aiv
 ```
 
-There is also a menu entry within the Config Menu 
-to update as well which runs the same commands as above.
+There is also a menu entry within the *Config Menu* to do this.
 
-For details on what changed between package versions or image releases
-refer to [the changelog](./CHANGELOG.md).
+After you update the sxmo packages themselves, be sure to run
+_sxmo_migrate.sh_(1) to upgrade your (local) config files. 
 
-*Update migrations*
-
-While developing Sxmo, we will regularly update certain configuration
-files such as the xinit/sway template, the hooks or whatever. These
-files are typically a mixture of changes by us and customizations by
-the user. This mixture gives the user maximum flexibility to adapt Sxmo
-to their liking. However, when we update such files, the challenge is
-to ensure that user modifications can be easily merged back in again.
-Moreover, we must ensure the system is never in a broken state because
-of outdated configurations and version mismatches.
-
-Whenever your configuration files are out-of-date when starting Sxmo,
-they will be moved aside (i.e. renamed with ``.needs-revision`` extension)
-and the default configuration will take its place. A red notification
-will pop up telling you have configuration files that need to be
-migrated. This migration is done by running a script named
-_sxmo_migrate_(1). This script can simply be launched from the
-configuration menu or via ssh (recommended).
-It first shows the differences between your configuration and the new
-default, and allows you to edit and apply your configuration accordingly.
-_sxmo_migrate_(1) use `$DIFFTOOL` to help you merge your changes. By default
-$DIFFTOOL is set to `vimdiff`.
-
-If you have any pending migrations, always make sure to complete the
-migration process before making any new changes to your configuration.
-It is also recommended to keep your configuration under version control
-(e.g. git).
-
-*Techical details*:
-
-Sxmo (since 1.8.1) uses explicitly versioned configuration files, meaning
-that they each carry a simple version hash unique to the file.
-This version hash is expressed in a comment in the file itself, such as:
-
-```
-# configversion: d8aaf01c9489793bda3686ef23b2b192
-```
-
-You should **only** update this version hash when ``sxmo_migrate.sh``
-prompts you to do so by showing a diff of a newer configversion hash.
-
-If you want to see what files are disabled and need migration, run
-*sxmo_migrate.sh state*, or run *sxmo_migrate.sh sync state* if
-you just performed an upgrade and haven't restarted yet. If you want to
-revert *all* your configuration files to the default, then you can
-run *sxmo_migrate.sh reset*. This is usually a last resort if you
-end up with a broken system and can be considered a kind of factory
-reset, all your configuration files will moved out of the way and
-flagged for migration then.
-
-The process that checks the versions of your configuration files is
-*sxmo_migrate.sh sync*, it runs automatically when Sxmo starts.
-
-*Resolving system configs on system upgrade and make*
-
-Apk will install new configs as
-*.apk-new* on upgrades if you have modified the original config in */etc*.
-Moreover, when hacking on Sxmo, you will often run `make install`and this may "modify" 
-a config in /etc from apk's perspective.
-You can merge apk's config changes by running `doas update-conf`. You can also run `apk audit` 
-to list all the files that have changed from what apk originally installed.
-
-# FURTHER CUSTOMIZATION
-
-Much of Sxmo's core-functionality in regards to menus
-are built out via plain shell scripts. So further
-cutomization should be simple. See sxmo-util's [scripts
-directory](https://git.sr.ht/~mil/sxmo-utils/tree/master/scripts)
-to get a better sense of how things are put together. You can edit
-the scripts on your system for temporary fixes and please consider [contributing](./CONTRIBUTING.md)
-your changes if you believe your modifications may be useful to other
-users.
-
-# HOOKS
-
-If a user-defined hook file does not exist on activity, sxmo will run the
-corresponding project defined default hook from `/usr/share/sxmo/default_hooks/`.
-For example, if you pickup a call and `~/.config/sxmo/hooks/sxmo_hook_pickup.sh` does
-not exist, `/usr/share/sxmo/default_hooks/sxmo_hook_pickup.sh` will be run.
-
-Note also that some hooks will be in a subdirectory with a devicename.  For
-instance, in `/usr/share/sxmo/default_hooks/` there are `one_button_ereader`
-and `three_button_touchscreen` and various names linked to them.  (We determine
-the name of your device by looking at
-*/sys/firmware/devicetree/base/compatible*.) This allows you to have unique
-hooks depending on the kind of device that you are running.
+SEE ALSO: _sxmo_migrate.sh_(1)
 
 # NOTIFICATIONS
 
 TODO
 
-# LOGGING
-
-Sxmo places its information in ~/.local/state/sxmo.log. You might find the other 
-logfiles in that directory of use as well (e.g. ~/.local/state/superd/logs/\*)
-
-# SUPERD AND DAEMONS
-
-Sxmo uses _superd_(1) and _sxmo_daemons_(1) to handle launching daemons.
-
-# FILES
-
-Sxmo uses _sxmo_files_(1) via the Main Menu to access your files. It obeys xdg.
-
-# AUTO-LOGIN WITH TINYDM
-
-Sxmo uses _tinydm_(1) to automatically log you in.
-You can configure the
-UID to login as in `/etc/conf.d/tinydm`. (make sure to adapt this if you create a custom user!)
-
-# ENVIRONMENTAL VARIABLES
-
-The following environment variables can be set in *~/.config/sxmo/profile* or
-*~/.profile*.
-
-- $TERMCMD: Terminal to launch. Defaults to _foot_(1) or _st_(1).
-- $KEYBOARD: Keyboard to launch. Defaults to _svkbd_(1) or _wvkbd_(1).
-- $KEYBOARD_ARGS: Arguments to pass to $KEYBOARD, e.g., *-o | clickclack -f
-  /usr/share/sxmo/keytap.wav*
-- $EDITOR: Editor to use to handle files. Defaults to _vim_(1).
-- $DEFAULT_COUNTRY: String to indicate the default country sxmo should fallback
-  to when the phone numbers are not country code prefixed. Should be set to a
-  country code (iso-3166?) such as *FR* for France, *DE* for Germany, *US*
-  for the Unites States.
-- $SXMO_DEVICE_NAME: See DEVICES
-- $SXMO_CACHEDIR: Default: ~/.cache/sxmo
-- $SXMO_BLOCKDIR: See BLOCKING NUMBERS.
-- $SXMO_BLOCKFILE: See BLOCKING NUMBERS.
-- $SXMO_CONTACTFILE: See CONTACTS.
-- $SXMO_LOGDIR: Where to log text messages. Default: ~/.local/share/sxmo/modem
-- $SXMO_NOTIFDIR: Default: ~/.local/share/sxmo/notifications. See NOTIFICATIONS.
-- $SXMO_RINGTONE: Sound to play when incoming call
-- $SXMO_TEXTSOUND: Sound to play when new message.
-- $SXMO_RINGTIME: Number of times to play ring tone.
-- $SXMO_DEFAULT_DRAFT: Default message when composing a message.
-- $SXMO_BG_IMG: Background image.
-
-There are other environmental variables that are device specific. See DEVICES.
-As well, several scripts have their own environmental variables which we do not
-list here.
+SEE ALSO: _sxmo_notificationwrite.sh_(1)
 
 # DEVICES
 
@@ -682,3 +652,123 @@ folders and several symlinks.  These folders contain various hooks that handle
 locking mechanisms.  There are at present three basic folders:
 *three_button_touchscreen*, *one_button_e_reader*, and *desktop*.  You can also
 create your own, but usually you'll just want to symlink to one of these.
+
+# MISC
+
+sxmo offers so much more. For instance, _sxmo_rotate.sh_(1) for screen rotation,
+TODO
+
+
+# ENVIRONMENT
+
+Hint: type *env* to see environmental variables. Environmental variables can be
+overridden (generally) in *~/.config/sxmo/profile* or *~/.profile*. See also
+*~/.Xdefaults*, *~/.config/sxmo/xinit*, and *~/.config/sxmo/sway*.
+
+sxmo respects the xdg protocal, falling back to some sane defaults if this is
+missing on your system. The most relevant ones are:
+
+- XDG_DATA_HOME=/home/user/.local/share
+- XDG_CONFIG_HOME=/home/user/.config
+- XDG_CACHE_HOME=/home/user/.cache
+- XDG_STATE_HOME=/home/user/.local/state
+- XDG_RUNTIME_DIR=/dev/shm/user/1000
+- XDG_DATA_DIRS=/home/user/.local/share
+
+When the system boots, tinydm will will run either *sxmo_xinit.sh* or
+*sxmo_winit.sh* depending on if you are running Xorg (dwm) or Wayland (sway).
+Each of these then will load */etc/profile.d/sxmo_init.sh* which will set the
+following environmental variables. Hint: you can type *\_sxmo_grab_session* 
+from the commandline to reload these (e.g., if you switch window managers but
+are logged into an ssh connection).
+
+- SXMO_WM: the window manager (sway or dwm) (if running)
+- DBUS_SESSION_BUS_ADDRESS: dbus socket (if already present)
+- SWAYSOCK: sway socket (if alreayd present)
+- SXMO_OS: calculates the distribution (archlinux, etc.)
+- SXMO_CACHEDIR: Where temporary files are stored.
+- SXMO_BLOCKDIR: Where blocked number metadata is stored. See BLOCKING NUMBERS.
+- SXMO_BLOCKFILE: A TSV file for blocked numbers. See BLOCKING NUMBERS.
+- SXMO_CONTACTFILE: A TSV file containing contacts. See CONTACTS.
+- SXMO_STATE: the file containing the current state
+- SXMO_LOGDIR: Where to log metadata about calls and texts received. Under this
+  directory, there will be several subdirectories, one for each number, which
+  contain the content of the text messages received..
+- SXMO_NOTIFDIR: the directory containing _sxmo_notificationwrite.sh_(1)'s
+  internal files.
+- BEMENU_OPTS: options to pass to bemenu
+- EDITOR: default text editor
+- BROWSER: default web browser
+- SHELL: default shell
+- SXMO_DEVICE_NAME: the device name. Sxmo will also load all the
+  variables in */usr/bin/sxmo_deviceprofile_$SXMO_DEVICE_NAME.sh*, such as id for
+  touch input, whether the device has leds, and so on. See DEVICES.
+- PATH: this will be set to look in ~/.config/sxmo/hooks/$SXMO_DEVICE_NAME/,
+  /usr/share/sxmo/hooks/$SXMO_DEVICE_NAME/
+  ~/.config/sxmo/hooks/,
+  and ~/usr/share/sxmo/hooks/
+  before the regular PATH the operating system sets.
+
+It will then also set the following variables:
+
+- KEYBOARD: the name of the virtual keyboard
+- SXMO_WM: the name of the window manager
+- MOZ_ENABLE_WAYLAND: special to wayland
+- XDG_CURRENT_DESKTOP: the name of the desktop (sway or dwm)
+- SDL_VIDEODRIVER: special to wayland
+- DBUS_SESSION_BUS_ADDRESS: the dbus socket
+- SWAYSOCK
+
+It will then load everything in *~/.Xresources* and *~/.config/sxmo/xinit* (if
+dwm).
+
+You might also want to set various variables not listed above:
+
+- DMENU_WRAP_AROUND: when scrolling past the beginning or end of a menu, wrap
+  around it
+- DEFAULT_COUNTRY: String to indicate the default country sxmo should fallback
+  to when the phone numbers are not country code prefixed. Should be set to a
+  country code (iso-3166?) such as *FR* for France, *DE* for Germany, *US*
+  for the Unites States.
+- SXMO_SWAY_SCALE: set the scale factor in sway
+- SXMO_RINGTONE: Sound to play when incoming call
+- SXMO_TEXTSOUND: Sound to play when new message.
+- SXMO_RINGTIME: Number of times to play ring tone.
+- SXMO_DEFAULT_DRAFT: Default message when composing a message.
+- SXMO_BG_IMG: Background image.
+- SXMO_STATUS_DATE_FORMAT: the format of the date command in statusbar
+- SXMO_DEBUG: turn debugging on or off
+
+There are other environmental variables that are device specific. See DEVICES.
+As well, several scripts have their own environmental variables which we do not
+list here.
+
+# FILES
+
+~/.local/state/sxmo.log - sxmo's logfiles
+
+~/.config/sxmo - most sxmo config files
+
+~/.config/sxmo/hooks - your local hooks. See HOOKS
+
+~/.config/sxmo/userscripts - either a file or a directory containing your
+userscripts. See MENUS.
+
+~/.
+TODO
+
+# AUTHORS
+
+TODO
+
+# REPORTING BUGS
+
+TODO
+
+# COPYRIGHT
+
+TODO
+
+# SEE ALSO
+
+

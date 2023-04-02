@@ -1,6 +1,14 @@
 #!/bin/sh
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
+#
+# See man 7 sxmo.states.
+#
+# This will:
+# - turn screen off
+# - turn input off
+# - launch a demon to blink purple led every 2s
+# - check wakelocks and if none suspend after 3s hold
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh

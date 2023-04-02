@@ -1,6 +1,14 @@
 #!/bin/sh
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
+#
+# See man 7 sxmo.states.
+#
+# This will:
+# - blink blue led once
+# - turn screen on
+# - disable input
+# - set up a daemon to automatically transition to screenoff state after 8s.
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
