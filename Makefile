@@ -1,4 +1,8 @@
+DESTDIR=
 PREFIX:=/usr
+SHAREDIR=$(PREFIX)/share
+MANDIR=$(SHAREDIR)/man
+SCDOC=scdoc
 
 .PHONY: install shellcheck
 
@@ -13,7 +17,13 @@ PROGRAMS = \
 	programs/sxmo_aligned_sleep \
 	programs/sxmo_vibrate
 
-all: $(PROGRAMS)
+DOCS = \
+	docs/sxmo.7
+
+docs/%: docs/%.scd
+	$(SCDOC) <$< >$@
+
+all: $(PROGRAMS) $(DOCS)
 
 test: shellcheck
 
@@ -26,7 +36,10 @@ programs/%: programs/%.c
 clean:
 	rm -f programs/sxmo_aligned_sleep programs/sxmo_vibrate
 
-install: install-sway install-dwm install-scripts
+install: install-sway install-dwm install-scripts install-docs
+
+install-docs: $(DOCS)
+	cd docs && find . -type f -name '*.7' -exec install -D -m 0644 "{}" "$(DESTDIR)$(MANDIR)/man7/{}" \; && cd ..
 
 install-sway:
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/wayland-sessions/ configs/applications/swmo.desktop
