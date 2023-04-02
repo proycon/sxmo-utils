@@ -15,9 +15,9 @@ VVMCONFIG="$VVM_BASE_DIR/vvm"
 defaultconfig() {
 	cat <<EOF
 [Modem Manager]
-VVMEnabled=true
-VVMType=cvvm
-VVMDestinationNumber=127
+VVMEnabled=false
+VVMType=type_invalid
+VVMDestinationNumber=number_invalid
 EOF
 }
 
