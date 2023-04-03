@@ -208,6 +208,7 @@ checkfornewtexts() {
 			grep sms.content.number |
 			sed -E 's/^sms\.content\.number\s+:\s+//'
 		)"
+		NUM="$(cleanupnumber "$NUM")"
 
 		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
 		TIME="$(date +%FT%H:%M:%S%z -d "$TIME")"
