@@ -18,7 +18,7 @@ daemon_start() {
 		sxmo_notify_user.sh "$1 is already running"
 		return 0
 	fi
-	case "$OS" in
+	case "$SXMO_OS" in
 		alpine|postmarketos)
 			doas rc-service "$1" start
 			;;
@@ -38,7 +38,7 @@ daemon_stop() {
 		sxmo_notify_user.sh "$1 is already stopped"
 		return 0
 	fi
-	case "$OS" in
+	case "$SXMO_OS" in
 		alpine|postmarketos)
 			doas rc-service "$1" stop
 			;;
@@ -54,7 +54,7 @@ daemon_isrunning() {
 		sxmo_log "$1 does not exist on the system"
 		return 1
 	fi
-	case "$OS" in
+	case "$SXMO_OS" in
 		alpine|postmarketos)
 			rc-service "$1" status | grep -q started
 			;;
@@ -66,7 +66,7 @@ daemon_isrunning() {
 }
 
 daemon_exists() {
-	case "$OS" in
+	case "$SXMO_OS" in
 		alpine|postmarketos)
 			[ -f /etc/init.d/"$1" ]
 			;;

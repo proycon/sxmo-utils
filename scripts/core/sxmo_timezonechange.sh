@@ -39,7 +39,7 @@ if [ $# -gt 0 ]; then
 	trap "read -r" EXIT
 	set -e
 
-	case "$OS" in
+	case "$SXMO_OS" in
 		alpine|postmarketos) change_alpine "$@";;
 		arch|archarm|debian) change_systemd "$@";;
 		nixos) echo "Change the timezone in configuration.nix with time.timeZone = \"[timezone]\"";;

@@ -55,7 +55,7 @@ _sxmo_load_environments() {
 		# shellcheck source=/dev/null
 		. /usr/lib/os-release
 	fi
-	export OS="${ID:-unknown}"
+	export SXMO_OS="${ID:-unknown}"
 
 	export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 	export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"

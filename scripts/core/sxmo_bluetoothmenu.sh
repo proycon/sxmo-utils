@@ -52,7 +52,7 @@ _device_list() {
 }
 
 _restart_bluetooth() {
-	case "$OS" in
+	case "$SXMO_OS" in
 		alpine|postmarketos)
 			doas rc-service bluetooth restart
 			;;

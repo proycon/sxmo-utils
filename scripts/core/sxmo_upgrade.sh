@@ -36,7 +36,7 @@ update_nixos() {
 
 sxmo_wakelock.sh lock upgrading infinite
 
-case "$OS" in
+case "$SXMO_OS" in
 	alpine|postmarketos) update_apk;;
 	arch|archarm) update_pacman;;
 	nixos) update_nixos;;
