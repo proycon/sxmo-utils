@@ -333,34 +333,41 @@ Sxmo recognizes five basic states:
 
 - *unlock*: Screen is on; touchscreen is enabled.
 - *lock*: Screen is on; touchscreen is disabled.
-- *screenoff*: Screen is off; touchscreen is disabled. There is a short purple blink while in this state.
-- *suspend or CRUST*: This is the kernel CRUST, where the modem will still be
-  active to monitor incoming calls/texts but everything else will be suspended..
+- *screenoff*: Screen is off; touchscreen is disabled. The led will also blink
+  purple every few seconds to indicate that you are in this state.
+- *suspend or CRUST*: This is CRUST (or suspend), where the modem will still be
+  active and monitor for incoming calls/texts but everything else will be
+  suspended.
 - *Proximity Mode*: This is a special state when one is in a phone call. If you
-  bring it close to your face, it will lock input and blank the screen, and if you
-  move it away from your face, it will unlock input and unblank the screen.
+  bring it close to your face, it will disable input and turn the screen off,
+  and if you move the phone away from your face, it will enable input and turn
+  the screen back on.
 
-https://sxmo.org/assets/lock-power-states.png)
+A diagram of the states can be found here:
 
-The usual workflow is this. If the phone is in the "unlock" state and you wish
-to suspend it, click the power button once. This will transition to the
-"screenoff" state which will automatically move to the "suspend" state unless
-something is blocking it. If the phone is in the "suspend" state and you wish
-to use it, click the power button once (to move to "lock" state) and then once
-more to move to "unlock" state.
+https://sxmo.org/assets/lock-power-states.png
+
+The usual workflow is this. 
+
+- If the phone is in the *unlock* state (default when you boot up) and you wish
+  to suspend it, tap the power button once. This will transition to the
+  *screenoff* state which will then automatically transition to the *CRUST* state
+  unless something is blocking it. 
+- If the phone is in the *CRUST* state (i.e., suspended) and you wish to wake it
+  up, tap the power button once (to transition to the *lock* state) and then tap
+  it once again to transition to the *unlock* state. (This prevents accidental
+  wakeups in the pocket.)
 
 Sxmo also handles automatic transitions from some states to others.
 
-- It will automatically transition from unlock -> screenoff after a certain
+- It will automatically transition from *unlock* to *screenoff* after a certain
   amount of idleness (120s).
-- It will automatically transition from lock -> screenoff after a certain 
+- It will automatically transition from *lock* to *screenoff* after a certain 
   amount of time (8s).
-- It will automatically transition from screenoff -> suspend after a certain 
-  amount of time unless something is blocking (3s).
+- It will automatically transition from *screenoff* to *CRUST* immediately
+  unless something is blocking it.
 
 You can set up suspend blockers in the wakelocks hook.
-
-Note that several of these hooks are device-specific. See DEVICES.
 
 HOOKS:
 _sxmo_hook_postwake.sh_ (what to do after waking up from suspend state),
@@ -682,18 +689,20 @@ following environmental variables. Hint: you can type *\_sxmo_grab_session*
 from the commandline to reload these (e.g., if you switch window managers but
 are logged into an ssh connection).
 
-- SXMO_WM: the window manager (sway or dwm) (if running)
-- DBUS_SESSION_BUS_ADDRESS: dbus socket (if already present)
-- SWAYSOCK: sway socket (if alreayd present)
-- SXMO_OS: calculates the distribution (archlinux, etc.)
-- SXMO_CACHEDIR: Where temporary files are stored.
-- SXMO_BLOCKDIR: Where blocked number metadata is stored. See BLOCKING NUMBERS.
-- SXMO_BLOCKFILE: A TSV file for blocked numbers. See BLOCKING NUMBERS.
-- SXMO_CONTACTFILE: A TSV file containing contacts. See CONTACTS.
-- SXMO_STATE: the file containing the current state
-- SXMO_LOGDIR: Where to log metadata about calls and texts received. Under this
+- SXMO_WM: the window manager (sway or dwm)
+- DBUS_SESSION_BUS_ADDRESS: dbus socket
+- SWAYSOCK: sway socket
+- SXMO_OS: the distribution (archlinux, etc.)
+- SXMO_CACHEDIR: temporary cache files (~/.cache/sxmo)
+- SXMO_LOGDIR: where sxmo logs metadata about calls and texts received. Under this
   directory, there will be several subdirectories, one for each number, which
-  contain the content of the text messages received..
+  contain the content of the text messages received. (~/.local/share/modem)
+- SXMO_BLOCKDIR: blocked number metadata (~/.local/share/modem/block).
+- SXMO_BLOCKFILE: a TSV file that logs blocked texts and calls
+  (~/.local/share/sxmo/block/modemlog.tsv).
+- SXMO_CONTACTFILE: a TSV file containing contacts
+  (~/.config/sxmo/contacts.tsv)
+- SXMO_STATE: the file containing the current state
 - SXMO_NOTIFDIR: the directory containing _sxmo_notificationwrite.sh_(1)'s
   internal files.
 - BEMENU_OPTS: options to pass to bemenu
