@@ -12,7 +12,7 @@ EXTERNAL_SERVICES:=1
 
 SCDOC=scdoc
 
-.PHONY: install shellcheck
+.PHONY: install test shellcheck test_legacy_nerdfont
 
 VERSION:=1.13.0
 
@@ -33,10 +33,16 @@ docs/%: docs/%.scd
 
 all: $(PROGRAMS) $(DOCS)
 
-test: shellcheck
+test: shellcheck test_legacy_nerdfont
 
 shellcheck:
 	find . -type f -name '*.sh' -print0 | xargs -0 shellcheck -x --shell=sh
+
+test_legacy_nerdfont: programs/test_legacy_nerdfont
+	programs/test_legacy_nerdfont < configs/default_hooks/sxmo_hook_icons.sh
+
+programs/test_legacy_nerdfont: programs/test_legacy_nerdfont.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ $< $(shell pkg-config --cflags --libs icu-io)
 
 programs/%: programs/%.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ $<
