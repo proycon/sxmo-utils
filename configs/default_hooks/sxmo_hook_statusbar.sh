@@ -280,13 +280,12 @@ set_network() {
 }
 
 set_battery() {
-	count=0 # handle multiple batteries
 	for power_supply in /sys/class/power_supply/*; do
+		power_name="$(basename "$power_supply")"
 		fgcolor=default
 		bgcolor=default
 		style=normal
 		BATCMP=
-
 
 		if [ "$(cat "$power_supply"/type)" = "Battery" ]; then
 			if [ -e "$power_supply"/capacity ]; then
@@ -298,8 +297,6 @@ set_battery() {
 			else
 				continue
 			fi
-
-			count=$((count+1))
 
 			if [ -e "$power_supply"/status ]; then
 				# The status is not always given for the battery device.
@@ -346,12 +343,12 @@ set_battery() {
 			fi
 
 			sxmobar -a -t "$style" -b "$bgcolor" -f "$fgcolor" \
-				battery-icon 40 "$BATCMP"
+				"battery-icon-$power_name" 40 "$BATCMP"
 
 			if [ -z "$SXMO_BAR_SHOW_BAT_PER" ]; then
-				 sxmobar -d battery-status
+				 sxmobar -d "battery-status-$power_name"
 			else
-				 sxmobar -a battery-status 41 "$PCT%"
+				 sxmobar -a "battery-status-$power_name" 41 "$PCT%"
 			fi
 		fi
 	done
