@@ -20,8 +20,6 @@ sxmo_wm.sh inputevent touchscreen on
 sxmo_wm.sh inputevent stylus on
 superctl start sxmo_hook_lisgd
 
-sxmo_daemons.sh start periodic_wakelock_check sxmo_run_periodically.sh 10 sxmo_hook_wakelocks.sh
-
 # suspend after if no activity after 120s
 sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
 	timeout "1" '' \

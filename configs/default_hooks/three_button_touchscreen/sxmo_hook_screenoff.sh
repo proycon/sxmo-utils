@@ -39,9 +39,6 @@ case "$SXMO_WM" in
 		;;
 esac
 
-sxmo_hook_wakelocks.sh
-sxmo_daemons.sh start periodic_wakelock_check sxmo_run_periodically.sh - 10 sxmo_hook_wakelocks.sh
-
 wait
 
 sxmo_wakelock.sh lock hold_a_bit 3s # avoid immediate suspension

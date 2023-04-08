@@ -8,13 +8,25 @@
 
 set -e
 
-while true; do
-	# Make sure it's fresh before checking locks, reading wakeup_count will
-	# block so we can't poll it here
-	sxmo_hook_wakelocks.sh
+last_check=0
+wait_can_suspend() {
+	# If we already checked recently, then there's nothing to do. This helps
+	# mitigate the chance that running all checks could take too long and
+	# cause suspend to fail.
+	if [ "$((last_check + 10))" -gt "$(date +%s)" ]; then
+		return
+	fi
 
+	sxmo_hook_block_suspend.sh
+
+	last_check="$(date +%s)"
+}
+
+while true; do
 	# Reading from wakeup_count blocks until there are no wakelocks
 	wakeup_count=$(cat /sys/power/wakeup_count)
+
+	wait_can_suspend
 
 	# If the wakeup count has changed since we read it, this will fail so we
 	# know to try again. If something takes a wake_lock after we do this, it
