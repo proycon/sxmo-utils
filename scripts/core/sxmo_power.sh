@@ -22,13 +22,9 @@ case "$1" in
 		;;
 	logout)
 		sxmo_hook_logout.sh
-		case "$(realpath /var/lib/tinydm/default-session.desktop)" in
-			*"swmo.desktop")
-				swaymsg exit
-				;;
-			*"sxmo.desktop")
-				pkill dwm
-				;;
+		case "$SXMO_WM" in
+			"sway") swaymsg exit ;;
+			"dwm") pkill dwm ;;
 		esac
 		;;
 	togglewm)
