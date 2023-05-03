@@ -106,6 +106,9 @@ are several device subdirectories, one of which will be your $SXMO_DEVICE_NAME.
 It should be a symlink to another subdirectory, e.g., *one_button_ereader* or 
 *three_button_touchscreen*. Device-specific hooks go here.
 
+While you can manually copy and edit hooks to your liking,
+_sxmo_hookmenu.sh_ (MENU > config > hooks) simplifies this process.
+
 Note also that hooks do not have their own man pages. We have documented each
 hook in the comments of that hook.
 
