@@ -55,7 +55,7 @@ make_attachments_arg() {
 		if [ "$ATT_NUM" -ge 1 ] && [ "$TOTAL_SIZE" -gt "$MAX_SIZE" ]; then
 			err "Total size of attachments ($TOTAL_SIZE) greater than TotalMaxAttachmentSize ($MAX_SIZE)."
 		fi
-		printf " -a '%s' -c '%s'" "$ATTACHMENT" "$CTYPE"
+		printf " %s '%s' -c '%s'" "-a" "$ATTACHMENT" "$CTYPE"
 	done < "$SXMO_LOGDIR/$LOGDIRNUM/draft.attachments.txt"
 }
 
@@ -90,22 +90,22 @@ if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ] || [ -f "$SXMO_LO
 	NUMBER="$(printf %s "$NUMBER" | xargs pnc find | sort -u | grep . | xargs printf %s)"
 
 	# generate mmsctl arguments
-
-	# -a 'tmpfile' for message content
 	TMPFILE="$(mktemp)" # we remove this after we attempt run mmsctl
 	printf %s "$TEXT" > "$TMPFILE"
-	ATTACHMENTS_ARG="$(printf "-a '%s' %s" "$TMPFILE" "$ATTACHMENTS_ARG")"
 
 	# -a 'filename' -c 'content/type' -a 'filename2' -c 'content/type'
 	[ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ] && ATTACHMENTS_ARG="$(make_attachments_arg "$NUMBER" | sed 's/^ //')"
+
+	# -a 'tmpfile' for message content
+	ATTACHMENTS_ARG="-a '$TMPFILE' $ATTACHMENTS_ARG"
 
 	# -r +123 -r +345
 	RECIPIENTS_ARG="$(printf %s "$NUMBER" | sed 's/+/ -r +/g' | sed 's/^ //')"
 
 	# Send it to mmsd-tng via mmsctl.  We can't use dbus-send since
 	# dbus-send doesn't recognize a(sss) types.
-	info "mmsctl -S $RECIPIENTS_ARG $ATTACHMENTS_ARG..."
-	MMSCTL_RES="$(printf "-S %s %s" "$RECIPIENTS_ARG" "$ATTACHMENTS_ARG" | xargs mmsctl 2>&1)"
+	info "mmsctl -S $RECIPIENTS_ARG $ATTACHMENTS_ARG"
+	MMSCTL_RES="$(eval mmsctl -S "$RECIPIENTS_ARG" "$ATTACHMENTS_ARG")"
 	MMSCTL_OK="$?"
 	rm "$TMPFILE"
 	[ "$MMSCTL_OK" -ne 0 ] && err "mmsctl failed with \"$MMSCTL_RES\""
@@ -137,7 +137,7 @@ if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ] || [ -f "$SXMO_LO
 	# process it just like any other mms (this will handle logging it)
 	sxmo_mms.sh processmms "$MESSAGE_PATH"
 
-	MMS_FILE="$(printf %s "$MESSAGE_PATH" | rev | cut -d'/' -f1 | rev)"
+	MMS_FILE="$(basename  "$MESSAGE_PATH")"
 	CONTACTNAME="$(sxmo_contacts.sh --name-or-number "$NUMBER")"
 	sxmo_hook_sendsms.sh "$CONTACTNAME" "$TEXT" "$MMS_FILE" "$CONTACTNAME"
 
