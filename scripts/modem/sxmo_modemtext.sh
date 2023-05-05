@@ -121,7 +121,6 @@ sendtextmenu() {
 						mv "$SXMO_LOGDIR/$OLDNUMBER/draft.attachments.txt" \
 							"$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 					fi
-					kill "$(lsof | grep "/$OLDNUMBER/sms.txt" | cut -f1)"
 					[ -e "$SXMO_LOGDIR/$NUMBER/sms.txt" ] || touch "$SXMO_LOGDIR/$NUMBER/sms.txt"
 					sxmo_hook_tailtextlog.sh "$NUMBER" &
 				fi
@@ -155,7 +154,6 @@ sendtextmenu() {
 						mv "$SXMO_LOGDIR/$OLDNUMBER/draft.attachments.txt" \
 						"$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 					fi
-					kill "$(lsof | grep "/$OLDNUMBER/sms.txt" | cut -f1)"
 					[ -e "$SXMO_LOGDIR/$NUMBER/sms.txt" ] || touch "$SXMO_LOGDIR/$NUMBER/sms.txt"
 					sxmo_hook_tailtextlog.sh "$NUMBER" &
 				fi
