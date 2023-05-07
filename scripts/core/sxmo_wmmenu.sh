@@ -76,11 +76,11 @@ swaywmmenu() {
 		)"
 		if [ -n "$CURRENT_LAYOUT" ]; then
 			if [ "$CURRENT_LAYOUT" = "splith" ]; then
-				LAYOUT_LINE="splith → splitv → tabbed"
+				LAYOUT_LINE="splith $icon_arr splitv $icon_arr tabbed"
 			elif [ "$CURRENT_LAYOUT" = "tabbed" ] ; then
-				LAYOUT_LINE="tabbed → splith → splitv"
+				LAYOUT_LINE="tabbed $icon_arr splith $icon_arr splitv"
 			else
-				LAYOUT_LINE="splitv → tabbed → splith"
+				LAYOUT_LINE="splitv $icon_arr tabbed $icon_arr splith"
 			fi
 		fi
 		CHOICES="$(grep . <<EOF

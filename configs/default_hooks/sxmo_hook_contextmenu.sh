@@ -125,8 +125,8 @@ case "$WMCLASS" in
 			$icon_pau Pause        ^ 0 ^ sxmo_type -k Space
 			$icon_fbw Seek       ^ 1 ^ sxmo_type -k Left
 			$icon_ffw Seek       ^ 1 ^ sxmo_type -k Right
-			$icon_aru App Volume ↑ ^ 1 ^ sxmo_type 0
-			$icon_ard App Volume ↓ ^ 1 ^ sxmo_type 9
+			$icon_aru App Volume Up ^ 1 ^ sxmo_type 0
+			$icon_ard App Volume Down ^ 1 ^ sxmo_type 9
 			$icon_aru Speed up      ^ 1 ^ sxmo_type -k bracketRight
 			$icon_ard Speed down    ^ 1 ^ sxmo_type -k bracketLeft
 			$icon_cam Screenshot   ^ 1 ^ sxmo_type s

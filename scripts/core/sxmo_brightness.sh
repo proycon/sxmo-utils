@@ -4,13 +4,15 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
+# shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
+. sxmo_hook_icons.sh
 
 notify() {
 	if [ "$SXMO_WM" = "sway" ] && [ -z "$SXMO_WOB_DISABLE" ]; then
 		light | grep -o "^[0-9]*" > "$XDG_RUNTIME_DIR"/sxmo.wobsock
 	else
-		light | xargs dunstify -r 888 " Brightness"
+		light | xargs dunstify -r 888 "$icon_brightness Brightness"
 	fi
 }
 

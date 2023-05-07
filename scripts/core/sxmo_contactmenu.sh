@@ -80,7 +80,7 @@ deletecontact() {
 	ENTRIES="$(printf "$icon_cls No\n$icon_chk Yes")"
 	PICKED="$(
 		printf %b "$ENTRIES" |
-		dmenu -p "$icon_del Delete $name ?"
+		dmenu -p "$icon_del Delete $name?"
 	)"
 
 	# reverse them

@@ -65,19 +65,24 @@ sendtextmenu() {
 
 	while true
 	do
+		# We use them in printf statements
+		export icon_cls
+		export icon_att
+		export icon_usr
+
 		ATTACHMENTS=
 		if [ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ]; then
 			# shellcheck disable=SC2016
 			ATTACHMENTS="$(
 				tr '\n' '\0' < "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" |
-				xargs -0 -I{} sh -c 'printf "%s %s %s :: %s\n" "" "" "$(basename "{}")" "{}"'
+				xargs -0 -I{} sh -c 'printf "%s %s %s :: %s\n" "$icon_cls" "$icon_att" "$(basename "{}")" "{}"'
 			)"
 		fi
 
 		RECIPIENTS=
 		if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ]; then
 			# shellcheck disable=SC2016
-			RECIPIENTS="$(printf %s "$NUMBER" | xargs pnc find | xargs -I{} sh -c 'printf "  "$(sxmo_contacts.sh --name {})" :: {}\n"')"
+			RECIPIENTS="$(printf %s "$NUMBER" | xargs pnc find | xargs -I{} sh -c 'printf "$icon_cls $icon_usr "$(sxmo_contacts.sh --name {})" :: {}\n"')"
 		fi
 
 		CHOICES="$(printf "%s Send to %s (%s)\n%b\n%s Add Recipient\n%b\n%s Add Attachment\n%s Edit '%s'\n%s Cancel\n" \
@@ -98,7 +103,7 @@ sendtextmenu() {
 				fi
 				;;
 			# Remove Attachment
-			" "*)
+			"$icon_cls $icon_att"*)
 				FILE="$(printf %s "$CONFIRM" | awk -F' :: ' '{print $2}')"
 				sed -i "\|$FILE|d" "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 				if [ ! -s "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ] ; then
@@ -106,7 +111,7 @@ sendtextmenu() {
 				fi
 				;;
 			# Remove Recipient
-			" "*)
+			"$icon_cls $icon_usr"*)
 				if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ]; then
 					OLDNUMBER="$NUMBER"
 					RECIPIENT="$(printf %s "$CONFIRM" | awk -F' :: ' '{print $2}')"

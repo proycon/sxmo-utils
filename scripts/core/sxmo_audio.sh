@@ -19,7 +19,7 @@ notifyvol() {
 	if [ "$SXMO_WM" = "sway" ] && [ -z "$SXMO_WOB_DISABLE" ]; then
 		printf "%s\n" "$vol" > "$XDG_RUNTIME_DIR"/sxmo.wobsock
 	else
-		dunstify -r 999 "♫ Volume $vol"
+		dunstify -r 999 "$icon_audio Volume $vol"
 	fi
 }
 
