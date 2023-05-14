@@ -153,5 +153,5 @@ weathermenu() {
 if [ -z "$1" ]; then
 	weathermenu
 else
-  "$@"
+	"$@"
 fi

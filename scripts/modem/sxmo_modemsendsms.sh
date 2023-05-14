@@ -161,7 +161,7 @@ else
 	SMS_OK="$?"
 
 	if [ "$SMS_OK" = 1 ]; then
-		# if we fail to send due to a bad number, 
+		# if we fail to send due to a bad number,
 		# clear it from the modem
 		if echo "$SMS_RES" | grep -q "Invalid number"; then
 			for i in $(mmcli -m any --messaging-list-sms | grep " (unknown)" | cut -f5 -d' '); do

@@ -63,7 +63,7 @@ checkforlostmms() {
 		done < "$ALL_MMS_TEMP"
 		if [ "$1" = "--force" ]; then
 			info "Finished."
-		else 
+		else
 			info "Run $0 checkforlostmms --force to process (if sent or received) or delete (if expired or draft)."
 		fi
 	fi

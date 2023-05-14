@@ -217,7 +217,7 @@ checkfornewtexts() {
 		# later.
 		#
 		# TODO: a user *could* block the sms wap number (which would be user error).  But then
-		# the mms would not be processed.  So probably give a warning here if the user has blocked 
+		# the mms would not be processed.  So probably give a warning here if the user has blocked
 		# the sms wap number?
 		if cut -f1 "$SXMO_BLOCKFILE" 2>/dev/null | grep -q "^$NUM$"; then
 			mkdir -p "$SXMO_BLOCKDIR/$NUM"

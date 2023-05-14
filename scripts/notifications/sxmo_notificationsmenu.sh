@@ -33,7 +33,7 @@ notificationmenu() {
 	echo "$PICKEDCONTENT" | grep -q "Close Menu" && exit 1
 	if echo "$PICKEDCONTENT" | grep -q "Clear Notifications"; then
 		# merely removing the notifs won't remove
-		# the inotifywait notifwatchfile. so to handle that 
+		# the inotifywait notifwatchfile. so to handle that
 		# we need to open each notifwatchfile
 		find "$SXMO_NOTIFDIR" -type f | \
 			while read -r line; do

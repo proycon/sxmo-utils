@@ -10,7 +10,7 @@
 #  - Optionally, how to wait for the next check. Currently the only implemented
 #    method is exponential backoff (called delay) which is the default if none
 #    is provided.
-# 
+#
 # NOTE: If you're trying to extend this hook, skip to the while loop at the bottom
 
 # include common definitions

@@ -226,7 +226,7 @@ set_wifi() {
 	fi
 
 	# if they have a vpn nmcli c shown --active should also list:
-	# tun0              ef5fcce9-fdae-4ffe-a540-b16fc7b42852  tun   tun0   
+	# tun0              ef5fcce9-fdae-4ffe-a540-b16fc7b42852  tun   tun0
 	if printf %b "$CONN" | cut -d':' -f3 | grep -q ^tun$; then
 		wifivpn=1
 	else
@@ -346,9 +346,9 @@ set_battery() {
 				"battery-icon-$power_name" 40 "$BATCMP"
 
 			if [ -z "$SXMO_BAR_SHOW_BAT_PER" ]; then
-				 sxmobar -d "battery-status-$power_name"
+				sxmobar -d "battery-status-$power_name"
 			else
-				 sxmobar -a "battery-status-$power_name" 41 "$PCT%"
+				sxmobar -a "battery-status-$power_name" 41 "$PCT%"
 			fi
 		fi
 	done

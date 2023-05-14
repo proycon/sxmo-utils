@@ -99,7 +99,7 @@ sendtextmenu() {
 				;;
 			# Remove Attachment
 			" "*)
-				FILE="$(printf %s "$CONFIRM" | awk -F' :: ' '{print $2}')"  
+				FILE="$(printf %s "$CONFIRM" | awk -F' :: ' '{print $2}')"
 				sed -i "\|$FILE|d" "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"
 				if [ ! -s "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ] ; then
 					rm "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt"

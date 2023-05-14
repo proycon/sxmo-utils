@@ -418,10 +418,10 @@ case "$WMCLASS" in
 						$icon_itm Type complete   ^ 0 ^ sxmo_type -M Ctrl -M Shift -k u
 						$icon_cpy Copy complete   ^ 0 ^ sxmo_type -M Ctrl -M Shift -k i
 						$icon_itm Selmode $(
-						  [ "$STSELMODEON" = 1 ] &&
-						  printf %b "$icon_ton" ||
-						  printf %b "$icon_tof"
-						  printf %b '^ 0 ^ sxmo_type -M Ctrl -M Shift -k s'
+							[ "$STSELMODEON" = 1 ] &&
+							printf %b "$icon_ton" ||
+							printf %b "$icon_tof"
+							printf %b '^ 0 ^ sxmo_type -M Ctrl -M Shift -k s'
 						)
 						$([ "$STSELMODEON" = 1 ] && echo 'Copy selection ^ 0 ^ sxmo_type -M Ctrl -M Shift -k c')
 						$icon_pst Paste           ^ 0 ^ sxmo_type -M Ctrl -M Shift -k v

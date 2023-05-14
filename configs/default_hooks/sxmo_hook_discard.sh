@@ -3,7 +3,7 @@
 # Copyright 2022 Sxmo Contributors
 
 # This script is executed (asynchronously) when you discard an incoming call
-# i.e., click Hangup on Pickup menu when call is coming in (without picking 
+# i.e., click Hangup on Pickup menu when call is coming in (without picking
 # up the call).
 
 # kill existing ring playback

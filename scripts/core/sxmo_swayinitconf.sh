@@ -25,7 +25,7 @@ multikey_retrocompat() {
 		powerbutton_two \
 		powerbutton_three
 
-	 if ! [ "$vols" = "none" ]; then
+	if ! [ "$vols" = "none" ]; then
 		for vol in $vols; do
 			swaymsg -- bindsym --locked --input-device="$vol" XF86AudioRaiseVolume exec \
 				sxmo_multikey.sh \
@@ -41,7 +41,7 @@ multikey_retrocompat() {
 				voldown_two \
 				voldown_three
 		done
-	 fi
+	fi
 }
 
 if [ -n "$SXMO_MODEM_GPIO_KEY_RI" ]; then
