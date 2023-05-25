@@ -21,6 +21,9 @@ case "$TERMCMD" in
 	"vte-2.91"*)
 		set -- ${TERMCMD% --} --title "$TERMNAME" -- "$@"
 		;;
+	"alacritty"*)
+		set -- $TERMCMD -T "$TERMNAME" -e "$@"
+		;;
 	*)
 		printf "%s: '%s'\n" "Not implemented for TERMCMD" "$TERMCMD" >&2
 		set -- $TERMCMD "$@"
