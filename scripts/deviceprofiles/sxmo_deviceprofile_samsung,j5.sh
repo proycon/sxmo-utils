@@ -1,0 +1,1 @@
+sxmo_deviceprofile_samsung,a5u-eur.sh
