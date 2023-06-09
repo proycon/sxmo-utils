@@ -227,7 +227,7 @@ set_wifi() {
 
 	# if they have a vpn nmcli c shown --active should also list:
 	# tun0              ef5fcce9-fdae-4ffe-a540-b16fc7b42852  tun   tun0
-	if printf %b "$CONN" | cut -d':' -f3 | grep -q ^tun$; then
+	if printf %b "$CONN" | cut -d':' -f3 | grep -q -E "^tun$|^wireguard$"; then
 		wifivpn=1
 	else
 		wifivpn=0
@@ -444,4 +444,3 @@ case "$1" in
 		exit # swallow it !
 		;;
 esac
-
