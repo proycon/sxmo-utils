@@ -10,7 +10,7 @@
 
 set -e
 
-VPNDEVICE="$(nmcli con show --active | grep -E 'wireguard|vpn' | awk '{ print $1 }')"
+VPNDEVICE="$(nmcli con show --active | grep -E 'wireguard|vpn' | awk '{ print $1 }' | paste -s -d '|')"
 
 nofail() {
 	"$@" || return 0
@@ -33,7 +33,7 @@ connections() {
 		sed "s/802-3-ethernet:/$icon_usb /" | \
 		sed "s/^:/$icon_dof /" |\
 		sed "s/^cdc-wdm.*:/$icon_don /" |\
-		sed "s/^$VPNDEVICE.*:/$icon_don /" |\
+		sed -E "s/^$VPNDEVICE.*:/$icon_don /" |\
 		sed "s/^wlan.*:/$icon_don /" |\
 		sed "s/^wwan.*:/$icon_don /" |\
 		sed "s/^eth.*:/$icon_don /" |\
