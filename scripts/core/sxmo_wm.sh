@@ -25,9 +25,9 @@ xorgdpms() {
 
 swaydpms() {
 	STATE=off
-	if swaymsg -t get_outputs \
+	if ! swaymsg -t get_outputs \
 		| jq ".[] | .dpms" \
-		| grep -q "false"; then
+		| grep -q "true"; then
 		STATE=on
 	fi
 
