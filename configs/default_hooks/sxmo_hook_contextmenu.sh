@@ -136,6 +136,14 @@ case "$WMCLASS" in
 		"
 		WINNAME=Mpv
 		;;
+	io.bassi.amberol)
+		CHOICES="
+			$icon_pau Play/Pause ^ 0 ^ playerctl play-pause
+			$icon_prv Previous Track ^ 1 ^ playerctl previous
+			$icon_nxt Next Track ^ 1 ^ playerctl next
+		"
+		WINNAME=Amberol
+		;;
 	*feh*)
 		# Feh
 		CHOICES="
