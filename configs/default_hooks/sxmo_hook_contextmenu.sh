@@ -606,6 +606,7 @@ case "$WMCLASS" in
 	*geopard*)
 		# Geopard
 		CHOICES="
+			$icon_flt Pipe URL          ^ 0 ^ sxmo_urlhandler.sh
 			$icon_pls New Tab            ^ 0 ^ sxmo_type -M Ctrl t
 			$icon_cls Close Tab          ^ 0 ^ sxmo_type -M Ctrl w
 			$icon_bok Open Bookmarks     ^ 0 ^ sxmo_type -M Ctrl b

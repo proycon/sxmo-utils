@@ -23,12 +23,21 @@ else
 	fi
 
 	# Is normal browser? (FF or Netsurf) - use Ctrl-L Ctrl-C to copy URL
-	if sxmo_wm.sh focusedwindow | grep -i -E '(netsurf|firefox)'; then
+	WINDOW="$(sxmo_wm.sh focusedwindow)"
+
+	if printf "%s" "$WINDOW" | grep -i -E '(netsurf|firefox)'; then
 		sxmo_type.sh -M Ctrl l
 		sleep 0.3
 		sxmo_type.sh -M Ctrl c
 		sleep 0.3
-
+		URL="$(sxmo_wm.sh paste)"
+	elif printf "%s" "$WINDOW" | grep -i 'geopard'; then
+		sxmo_type.sh -M Ctrl l
+		sleep 0.3
+		sxmo_type.sh -M Ctrl a
+		sleep 0.3
+		sxmo_type.sh -M Ctrl c
+		sleep 0.3
 		URL="$(sxmo_wm.sh paste)"
 	fi
 fi
