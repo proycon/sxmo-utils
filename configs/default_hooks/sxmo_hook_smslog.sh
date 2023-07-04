@@ -26,10 +26,10 @@ fi
 
 # if group chain also print the sender
 if [ "$NUM" != "$LOGDIRNUM" ] && [ "$ACTION" = "recv" ]; then
-	printf "%s from %s at %s:\n%s\n" \
+	printf "%s from %s at %s:\n%b\n" \
 		"$VERB" "$NUM" "$TIME" "$TEXT"
 else
-	printf "%s at %s:\n%s\n" \
+	printf "%s at %s:\n%b\n" \
 		"$VERB" "$TIME" "$TEXT"
 fi
 
