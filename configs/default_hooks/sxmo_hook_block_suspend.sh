@@ -68,7 +68,7 @@ playing_mpc() {
 }
 
 playing_mpris() {
-	command -v playerctl && [ "$(playerctl status)" = "Playing" ]
+	command -v playerctl && playerctl -a status | grep -q "Playing"
 }
 
 photos_processing() {
