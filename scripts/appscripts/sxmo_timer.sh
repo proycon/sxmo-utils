@@ -27,6 +27,10 @@ timerrun() {
 	done
 }
 
+cleanwakelock() {
+	sxmo_wakelock.sh unlock sxmo_"$(basename "$0")"
+}
+
 stopwatchrun() {
 	start="$(date +%s)"
 	while : ; do
@@ -59,9 +63,13 @@ EOF
 			exit 0
 			;;
 		"Stopwatch")
+			sxmo_wakelock.sh lock sxmo_"$(basename "$0")" infinite
+			trap 'cleanwakelock' INT TERM EXIT
 			sxmo_terminal.sh "$0" stopwatchrun
 			;;
 		*)
+			sxmo_wakelock.sh lock sxmo_"$(basename "$0")" infinite
+			trap 'cleanwakelock' INT TERM EXIT
 			sxmo_terminal.sh "$0" timerrun "$TIMEINPUT"
 			;;
 	esac
