@@ -50,11 +50,11 @@ lock() {
 			;;
 		*mn)
 			_validint "${2%mn}"
-			set "$1" "$(printf "%s * 60000000000" "${2%mn}" | bc)"
+			set "$1" "$(printf "%s * 60000000000\n" "${2%mn}" | bc)"
 			;;
 		*h)
 			_validint "${2%h}"
-			set "$1" "$(printf "%s * 3600000000000" "${2%h}" | bc)"
+			set "$1" "$(printf "%s * 3600000000000\n" "${2%h}" | bc)"
 			;;
 	esac
 
