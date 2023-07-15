@@ -84,11 +84,10 @@ debug() {
 	fi
 
 	if [ "$1" = "watch" ]; then
-		watch -n1 cat /sys/power/wake_lock
-	else
-		tr " " "\n" < /sys/power/wake_lock | grep .
-		tail -f "$XDG_STATE_HOME"/sxmo.log | grep "${0##*/}"
+		exec watch -n1 "$0" debug
 	fi
+
+	tr ' ' '\n' < /sys/power/wake_lock | grep .
 }
 
 cmd="$1"
