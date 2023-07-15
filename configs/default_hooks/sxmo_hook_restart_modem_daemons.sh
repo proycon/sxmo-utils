@@ -100,4 +100,4 @@ if ! daemon_isrunning modemmanager; then
 	exit 1
 fi
 # we want 120s before sleeping again
-sxmo_wakelock.sh lock modem_manually_reset 120s
+sxmo_wakelock.sh lock sxmo_modem_manually_reset 120s

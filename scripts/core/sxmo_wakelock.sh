@@ -37,7 +37,7 @@ lock() {
 	case "$2" in
 		infinite)
 			sxmo_debug "lock $1 infinite"
-			echo "sxmo_$1" | doas tee -a /sys/power/wake_lock > /dev/null
+			echo "$1" | doas tee -a /sys/power/wake_lock > /dev/null
 			exit
 			;;
 		*ms)
@@ -59,7 +59,7 @@ lock() {
 	esac
 
 	sxmo_debug "lock $1 $2"
-	echo "sxmo_$1 $2" | doas tee -a /sys/power/wake_lock > /dev/null
+	echo "$1 $2" | doas tee -a /sys/power/wake_lock > /dev/null
 }
 
 unlock() {
@@ -74,7 +74,7 @@ unlock() {
 	fi
 
 	sxmo_debug "unlock $1"
-	echo "sxmo_$1" | doas tee -a /sys/power/wake_unlock > /dev/null 2>&1
+	echo "$1" | doas tee -a /sys/power/wake_unlock > /dev/null 2>&1
 }
 
 debug() {

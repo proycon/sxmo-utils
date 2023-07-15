@@ -14,7 +14,7 @@ suspend_time=99999999 # far away
 mnc="$(sxmo_hook_mnc.sh)"
 if [ -n "$mnc" ] && [ "$mnc" -gt 0 ] && [ "$mnc" -lt "$YEARS8_TO_SEC" ]; then
 	if [ "$mnc" -le 15 ]; then # cronjob imminent
-		sxmo_wakelock.sh lock waiting_cronjob infinite
+		sxmo_wakelock.sh lock sxmo_waiting_cronjob infinite
 		exit 1
 	else
 		suspend_time=$((mnc - 10))
@@ -29,7 +29,7 @@ rtcwake -m mem -s "$suspend_time" || exit 1
 time_spent="$(( $(date "+%s") - start ))"
 
 if [ "$((time_spent + 15))" -ge "$suspend_time" ]; then
-	sxmo_wakelock.sh lock waiting_cronjob infinite
+	sxmo_wakelock.sh lock sxmo_waiting_cronjob infinite
 fi
 
 sxmo_hook_postwake.sh

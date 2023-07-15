@@ -6,6 +6,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-sxmo_wakelock.sh lock stay_awake "${SXMO_UNLOCK_IDLE_TIME:-120}s"
+sxmo_wakelock.sh lock sxmo_stay_awake "${SXMO_UNLOCK_IDLE_TIME:-120}s"
 
 # Add here whatever you want to do

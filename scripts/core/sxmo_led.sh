@@ -69,7 +69,7 @@ set_leds() {
 }
 
 finish_blinking() {
-	sxmo_wakelock.sh unlock playing_with_leds
+	sxmo_wakelock.sh unlock sxmo_playing_with_leds
 	eval set_leds green '$'old_green blue '$'old_blue red '$'old_red ${white:+white '$'old_white}
 	exit
 }
@@ -80,7 +80,7 @@ blink_leds() {
 		eval "old_$color=$percent" # store old value
 	done
 
-	sxmo_wakelock.sh lock playing_with_leds 2s
+	sxmo_wakelock.sh lock sxmo_playing_with_leds 2s
 	trap 'finish_blinking' TERM INT EXIT
 
 	while [ -n "$1" ]; do

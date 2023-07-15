@@ -20,7 +20,7 @@ flock -x 3
 sxmo_log "transitioning to stage lock"
 printf lock > "$SXMO_STATE"
 
-sxmo_wakelock.sh lock not_screenoff infinite
+sxmo_wakelock.sh lock sxmo_not_screenoff infinite
 
 # This hook is called when the system reaches a locked state
 

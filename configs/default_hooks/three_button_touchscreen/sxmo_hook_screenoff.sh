@@ -41,5 +41,5 @@ esac
 
 wait
 
-sxmo_wakelock.sh lock hold_a_bit 3s # avoid immediate suspension
-sxmo_wakelock.sh unlock not_screenoff
+sxmo_wakelock.sh lock sxmo_hold_a_bit 3s # avoid immediate suspension
+sxmo_wakelock.sh unlock sxmo_not_screenoff

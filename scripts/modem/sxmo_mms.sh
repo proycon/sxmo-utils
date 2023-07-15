@@ -212,6 +212,6 @@ processmms() {
 
 }
 
-sxmo_wakelock.sh lock mms_processing 30s
+sxmo_wakelock.sh lock sxmo_mms_processing 30s
 "$@"
-sxmo_wakelock.sh unlock mms_processing
+sxmo_wakelock.sh unlock sxmo_mms_processing

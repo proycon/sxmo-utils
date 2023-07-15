@@ -11,7 +11,7 @@
 sxmo_log "transitioning to stage unlock"
 printf unlock > "$SXMO_STATE"
 
-sxmo_wakelock.sh lock stay_awake "${SXMO_UNLOCK_IDLE_TIME:-120}s"
+sxmo_wakelock.sh lock sxmo_stay_awake "${SXMO_UNLOCK_IDLE_TIME:-120}s"
 
 sxmo_hook_statusbar.sh state_change &
 
@@ -23,6 +23,6 @@ superctl start sxmo_hook_lisgd
 # suspend after if no activity after 120s
 sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
 	timeout "1" '' \
-	resume "sxmo_wakelock.sh lock stay_awake \"${SXMO_UNLOCK_IDLE_TIME:-120}s\""
+	resume "sxmo_wakelock.sh lock sxmo_stay_awake \"${SXMO_UNLOCK_IDLE_TIME:-120}s\""
 
 wait

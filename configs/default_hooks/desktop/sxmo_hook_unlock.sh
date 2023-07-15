@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
-sxmo_wakelock.sh lock not_screenoff infinite
+sxmo_wakelock.sh lock sxmo_not_screenoff infinite
 
 # Go to locker after 5 minutes of inactivity
 if [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then

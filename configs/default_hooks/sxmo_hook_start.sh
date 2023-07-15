@@ -78,7 +78,7 @@ if [ "$(command -v ModemManager)" ]; then
 
 	# place a wakelock for 120s to allow the modem to fully warm up (eg25 +
 	# elogind/systemd would do this for us, but we don't use those.)
-	sxmo_wakelock.sh lock modem_warming_up 120s
+	sxmo_wakelock.sh lock sxmo_modem_warming_up 120s
 fi
 
 # Start the desktop widget (e.g. clock)
