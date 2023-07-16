@@ -12,6 +12,12 @@
 
 set -e
 
+_movetowssubmenu() {
+	for ws in $(seq "${SXMO_WORKSPACE_WRAPPING:-4}"); do
+		printf "%s Move to WS %s\n" "$ws" "$ws"
+	done
+}
+
 # A menu which allows to move windows or toggle floating.
 swaymovemenu() {
 	CHOICES="$(cat <<EOF
@@ -22,10 +28,7 @@ $icon_arl Move Left
 $icon_arr Move Right
 $icon_wn2 Toggle Floating
 $icon_ac1 Move Scratchpad
-1 Move to WS 1
-2 Move to WS 2
-3 Move to WS 3
-4 Move to WS 4
+$(_movetowssubmenu)
 EOF
 	)"
 
@@ -125,10 +128,7 @@ dwmwmmenu() {
 		CHOICES="$(
 			cat <<EOF
 $icon_cls Close Menu
-1 Move to WS 1
-2 Move to WS 2
-3 Move to WS 3
-4 Move to WS 4
+$(_movetowssubmenu)
 $icon_rld Shift stack
 $icon_grd Toggle Layout
 EOF
