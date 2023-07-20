@@ -206,7 +206,7 @@ EOF
 }
 
 if [ -n "$1" ]; then
-	"$1"
+	"$SXMO_WM$1"
 	exit
 fi
 
