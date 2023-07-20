@@ -7,69 +7,64 @@
 
 set -e
 
-exitMsg() {
+exit_msg() {
 	printf "%s\n" "$1" > /dev/stderr
 	notify-send "$1"
 	exit 1
 }
 
-commandExists() {
+check_command() {
 	command -v "$1" > /dev/null
 }
 
-swayscreenshot() {
-	commandExists grim || exitMsg "grim command must be available to take a screenshot."
+sway_screenshot() {
+	check_command grim || exit_msg "grim command must be available to take a screenshot."
+	check_command slurp || exit_msg "slurp command must be available to make a selection."
 
-	if [ "$1" = selection ]; then
-		commandExists slurp || exitMsg "slurp command must be available to make a selection."
-		notify-send "select an area"
-		set -- grim -g "$(slurp)"
-	else
-		set -- grim
-	fi
-
-	"$@" "$FILENAME"
+	area="$(slurp)"
+	grim -g "$area" "$1"
 }
 
-xorgscreenshot() {
-	commandExists scrot || exitMsg "scrot command must be available to take a screenshot"
-	if [ "$1" = "selection" ]; then
-		notify-send 'select an area'
-		set -- scrot -d 1 -q 1 -s
-	else
-		set -- scrot -d 1 -q 1
-	fi
+xorg_screenshot() {
+	check_command scrot || exit_msg "scrot command must be available to take a screenshot"
 
-	"$@" "$FILENAME"
+	scrot -d 1 -q 1 -s "$1"
 }
 
 screenshot() {
 	case "$SXMO_WM" in
 		sway)
-			swayscreenshot "$@"
+			sway_screenshot "$@"
 			;;
 		dwm)
-			xorgscreenshot "$@"
+			xorg_screenshot "$@"
 			;;
 		*)
-			exitMsg "We dont know the WM, cannot screenshot."
+			exit_msg "We dont know the WM, cannot screenshot."
 			;;
 	esac
 }
 
-filepathoutput() {
-	printf %s "$FILENAME"
-	case "$SXMO_WM" in
+yank() {
+	printf %s "$1" | case "$SXMO_WM" in
 		sway)
-			wl-copy "$FILENAME"
+			wl-copy
 			;;
 		dwm)
-			printf %s "$FILENAME" | xsel -b -i
+			xsel -b -i
+			;;
+		*)
+			exit_msg "We dont know the WM, cannot yank."
 			;;
 	esac
 }
 
-FILENAME="${SXMO_SCREENSHOT_DIR:-$HOME}/$(date +%Y-%m-%d-%T).png"
+SXMO_SCREENSHOT_DIR="${SXMO_SCREENSHOT_DIR:-$HOME/screenshots}"
+mkdir -p "$SXMO_SCREENSHOT_DIR"
+FILENAME="$SXMO_SCREENSHOT_DIR/$(date +%Y-%m-%d-%T).png"
 
-screenshot "$@"
-filepathoutput
+screenshot "$FILENAME"
+yank "$FILENAME"
+printf %s "$FILENAME"
+
+notify-send --urgency=low "Screenshot taken"
