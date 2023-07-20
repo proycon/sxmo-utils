@@ -2,21 +2,31 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
-udev_tmp="$(mktemp)"
-udevadm monitor -u -s power_supply >> "$udev_tmp" &
-UDEVPID=$!
-# shellcheck disable=SC2034
-tail -f "$udev_tmp" | while read -r _; do
-	sxmo_hook_statusbar.sh battery
-done &
-STATUSBATTERYPID=$!
+# shellcheck source=scripts/core/sxmo_common.sh
+. sxmo_common.sh
 
-finish() {
-	kill "$STATUSBATTERYPID"
-	kill "$UDEVPID"
-	rm "$udev_tmp"
-}
-trap 'finish' TERM INT EXIT
+upower -m | while read -r line; do
+	# swallow first line
+	if [ -z "$last_line" ]; then
+		last_line=1
+		continue
+	fi
+	if [ "$last_line" = "$line" ]; then
+		continue
+	fi
+	last_line="$line"
 
-wait "$UDEVPID"
-wait "$STATUSBATTERYPID"
+	#time="$(printf %s "$line" | cut -d"	" -f1)"
+	line="$(printf %s "$line" | cut -d"	" -f2)"
+	event="$(printf %s "$line" | cut -d":" -f1)"
+	object="$(printf %s "$line" | cut -d":" -f2 | sed 's|^\( *\)||')"
+
+	if [ -z "$object" ]; then
+		continue
+	fi
+
+	set -- sxmo_hook_battery.sh "$object" "$event"
+
+	sxmo_debug "$*"
+	"$@"
+done

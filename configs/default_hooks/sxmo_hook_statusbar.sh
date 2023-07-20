@@ -282,78 +282,62 @@ set_network() {
 }
 
 set_battery() {
-	for power_supply in /sys/class/power_supply/*; do
-		power_name="$(basename "$power_supply")"
-		fgcolor=default
-		bgcolor=default
-		style=normal
-		BATCMP=
+	name="$1"
+	state="$2"
+	percentage="$3"
 
-		if [ "$(cat "$power_supply"/type)" = "Battery" ]; then
-			if [ -e "$power_supply"/capacity ]; then
-				PCT="$(cat "$power_supply"/capacity)"
-			elif [ -e "$power_supply"/charge_now ]; then
-				CHARGE_NOW="$(cat "$power_supply"/charge_now)"
-				CHARGE_FULL="$(cat "$power_supply"/charge_full_design)"
-				PCT="$(printf "scale=2; %s / %s * 100\n" "$CHARGE_NOW" "$CHARGE_FULL" | bc | cut -d'.' -f1)"
+	fgcolor=default
+	bgcolor=default
+	style=normal
+	BATCMP=
+
+	case "$state" in
+		fully-charged)
+				BATCMP="$icon_bat_c_3"
+				;;
+		charging)
+			if [ "$percentage" -lt 25 ]; then
+				BATCMP="$icon_bat_c_0"
+			elif [ "$percentage" -lt 50 ]; then
+				BATCMP="$icon_bat_c_1"
+			elif [ "$percentage" -lt 75 ]; then
+				BATCMP="$icon_bat_c_2"
 			else
-				continue
+				# Treat 'Full' status as same as 'fully-charged'
+				BATCMP="$icon_bat_c_3"
 			fi
-
-			if [ -e "$power_supply"/status ]; then
-				# The status is not always given for the battery device.
-				# (sometimes it's linked to the charger device).
-				BATSTATUS="$(cut -c1 "$power_supply"/status)"
-			fi
-
-			# fixes a bug with keyboard case where
-			# /sys/class/power_supply/ip5xxx-charger/capacity
-			# exists but returns 'Not a tty'
-			if [ -z "$PCT" ]; then
-				BATCMP="ERR"
-			elif [ "$BATSTATUS" = "C" ] || [ "$BATSTATUS" = "F" ]; then
-				if [ "$PCT" -lt 25 ]; then
-					BATCMP="$icon_bat_c_0"
-				elif [ "$PCT" -lt 50 ]; then
-					BATCMP="$icon_bat_c_1"
-				elif [ "$PCT" -lt 75 ]; then
-					BATCMP="$icon_bat_c_2"
-				else
-					# Treat 'Full' status as same as 'Charging'
-					BATCMP="$icon_bat_c_3"
-				fi
-			else
-				if [ "$PCT" -lt 25 ]; then
-					fgcolor=red
-					if [ "$PCT" -lt 5 ]; then
-						BATCMP="$icon_bat_0"
-					elif [ "$PCT" -lt 10 ]; then
-						BATCMP="$icon_bat_1"
-					elif [ "$PCT" -lt 15 ]; then
-						BATCMP="$icon_bat_2"
-					else
-						BATCMP="$icon_bat_3"
-					fi
-				elif [ "$PCT" -lt 50 ]; then
-					fgcolor=orange
+			;;
+		discharging)
+			if [ "$percentage" -lt 25 ]; then
+				fgcolor=red
+				if [ "$percentage" -lt 5 ]; then
+					BATCMP="$icon_bat_0"
+				elif [ "$percentage" -lt 10 ]; then
 					BATCMP="$icon_bat_1"
-				elif [ "$PCT" -lt 75 ]; then
+				elif [ "$percentage" -lt 15 ]; then
 					BATCMP="$icon_bat_2"
 				else
 					BATCMP="$icon_bat_3"
 				fi
-			fi
-
-			sxmobar -a -t "$style" -b "$bgcolor" -f "$fgcolor" \
-				"battery-icon-$power_name" 40 "$BATCMP"
-
-			if [ -z "$SXMO_BAR_SHOW_BAT_PER" ]; then
-				sxmobar -d "battery-status-$power_name"
+			elif [ "$percentage" -lt 50 ]; then
+				fgcolor=orange
+				BATCMP="$icon_bat_1"
+			elif [ "$percentage" -lt 75 ]; then
+				BATCMP="$icon_bat_2"
 			else
-				sxmobar -a "battery-status-$power_name" 41 "$PCT%"
+				BATCMP="$icon_bat_3"
 			fi
-		fi
-	done
+			;;
+	esac
+
+	sxmobar -a -t "$style" -b "$bgcolor" -f "$fgcolor" \
+		"battery-icon-$name" 40 "$BATCMP"
+
+	if [ -z "$SXMO_BAR_SHOW_BAT_PER" ]; then
+		sxmobar -d "battery-status-$name"
+	else
+		sxmobar -a "battery-status-$name" 41 "$percentage%"
+	fi
 }
 
 set_notifications() {
@@ -422,13 +406,16 @@ case "$1" in
 		shift
 		set_network "$@"
 		;;
-	time|modem|battery|volume|state|notifications)
+	battery)
+		shift
+		set_battery "$@"
+		;;
+	time|modem|volume|state|notifications)
 		set_"$1"
 		;;
 	periodics|state_change) # 55 s loop and screenlock triggers
 		set_time
 		set_modem
-		set_battery
 		set_state
 		set_network wifi wlan0
 		;;
@@ -436,7 +423,6 @@ case "$1" in
 		sxmobar -r
 		set_time
 		set_modem
-		set_battery
 		set_volume
 		set_state
 		set_notifications
