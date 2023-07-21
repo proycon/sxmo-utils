@@ -81,7 +81,12 @@ done
 sleep 1
 
 bluetoothctl trust '$1'
-bluetoothctl --timeout 7 connect '$1'
+while : ; do
+	bluetoothctl --timeout 7 connect '$1'
+	if bluetoothctl info '$1'  | grep -q 'Connected: yes'; then
+		break
+	fi
+done
 
 sxmo_daemons.sh stop bluetooth_scan
 "
