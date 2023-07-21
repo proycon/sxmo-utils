@@ -66,7 +66,7 @@ _full_reconnection() {
 	_can_fail sxmo_terminal.sh sh -ce "
 notify-send 'Make the device discoverable'
 
-bluetoothctl remove '$1' &
+bluetoothctl remove '$1'
 sxmo_daemons.sh start bluetooth_scan bluetoothctl scan on
 
 sleep 5
