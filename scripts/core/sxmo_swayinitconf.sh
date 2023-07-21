@@ -60,13 +60,13 @@ focused_name="$(
 swaymsg -- input type:touch map_to_output "$focused_name"
 swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 
-swaymsg -- input "$pwr" xkb_file "$(xdg_data_path sxmo/sway/xkb_mobile_normal_buttons)"
+swaymsg -- input "$pwr" xkb_file "$(xdg_data_path sxmo/xkb/xkb_mobile_normal_buttons)"
 
 if ! [ "$vols" = "none" ]; then
 	for vol in $vols; do
 		swaymsg -- input "$vol" repeat_delay 200
 		swaymsg -- input "$vol" repeat_rate 15
-		swaymsg -- input "$vol" xkb_file "$(xdg_data_path sxmo/sway/xkb_mobile_normal_buttons)"
+		swaymsg -- input "$vol" xkb_file "$(xdg_data_path sxmo/xkb/xkb_mobile_normal_buttons)"
 	done
 fi
 
