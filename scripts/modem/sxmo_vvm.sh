@@ -32,7 +32,7 @@ processvvm() {
 		exit 1
 	fi
 
-	sxmo_hook_smslog "recv" "$VVM_SENDER" "$VVM_SENDER" "$VVM_DATE" \
+	sxmo_hook_smslog.sh "recv" "$VVM_SENDER" "$VVM_SENDER" "$VVM_DATE" \
 		"$icon_phn $(basename "$VVM_FILE")" >> "$SXMO_LOGDIR/$VVM_SENDER/sms.txt"
 
 	if [ -z "$SXMO_DISABLE_SMS_NOTIFS" ]; then
