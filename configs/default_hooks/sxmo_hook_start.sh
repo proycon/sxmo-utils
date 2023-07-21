@@ -70,7 +70,9 @@ if [ -w "/sys/power/wakeup_count" ] && [ -f "/sys/power/wake_lock" ]; then
 fi
 
 # Turn on lisgd
-superctl start sxmo_hook_lisgd
+if [ ! -e "$XDG_CACHE_HOME"/sxmo/sxmo.nogesture ]; then
+	superctl start sxmo_hook_lisgd
+fi
 
 if [ "$(command -v ModemManager)" ]; then
 	# Turn on the dbus-monitors for modem-related tasks

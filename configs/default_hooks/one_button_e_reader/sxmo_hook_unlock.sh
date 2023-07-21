@@ -18,7 +18,10 @@ sxmo_hook_statusbar.sh state_change &
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen on
 sxmo_wm.sh inputevent stylus on
-superctl start sxmo_hook_lisgd
+
+if [ ! -e "$XDG_CACHE_HOME"/sxmo/sxmo.nogesture ]; then
+	superctl start sxmo_hook_lisgd
+fi
 
 # suspend after if no activity after 120s
 sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
