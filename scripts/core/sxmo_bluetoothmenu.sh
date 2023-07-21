@@ -158,11 +158,11 @@ EOF
 				;;
 			"Trusted $icon_ton")
 				INDEX=3
-				sxmo_terminal.sh bluetoothctl untrust "$MAC"
+				_can_fail sxmo_terminal.sh bluetoothctl untrust "$MAC"
 				;;
 			"Trusted $icon_tof")
 				INDEX=3
-				sxmo_terminal.sh bluetoothctl trust "$MAC"
+				_can_fail sxmo_terminal.sh bluetoothctl trust "$MAC"
 				;;
 			"Connected $icon_ton")
 				INDEX=4
