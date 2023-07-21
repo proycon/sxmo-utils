@@ -9,7 +9,7 @@
 # Create xdg user directories, such as ~/Pictures
 xdg-user-dirs-update
 
-sxmo_daemons.sh start daemon_manager superd -v
+sxmo_daemons.sh start daemon_manager superd
 
 # let time to superd to start correctly
 while ! superctl status > /dev/null 2>&1; do
