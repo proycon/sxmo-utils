@@ -63,7 +63,7 @@ _restart_bluetooth() {
 }
 
 _full_reconnection() {
-	_can_fail sxmo_terminal.sh sh -ce "
+	sxmo_terminal.sh sh -c "
 notify-send 'Make the device discoverable'
 
 bluetoothctl remove '$1'
