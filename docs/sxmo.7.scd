@@ -377,7 +377,6 @@ _sxmo_hook_postwake.sh_ (what to do after waking up from suspend state),
 _sxmo_hook_lock.sh_ (what to do when transitioning into lock state),
 _sxmo_hook_screenoff.sh_ (what to do when transitioning into screenoff state),
 _sxmo_hook_unlock.sh_ (what to do when transitioning into unlock state),
-_sxmo_hook_wakelocks.sh_ (set what block suspend)
 
 # CRONJOBS
 
