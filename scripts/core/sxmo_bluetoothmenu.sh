@@ -87,9 +87,8 @@ while : ; do
 		break
 	fi
 done
-
-sxmo_daemons.sh stop bluetooth_scan
 "
+	sxmo_daemons.sh stop bluetooth_scan
 }
 
 _notify_failure() {
