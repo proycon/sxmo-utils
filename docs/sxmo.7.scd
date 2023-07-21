@@ -575,8 +575,8 @@ If your phone has a wifi killswitch (like the Pinephone or Librem 5), make sure 
 
 HOOKS: _sxmo_hook_network_up.sh_ (what to do when network goes up),
 _sxmo_hook_network_down.sh_ (what to do when network goes down),
-_sxmo_hook_network_preup.sh_,
-_sxmo_hook_network_predown.sh_
+_sxmo_hook_network_pre_up.sh_,
+_sxmo_hook_network_pre_down.sh_
 
 # AUDIO
 

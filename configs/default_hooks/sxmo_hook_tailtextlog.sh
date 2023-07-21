@@ -48,4 +48,3 @@ CONTACTSSEDCMD="$(mkcontactssedcmd)"
 
 sxmo_terminal.sh sh -c "tail -n9999 -f \"$SXMO_LOGDIR/$LOGDIRNUM/sms.txt\" |\
 	sed -e \"$CONTACTSSEDCMD\" -e \"$DATESEDCMD\" -e \"$COLORSEDCMD\""
-#sxmo_terminal.sh sh -c "sxmo_hook_parselog.sh \"$NUMBER\""

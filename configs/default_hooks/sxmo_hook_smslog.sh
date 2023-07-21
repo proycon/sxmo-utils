@@ -3,7 +3,7 @@
 # Copyright 2022 Sxmo Contributors
 
 # Allow user to override what we log in the sms.txt file.  Note if you change
-# this you probably should change sxmo_hook_parselog.sh
+# this you probably should change sxmo_hook_tailtextlog.sh
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
