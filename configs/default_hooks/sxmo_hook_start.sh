@@ -16,6 +16,10 @@ while ! superctl status > /dev/null 2>&1; do
 	sleep 0.5
 done
 
+if [ "$(command -v sxmo_hook_locker.sh)" ]; then
+	sxmo_hook_locker.sh
+fi
+
 # Load our sound daemons
 
 if [ "$(command -v pulseaudio)" ]; then
