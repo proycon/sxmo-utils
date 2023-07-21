@@ -74,7 +74,7 @@ case "$WMCLASS" in
 			$icon_cfg Gestures $(
 				superd_service_isrunning "sxmo_hook_lisgd" &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
-			) ^ 1 ^ supertoggle_daemon 'sxmo_hook_lisgd' && (rm $XDG_CACHE_HOME/sxmo/sxmo.nogesture || touch $XDG_CACHE_HOME/sxmo/sxmo.nogesture)
+			) ^ 1 ^ supertoggle_daemon 'sxmo_hook_lisgd' && (rm $XDG_CACHE_HOME/sxmo/sxmo.nogesture 2>/dev/null || touch $XDG_CACHE_HOME/sxmo/sxmo.nogesture)
 			$icon_cfg Toggle Bar ^ 0 ^ sxmo_wm.sh togglebar
 			$icon_bth Bluetooth $(
 				rfkill list bluetooth | grep -q "yes" &&
