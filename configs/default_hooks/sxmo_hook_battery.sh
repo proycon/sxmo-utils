@@ -9,6 +9,8 @@ data_get() {
 	printf "%b" "$data" | grep "^$1:" | cut -d: -f2
 }
 
+SETTED_LED_PATH="$XDG_RUNTIME_DIR/sxmo_hook_battery_setted_led"
+
 device_changed() {
 	name="$(data_get "native-path")"
 	state="$(data_get "state")"
@@ -20,6 +22,14 @@ device_changed() {
 
 	if [ "$state" = unknown ]; then
 		return
+	fi
+
+	if [ "$percentage" -lt 25 ] && [ ! -f "$SETTED_LED_PATH" ]; then
+		touch "$SETTED_LED_PATH"
+		sxmo_led.sh set red 100
+	elif [ -f "$SETTED_LED_PATH" ]; then
+		rm "$SETTED_LED_PATH"
+		sxmo_led.sh set red 0
 	fi
 
 	sxmo_hook_statusbar.sh battery "$name" "$state" "$percentage"
