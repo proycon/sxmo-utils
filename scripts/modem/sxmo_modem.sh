@@ -95,7 +95,7 @@ checkforfinishedcalls() {
 		# If it was the last call
 		if ! sxmo_modemcall.sh list_active_calls | grep -q .; then
 			# Cleanup
-			sxmo_vibrate 1000 &
+			sxmo_vibrate 1000 "${SXMO_VIBRATE_STRENGTH:-1}" &
 			sxmo_daemons.sh stop incall_menu
 			sxmo_daemons.sh stop proximity_lock
 

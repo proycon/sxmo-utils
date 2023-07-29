@@ -24,7 +24,7 @@ if ! sxmo_modemcall.sh list_active_calls | grep -q active; then
 	fi
 
 	if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.novibrate ]; then
-		sxmo_vibrate 500
+		sxmo_vibrate 500 "${SXMO_VIBRATE_STRENGTH:-1}"
 	fi
 
 fi
