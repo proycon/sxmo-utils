@@ -79,7 +79,7 @@ unlock() {
 
 debug() {
 	if [ ! -f /sys/power/wake_lock ]; then
-		printf 'System is not supporting wake locks\n' >&2
+		printf 'System does not support wake locks\n' >&2
 		exit # we swallow when the system doesn't support it
 	fi
 
