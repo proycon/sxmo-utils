@@ -93,6 +93,10 @@ case "$WMCLASS" in
 				sxmo_daemons.sh running autorotate -q &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
 			) ^ 1 ^ toggle_daemon 'Autorotate' autorotate sxmo_autorotate.sh
+			$([ -n "$SXMO_KEYBOARD_SLIDER_EVENT_DEVICE" ] && echo "$icon_ror Autorotate on Keyboard Open/Close $(
+				sxmo_daemons.sh running kb_autorotate -q &&
+				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
+			) ^ 1 ^ toggle_daemon 'Keyboard Autorotate' kb_autorotate sxmo_keyboard_autorotate.sh")
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate
 			$icon_trm Hooks                      ^ 0 ^ sxmo_hookmenu.sh
 			$icon_upc Upgrade Pkgs               ^ 0 ^ sxmo_terminal.sh sxmo_upgrade.sh
