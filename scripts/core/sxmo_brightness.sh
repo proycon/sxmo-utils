@@ -36,6 +36,7 @@ down() {
 }
 
 getvalue() {
+	# need brightnessctl release after 0.5.1 to have --percentage
 	brightnessctl info \
 		| grep "Current brightness:" \
 		| awk '{ print $NF }' \
