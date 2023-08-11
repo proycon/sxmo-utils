@@ -10,27 +10,36 @@
 
 notify() {
 	if [ "$SXMO_WM" = "sway" ] && [ -z "$SXMO_WOB_DISABLE" ]; then
-		light | grep -o "^[0-9]*" > "$XDG_RUNTIME_DIR"/sxmo.wobsock
+		getvalue > "$XDG_RUNTIME_DIR"/sxmo.wobsock
 	else
-		light | xargs dunstify -r 888 "$icon_brightness Brightness"
+		getvalue | xargs dunstify -r 888 "$icon_brightness Brightness"
 	fi
 }
 
 setvalue() {
-	light -S "$1"
+	brightnessctl set "$1"%
 }
 
 up() {
-	light -A 5
+	brightnessctl set 5%+
 }
 
 down() {
-	light -N "${SXMO_MIN_BRIGHTNESS:-5}"
-	light -U 5
+	# bugged https://github.com/Hummer12007/brightnessctl/issues/82
+	# brightnessctl --min-value "${SXMO_MIN_BRIGHTNESS:-5}" set 5%-
+
+	if [ "$(getvalue)" -gt "${SXMO_MIN_BRIGHTNESS:-5}" ]; then
+		brightnessctl set 5%-
+	else
+		brightnessctl set "${SXMO_MIN_BRIGHTNESS:-5}"%
+	fi
 }
 
 getvalue() {
-	light
+	brightnessctl info \
+		| grep "Current brightness:" \
+		| awk '{ print $NF }' \
+		| grep -o "[0-9]*"
 }
 
 "$@"
