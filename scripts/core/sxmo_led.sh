@@ -5,22 +5,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-get_type() {
-	# Get type from variable name created dynamically from the color,
-	# e.g. $SXMO_LED_RED_TYPE
-	eval type='$'SXMO_LED_"$(echo "$1" | tr '[:lower:]' '[:upper:]')"_TYPE
-
-	# Defaults
-	if [ -z "$type" ]; then
-		case $1 in
-			red|green|blue) type="indicator" ;;
-			white) type="flash" ;;
-		esac
-	fi
-
-	printf %s "$type"
-}
-
 get_led() {
 	color="$1"
 
@@ -30,10 +14,9 @@ get_led() {
 	}
 	[ $# -lt 1 ] && usage
 
-	type="$(get_type "$color")";
-
-	value="$(cat "/sys/class/leds/$color:$type/brightness")"
-	max="$(cat "/sys/class/leds/$color:$type/max_brightness")"
+	# need brightnessctl release after 0.5.1 to have --percentage
+	value="$(brightnessctl -d "$color:*" get)"
+	max="$(brightnessctl -d "$color:*" max)"
 	printf "scale=0; %s / %s * 100\n" "$value" "$max" | bc -l
 }
 
@@ -47,16 +30,7 @@ set_led() {
 	color="$1"
 	percent="$2"
 
-	type="$(get_type "$color")";
-
-	if [ ! -d "/sys/class/leds/$color:$type" ]; then
-		echo "LED does not exist: /sys/class/leds/$color:$type"
-		exit 1
-	fi
-
-	max="$(cat "/sys/class/leds/$color:$type/max_brightness")"
-	brightness="$(echo "($percent / 100.0) * $max" | bc -l)"
-	printf "%0.f\n" "$brightness" > "/sys/class/leds/$color:$type/brightness"
+	brightnessctl -q -d "$color:*" set "$percent%"
 }
 
 set_leds() {

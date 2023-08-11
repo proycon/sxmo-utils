@@ -52,14 +52,6 @@ SXMO_MIN_BRIGHTNESS		| Minimum brightness level [default: 5]
 
 SXMO_DISABLE_LEDS		| Disable leds (1 or 0) [default: 0]
 
-SXMO_LED_WHITE_TYPE		| LED device type, i.e., the part after the colon in the path: `/sys/class/leds/<color>:<type>` [default: status]
-
-SXMO_LED_BLUE_TYPE		| LED device type, i.e., the part after the colon in the path: `/sys/class/leds/<color>:<type>` [default: status]
-
-SXMO_LED_RED_TYPE		| LED device type, i.e., the part after the colon in the path: `/sys/class/leds/<color>:<type>` [default: status]
-
-SXMO_LED_GREEN_TYPE		| LED device type, i.e., the part after the colon in the path: `/sys/class/leds/<color>:<type>` [default: status]
-
 SXMO_SWAY_SCALE		| Screen scale for hidpi screens. Can be fractional [SWAY-ONLY].
 
 ### Input-related
