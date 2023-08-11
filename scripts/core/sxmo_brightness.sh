@@ -17,11 +17,11 @@ notify() {
 }
 
 setvalue() {
-	brightnessctl set "$1"%
+	brightnessctl -q set "$1"%
 }
 
 up() {
-	brightnessctl set 5%+
+	brightnessctl -q set 5%+
 }
 
 down() {
@@ -29,9 +29,9 @@ down() {
 	# brightnessctl --min-value "${SXMO_MIN_BRIGHTNESS:-5}" set 5%-
 
 	if [ "$(getvalue)" -gt "${SXMO_MIN_BRIGHTNESS:-5}" ]; then
-		brightnessctl set 5%-
+		brightnessctl -q set 5%-
 	else
-		brightnessctl set "${SXMO_MIN_BRIGHTNESS:-5}"%
+		brightnessctl -q set "${SXMO_MIN_BRIGHTNESS:-5}"%
 	fi
 }
 
