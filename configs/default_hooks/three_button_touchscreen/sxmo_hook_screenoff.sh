@@ -16,11 +16,13 @@
 
 # This hook is called when the system reaches a off state (screen off)
 
+sxmo_led.sh blink red blue &
+
 [ "$SXMO_WM" = "sway" ] && swaymsg mode default
 sxmo_wm.sh dpms on
 sxmo_wm.sh inputevent touchscreen off
 
-sxmo_daemons.sh start periodic_blink sxmo_run_periodically.sh 2 sxmo_led.sh blink red blue
+sxmo_daemons.sh start periodic_blink sxmo_run_periodically.sh - 2 sxmo_led.sh blink red blue
 
 case "$SXMO_WM" in
 	dwm)
