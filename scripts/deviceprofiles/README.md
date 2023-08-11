@@ -62,15 +62,6 @@ SXMO_LED_GREEN_TYPE		| LED device type, i.e., the part after the colon in the pa
 
 SXMO_SWAY_SCALE		| Screen scale for hidpi screens. Can be fractional [SWAY-ONLY].
 
-### Music-related
-SXMO_SPEAKER			| Audio device name for the main speaker [default: Speaker]
-
-SXMO_EARPIECE			| Audio device name for the earpiece speaker [default: Earpiece]
-
-SXMO_HEADPHONE			| Audio device name for the headphones [default: Headphone]
-
-SXMO_ALSA_CONTROL_NAME	| Alsa audio control name [default: 0]
-
 ### Input-related
 SXMO_TOUCHSCREEN_ID 		| ID (from xinput) for the touchscreen device [DWM-ONLY] [default: 10]
 
