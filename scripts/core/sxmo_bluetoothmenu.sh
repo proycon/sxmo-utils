@@ -4,7 +4,7 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 # shellcheck source=configs/default_hooks/sxmo_hook_icons.sh
 . sxmo_hook_icons.sh
 

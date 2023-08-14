@@ -4,7 +4,7 @@
 
 # include common definitions
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 printf "Sxmo "
 cat "$(xdg_data_path sxmo/version)"

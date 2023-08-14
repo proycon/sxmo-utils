@@ -3,7 +3,7 @@
 # Copyright 2022 Sxmo Contributors
 
 # shellcheck source=scripts/core/sxmo_common.sh
-. "$(dirname "$0")/sxmo_common.sh"
+. sxmo_common.sh
 
 returnvalid() {
 	printf %s "$1"
