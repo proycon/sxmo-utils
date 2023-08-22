@@ -5,24 +5,24 @@
 
 ca_dbus_get_prop() {
 	dbus-send --session --print-reply --dest=org.mobian_project.CallAudio \
-		/org/mobian_project/CallAudio org.freedesktop.DBus.Properties.Get \
+		--reply-timeout=2500 /org/mobian_project/CallAudio org.freedesktop.DBus.Properties.Get \
 		string:org.mobian_project.CallAudio string:"$1"
 }
 
 ca_dbus_set_prop() {
 	dbus-send --session --print-reply --type=method_call \
-		--dest=org.mobian_project.CallAudio \
+		--reply-timeout=2500 --dest=org.mobian_project.CallAudio \
 		/org/mobian_project/CallAudio org.mobian_project.CallAudio."$1" "$2" |\
 		grep -q "boolean true" && return 0 || return 1
 }
 
 setup_audio() {
-	# implies speaker off, mic not muted
 	enable_call_audio_mode
+	sxmo_hook_call_audio.sh "enable"
 }
 
 reset_audio() {
-	# implies speaker on, mic muted
+	sxmo_hook_call_audio.sh "disable"
 	disable_call_audio_mode
 }
 
@@ -46,7 +46,6 @@ mute_mic() {
 	if ca_dbus_set_prop MuteMic boolean:true; then
 		sxmo_hook_statusbar.sh volume
 		sxmo_log "Successfully muted mic."
-		return 0
 	else
 		sxmo_notify_user.sh "Failed to mute mic."
 		return 1
@@ -57,7 +56,6 @@ unmute_mic() {
 	if ca_dbus_set_prop MuteMic boolean:false; then
 		sxmo_hook_statusbar.sh volume
 		sxmo_log "Successfully unmuted mic."
-		return 0
 	else
 		sxmo_notify_user.sh "Failed to unmute mic."
 		return 1
@@ -75,9 +73,7 @@ is_default_audio_mode() {
 enable_call_audio_mode() {
 	if ca_dbus_set_prop SelectMode uint32:1; then
 		sxmo_log "Successfully enabled call audio mode."
-		sxmo_hook_call_audio.sh "enable"
 		sxmo_hook_statusbar.sh volume
-		return 0
 	else
 		sxmo_notify_user.sh "Failed to enable call audio mode."
 		return 1
@@ -87,9 +83,7 @@ enable_call_audio_mode() {
 disable_call_audio_mode() {
 	if ca_dbus_set_prop SelectMode uint32:0; then
 		sxmo_log "Successfully disabled call audio mode."
-		sxmo_hook_call_audio.sh "disable"
 		sxmo_hook_statusbar.sh volume
-		return 0
 	else
 		sxmo_notify_user.sh "Failed to disable call audio mode."
 		return 1
@@ -108,7 +102,6 @@ enable_speaker() {
 	if ca_dbus_set_prop EnableSpeaker boolean:true; then
 		sxmo_hook_statusbar.sh volume
 		sxmo_log "Successfully enabled speaker."
-		return 0
 	else
 		sxmo_notify_user.sh "Failed to enable speaker."
 		return 1
@@ -119,7 +112,6 @@ disable_speaker() {
 	if ca_dbus_set_prop EnableSpeaker boolean:false; then
 		sxmo_hook_statusbar.sh volume
 		sxmo_log "Successfully disabled speaker."
-		return 0
 	else
 		sxmo_notify_user.sh "Failed to disable speaker."
 		return 1
