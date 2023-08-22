@@ -15,7 +15,9 @@ export TERMNAME
 # If it's already open, switch to it.
 if [ "$SXMO_WM" = "sway" ] && [ -z "$SSH_CLIENT" ]; then
 	regesc_termname="$(echo "$TERMNAME" | sed 's|+|\\+|g')"
-	swaymsg "[title=\"^$regesc_termname\$\"]" focus && exit 0
+	if swaymsg -q "[title=\"^$regesc_termname\$\"]" focus; then
+		exit 0
+	fi
 fi
 
 mkcontactssedcmd() {
