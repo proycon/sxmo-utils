@@ -36,10 +36,9 @@ processvvm() {
 		"$icon_phn $(basename "$VVM_FILE")" >> "$SXMO_LOGDIR/$VVM_SENDER/sms.txt"
 
 	if [ -z "$SXMO_DISABLE_SMS_NOTIFS" ]; then
-		sxmo_notificationwrite.sh \
-			random \
+		sxmo_notifs.sh new \
+			-g "incoming-vvm-$VVM_SENDER" \
 			"sxmo_open.sh '$VVM_FILE'" \
-			"$SXMO_LOGDIR/$VVM_SENDER/sms.txt" \
 			"VM: $VVM_SENDER_NAME ($VVM_ID)"
 	fi
 

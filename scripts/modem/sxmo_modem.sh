@@ -85,10 +85,9 @@ checkforfinishedcalls() {
 			stderr "Invoking missed call hook (async)"
 			sxmo_hook_missed_call.sh "$CONTACT" &
 
-			sxmo_notificationwrite.sh \
-				random \
+			sxmo_notifs.sh new \
+				-g "incoming-call-$FINISHEDNUMBER" \
 				"TERMNAME='$NOTIFMSG' sxmo_terminal.sh sh -c \"echo '$NOTIFMSG at $(date)' && read\"" \
-				none \
 				"Missed $icon_phn $CONTACT ($FINISHEDNUMBER)"
 		fi
 
@@ -259,10 +258,9 @@ checkfornewtexts() {
 		CONTACTNAME=$(sxmo_contacts.sh --name-or-number "$NUM")
 
 		if [ -z "$SXMO_DISABLE_SMS_NOTIFS" ]; then
-			sxmo_notificationwrite.sh \
-				random \
+			sxmo_notifs.sh new \
+				-g "incoming-message-$NUM" \
 				"sxmo_hook_tailtextlog.sh '$NUM'" \
-				"$SXMO_LOGDIR/$NUM/sms.txt" \
 				"$CONTACTNAME: $TEXT"
 
 		fi

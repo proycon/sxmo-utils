@@ -191,10 +191,9 @@ processmms() {
 			[ -n "$OPEN_ATTACHMENTS_CMD" ] && TEXT="$icon_att $TEXT"
 			[ "$NUM_RECIPIENTS" -gt 1 ] && TEXT="$icon_grp $TEXT"
 
-			sxmo_notificationwrite.sh \
-				random \
+			sxmo_notifs.sh new \
+				-g "incoming-message-$LOGDIRNUM" \
 				"${OPEN_ATTACHMENTS_CMD}sxmo_hook_tailtextlog.sh \"$LOGDIRNUM\"" \
-				"$SXMO_LOGDIR/$LOGDIRNUM/sms.txt" \
 				"$SENDER_NAME: $TEXT"
 		fi
 

@@ -81,7 +81,7 @@ getprogchoices() {
 		NNOTIFICATIONS="$(find "$SXMO_NOTIFDIR" -type f | wc -l)"
 		if [ "$NNOTIFICATIONS" -gt 0 ]; then
 			CHOICES="
-				$icon_bel Notifications ($NNOTIFICATIONS) ^ 0 ^ sxmo_notificationsmenu.sh
+				$icon_bel Notifications ($NNOTIFICATIONS) ^ 0 ^ sxmo_notifs.sh menu
 				$CHOICES
 			"
 		fi
