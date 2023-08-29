@@ -176,6 +176,18 @@ case "$WMCLASS" in
 								;;
 						esac
 						;;
+					*'nnn'*)
+						case "$ACTION" in
+							"onedown")
+								sxmo_type.sh -k Down
+								exit 0
+								;;
+							"oneup")
+								sxmo_type.sh -k Up
+								exit 0
+								;;
+						esac
+						;;
 				esac
 				;;
 		esac
@@ -272,6 +284,18 @@ case "$WMCLASS" in
 					"voldown_three"|"twodownbottomedge")
 						sxmo_type.sh q
 						exit
+						;;
+				esac
+				;;
+			*'nnn'*)
+				case "$ACTION" in
+					*"left")
+						sxmo_type.sh -k Right
+						exit 0
+						;;
+					*"right")
+						sxmo_type.sh -k Left
+						exit 0
 						;;
 				esac
 				;;
