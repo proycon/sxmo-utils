@@ -18,6 +18,6 @@ fi
 # users can override this in sxmo_deviceprofile_mydevice.sh
 files="${SXMO_SYS_FILES:-"/sys/power/state /sys/power/mem_sleep /dev/rtc0"}"
 
-for file in $files; do
+for file in $files /sys/power/wakeup_count; do
 	[ -e "$file" ] && chmod a+rw "$file"
 done
