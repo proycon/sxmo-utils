@@ -63,7 +63,7 @@ install-scripts: $(PROGRAMS)
 		install -D -m 0755 -t $(DESTDIR)/etc/init.d configs/openrc/sxmo-setpermissions; \
 	fi
 
-	install -D -m 0644 -t $(DESTDIR)/usr/lib/udev/rules.d/ configs/udev/*.rules
+	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/lib/udev/rules.d/ configs/udev/*.rules
 
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ configs/xdg/mimeapps.list
 
