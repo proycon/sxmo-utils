@@ -25,15 +25,6 @@ sxmo_wm.sh inputevent touchscreen on
 sxmo_daemons.sh stop periodic_blink
 sxmo_daemons.sh stop periodic_wakelock_check
 
-# see https://todo.sr.ht/~mil/sxmo-tickets/150
-# We set the scan interval threshold here to
-# 16000 (16s) the default, since in sxmo_hook_postwake.sh
-# we set it to 1200 (.12s) so that we can reconnect to wifi
-# quicker after resuming from suspend.
-if [ 1 = "$SXMO_RTW_SCAN_INTERVAL" ]; then
-	echo 16000 > "/sys/module/$SXMO_WIFI_MODULE/parameters/rtw_scan_interval_thr"
-fi
-
 # Go to lock after 120 seconds of inactivity
 if [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
 	sxmo_daemons.sh stop idle_locker

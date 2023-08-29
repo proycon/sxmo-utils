@@ -89,10 +89,6 @@ SXMO_POWER_BUTTON               | Power button "Identifier" from `swaymsg -t get
 SXMO_MONITOR		| Display "Output" from `swaymsg -t get_outputs`. Should be the same as the output from the `xrandr` command when running dwm.
 
 ### General / Misc.
-SXMO_WIFI_MODULE		| The wifi kernel module used when switching scan intervals
-
-SXMO_RTW_SCAN_INTERVAL	| Does the wifi kernel module offer a rtw_scan_interval_thr interface ? [default: 0]
-
 SXMO_SYS_FILES			| String of files for sxmo_setpermissions.sh to make +rw (see sxmo_setpermissions.sh)
 
 SXMO_VIBRATE_DEV		| Path to vibration device (see sxmo_vibrate.c and clickclack.c) [default: /dev/input/by-path/platform-vibrator-event]

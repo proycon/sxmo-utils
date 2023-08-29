@@ -47,5 +47,4 @@ export SXMO_MONITOR='0:0:MELFAS_MMS345_Touchscreen'
 # /sys/devices/platform/soc@0/78b8000.i2c/i2c-5/5-0035/power_supply/rt5033-battery/wakeup6
 # /sys/devices/virtual/wakeup/wakeup4
 # /sys/devices/virtual/wakeup/wakeup5
-export SXMO_WIFI_MODULE='wcn36xx'
 export SXMO_SWAY_SCALE="2"

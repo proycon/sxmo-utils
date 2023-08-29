@@ -12,10 +12,4 @@ if [ -z "$MMCLI" ]; then
 	sxmo_wakelock.sh lock sxmo_modem_crashed 30s
 fi
 
-# see the comments in sxmo_hook_lock.sh
-# and https://todo.sr.ht/~mil/sxmo-tickets/150
-if [ 1 = "$SXMO_RTW_SCAN_INTERVAL" ]; then
-	echo 1200 > "/sys/module/$SXMO_WIFI_MODULE/parameters/rtw_scan_interval_thr"
-fi
-
 # Add here whatever you want to do
