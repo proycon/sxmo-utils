@@ -8,7 +8,7 @@ envvars() {
 	export SDL_VIDEODRIVER=wayland
 	export XDG_CURRENT_DESKTOP=sway
 	# shellcheck disable=SC2086
-	command -v $TERMCMD "" >/dev/null || export TERMCMD="foot"
+	command -v $SXMO_TERMINAL "" >/dev/null || export SXMO_TERMINAL="foot"
 	command -v "$KEYBOARD" >/dev/null || export KEYBOARD=wvkbd-mobintl
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 }

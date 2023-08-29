@@ -11,22 +11,22 @@ if [ -z "$TERMNAME" ]; then
 	TERMNAME="$*"
 fi
 
-case "$TERMCMD" in
+case "$SXMO_TERMINAL" in
 	"st"*)
-		set -- $TERMCMD -T "$TERMNAME" -e "$@"
+		set -- $SXMO_TERMINAL -T "$TERMNAME" -e "$@"
 		;;
 	"foot"*)
-		set -- $TERMCMD -T "$TERMNAME" "$@"
+		set -- $SXMO_TERMINAL -T "$TERMNAME" "$@"
 		;;
 	"vte-2.91"*)
-		set -- ${TERMCMD% --} --title "$TERMNAME" -- "$@"
+		set -- ${SXMO_TERMINAL% --} --title "$TERMNAME" -- "$@"
 		;;
 	"alacritty"*)
-		set -- $TERMCMD -T "$TERMNAME" -e "$@"
+		set -- $SXMO_TERMINAL -T "$TERMNAME" -e "$@"
 		;;
 	*)
-		printf "%s: '%s'\n" "Not implemented for TERMCMD" "$TERMCMD" >&2
-		set -- $TERMCMD "$@"
+		printf "%s: '%s'\n" "Not implemented for SXMO_TERMINAL" "$SXMO_TERMINAL" >&2
+		set -- $SXMO_TERMINAL "$@"
 esac
 
 exec "$@"

@@ -13,7 +13,6 @@ CACHE_DIR="${XDG_RUNTIME_DIR:-$HOME/.run}/xdg-open-cache"
 [ ! -d "$CACHE_DIR" ] && mkdir -p "$CACHE_DIR"
 attached=
 debug=
-TERMCMD="${TERMCMD:-st -e}"
 
 # This will convert a mimeapps.list to a parsable mapping
 # Lines with multiple mimetype will be splitted
