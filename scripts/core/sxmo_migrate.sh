@@ -6,8 +6,13 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-. /etc/profile.d/sxmo_init.sh
-_sxmo_load_environments
+if [ -z "$SXMO_DEVICE_NAME" ]; then
+	. /etc/profile.d/sxmo_init.sh
+	# not grabbed
+	if [ -z "$SXMO_DEVICE_NAME" ]; then
+		_sxmo_load_environments
+	fi
+fi
 
 smartdiff() {
 	if command -v colordiff > /dev/null; then
