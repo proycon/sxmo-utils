@@ -1,5 +1,6 @@
 DESTDIR=
 PREFIX:=/usr
+SYSCONFDIR:=/etc
 SHAREDIR=$(PREFIX)/share
 MANDIR=$(SHAREDIR)/man
 SCDOC=scdoc
@@ -60,22 +61,22 @@ install-scripts: $(PROGRAMS)
 
 	# Configs
 	if [ "$(OPENRC)" = "1" ]; then \
-		install -D -m 0755 -t $(DESTDIR)/etc/init.d configs/openrc/sxmo-setpermissions; \
+		install -D -m 0755 -t $(DESTDIR)$(SYSCONFDIR)/init.d configs/openrc/sxmo-setpermissions; \
 	fi
 
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/lib/udev/rules.d/ configs/udev/*.rules
 
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ configs/xdg/mimeapps.list
 
-	install -D -m 0640 -t $(DESTDIR)/etc/doas.d/ configs/doas/sxmo.conf
+	install -D -m 0640 -t $(DESTDIR)$(SYSCONFDIR)/doas.d/ configs/doas/sxmo.conf
 
 	install -D -m 0644 -T configs/xorg/monitor.conf $(DESTDIR)$(PREFIX)/share/X11/xorg.conf.d/90-monitor.conf
 
-	mkdir -p $(DESTDIR)/etc/NetworkManager/dispatcher.d
+	mkdir -p $(DESTDIR)$(SYSCONFDIR)/NetworkManager/dispatcher.d
 
-	install -D -m 0644 -T configs/appcfg/mpv_input.conf $(DESTDIR)/etc/mpv/input.conf
+	install -D -m 0644 -T configs/appcfg/mpv_input.conf $(DESTDIR)$(SYSCONFDIR)/mpv/input.conf
 
-	install -D -m 0755 -T configs/profile.d/sxmo_init.sh $(DESTDIR)/etc/profile.d/sxmo_init.sh
+	install -D -m 0755 -T configs/profile.d/sxmo_init.sh $(DESTDIR)$(SYSCONFDIR)/profile.d/sxmo_init.sh
 
 	# Migrations
 	install -D -t $(DESTDIR)$(PREFIX)/share/sxmo/migrations migrations/*
