@@ -110,9 +110,51 @@ case "$WMCLASS" in
 				;;
 		esac
 		;;
-	*"foot"*|*"st"*|*"vte"*|"terminal")
-		# First we try to handle the app running inside st:
-		case "$WMNAME" in
+	*"foot"*|*"st"*|*"vte"*|"terminal") # Terminals
+		case "$WMCLASS" in # Handle programs without touch support
+			*"st"*)
+				case "$WMNAME" in
+					*"weechat"*|*'gomuks'*)
+						case "$ACTION" in
+							*"onedown")
+								sxmo_type.sh -k Page_Up
+								exit 0
+								;;
+							*"oneup")
+								sxmo_type.sh -k Page_Down
+								exit 0
+								;;
+						esac
+						;;
+					*"less"*|*"amfora"*)
+						case "$ACTION" in
+							*"onedown")
+								sxmo_type.sh u
+								exit 0
+								;;
+							*"oneup")
+								sxmo_type.sh d
+								exit 0
+								;;
+						esac
+						;;
+					*'irssi'*)
+						case "$ACTION" in
+							"onedown")
+								sxmo_type.sh -M Alt p
+								exit 0
+								;;
+							"oneup")
+								sxmo_type.sh -M Alt n
+								exit 0
+								;;
+						esac
+						;;
+				esac
+				;;
+		esac
+
+		case "$WMNAME" in # Handle programs
 			*"weechat"*)
 				case "$ACTION" in
 					*"oneleft")
@@ -121,14 +163,6 @@ case "$WMCLASS" in
 						;;
 					*"oneright")
 						sxmo_type.sh -M Alt -k less
-						exit 0
-						;;
-					*"oneup")
-						sxmo_type.sh -k Page_Down
-						exit 0
-						;;
-					*"onedown")
-						sxmo_type.sh -k Page_Up
 						exit 0
 						;;
 				esac
@@ -161,14 +195,6 @@ case "$WMCLASS" in
 						sxmo_type.sh q
 						exit 0
 						;;
-					*"onedown")
-						sxmo_type.sh u
-						exit 0
-						;;
-					*"oneup")
-						sxmo_type.sh d
-						exit 0
-						;;
 					*"oneleft")
 						sxmo_type.sh ":n" -k Return
 						exit 0
@@ -189,14 +215,6 @@ case "$WMCLASS" in
 						sxmo_type.sh -M Shift -k Tab
 						exit 0
 						;;
-					*"onedown")
-						sxmo_type.sh u
-						exit 0
-						;;
-					*"oneup")
-						sxmo_type.sh d
-						exit 0
-						;;
 					*"oneright")
 						sxmo_type.sh -k Return
 						exit 0
@@ -215,76 +233,31 @@ case "$WMCLASS" in
 						;;
 				esac
 				;;
-			*'irssi'*)
-				case "$ACTION" in
-					"onedown")
-						sxmo_type.sh -M Alt p
-						exit 0
-						;;
-					"oneup")
-						sxmo_type.sh -M Alt n
-						exit 0
-						;;
-				esac
-				;;
-			*'gomuks'*)
-				case "$ACTION" in
-					*"oneup")
-						sxmo_type.sh -k Page_Down
-						exit 0
-						;;
-					*"onedown")
-						sxmo_type.sh -k Page_Up
-						exit 0
-						;;
-				esac
-				;;
 		esac
-		# Now we try generic actions for terminal
-		case "$ACTION" in
-			*"onedown")
-				case "$WMCLASS" in
-					*"foot"*)
-						sxmo_type.sh -M Shift -k Page_Up
-						exit 0
-						;;
-					*"st"*)
+
+		case "$WMCLASS" in # Handle general scrolling without touch support
+			*"st"*)
+				case "$ACTION" in
+					*"onedown")
 						sxmo_type.sh -M Ctrl -M Shift -k b
 						exit 0
 						;;
-				esac
-				;;
-			*"oneup")
-				case "$WMCLASS" in
-					*"foot"*)
-						sxmo_type.sh -M Shift -k Page_Down
-						exit 0
-						;;
-					*"st"*)
+					*"oneup")
 						sxmo_type.sh -M Ctrl -M Shift -k f
 						exit 0
 						;;
 				esac
 				;;
-			"uprightedge")
-				case "$WMCLASS" in
-					"org.gnome.vte.application"|"terminal")
-						# For VTE, fallback to doing nothing,
-						# you're probably dragging the scrollbar
-						exit 0
-						;;
-				esac
-				;;
-			"downrightedge")
-				case "$WMCLASS" in
-					"org.gnome.vte.application"|"terminal")
-						# For VTE, fallback to doing nothing,
-						# you're probably dragging the scrollbar
-						exit 0
-						;;
+			"org.gnome.vte.application"|"terminal")
+				case "$ACTION" in
+					# For VTE, fallback to doing nothing,
+					# you're probably dragging the scrollbar
+					*"uprightedge") exit 0 ;;
+					*"downrightedge") exit 0 ;;
 				esac
 				;;
 		esac
+		;;
 esac
 
 #standard handling
