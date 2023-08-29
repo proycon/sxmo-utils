@@ -214,6 +214,7 @@ bar {
 for_window [app_id="pinentry-.*"] floating true
 for_window [app_id="foot" title=".*sxmo/modem/.*/draft.txt.*"] resize set height 25
 for_window [title="megapixels"] inhibit_idle open
+for_window [title="ep[yr].*"] inhibit_idle visible
 
 default_border pixel 3
 titlebar_border_thickness 3

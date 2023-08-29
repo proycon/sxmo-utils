@@ -45,6 +45,20 @@ WMNAME="$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' 
 sxmo_debug "STATE: $(cat "$SXMO_STATE") ACTION: $ACTION WMCLASS: $WMCLASS WMNAME: $WMNAME"
 
 if ! grep -q unlock "$SXMO_STATE"; then
+	case "$WMNAME" in # Handle programs
+		*"epy"*|*"epr"*)
+			case "$ACTION" in
+				"voldown_one")
+					sxmo_type.sh l
+					exit 0
+					;;
+				"volup_one")
+					sxmo_type.sh h
+					exit 0
+					;;
+			esac
+			;;
+	esac
 	case "$ACTION" in
 		"powerbutton_one")
 			lock_screen_action
@@ -150,6 +164,18 @@ case "$WMCLASS" in
 								;;
 						esac
 						;;
+					*'epy'*|*'epr'*)
+						case "$ACTION" in
+							"onedown")
+								sxmo_type.sh h
+								exit 0
+								;;
+							"oneup")
+								sxmo_type.sh l
+								exit 0
+								;;
+						esac
+						;;
 				esac
 				;;
 		esac
@@ -230,6 +256,22 @@ case "$WMCLASS" in
 					"downleft")
 						sxmo_type.sh -M Ctrl w
 						exit 0
+						;;
+				esac
+				;;
+			*"epy"*|*"epr"*)
+				case "$ACTION" in
+					*"left"|"voldown_one")
+						sxmo_type.sh l
+						exit 0
+						;;
+					*"right"|"volup_one")
+						sxmo_type.sh h
+						exit 0
+						;;
+					"voldown_three"|"twodownbottomedge")
+						sxmo_type.sh q
+						exit
 						;;
 				esac
 				;;
