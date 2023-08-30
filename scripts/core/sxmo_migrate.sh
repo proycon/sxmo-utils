@@ -77,12 +77,12 @@ resolvedifference() {
 			;;
 		[3uU]*)
 			#update configversion automatically
-			refversion="$(fetchversion "$reffile")"
+			refversion="$(fetchversion "$defaultfile")"
 			userversion="$(fetchversion "$userfile")"
 			if [ -n "$userversion" ]; then
 				sed -i "s/configversion: $userversion/configversion: $refversion/" "$userfile" || abort=1
 			elif [ -n "$refversion" ]; then
-				refline="$(head -n5 "$reffile" | grep -m1 "configversion: ")"
+				refline="$(head -n5 "$defaultfile" | grep -m1 "configversion: ")"
 				# fall back in case the userfile doesn't contain a configversion at all yet
 				sed -i "2i$refline" "$userfile" || abort=1
 			fi
