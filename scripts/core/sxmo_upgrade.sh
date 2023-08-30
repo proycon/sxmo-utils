@@ -12,7 +12,7 @@ update_apk() {
 	doas apk update
 
 	echo "Upgrading all packages"
-	doas apk upgrade -v
+	doas apk upgrade -aiv
 
 	echo "Upgrade complete - reboot for all changes to take effect"
 }
