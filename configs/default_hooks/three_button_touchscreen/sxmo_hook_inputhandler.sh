@@ -176,7 +176,7 @@ case "$WMCLASS" in
 								;;
 						esac
 						;;
-					*'nnn'*)
+					*'nnn'*|'lf')
 						case "$ACTION" in
 							"onedown")
 								sxmo_type.sh -k Down
@@ -287,7 +287,7 @@ case "$WMCLASS" in
 						;;
 				esac
 				;;
-			*'nnn'*)
+			*'nnn'*|'lf')
 				case "$ACTION" in
 					*"left")
 						sxmo_type.sh -k Right
