@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=sxiv Image Viewer
-Exec=sxiv
+Name=nsxiv Image Viewer
+Exec=nsxiv
 Terminal=false
 Type=Application
 MimeType=image/jpeg;image/png;image/gif

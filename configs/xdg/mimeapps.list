@@ -1,7 +1,7 @@
 [Default Applications]
-image/jpeg=sxmo-sxiv.desktop
-image/png=sxmo-sxiv.desktop
-image/gif=sxmo-sxiv.desktop
+image/jpeg=sxmo-nsxiv.desktop
+image/png=sxmo-nsxiv.desktop
+image/gif=sxmo-nsxiv.desktop
 audio/x-m4a=sxmo-mpv-music.desktop
 audio/mpeg=sxmo-mpv-music.desktop
 audio/amr=sxmo-mpv-music.desktop
