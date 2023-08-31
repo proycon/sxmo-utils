@@ -21,7 +21,7 @@ sway_screenshot() {
 	check_command grim || exit_msg "grim command must be available to take a screenshot."
 	check_command slurp || exit_msg "slurp command must be available to make a selection."
 
-	area="$(slurp)"
+	area="$(slurp -o)"
 	grim -g "$area" "$1"
 }
 
