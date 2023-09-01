@@ -86,6 +86,8 @@ write_line_app netsurf "$icon_glb Netsurf" "netsurf"
 write_line_app newsboat "$icon_rss Newsboat" "sxmo_terminal.sh newsboat"
 write_line_app com.gitlab.newsflash "$icon_rss Newsflash" com.gitlab.newsflash
 write_line_app nnn "$icon_dir Nnn" "sxmo_terminal.sh nnn"
+write_line_app numberstation "$icon_clc Numberstation" "numberstation"
+write_line_app osmin "$icon_map Osmin" "osmin"
 write_line_app pidgin "$icon_msg Pidgin" "pidgin"
 write_line_app pulsemixer "$icon_mus Pulsemixer" "sxmo_terminal.sh pulsemixer"
 write_line_app pure-maps "$icon_map Pure-Maps" "pure-maps"
