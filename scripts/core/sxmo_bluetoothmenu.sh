@@ -199,6 +199,7 @@ main_loop() {
 	while : ; do
 		INFO="$(bluetoothctl show)"
 		DISCOVERING="$(printf "%s\n" "$INFO" | grep "Discovering:" | awk '{print $NF}')"
+		PAIRABLE="$(printf "%s\n" "$INFO" | grep "Pairable:" | awk '{print $NF}')"
 
 		DEVICES="$(_device_list)"
 
@@ -208,6 +209,7 @@ $icon_cls Close Menu
 $icon_rld Refresh
 $icon_pwr Restart daemon
 Simple mode $(_show_toggle "$SIMPLE_MODE")
+Pairable $(_show_toggle "$PAIRABLE")
 Discovering $(_show_toggle "$DISCOVERING")
 $DEVICES
 EOF
@@ -233,15 +235,23 @@ EOF
 			"Simple mode $icon_tof")
 				SIMPLE_MODE=yes
 				;;
-			"Discovering $icon_ton")
+			"Pairable $icon_ton")
+				bluetoothctl pairable off
 				INDEX=3
+				;;
+			"Pairable $icon_tof")
+				bluetoothctl pairable on
+				INDEX=3
+				;;
+			"Discovering $icon_ton")
+				INDEX=4
 				sxmo_daemons.sh stop bluetooth_scan
 				sleep 0.5
 				;;
 			"Discovering $icon_tof")
 				sxmo_daemons.sh start bluetooth_scan bluetoothctl --timeout 60 scan on > /dev/null
 				notify-send "Scanning for 60 seconds"
-				INDEX=3
+				INDEX=4
 				sleep 0.5
 				;;
 			*)
