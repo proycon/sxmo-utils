@@ -231,27 +231,29 @@ EOF
 				;;
 			"Simple mode $icon_ton")
 				SIMPLE_MODE=no
+				INDEX=3
 				;;
 			"Simple mode $icon_tof")
 				SIMPLE_MODE=yes
+				INDEX=3
 				;;
 			"Pairable $icon_ton")
 				bluetoothctl pairable off
-				INDEX=3
+				INDEX=4
 				;;
 			"Pairable $icon_tof")
 				bluetoothctl pairable on
-				INDEX=3
+				INDEX=4
 				;;
 			"Discovering $icon_ton")
-				INDEX=4
+				INDEX=5
 				sxmo_daemons.sh stop bluetooth_scan
 				sleep 0.5
 				;;
 			"Discovering $icon_tof")
 				sxmo_daemons.sh start bluetooth_scan bluetoothctl --timeout 60 scan on > /dev/null
 				notify-send "Scanning for 60 seconds"
-				INDEX=4
+				INDEX=5
 				sleep 0.5
 				;;
 			*)
