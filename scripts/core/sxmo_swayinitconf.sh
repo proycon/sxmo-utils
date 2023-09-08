@@ -19,6 +19,13 @@ multikey_retrocompat() {
 	swaymsg -- input "$pwr" repeat_delay 200
 	swaymsg -- input "$pwr" repeat_rate 15
 
+	if ! [ "$vols" = "none" ]; then
+		for vol in $vols; do
+			swaymsg -- input "$vol" repeat_delay 200
+			swaymsg -- input "$vol" repeat_rate 15
+		done
+	fi
+
 	swaymsg -- bindsym --locked --input-device="$pwr" XF86PowerOff exec sxmo_multikey.sh \
 		powerbutton \
 		powerbutton_one \
@@ -64,8 +71,6 @@ swaymsg -- input "$pwr" xkb_file "$(xdg_data_path sxmo/xkb/xkb_mobile_normal_but
 
 if ! [ "$vols" = "none" ]; then
 	for vol in $vols; do
-		swaymsg -- input "$vol" repeat_delay 200
-		swaymsg -- input "$vol" repeat_rate 15
 		swaymsg -- input "$vol" xkb_file "$(xdg_data_path sxmo/xkb/xkb_mobile_normal_buttons)"
 	done
 fi
