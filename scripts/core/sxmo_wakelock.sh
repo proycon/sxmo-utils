@@ -8,6 +8,7 @@
 usage() {
 		cat >&2 <<EOF
 Usage: $(basename "$0") ACTION
+	isenabled
 	lock <lock-name> <duration|nanosec|infinite>
 	unlock <lock-name>
 duration: <value><unit>
@@ -30,7 +31,7 @@ lock() {
 		exit 1
 	fi
 
-	if [ ! -f /sys/power/wake_lock ]; then
+	if ! isenabled; then
 		exit # we swallow when the system doesn't support it
 	fi
 
@@ -78,7 +79,7 @@ unlock() {
 }
 
 debug() {
-	if [ ! -f /sys/power/wake_lock ]; then
+	if ! isenabled; then
 		printf 'System does not support wake locks\n' >&2
 		exit # we swallow when the system doesn't support it
 	fi
@@ -90,9 +91,14 @@ debug() {
 	tr ' ' '\n' < /sys/power/wake_lock | grep .
 }
 
+isenabled() {
+	[ -f /sys/power/wake_lock ]
+}
+
 cmd="$1"
 shift
 case "$cmd" in
+	isenabled) isenabled "$@";;
 	lock) lock "$@";;
 	unlock) unlock "$@";;
 	debug) debug "$@";;
