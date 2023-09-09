@@ -8,7 +8,7 @@
 
 LISGD_THRESHOLD="${SXMO_LISGD_THRESHOLD:-125}"
 LISGD_THRESHOLD_PRESSED="${SXMO_LISGD_THRESHOLD_PRESSED:-60}"
-LISGD_INPUT_DEVICE="${SXMO_LISGD_INPUT_DEVICE:-"/dev/input/touchscreen"}"
+LISGD_INPUT_DEVICE="${SXMO_LISGD_INPUT_DEVICE:-"/dev/input/by-path/first-touchscreen"}"
 
 if [ dwm = "$SXMO_WM" ]; then
 	case "$(xrandr | grep primary | cut -d' ' -f 5)" in
