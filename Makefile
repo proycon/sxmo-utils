@@ -66,11 +66,6 @@ install-scripts: $(PROGRAMS)
 
 	cd resources && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
-	# Configs
-	if [ "$(OPENRC)" = "1" ]; then \
-		install -D -m 0755 -t $(DESTDIR)$(SYSCONFDIR)/init.d configs/openrc/sxmo-setpermissions; \
-	fi
-
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/lib/udev/rules.d/ configs/udev/*.rules
 
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ configs/xdg/mimeapps.list

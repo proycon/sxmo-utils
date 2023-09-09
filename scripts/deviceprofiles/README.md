@@ -74,7 +74,5 @@ SXMO_DISABLE_KEYBINDS		| Disable most custom Sxmo binds on volume keys if set.
 SXMO_MONITOR		| Display "Output" from `swaymsg -t get_outputs`. Should be the same as the output from the `xrandr` command when running dwm.
 
 ### General / Misc.
-SXMO_SYS_FILES			| String of files for sxmo_setpermissions.sh to make +rw (see sxmo_setpermissions.sh)
-
 SXMO_VIBRATE_DEV		| Path to vibration device (see sxmo_vibrate.c and clickclack.c) [default: /dev/input/by-path/platform-vibrator-event]
 SXMO_VIBRATE_STRENGTH | Strength parameter to pass to sxmo_vibrate [default: 1]

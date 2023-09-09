@@ -69,7 +69,8 @@ esac
 sxmo_state_switch.sh set unlock
 
 # Turn on auto-suspend
-if [ -w "/sys/power/wakeup_count" ] && [ -f "/sys/power/wake_lock" ]; then
+if [ -f "/sys/power/wakeup_count" ]; then
+	sxmo_wakelock.sh lock sxmo_not_screenoff infinite
 	superctl start sxmo_autosuspend
 fi
 

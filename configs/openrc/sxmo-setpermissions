@@ -1,5 +1,0 @@
-#!/sbin/openrc-run
-
-description="Set user permissions to aspects of the hardware kernel interface"
-
-command="/usr/bin/sxmo_setpermissions.sh"

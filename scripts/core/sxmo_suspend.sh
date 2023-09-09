@@ -24,7 +24,7 @@ fi
 sxmo_log "calling suspend with suspend_time <$suspend_time>"
 
 start="$(date "+%s")"
-rtcwake -m mem -s "$suspend_time" || exit 1
+doas rtcwake -m mem -s "$suspend_time" || exit 1
 #We woke up again
 time_spent="$(( $(date "+%s") - start ))"
 

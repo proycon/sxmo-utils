@@ -31,7 +31,9 @@ while true; do
 	# If the wakeup count has changed since we read it, this will fail so we
 	# know to try again. If something takes a wake_lock after we do this, it
 	# will cause the kernel to abort suspend.
-	echo "$wakeup_count" > /sys/power/wakeup_count || continue
+	if ! echo "$wakeup_count" | doas tee /sys/power/wakeup_count > /dev/null; then
+		continue
+	fi
 
 	# If sxmo_suspend failed then we didn't enter suspend, it should be safe
 	# to retry immediately. There's a delay so we don't eat up all the
