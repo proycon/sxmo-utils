@@ -15,29 +15,6 @@ stop_proximity_lock() {
 	sxmo_daemons.sh stop proximity_lock
 }
 
-# this action will move the lock state $1 levels higher
-lock_screen_action() {
-	count="${1:-1}"
-
-	state="$(cat "$SXMO_STATE")"
-	while [ "$count" -gt 0 ]; do
-		case "$state" in
-			unlock)
-				state=screenoff
-				;;
-			screenoff)
-				state=lock
-				;;
-			lock)
-				state=unlock
-				;;
-		esac
-		count=$((count-1))
-	done
-
-	sxmo_hook_"$state".sh
-}
-
 XPROPOUT="$(sxmo_wm.sh focusedwindow)"
 WMCLASS="$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
 WMNAME="$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
@@ -61,16 +38,16 @@ if ! grep -q unlock "$SXMO_STATE"; then
 	esac
 	case "$ACTION" in
 		"powerbutton_one")
-			lock_screen_action
+			sxmo_state_switch.sh up
 			;;
 		"powerbutton_two")
-			lock_screen_action 2
+			sxmo_state_switch.sh up 2
 			;;
 		"powerbutton_three")
 			if grep -q proximity "$SXMO_STATE"; then
 				stop_proximity_lock
 			else
-				lock_screen_action 2
+				sxmo_state_switch.sh up 2
 			fi
 			;;
 		"voldown_one")
@@ -332,12 +309,12 @@ case "$ACTION" in
 		if echo "$WMCLASS" | grep -i "megapixels"; then
 			sxmo_type.sh -k space
 		else
-			lock_screen_action
+			sxmo_state_switch.sh up
 		fi
 		exit 0
 		;;
 	"powerbutton_two")
-		lock_screen_action 2
+		sxmo_state_switch.sh up 2
 		exit 0
 		;;
 	"powerbutton_three")
@@ -472,9 +449,9 @@ case "$ACTION" in
 		sxmo_dmenu.sh close
 		sxmo_keyboard.sh close
 		if [ -n "$WMCLASS" ]; then
-			sxmo_hook_lock.sh
+			sxmo_state_switch.sh set lock
 		else
-			sxmo_hook_screenoff.sh
+			sxmo_state_switch.sh set screenoff
 		fi
 		exit 0
 		;;

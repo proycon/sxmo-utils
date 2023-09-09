@@ -62,7 +62,7 @@ case "$SXMO_WM" in
 esac
 
 # To setup initial lock state
-sxmo_hook_unlock.sh
+sxmo_state_switch.sh set unlock
 
 # Turn on auto-suspend
 if [ -w "/sys/power/wakeup_count" ] && [ -f "/sys/power/wake_lock" ]; then

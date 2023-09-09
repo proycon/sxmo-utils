@@ -16,13 +16,6 @@
 
 # This hook is called when the system reaches a off state (screen off)
 
-exec 3<> "$SXMO_STATE.lock"
-flock -x 3
-
-sxmo_log "transitioning to stage off"
-printf screenoff > "$SXMO_STATE"
-sxmo_hook_statusbar.sh state_change &
-
 [ "$SXMO_WM" = "sway" ] && swaymsg mode default
 sxmo_wm.sh dpms on
 sxmo_wm.sh inputevent touchscreen off

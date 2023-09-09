@@ -20,38 +20,35 @@ finish() {
 	printf 6553 > "$prox_path/events/in_proximity_thresh_rising_value"
 
 	sxmo_wakelock.sh unlock sxmo_proximity_lock_running
-	sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 
-	exec sxmo_hook_"$INITIALSTATE".sh
+	if [ -n "$INITIALSTATE" ]; then
+		sxmo_state_switch.sh set "$INITIALSTATE"
+	fi
+
+	exit
 }
 
 near() {
+	if [ -z "$INITIALSTATE" ]; then
+		INITIALSTATE="$(cat "$SXMO_STATE")"
+	fi
+
 	sxmo_debug "near"
-	sxmo_wm.sh dpms on
-	sxmo_wm.sh inputevent touchscreen off
-	printf proximitylock > "$SXMO_STATE"
+	sxmo_state_switch.sh set screenoff
 }
 
 far() {
+	if [ -z "$INITIALSTATE" ]; then
+		INITIALSTATE="$(cat "$SXMO_STATE")"
+	fi
+
 	sxmo_debug "far"
-	sxmo_wm.sh dpms off
-	sxmo_wm.sh inputevent touchscreen on
-	printf proximityunlock > "$SXMO_STATE"
+	sxmo_state_switch.sh set unlock
 }
-
-exec 3<> "$SXMO_STATE.lock"
-flock -x 3
-
-sxmo_log "transitioning to stage proximitylock"
-INITIALSTATE="$(cat "$SXMO_STATE")"
-printf proximitylock > "$SXMO_STATE"
 
 trap 'finish' TERM INT
 
-sxmo_daemons.sh stop idle_locker
-
 sxmo_wakelock.sh lock sxmo_proximity_lock_running infinite
-sxmo_daemons.sh start state_change_bar sxmo_hook_statusbar.sh state_change
 
 # find the device
 if [ -z "$SXMO_PROX_RAW_BUS" ]; then

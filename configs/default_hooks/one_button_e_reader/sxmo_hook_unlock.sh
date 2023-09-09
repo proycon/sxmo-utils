@@ -8,9 +8,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-sxmo_log "transitioning to stage unlock"
-printf unlock > "$SXMO_STATE"
-
 sxmo_wakelock.sh lock sxmo_stay_awake "${SXMO_UNLOCK_IDLE_TIME:-120}s"
 
 sxmo_hook_statusbar.sh state_change &

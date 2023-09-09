@@ -15,4 +15,4 @@ case "$SXMO_WM" in
 		;;
 esac
 
-sxmo_hook_unlock.sh
+sxmo_state_switch.sh set unlock

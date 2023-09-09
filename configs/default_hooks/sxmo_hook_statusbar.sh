@@ -27,11 +27,13 @@ set_state() {
 		return
 	fi
 
+	if sxmo_daemons.sh running proximity_lock; then
+		sxmobar -a -e bold -f orange state 90 "$icon_state_proximity" # circle with dot
+		return
+	fi
+
 	STATE_LABEL="$(cat "$SXMO_STATE")"
 	case "$STATE_LABEL" in
-		proximity*)
-			sxmobar -a -e bold -f orange state 90 "$icon_state_proximity" # circle with dot
-			;;
 		screenoff)
 			sxmobar -a -e bold -f red state 90 "$icon_state_screenoff" # filled circle
 			;;

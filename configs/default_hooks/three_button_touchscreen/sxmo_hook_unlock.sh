@@ -8,16 +8,9 @@
 
 # This hook is called when the system becomes unlocked again
 
-exec 3<> "$SXMO_STATE.lock"
-flock -x 3
-
-sxmo_log "transitioning to stage unlock"
-printf unlock > "$SXMO_STATE"
-
 sxmo_wakelock.sh lock sxmo_not_screenoff infinite
 
 sxmo_led.sh blink red green &
-sxmo_hook_statusbar.sh state_change &
 
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen on
@@ -34,12 +27,12 @@ else
 			sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
 				timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" 'sh -c "
 					swaymsg mode default;
-					exec sxmo_hook_lock.sh
+					exec sxmo_state_switch.sh set lock
 				"'
 			;;
 		dwm)
 			sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
-				timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" "sxmo_hook_lock.sh"
+				timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" "sxmo_state_switch.sh set lock"
 			;;
 	esac
 fi

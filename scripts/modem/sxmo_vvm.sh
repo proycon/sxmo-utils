@@ -44,7 +44,7 @@ processvvm() {
 	fi
 
 	if grep -q screenoff "$SXMO_STATE"; then
-		sxmo_hook_lock.sh
+		sxmo_state_switch.sh set lock
 	fi
 
 	sxmo_hook_sms.sh "$VVM_SENDER" "VVM" "$VVM_ID"
