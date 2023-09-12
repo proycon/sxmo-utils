@@ -80,47 +80,40 @@ _sxmo_load_environments() {
 	export BROWSER="${BROWSER:-firefox}"
 	export SHELL="${SHELL:-/bin/sh}"
 
-	# The user can already forced a $SXMO_DEVICE_NAME value
-	if [ -z "$SXMO_DEVICE_NAME" ] && [ -e /proc/device-tree/compatible ]; then
-		SXMO_DEVICE_NAME="$(tr -c '\0[:alnum:].,-' '_' < /proc/device-tree/compatible |
-			tr '\0' '\n' | head -n1)"
-		export SXMO_DEVICE_NAME
-		deviceprofile="$(command -v "sxmo_deviceprofile_$SXMO_DEVICE_NAME.sh")"
-		# shellcheck disable=SC1090
-		if [ -f "$deviceprofile" ]; then
-			. "$deviceprofile"
-			printf "deviceprofile file %s loaded.\n" "$deviceprofile"
+	# The user can already force a $SXMO_DEVICE_NAME value in ~/.profile
+	if [ -z "$SXMO_DEVICE_NAME" ]; then
+		if [ -e /proc/device-tree/compatible ]; then
+			SXMO_DEVICE_NAME="$(tr -c '\0[:alnum:].,-' '_' < /proc/device-tree/compatible |
+				tr '\0' '\n' | head -n1)"
 		else
-			printf "WARNING: deviceprofile file not found for %s. Most device functions will not work. Please read: https://sxmo.org/deviceprofile \n" "$SXMO_DEVICE_NAME"
-
-			# on a new device, power button won't work
-			# so make sure we don't go into screenoff
-			# or suspend
-			touch "$XDG_CACHE_HOME"/sxmo/sxmo.nosuspend
-			touch "$XDG_CACHE_HOME"/sxmo/sxmo.noidle
-
-			SXMO_DEVICE_NAME=unknown
+			SXMO_DEVICE_NAME=desktop
 		fi
-		unset deviceprofile
 	fi
+	export SXMO_DEVICE_NAME
 
-	if [ -n "$SXMO_DEVICE_NAME" ]; then
-		_device_hooks_path="$(xdg_data_path "sxmo/default_hooks/$SXMO_DEVICE_NAME" 0 ':')"
-		if [ -z "$_device_hooks_path" ]; then
-			_device_hooks_path="$(xdg_data_path "sxmo/default_hooks/three_button_touchscreen" 0 ':')"
-		fi
+	deviceprofile="$(command -v "sxmo_deviceprofile_$SXMO_DEVICE_NAME.sh")"
+	# shellcheck disable=SC1090
+	if [ -f "$deviceprofile" ]; then
+		. "$deviceprofile"
+		printf "deviceprofile file %s loaded.\n" "$deviceprofile"
+	else
+		printf "WARNING: deviceprofile file not found for %s. Most device functions will not work. Please read: https://sxmo.org/deviceprofile \n" "$SXMO_DEVICE_NAME"
 
-		PATH="\
+		# on a new device, power button won't work
+		# so make sure we don't go into screenoff
+		# or suspend
+		touch "$XDG_CACHE_HOME"/sxmo/sxmo.nosuspend
+		touch "$XDG_CACHE_HOME"/sxmo/sxmo.noidle
+	fi
+	unset deviceprofile
+
+	PATH="\
 $XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME:\
+$(xdg_data_path "sxmo/default_hooks/$SXMO_DEVICE_NAME" 0 ':'):\
 $XDG_CONFIG_HOME/sxmo/hooks:\
-$_device_hooks_path:\
 $(xdg_data_path "sxmo/default_hooks" 0 ':'):\
 $PATH"
-		export PATH
-	else
-		default_hooks_path=$(xdg_data_path sxmo/default_hooks 0 ':')
-		export PATH="$XDG_CONFIG_HOME/sxmo/hooks:$default_hooks_path:$PATH"
-	fi
+	export PATH
 }
 
 _sxmo_grab_session() {

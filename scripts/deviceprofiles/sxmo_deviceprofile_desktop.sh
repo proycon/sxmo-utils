@@ -1,0 +1,2 @@
+export SXMO_DISABLE_LEDS=1
+export SXMO_STATUS_DATE_FORMAT="%Y-%m-%d %H:%M"
