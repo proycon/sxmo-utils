@@ -273,11 +273,29 @@ set_wifi() {
 	sxmobar -a wifi-status 30 "$icon_wif"
 }
 
+# $1 = type (wifi, tun)
+# $2 = interface name (wlan0, tun0)
+set_ethernet() {
+	conname="$(nmcli -t device show "$2" | grep ^GENERAL.CONNECTION | cut -d: -f2-)"
+	if [ "$conname" = "--" ]; then
+		# not used device
+		sxmobar -d ethernet-status-"$2" 30
+		return
+	fi
+
+	if nmcli -t connection show "$conname" | grep ^ipv4.method | grep -q :shared; then
+		sxmobar -a ethernet-status-"$2" 30 "$icon_lnk"
+	else
+		sxmobar -d ethernet-status-"$2" 30
+	fi
+}
+
 # $1: type (reported by nmcli, e.g., wifi, tun)
 # $2: interface name (reported by nmcli, e.g., wlan0, tun0)
 set_network() {
 	case "$1" in
 		wifi|tun) set_wifi "$@" ;;
+		ethernet) set_ethernet "$@" ;;
 	esac
 }
 
