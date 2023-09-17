@@ -5,3 +5,4 @@ Description=A lightweight overlay volume/backlight/progress/anything bar for Way
 Type=simple
 Restart=always
 ExecStart=/usr/bin/sxmo_wob.sh
+Environment=WOB_DISABLE_PLEDGE=1
