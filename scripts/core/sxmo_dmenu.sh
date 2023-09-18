@@ -43,11 +43,13 @@ case "$1" in
 esac
 
 if [ -n "$WAYLAND_DISPLAY" ]; then
-	swaymsg mode menu -q # disable default button inputs
-	cleanmode() {
-		swaymsg mode default -q
-	}
-	trap 'cleanmode' TERM INT
+	if grep -q unlock "$SXMO_STATE"; then
+		swaymsg mode menu -q # disable default button inputs
+		cleanmode() {
+			swaymsg mode default -q
+		}
+		trap 'cleanmode' TERM INT
+	fi
 
 	bemenu -l "$(sxmo_rotate.sh isrotated > /dev/null && \
 		printf %s "${SXMO_BEMENU_LANDSCAPE_LINES:-8}" || \
