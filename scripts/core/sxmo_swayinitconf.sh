@@ -9,31 +9,31 @@
 . sxmo_common.sh
 
 monitor="${SXMO_MONITOR:-"$(swaymsg -t get_outputs | jq -r '.[0] | .name')"}"
-pwr="${SXMO_POWER_BUTTON:-"0:0:axp20x-pek"}"
-vols="${SXMO_VOLUME_BUTTON:-"1:1:1c21800.lradc"}"
+pwr="$SXMO_POWER_BUTTON"
+vols="$SXMO_VOLUME_BUTTON"
 
 # Drop this when bonsai is available on 32 bits systems
 multikey_retrocompat() {
 	sxmo_multikey.sh clear
 
-	swaymsg -- input "$pwr" repeat_delay 200
-	swaymsg -- input "$pwr" repeat_rate 15
+	if [ -n "$pwr" ]; then
+		swaymsg -- input "$pwr" repeat_delay 200
+		swaymsg -- input "$pwr" repeat_rate 15
+		swaymsg -- bindsym --locked --input-device="$pwr" XF86PowerOff exec sxmo_multikey.sh \
+			powerbutton \
+			powerbutton_one \
+			powerbutton_two \
+			powerbutton_three
+	else
+		swaymsg -- bindsym --locked XF86PowerOff exec \
+			sxmo_hook_inputhandler.sh powerbutton_one
+	fi
 
-	if ! [ "$vols" = "none" ]; then
+	if [ -n "$vols" ]; then
 		for vol in $vols; do
 			swaymsg -- input "$vol" repeat_delay 200
 			swaymsg -- input "$vol" repeat_rate 15
-		done
-	fi
 
-	swaymsg -- bindsym --locked --input-device="$pwr" XF86PowerOff exec sxmo_multikey.sh \
-		powerbutton \
-		powerbutton_one \
-		powerbutton_two \
-		powerbutton_three
-
-	if ! [ "$vols" = "none" ]; then
-		for vol in $vols; do
 			swaymsg -- bindsym --locked --input-device="$vol" XF86AudioRaiseVolume exec \
 				sxmo_multikey.sh \
 				volup \
@@ -48,6 +48,11 @@ multikey_retrocompat() {
 				voldown_two \
 				voldown_three
 		done
+	else
+		swaymsg -- bindsym --locked XF86AudioRaiseVolume exec \
+			sxmo_hook_inputhandler.sh volup_one
+		swaymsg -- bindsym --locked XF86AudioLowerVolume exec \
+			sxmo_hook_inputhandler.sh voldown_one
 	fi
 }
 
@@ -67,12 +72,10 @@ focused_name="$(
 swaymsg -- input type:touch map_to_output "$focused_name"
 swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 
-swaymsg -- input "$pwr" xkb_file "$(xdg_data_path sxmo/xkb/xkb_mobile_normal_buttons)"
-
-if ! [ "$vols" = "none" ]; then
-	for vol in $vols; do
-		swaymsg -- input "$vol" xkb_file "$(xdg_data_path sxmo/xkb/xkb_mobile_normal_buttons)"
-	done
+if [ "$SXMO_DEVICE_NAME" = "desktop" ]; then
+	swaymsg -- bindsym --locked XF86PowerOff exec \
+		sxmo_hook_inputhandler.sh powerbutton_one
+	exit 0
 fi
 
 if ! command -v bonsaictl > /dev/null; then
@@ -80,15 +83,11 @@ if ! command -v bonsaictl > /dev/null; then
 	exit
 fi
 
-swaymsg -- bindsym --locked --input-device="$pwr" --no-repeat XF86PowerOff exec bonsaictl -e power_pressed
-swaymsg -- bindsym --locked --input-device="$pwr" --release XF86PowerOff exec bonsaictl -e power_released
+swaymsg -- bindsym --locked --no-repeat XF86PowerOff exec bonsaictl -e power_pressed
+swaymsg -- bindsym --locked --release XF86PowerOff exec bonsaictl -e power_released
 
-if ! [ "$vols" = "none" ]; then
-	for vol in $vols; do
-		swaymsg -- bindsym --locked --input-device="$vol" --no-repeat XF86AudioRaiseVolume exec bonsaictl -e volup_pressed
-		swaymsg -- bindsym --locked --input-device="$vol" --release XF86AudioRaiseVolume exec bonsaictl -e volup_released
+swaymsg -- bindsym --locked --no-repeat XF86AudioRaiseVolume exec bonsaictl -e volup_pressed
+swaymsg -- bindsym --locked --release XF86AudioRaiseVolume exec bonsaictl -e volup_released
 
-		swaymsg -- bindsym --locked --input-device="$vol" --no-repeat XF86AudioLowerVolume exec bonsaictl -e voldown_pressed
-		swaymsg -- bindsym --locked --input-device="$vol" --release XF86AudioLowerVolume exec bonsaictl -e voldown_released
-	done
-fi
+swaymsg -- bindsym --locked --no-repeat XF86AudioLowerVolume exec bonsaictl -e voldown_pressed
+swaymsg -- bindsym --locked --release XF86AudioLowerVolume exec bonsaictl -e voldown_released

@@ -27,7 +27,14 @@ exec_always sxmo_swayinitconf.sh
 exec_always dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP
 
 mode "menu" {
-    bindsym --input-device=1:1:1c21800.lradc XF86AudioMute exec nothing # just a placeholder for "menu" mode
+    # This is slower than remapping the keys using a keymap, but we don't need
+    # to know the device names, so use it as a fallback so this functionality
+    # keeps working if a deviceprofile doesn't exist.
+    # TODO: the correct way to do this is to implement custom keybindings in
+    # bemenu
+    bindsym XF86PowerOff exec wtype -k Return
+    bindsym XF86AudioRaiseVolume exec wtype -k Up
+    bindsym XF86AudioLowerVolume exec wtype -k Down
 }
 
 ### Key bindings

@@ -5,10 +5,7 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-inputs="
-	${SXMO_POWER_BUTTON:-"0:0:axp20x-pek"}
-	${SXMO_VOLUME_BUTTON:-"1:1:1c21800.lradc"}
-"
+inputs="$SXMO_POWER_BUTTON $SXMO_VOLUME_BUTTON"
 
 setup_xkb() {
 	for input in $inputs; do
