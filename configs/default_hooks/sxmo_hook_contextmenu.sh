@@ -636,6 +636,19 @@ case "$WMCLASS" in
 		"
 		WINNAME=Lagrange
 		;;
+	org.gnome.maps)
+	CHOICES="
+		$icon_gps Toggle Geoclue ^ 0 ^ superctl status geoclue-agent |grep started >/dev/null && superctl stop geoclue-agent || superctl start geoclue-agent
+		$icon_zmi Zoom in ^ 1 ^ sxmo_type -M ctrl =
+		$icon_zmo Zoom out ^ 1 ^ sxmo_type -M ctrl -k minus
+		$icon_fnd Explore POI ^ 0 ^ sxmo_type -M ctrl -M Shift F
+		$icon_fnd Search ^ 0 ^ sxmo_type -M ctrl f  && sxmo_keyboard.sh open
+		$icon_lst Show last results ^ 0 ^ sxmo_type -M ctrl r
+		$icon_map Toggle route planner ^ 0 ^ sxmo_type -M ctrl d
+		$icon_gps Show current location ^ 0 ^ sxmo_type -M ctrl l
+		"
+		WINNAME=Maps
+		;;
 	*mepo*)
 		# Mepo
 		# The choices / hotkeys for the contextmenu are generated through mepo's

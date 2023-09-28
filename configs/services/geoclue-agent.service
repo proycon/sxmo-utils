@@ -1,0 +1,7 @@
+[Unit]
+Description=Proxy location data to map applications
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/libexec/geoclue-2.0/demos/agent
