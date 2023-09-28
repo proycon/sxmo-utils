@@ -57,7 +57,7 @@ icon_fil="" #file
 icon_flk="" #falkon
 icon_fll="󰉄" #flashlight
 icon_flt="" #filter/pipe
-icon_fnd="" #search/find
+icon_fnd="󰍉" #search/find
 icon_gam="󰊴" # gaming controller (🎮)
 icon_glb="" #globe
 icon_gps='' #gps
@@ -135,8 +135,8 @@ icon_wn2=""
 icon_wrh=""
 icon_wtr="" #weather
 icon_ytb="" #youtube
-icon_zmi=""
-icon_zmo=""
+icon_zmi="󰛭" # Zoom in/magnify
+icon_zmo="󰛬" # Zoom out/demagnify
 icon_zzz="" #sleep/suspend/crust
 
 # modem states
