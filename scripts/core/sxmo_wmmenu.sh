@@ -94,6 +94,7 @@ $([ -n "$CURRENT_LAYOUT" ] && printf "%s" "$icon_rld $LAYOUT_LINE")
 $icon_grd Split horizontal
 $icon_mnu Split vertical
 $icon_exp Focus parent
+$icon_trh Kill window
 EOF
 		)"
 		PICKED="$(printf "%s" "$CHOICES" | grep . | dmenu -I "$WMINDEX" -p "WM Menu")"
@@ -115,6 +116,9 @@ EOF
 			"$icon_exp Focus parent")
 				swaymsg focus parent
 				;;
+			"$icon_trh Kill window")
+				sxmo_killwindow.sh
+				;;
 			*)
 				printf "%s" "$PICKED" | tr -cd '\000-\177' | xargs swaymsg
 		esac
@@ -131,6 +135,7 @@ $icon_cls Close Menu
 $(_movetowssubmenu)
 $icon_rld Shift stack
 $icon_grd Toggle Layout
+$icon_trh Kill window
 EOF
 		)"
 		PICKED="$(printf "%s" "$CHOICES" | dmenu -I "$WMINDEX" -p "WM Menu")"
@@ -147,6 +152,10 @@ EOF
 				;;
 			"$icon_grd Toggle Layout")
 				sxmo_wm.sh togglelayout
+				;;
+			"$icon_trh Kill window")
+				sxmo_killwindow.sh
+				;;
 		esac
 	done
 }
