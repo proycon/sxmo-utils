@@ -23,7 +23,7 @@ open() {
 
 close() {
 	if [ -n "$KEYBOARD" ]; then # avoid killing everything !
-		pkill "$KEYBOARD"
+		pkill -f "$KEYBOARD"
 	fi
 }
 
