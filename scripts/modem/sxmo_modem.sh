@@ -202,7 +202,7 @@ checkfornewtexts() {
 				stderr "WARNING: mmsdtng not found or unconfigured, treating as normal sms."
 			fi
 		fi
-		TEXT="$(echo "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
+		TEXT="$(printf %b "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
 		NUM="$(
 			echo "$TEXTDATA" |
 			grep sms.content.number |
