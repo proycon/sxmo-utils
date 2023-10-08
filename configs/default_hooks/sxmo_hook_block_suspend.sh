@@ -47,6 +47,10 @@ in_call() {
 	pgrep -f sxmo_modemcall.sh
 }
 
+in_call_dino() {
+	command -v pw-link && [ -n "$(pw-link -o Dino)" ]
+}
+
 hotspot_active() {
 	nmcli -t c show --active | grep -q ^Hotspot
 }
@@ -82,6 +86,7 @@ while [ "$waited" != "0" ]; do
 	waited=0
 	wait_item suspend_disabled
 	wait_item in_call
+	wait_item in_call_dino
 	wait_item hotspot_active
 	wait_item ssh_connected
 	wait_item active_mosh
