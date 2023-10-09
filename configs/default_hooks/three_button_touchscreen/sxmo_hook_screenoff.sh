@@ -36,5 +36,6 @@ esac
 
 wait
 
-sxmo_wakelock.sh lock sxmo_hold_a_bit 3s # avoid immediate suspension
-sxmo_wakelock.sh unlock sxmo_not_screenoff
+sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
+	timeout 3 'sxmo_wakelock.sh unlock sxmo_not_screenoff' \
+	resume 'sxmo_wakelock.sh lock sxmo_not_screenoff infinite'
