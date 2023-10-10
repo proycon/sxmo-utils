@@ -3,6 +3,13 @@ PREFIX:=/usr
 SYSCONFDIR:=/etc
 SHAREDIR=$(PREFIX)/share
 MANDIR=$(SHAREDIR)/man
+
+# use $(PREFIX)/lib/systemd/user for systemd integration
+SERVICEDIR:=$(PREFIX)/share/superd/services
+
+# Install services for packages outside sxmo
+EXTERNAL_SERVICES:=1
+
 SCDOC=scdoc
 
 .PHONY: install shellcheck
@@ -94,9 +101,11 @@ install-scripts: $(PROGRAMS)
 	mkdir -p "$(DESTDIR)$(PREFIX)/share/sxmo/appscripts"
 	cd scripts/appscripts && find . -name 'sxmo_*.sh' | xargs -I{} ln -fs "$(PREFIX)/bin/{}" "$(DESTDIR)$(PREFIX)/share/sxmo/appscripts/{}" && cd ../..
 
-
-	mkdir -p "$(DESTDIR)$(PREFIX)/share/superd/services"
-	install -m 0644 -t $(DESTDIR)$(PREFIX)/share/superd/services configs/superd/services/*
+	mkdir -p "$(DESTDIR)$(SERVICEDIR)"
+	install -m 0644 -t "$(DESTDIR)$(SERVICEDIR)" configs/services/*
+	if [ "$(EXTERNAL_SERVICES)" = "1" ]; then \
+		install -m 0644 -t "$(DESTDIR)$(SERVICEDIR)" configs/external-services/*; \
+	fi
 
 	@echo "-------------------------------------------------------------------">&2
 	@echo "NOTICE 1: Do not forget to add sxmo-setpermissions to your init system, e.g. for openrc: rc-update add sxmo-setpermissions default && rc-service sxmo-setpermissions start" >&2
