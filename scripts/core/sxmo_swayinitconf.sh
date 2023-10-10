@@ -72,7 +72,7 @@ focused_name="$(
 swaymsg -- input type:touch map_to_output "$focused_name"
 swaymsg -- input type:tablet_tool map_to_output "$focused_name"
 
-if [ "$SXMO_DEVICE_NAME" = "desktop" ]; then
+if [ -n "$SXMO_DISABLE_KEYBINDS" ]; then
 	swaymsg -- bindsym --locked XF86PowerOff exec \
 		sxmo_hook_inputhandler.sh powerbutton_one
 	exit 0

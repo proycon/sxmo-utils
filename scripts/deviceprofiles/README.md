@@ -86,6 +86,8 @@ SXMO_VOLUME_BUTTON		| Volume button "Identifier" from `swaymsg -t get_inputs` co
 
 SXMO_POWER_BUTTON               | Power button "Identifier" from `swaymsg -t get_inputs` command.
 
+SXMO_DISABLE_KEYBINDS		| Disable most custom Sxmo binds on volume keys if set.
+
 SXMO_MONITOR		| Display "Output" from `swaymsg -t get_outputs`. Should be the same as the output from the `xrandr` command when running dwm.
 
 ### General / Misc.
