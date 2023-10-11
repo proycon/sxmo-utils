@@ -12,7 +12,7 @@ ACTION="$1"
 . sxmo_common.sh
 
 stop_proximity_lock() {
-	sxmo_daemons.sh stop proximity_lock
+	sxmo_jobs.sh stop proximity_lock
 }
 
 XPROPOUT="$(sxmo_wm.sh focusedwindow)"

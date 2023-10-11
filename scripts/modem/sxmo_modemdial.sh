@@ -52,9 +52,9 @@ EOF
 		return 1
 	fi
 
-	sxmo_daemons.sh start proximity_lock sxmo_proximitylock.sh
+	sxmo_jobs.sh start proximity_lock sxmo_proximitylock.sh
 
-	sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incall_menu
+	sxmo_jobs.sh start incall_menu sxmo_modemcall.sh incall_menu
 }
 
 dial_menu() {

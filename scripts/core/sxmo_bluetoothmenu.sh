@@ -67,7 +67,7 @@ _full_reconnection() {
 notify-send 'Make the device discoverable'
 
 bluetoothctl remove '$1'
-sxmo_daemons.sh start bluetooth_scan bluetoothctl scan on
+sxmo_jobs.sh start bluetooth_scan bluetoothctl scan on
 
 sleep 5
 
@@ -88,7 +88,7 @@ while : ; do
 	fi
 done
 "
-	sxmo_daemons.sh stop bluetooth_scan
+	sxmo_jobs.sh stop bluetooth_scan
 }
 
 _notify_failure() {
@@ -247,11 +247,11 @@ EOF
 				;;
 			"Discovering $icon_ton")
 				INDEX=5
-				sxmo_daemons.sh stop bluetooth_scan
+				sxmo_jobs.sh stop bluetooth_scan
 				sleep 0.5
 				;;
 			"Discovering $icon_tof")
-				sxmo_daemons.sh start bluetooth_scan bluetoothctl --timeout 60 scan on > /dev/null
+				sxmo_jobs.sh start bluetooth_scan bluetoothctl --timeout 60 scan on > /dev/null
 				notify-send "Scanning for 60 seconds"
 				INDEX=5
 				sleep 0.5

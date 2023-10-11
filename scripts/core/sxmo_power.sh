@@ -12,12 +12,12 @@ usage() {
 case "$1" in
 	reboot)
 		sxmo_hook_power.sh reboot
-		sxmo_daemons.sh stop all
+		sxmo_jobs.sh stop all
 		doas reboot
 		;;
 	poweroff)
 		sxmo_hook_power.sh poweroff
-		sxmo_daemons.sh stop all
+		sxmo_jobs.sh stop all
 		doas poweroff
 		;;
 	logout)

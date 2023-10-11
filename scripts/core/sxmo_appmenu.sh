@@ -33,11 +33,11 @@ toggle_daemon() {
 	name="$1"
 	shift
 
-	if sxmo_daemons.sh running "$1" -q; then
-		sxmo_daemons.sh stop "$@"
+	if sxmo_jobs.sh running "$1" -q; then
+		sxmo_jobs.sh stop "$@"
 		notify-send "$name Stopped"
 	else
-		sxmo_daemons.sh start "$@" &
+		sxmo_jobs.sh start "$@" &
 		notify-send "$name Started"
 	fi
 }
@@ -55,13 +55,13 @@ call_entries() {
 				NUMBER="$(sxmo_modemcall.sh vid_to_number "$CALLID")"
 				CONTACT="$(sxmo_contacts.sh --name "$NUMBER")"
 
-				printf "%s Incoming call %s ^ 0 ^ sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incoming_call_menu %s\n" \
+				printf "%s Incoming call %s ^ 0 ^ sxmo_jobs.sh start incall_menu sxmo_modemcall.sh incoming_call_menu %s\n" \
 					"$icon_phn" "$CONTACT" "$CALLID"
 				;;
 			*)
 				[ -n "$shown_incall_menu" ] && continue
 				shown_incall_menu=1
-				printf "%s Incall Menu ^ 0 ^ sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incall_menu\n" \
+				printf "%s Incall Menu ^ 0 ^ sxmo_jobs.sh start incall_menu sxmo_modemcall.sh incall_menu\n" \
 					"$icon_phn"
 				;;
 		esac

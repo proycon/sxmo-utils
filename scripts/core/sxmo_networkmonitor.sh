@@ -8,7 +8,7 @@
 
 gracefulexit() {
 	sxmo_log "gracefully exiting (on signal or after error)"
-	sxmo_daemons.sh stop network_monitor_device
+	sxmo_jobs.sh stop network_monitor_device
 	trap - INT TERM EXIT
 }
 
@@ -26,7 +26,7 @@ nmcli -g GENERAL.TYPE,GENERAL.DEVICE d show | grep . | while read -r type; do
 done
 
 # shellcheck disable=2016
-sxmo_daemons.sh start network_monitor_device \
+sxmo_jobs.sh start network_monitor_device \
 	nmcli device monitor | stdbuf -o0 awk '
 	{ newstate=$2 }
 	/device removed$/ {newstate="disconnected"}

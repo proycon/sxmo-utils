@@ -6,10 +6,10 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-ROOT="$XDG_RUNTIME_DIR/sxmo_daemons"
+ROOT="$XDG_RUNTIME_DIR/sxmo_jobs"
 mkdir -p "$ROOT"
 
-exec 3<> "$ROOT/daemons.lock"
+exec 3<> "$ROOT/jobs.lock"
 flock -x 3
 
 list() {

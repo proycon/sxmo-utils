@@ -23,7 +23,7 @@ with_dbus() {
 }
 
 cleanup() {
-	sxmo_daemons.sh stop all
+	sxmo_jobs.sh stop all
 	pkill bemenu
 	pkill wvkbd
 	pkill superd

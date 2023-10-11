@@ -24,12 +24,12 @@ sxmo_led.sh blink blue &
 sxmo_wm.sh dpms off
 sxmo_wm.sh inputevent touchscreen off
 
-sxmo_daemons.sh stop periodic_blink
-sxmo_daemons.sh stop periodic_wakelock_check
+sxmo_jobs.sh stop periodic_blink
+sxmo_jobs.sh stop periodic_wakelock_check
 
 # Go to screenoff after 8 seconds of inactivity
 if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
-	sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
+	sxmo_jobs.sh start idle_locker sxmo_idle.sh -w \
 		timeout "${SXMO_LOCK_IDLE_TIME:-8}" "sxmo_state_switch.sh set screenoff"
 fi
 

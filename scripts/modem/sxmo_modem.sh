@@ -96,15 +96,15 @@ checkforfinishedcalls() {
 		if ! sxmo_modemcall.sh list_active_calls | grep -q .; then
 			# Cleanup
 			sxmo_vibrate 1000 "${SXMO_VIBRATE_STRENGTH:-1}" &
-			sxmo_daemons.sh stop incall_menu
-			sxmo_daemons.sh stop proximity_lock
+			sxmo_jobs.sh stop incall_menu
+			sxmo_jobs.sh stop proximity_lock
 
 			if ! sxmo_modemaudio.sh reset_audio; then
 				sxmo_notify_user.sh --urgency=critical "We failed to reset call audio"
 			fi
 		else
 			# Or refresh the menu
-			sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incall_menu
+			sxmo_jobs.sh start incall_menu sxmo_modemcall.sh incall_menu
 		fi
 	done
 }
@@ -139,17 +139,17 @@ checkforincomingcalls() {
 		mkdir -p "$SXMO_LOGDIR"
 		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 
-		sxmo_daemons.sh start proximity_lock sxmo_proximitylock.sh
+		sxmo_jobs.sh start proximity_lock sxmo_proximitylock.sh
 
 		# If we already got an active call
 		if sxmo_modemcall.sh list_active_calls \
 			| grep -v ringing-in \
 			| grep -q .; then
 			# Refresh the incall menu
-			sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incall_menu
+			sxmo_jobs.sh start incall_menu sxmo_modemcall.sh incall_menu
 		else
 			# Or fire the incomming call menu
-			sxmo_daemons.sh start incall_menu sxmo_modemcall.sh incoming_call_menu "$VOICECALLID"
+			sxmo_jobs.sh start incall_menu sxmo_modemcall.sh incoming_call_menu "$VOICECALLID"
 		fi
 
 		stderr "Call from number: $INCOMINGNUMBER (VOICECALLID: $VOICECALLID)"

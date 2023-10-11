@@ -9,7 +9,7 @@
 # Create xdg user directories, such as ~/Pictures
 xdg-user-dirs-update
 
-sxmo_daemons.sh start daemon_manager superd
+sxmo_jobs.sh start daemon_manager superd
 
 # let time to superd to start correctly
 while ! superctl status > /dev/null 2>&1; do
@@ -32,7 +32,7 @@ fi
 
 # Periodically update some status bar components
 sxmo_hook_statusbar.sh all
-sxmo_daemons.sh start statusbar_periodics sxmo_run_aligned.sh 60 \
+sxmo_jobs.sh start statusbar_periodics sxmo_run_aligned.sh 60 \
 	sxmo_hook_statusbar.sh periodics
 
 # mako/dunst are required for warnings.

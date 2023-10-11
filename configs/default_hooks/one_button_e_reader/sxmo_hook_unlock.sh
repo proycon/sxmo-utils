@@ -21,7 +21,7 @@ if [ ! -e "$XDG_CACHE_HOME"/sxmo/sxmo.nogesture ]; then
 fi
 
 # suspend after if no activity after 120s
-sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
+sxmo_jobs.sh start idle_locker sxmo_idle.sh -w \
 	timeout "1" '' \
 	resume "sxmo_wakelock.sh lock sxmo_stay_awake \"${SXMO_UNLOCK_IDLE_TIME:-120}s\""
 

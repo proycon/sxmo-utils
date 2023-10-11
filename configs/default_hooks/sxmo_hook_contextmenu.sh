@@ -19,7 +19,7 @@ superd_service_isrunning() {
 }
 
 sxmo_service_isrunning() {
-	sxmo_daemons.sh running "$1" > /dev/null
+	sxmo_jobs.sh running "$1" > /dev/null
 }
 
 if [ -z "$XPROPOUT" ]; then
@@ -90,11 +90,11 @@ case "$WMCLASS" in
 				[ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ] && printf "%s" "$icon_tof" || printf "%s" "$icon_ton"
 			) ^ 1 ^ (rm $XDG_CACHE_HOME/sxmo/sxmo.noidle 2>/dev/null || touch $XDG_CACHE_HOME/sxmo/sxmo.noidle) && sxmo_state_switch.sh set unlock
 			$icon_ror Autorotate $(
-				sxmo_daemons.sh running autorotate -q &&
+				sxmo_jobs.sh running autorotate -q &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
 			) ^ 1 ^ toggle_daemon 'Autorotate' autorotate sxmo_autorotate.sh
 			$([ -n "$SXMO_KEYBOARD_SLIDER_EVENT_DEVICE" ] && echo "$icon_ror Autorotate on Keyboard Open/Close $(
-				sxmo_daemons.sh running kb_autorotate -q &&
+				sxmo_jobs.sh running kb_autorotate -q &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
 			) ^ 1 ^ toggle_daemon 'Keyboard Autorotate' kb_autorotate sxmo_keyboard_autorotate.sh")
 			$icon_ror Rotate                     ^ 1 ^ sxmo_rotate.sh rotate

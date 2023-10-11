@@ -45,7 +45,7 @@ with_dbus() {
 }
 
 cleanup() {
-	sxmo_daemons.sh stop all
+	sxmo_jobs.sh stop all
 	pkill svkbd
 	pkill dmenu
 	pkill superd

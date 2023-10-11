@@ -22,13 +22,13 @@ sxmo_led.sh blink red blue &
 sxmo_wm.sh dpms on
 sxmo_wm.sh inputevent touchscreen off
 
-sxmo_daemons.sh start periodic_blink sxmo_run_periodically.sh - 2 sxmo_led.sh blink red blue
+sxmo_jobs.sh start periodic_blink sxmo_run_periodically.sh - 2 sxmo_led.sh blink red blue
 
 case "$SXMO_WM" in
 	dwm)
 		# dmenu will grab input focus (i.e. power button) so kill it before going to
 		# screenoff unless proximity lock is running (i.e. there's a phone call).
-		if ! sxmo_daemons.sh running proximity_lock -q; then
+		if ! sxmo_jobs.sh running proximity_lock -q; then
 			sxmo_dmenu.sh close
 		fi
 		;;
@@ -36,6 +36,6 @@ esac
 
 wait
 
-sxmo_daemons.sh start idle_locker sxmo_idle.sh -w \
+sxmo_jobs.sh start idle_locker sxmo_idle.sh -w \
 	timeout 3 'sxmo_wakelock.sh unlock sxmo_not_screenoff' \
 	resume 'sxmo_wakelock.sh lock sxmo_not_screenoff infinite'
