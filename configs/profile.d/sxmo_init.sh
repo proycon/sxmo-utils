@@ -39,10 +39,14 @@ _sxmo_find_runtime_dir() {
 		return
 	fi
 
-	if [ -d "/var/run/user/$(id -u)" ]; then
-		printf "/var/run/user/%s" "$(id -u)"
-		return
-	fi
+	# Try something existing
+	for root in /run /var/run; do
+		path="$root/user/$(id -u)"
+		if [ -d "$path" ] && [ -w "$path" ]; then
+			printf %s "$path"
+			return
+		fi
+	done
 
 	# Fallback to a shared memory location
 	printf "/dev/shm/user/%s" "$(id -u)"
