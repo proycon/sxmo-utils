@@ -9,15 +9,18 @@
 _sxmo_is_running() {
 	unset SXMO_WM
 
-	if [ -f "${XDG_RUNTIME_DIR}"/sxmo.swaysock ]; then
-		unset SWAYSOCK
-		if SWAYSOCK="$(cat "${XDG_RUNTIME_DIR}"/sxmo.swaysock)" \
-			swaymsg 2>/dev/null; then
+	_XDG_RUNTIME_DIR="$(_sxmo_find_runtime_dir)"
+
+	if [ -f "${_XDG_RUNTIME_DIR}"/sxmo.swaysock ]; then
+		if SWAYSOCK="$(cat "${_XDG_RUNTIME_DIR}"/sxmo.swaysock)" swaymsg 2>/dev/null
+		then
 			printf "Detected the Sway environment\n" >&2
 			export SXMO_WM=sway
+			unset _XDG_RUNTIME_DIR
 			return 0
 		fi
 	fi
+	unset _XDG_RUNTIME_DIR
 
 	if DISPLAY=:0 xrandr >/dev/null 2>&1; then
 		printf "Detected the Dwm environment\n" >&2
@@ -117,12 +120,12 @@ $PATH"
 }
 
 _sxmo_grab_session() {
-	XDG_RUNTIME_DIR="$(_sxmo_find_runtime_dir)"
-	export XDG_RUNTIME_DIR
 	if ! _sxmo_is_running; then
-		unset XDG_RUNTIME_DIR
 		return
 	fi
+
+	XDG_RUNTIME_DIR="$(_sxmo_find_runtime_dir)"
+	export XDG_RUNTIME_DIR
 
 	_sxmo_load_environments
 
