@@ -18,6 +18,8 @@ while true; do
 	x_raw="$(cat "$FILE_X")"
 	if  [ "$x_raw" -ge "$RIGHT_SIDE_UP" ] && sxmo_rotate.sh isrotated ; then
 		sxmo_rotate.sh rotnormal
+	elif [ "$x_raw" -le "$UPSIDE_DOWN" ] && [ "$(sxmo_rotate.sh isrotated)" != "invert" ]; then
+		sxmo_rotate.sh rotinvert
 	elif [ "$y_raw" -le "$UPSIDE_DOWN" ] && [ "$(sxmo_rotate.sh isrotated)" != "right" ]; then
 		sxmo_rotate.sh rotright
 	elif [ "$y_raw" -ge "$RIGHT_SIDE_UP" ] && [ "$(sxmo_rotate.sh isrotated)" != "left" ]; then
