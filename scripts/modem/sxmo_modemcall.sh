@@ -195,6 +195,7 @@ mute() {
 
 incoming_call_menu() {
 	NUMBER="$(vid_to_number "$1")"
+	NUMBER="$(sxmo_modem.sh cleanupnumber "$NUMBER")"
 	CONTACTNAME="$(sxmo_contacts.sh --name-or-number "$NUMBER")"
 
 	if [ "$SXMO_WM" = "sway" ]; then
