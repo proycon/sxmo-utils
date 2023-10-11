@@ -8,4 +8,4 @@
 
 # The following parameters are provided:
 # $1 = the new orientation
-# possible values are "normal", "left" and "right"
+# possible values are "normal", "invert", "left" and "right"
