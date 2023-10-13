@@ -199,7 +199,7 @@ processmms() {
 		fi
 
 		if grep -q screenoff "$SXMO_STATE"; then
-			sxmo_state_switch.sh set lock
+			sxmo_state.sh set lock
 		fi
 
 		if [ "$NUM_RECIPIENTS" -gt 1 ]; then

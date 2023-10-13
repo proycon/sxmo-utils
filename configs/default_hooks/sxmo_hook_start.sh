@@ -17,7 +17,7 @@ while ! superctl status > /dev/null 2>&1; do
 done
 
 # Not dangerous if "locker" isn't an available state
-sxmo_state_switch.sh set locker
+sxmo_state.sh set locker
 
 # Load our sound daemons
 
@@ -71,7 +71,7 @@ if sxmo_wakelock.sh isenabled; then
 fi
 
 # To setup initial unlock state
-sxmo_state_switch.sh set unlock
+sxmo_state.sh set unlock
 
 # Turn on lisgd
 if [ ! -e "$XDG_CACHE_HOME"/sxmo/sxmo.nogesture ]; then

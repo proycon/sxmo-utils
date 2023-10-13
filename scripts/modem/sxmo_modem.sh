@@ -266,7 +266,7 @@ checkfornewtexts() {
 		fi
 
 		if grep -q screenoff "$SXMO_STATE"; then
-			sxmo_state_switch.sh set lock
+			sxmo_state.sh set lock
 		fi
 
 		sxmo_hook_sms.sh "$CONTACTNAME" "$TEXT"

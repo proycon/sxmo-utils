@@ -38,16 +38,16 @@ if ! grep -q unlock "$SXMO_STATE"; then
 	esac
 	case "$ACTION" in
 		"powerbutton_one")
-			sxmo_state_switch.sh up
+			sxmo_state.sh up
 			;;
 		"powerbutton_two")
-			sxmo_state_switch.sh up 2
+			sxmo_state.sh up 2
 			;;
 		"powerbutton_three")
 			if grep -q proximity "$SXMO_STATE"; then
 				stop_proximity_lock
 			else
-				sxmo_state_switch.sh up 2
+				sxmo_state.sh up 2
 			fi
 			;;
 		"voldown_one")
@@ -309,12 +309,12 @@ case "$ACTION" in
 		if echo "$WMCLASS" | grep -i "megapixels"; then
 			sxmo_type.sh -k space
 		else
-			sxmo_state_switch.sh up
+			sxmo_state.sh up
 		fi
 		exit 0
 		;;
 	"powerbutton_two")
-		sxmo_state_switch.sh up 2
+		sxmo_state.sh up 2
 		exit 0
 		;;
 	"powerbutton_three")
@@ -449,9 +449,9 @@ case "$ACTION" in
 		sxmo_dmenu.sh close
 		sxmo_keyboard.sh close
 		if [ -n "$WMCLASS" ]; then
-			sxmo_state_switch.sh set lock
+			sxmo_state.sh set lock
 		else
-			sxmo_state_switch.sh set screenoff
+			sxmo_state.sh set screenoff
 		fi
 		exit 0
 		;;

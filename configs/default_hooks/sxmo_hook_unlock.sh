@@ -25,12 +25,12 @@ else
 			sxmo_jobs.sh start idle_locker sxmo_idle.sh -w \
 				timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" 'sh -c "
 					swaymsg mode default;
-					exec sxmo_state_switch.sh down
+					exec sxmo_state.sh down
 				"'
 			;;
 		dwm)
 			sxmo_jobs.sh start idle_locker sxmo_idle.sh -w \
-				timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" "sxmo_state_switch.sh down"
+				timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" "sxmo_state.sh down"
 			;;
 	esac
 fi

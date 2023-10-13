@@ -28,7 +28,7 @@ sxmo_jobs.sh stop periodic_wakelock_check
 # Go down after 8 seconds of inactivity
 if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
 	sxmo_jobs.sh start idle_locker sxmo_idle.sh -w \
-		timeout "${SXMO_LOCK_IDLE_TIME:-8}" "sxmo_state_switch.sh down"
+		timeout "${SXMO_LOCK_IDLE_TIME:-8}" "sxmo_state.sh down"
 fi
 
 wait

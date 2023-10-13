@@ -22,7 +22,7 @@ finish() {
 	sxmo_wakelock.sh unlock sxmo_proximity_lock_running
 
 	if [ -n "$INITIALSTATE" ]; then
-		sxmo_state_switch.sh set "$INITIALSTATE"
+		sxmo_state.sh set "$INITIALSTATE"
 	fi
 
 	exit
@@ -34,7 +34,7 @@ near() {
 	fi
 
 	sxmo_debug "near"
-	sxmo_state_switch.sh set screenoff
+	sxmo_state.sh set screenoff
 }
 
 far() {
@@ -43,7 +43,7 @@ far() {
 	fi
 
 	sxmo_debug "far"
-	sxmo_state_switch.sh set unlock
+	sxmo_state.sh set unlock
 }
 
 trap 'finish' TERM INT

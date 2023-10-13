@@ -88,7 +88,7 @@ case "$WMCLASS" in
 			) ^ 1 ^ (rm $XDG_CACHE_HOME/sxmo/sxmo.nosuspend 2>/dev/null || touch $XDG_CACHE_HOME/sxmo/sxmo.nosuspend)
 			$icon_zzz Auto-screen-off $(
 				[ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ] && printf "%s" "$icon_tof" || printf "%s" "$icon_ton"
-			) ^ 1 ^ (rm $XDG_CACHE_HOME/sxmo/sxmo.noidle 2>/dev/null || touch $XDG_CACHE_HOME/sxmo/sxmo.noidle) && sxmo_state_switch.sh set unlock
+			) ^ 1 ^ (rm $XDG_CACHE_HOME/sxmo/sxmo.noidle 2>/dev/null || touch $XDG_CACHE_HOME/sxmo/sxmo.noidle) && sxmo_state.sh set unlock
 			$icon_ror Autorotate $(
 				sxmo_jobs.sh running autorotate -q &&
 				printf "%s" "$icon_ton" || printf "%s" "$icon_tof"
@@ -111,8 +111,8 @@ case "$WMCLASS" in
 	power)
 		# Power menu
 		CHOICES="
-			$icon_lck Lock               ^ 0 ^ sxmo_state_switch.sh set lock
-			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_state_switch.sh set screenoff
+			$icon_lck Lock               ^ 0 ^ sxmo_state.sh set lock
+			$icon_lck Lock (Screen off)  ^ 0 ^ sxmo_state.sh set screenoff
 			$icon_out Logout             ^ 0 ^ confirm Logout && sxmo_power.sh logout
 			$([ -f "$(xdg_data_path xsessions/sxmo.desktop)" ] &&
 				[ -f "$(xdg_data_path wayland-sessions/swmo.desktop)" ] &&
