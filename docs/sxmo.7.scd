@@ -34,7 +34,7 @@ A brief overview of sxmo's features (in order of presentation):
 - *Autosuspend, screen blanking, and input locking*: sxmo states allow sxmo to
   automatically suspend when idle unless certain programs block it; to offer 
   protection from accidental wakeups; and to blank the screen and lock the input
-  while in a phone call and the phone is near your face. See STATES.
+  while in a phone call and the phone is near your face. See STATES AND SUSPENSION.
 - *Smart cronjobs*: sxmo uses _crond_(1) to handle cronjobs and a special
   program called _mnc_(1) to wake the phone up in time to execute cron jobs.
   See CRONJOBS.
@@ -330,27 +330,41 @@ HOOKS: _sxmo_hook_apps.sh_ (control list of apps)
 
 SEE _sxmo_files.sh_(1).
 
-# STATES
+# STATES AND SUSPENSION
 
-Sxmo recognizes five basic states:
+Sxmo recognizes three basic states:
 
 - *unlock*: Screen is on; touchscreen is enabled.
 - *lock*: Screen is on; touchscreen is disabled.
 - *screenoff*: Screen is off; touchscreen is disabled. The led will also blink
   purple every few seconds to indicate that you are in this state.
-- *suspend or CRUST*: This is CRUST (or suspend), where the modem will still be
-  active and monitor for incoming calls/texts but everything else will be
-  suspended.
 - *Proximity Mode*: This is a special state when one is in a phone call. If you
   bring it close to your face, it will disable input and turn the screen off,
   and if you move the phone away from your face, it will enable input and turn
-  the screen back on.
+  the screen back on. This script actually switch back and forth between *unlock*
+  and *screenoff*.
 
-A diagram of the states can be found here:
+There also is some dedicated workflow for some type of device.
 
-https://sxmo.org/assets/lock-power-states.png
+On desktops, which is the default mode, if no other one is recognised:
 
-The usual workflow is this. 
+- *unlock*: The entry point, and default one.
+- *locker*: A session locker is running, and prevent any interaction with the
+  environment.
+
+On e-ink display devices, by example e-reader devices:
+
+- *unlock*: The entry point, and only available state. The screens stay on while
+  the device is suspended, which means that the power button is only a refresh of
+  the suspension idle timeout, and a way to bring back interactivity.
+
+Sxmo will also *suspend* on most devices, when this feature is available.
+
+- *suspend or CRUST*: This is CRUST (or suspend), where the modem will still be
+  active and monitor for incoming calls/texts but everything else will be
+  suspended.
+
+The usual workflow is this.
 
 - If the phone is in the *unlock* state (default when you boot up) and you wish
   to suspend it, tap the power button once. This will transition to the
@@ -370,7 +384,7 @@ Sxmo also handles automatic transitions from some states to others.
 - It will automatically transition from *screenoff* to *CRUST* immediately
   unless something is blocking it.
 
-You can set up suspend blockers in the wakelocks hook.
+You can set up suspend blockers in the block_suspend hook.
 
 HOOKS:
 _sxmo_hook_postwake.sh_ (what to do after waking up from suspend state),

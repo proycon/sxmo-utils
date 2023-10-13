@@ -35,7 +35,3 @@ case "$SXMO_WM" in
 esac
 
 wait
-
-sxmo_jobs.sh start idle_locker sxmo_idle.sh -w \
-	timeout 3 'sxmo_wakelock.sh unlock sxmo_not_screenoff' \
-	resume 'sxmo_wakelock.sh lock sxmo_not_screenoff infinite'

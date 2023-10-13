@@ -15,4 +15,5 @@ case "$SXMO_WM" in
 		;;
 esac
 
-sxmo_state_switch.sh set unlock
+# need & cause we are still holding flock
+sxmo_state_switch.sh set unlock &

@@ -14,8 +14,6 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-sxmo_wakelock.sh lock sxmo_not_screenoff infinite
-
 # This hook is called when the system reaches a locked state
 
 sxmo_led.sh blink blue &
@@ -27,10 +25,10 @@ sxmo_wm.sh inputevent touchscreen off
 sxmo_jobs.sh stop periodic_blink
 sxmo_jobs.sh stop periodic_wakelock_check
 
-# Go to screenoff after 8 seconds of inactivity
+# Go down after 8 seconds of inactivity
 if ! [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
 	sxmo_jobs.sh start idle_locker sxmo_idle.sh -w \
-		timeout "${SXMO_LOCK_IDLE_TIME:-8}" "sxmo_state_switch.sh set screenoff"
+		timeout "${SXMO_LOCK_IDLE_TIME:-8}" "sxmo_state_switch.sh down"
 fi
 
 wait

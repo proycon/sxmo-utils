@@ -76,3 +76,7 @@ SXMO_MONITOR		| Display "Output" from `swaymsg -t get_outputs`. Should be the sa
 ### General / Misc.
 SXMO_VIBRATE_DEV		| Path to vibration device (see sxmo_vibrate.c and clickclack.c) [default: /dev/input/by-path/platform-vibrator-event]
 SXMO_VIBRATE_STRENGTH | Strength parameter to pass to sxmo_vibrate [default: 1]
+
+SXMO_STATES			| The list of available state [default: "unlock lock screenoff"]
+
+SXMO_SUSPENDABLE_STATES		| The list of suspendable states, with their timeout duration [default: "screenoff 3"]

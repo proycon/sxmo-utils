@@ -16,9 +16,8 @@ while ! superctl status > /dev/null 2>&1; do
 	sleep 0.5
 done
 
-if [ "$(command -v sxmo_hook_locker.sh)" ]; then
-	sxmo_hook_locker.sh
-fi
+# Not dangerous if "locker" isn't an available state
+sxmo_state_switch.sh set locker
 
 # Load our sound daemons
 
@@ -65,14 +64,14 @@ case "$SXMO_WM" in
 		;;
 esac
 
-# To setup initial lock state
-sxmo_state_switch.sh set unlock
-
 # Turn on auto-suspend
 if sxmo_wakelock.sh isenabled; then
-	sxmo_wakelock.sh lock sxmo_not_screenoff infinite
+	sxmo_wakelock.sh lock sxmo_not_suspendable infinite
 	superctl start sxmo_autosuspend
 fi
+
+# To setup initial unlock state
+sxmo_state_switch.sh set unlock
 
 # Turn on lisgd
 if [ ! -e "$XDG_CACHE_HOME"/sxmo/sxmo.nogesture ]; then

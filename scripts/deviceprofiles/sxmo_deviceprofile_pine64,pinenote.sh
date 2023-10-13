@@ -19,3 +19,5 @@ export SXMO_ROTATION_POLL_TIME="0" # the device already polls at 1s so a further
 export SXMO_UNLOCK_IDLE_TIME="30"
 export SXMO_SPEAKER="Master"
 export SXMO_SWAY_SCALE="2"
+export SXMO_STATES="unlock"
+export SXMO_SUSPENDABLE_STATES="unlock 120"
