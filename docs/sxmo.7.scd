@@ -32,7 +32,7 @@ A brief overview of sxmo's features (in order of presentation):
   Menu* which allows you to browser your filesystem via _sxmo_files_(1); and
   more. See MENUS.
 - *Autosuspend, screen blanking, and input locking*: sxmo states allow sxmo to
-  automatically suspend when idle unless certain programs block it; to offer 
+  automatically suspend when idle unless certain programs block it; to offer
   protection from accidental wakeups; and to blank the screen and lock the input
   while in a phone call and the phone is near your face. See STATES AND SUSPENSION.
 - *Smart cronjobs*: sxmo uses _crond_(1) to handle cronjobs and a special
@@ -71,7 +71,7 @@ Sxmo 1.4.1 was presented at AlpineConf 2021, you can watch the video.
 
 Sxmo uses _tinydm_(1) to automatically launch the window manager of your
 choice (_sway_(1) or _dwm_(1)). Note: You can configure the UID in
-*/etc/conf.d/tinydm*. Make sure to change this if you create a custom user. 
+*/etc/conf.d/tinydm*. Make sure to change this if you create a custom user.
 You may switch between the two window managers in the *Power Menu*.
 
 Once the window manager launches, it will execute _sxmo_hook_start.sh_. Sxmo
@@ -93,17 +93,17 @@ SEE ALSO: _tinydm_(1), _superd_(1), _sxmo_daemons.sh_(1)
 # HOOKS
 
 A lot of functionality is also contained in hooks (*sxmo_hook_\*.sh*). Sxmo uses
-PATH to determine which hook executes. It will look first for hooks in 
-*~/.config/sxmo/hooks/* before it looks in */usr/share/sxmo/default_hooks/*. 
-For example, if you pickup 
-a call and *~/.config/sxmo/hooks/sxmo_hook_pickup.sh* does not exist, 
+PATH to determine which hook executes. It will look first for hooks in
+*~/.config/sxmo/hooks/* before it looks in */usr/share/sxmo/default_hooks/*.
+For example, if you pickup
+a call and *~/.config/sxmo/hooks/sxmo_hook_pickup.sh* does not exist,
 */usr/share/sxmo/default_hooks/sxmo_hook_pickup.sh* will be run.
 
 Note that some hooks are in a subdirectory under the *hooks/* main
 directory which will allow you to have hooks associated with a certain
-device. See DEVICES. For instance, in */usr/share/sxmo/default_hooks/* there 
-are several device subdirectories, one of which will be your $SXMO_DEVICE_NAME. 
-It should be a symlink to another subdirectory, e.g., *one_button_ereader* or 
+device. See DEVICES. For instance, in */usr/share/sxmo/default_hooks/* there
+are several device subdirectories, one of which will be your $SXMO_DEVICE_NAME.
+It should be a symlink to another subdirectory, e.g., *one_button_ereader* or
 *three_button_touchscreen*. Device-specific hooks go here.
 
 While you can manually copy and edit hooks to your liking,
@@ -118,7 +118,7 @@ After login, you will be presented the sxmo interface as follows:
 
 https://sxmo.org/assets/screenshot.jpg
 
-The statusbar relies upon _sxmobar_(1). It has space for the following information 
+The statusbar relies upon _sxmobar_(1). It has space for the following information
 (from left to right) has icons for:
 - The current and active workspace(s) (in the form of numbers). You can tap these to switch to them.
 - The title of the active window (if any).
@@ -253,7 +253,7 @@ zoom in, zoom out, etc.).
 
 If no application is focused, swiping down from the top of the screen, or pressing
 the volume raise button once, will bring up the Main Menu.  If an application is
-focused, this will bring up the application's Context Menu instead.  (To access the 
+focused, this will bring up the application's Context Menu instead.  (To access the
 Main Menu while an application is focussed, press the volume raise button twice.)
 
 You can close any open menu with a gesture: swipe straight up (vertically) onto
@@ -281,7 +281,7 @@ place a shell script in the *~/.config/sxmo/userscripts/* directory.
 
 - Option 1. Edit *~/.config/sxmo/userscripts* and write your entries in it,
   following the appmenu format *<name> ^ <should-return-to-menu> ^
-  <script-path-or-command>* one entry per line. Example: 
+  <script-path-or-command>* one entry per line. Example:
 
 ```
  Weather ^ 0 ^ sxmo_terminal.sh -f "Sxmo:size=5" sh -c "curl http://wttr.in/ | less -SR"
@@ -369,7 +369,7 @@ The usual workflow is this.
 - If the phone is in the *unlock* state (default when you boot up) and you wish
   to suspend it, tap the power button once. This will transition to the
   *screenoff* state which will then automatically transition to the *CRUST* state
-  unless something is blocking it. 
+  unless something is blocking it.
 - If the phone is in the *CRUST* state (i.e., suspended) and you wish to wake it
   up, tap the power button once (to transition to the *lock* state) and then tap
   it once again to transition to the *unlock* state. (This prevents accidental
@@ -379,7 +379,7 @@ Sxmo also handles automatic transitions from some states to others.
 
 - It will automatically transition from *unlock* to *screenoff* after a certain
   amount of idleness (120s).
-- It will automatically transition from *lock* to *screenoff* after a certain 
+- It will automatically transition from *lock* to *screenoff* after a certain
   amount of time (8s).
 - It will automatically transition from *screenoff* to *CRUST* immediately
   unless something is blocking it.
@@ -397,7 +397,7 @@ _sxmo_hook_unlock.sh_ (what to do when transitioning into unlock state),
 Sxmo ensures that cron jobs run and will actively wake the phone from sleep temporarily to this end.
 The cron daemon is installed but not enabled in postmarketOS. Cron has to be started manually
 with *rc-service crond start* and set to start on boot with *rc-update add crond
-default*. We use a little program called _mnc_(1) to wake the phone up before the next 
+default*. We use a little program called _mnc_(1) to wake the phone up before the next
 planned cron job. We also wrap some sxmo logic in _sxmo_rtcwake_(1) which
 launches the cronjob and puts the phone back to sleep when finished.
 
@@ -492,14 +492,14 @@ HOOKS: _sxmo_hook_tailtextlog.sh_ (controls look and feel of view of message tex
 
 A vital feature of a working phone is being able to receive new texts and
 pickup calls. This functionality is made possible through a script that
-monitors the modem activities and vibrates the phone, plays a notification or ringing sound, 
-and blinks the green LED when there is an incoming text/call. 
+monitors the modem activities and vibrates the phone, plays a notification or ringing sound,
+and blinks the green LED when there is an incoming text/call.
 
 While a call is incoming:
 - The phone will ring and vibrate (unless you disabled these in the [Audio menu](#strongincluded-menustrong)).
 - The green LED will trigger.
 - A menu will appear to allow you to pickup the call. You can also discard
-  the call or ignore the call (mute the ring). If you missed the menu, you can also open 
+  the call or ignore the call (mute the ring). If you missed the menu, you can also open
   the [global system menu](#strongincluded-menusstrong) menu and you'll
   see a menu entry to pickup the call; of course this is time-sensitive and this
   menu entry will only be visible while the other party's line is ringing
@@ -545,7 +545,7 @@ easier in sxmo, we have a dedicated menu entry in *Config* called
 fields one by one.  The script should take care of restarting mmsd when closed.
 
 *Note* that you likely will *not* have to configure mmsd-tng, if your settings
-are already in 
+are already in
 https://wiki.gnome.org/Projects/NetworkManager/MobileBroadband/ServiceProviders.
 Consider contributing your own if it is not.
 
@@ -625,7 +625,7 @@ apk upgrade -aiv
 There is also a menu entry within the *Config Menu* to do this.
 
 After you update the sxmo packages themselves, be sure to run
-_sxmo_migrate.sh_(1) to upgrade your (local) config files. 
+_sxmo_migrate.sh_(1) to upgrade your (local) config files.
 
 SEE ALSO: _sxmo_migrate.sh_(1)
 
@@ -701,7 +701,7 @@ missing on your system. The most relevant ones are:
 When the system boots, tinydm will will run either *sxmo_xinit.sh* or
 *sxmo_winit.sh* depending on if you are running Xorg (dwm) or Wayland (sway).
 Each of these then will load */etc/profile.d/sxmo_init.sh* which will set the
-following environmental variables. Hint: you can type *\_sxmo_grab_session* 
+following environmental variables. Hint: you can type *\_sxmo_grab_session*
 from the commandline to reload these (e.g., if you switch window managers but
 are logged into an ssh connection).
 
