@@ -80,8 +80,7 @@ swayinputevent() {
 			printf "not found"
 			exit 0
 		else
-			sxmo_notify_user.sh "No matching \"$TOUCH_POINTER_ID\" input has been found"
-			exit 1
+			exit 0
 		fi
 	fi
 
