@@ -54,6 +54,10 @@ SXMO_DISABLE_LEDS		| Disable leds (1 or 0) [default: 0]
 
 SXMO_SWAY_SCALE		| Screen scale for hidpi screens. Can be fractional [SWAY-ONLY].
 
+SXMO_ROTATE_DIRECTION		| The direction to rotate when using the gesture [default: right]
+
+SXMO_ROTATE_START		| Should rotate on start? (usefull when landscaped by default)
+
 ### Input-related
 SXMO_TOUCHSCREEN_ID 		| ID (from xinput) for the touchscreen device [DWM-ONLY] [default: 10]
 

@@ -129,7 +129,7 @@ if [ -z "$1" ] || [ "rotate" = "$1" ]; then
 	if isrotated; then
 		set -- rotnormal "$@"
 	else
-		set -- rotright "$@"
+		set -- rot"${SXMO_ROTATE_DIRECTION:-right}" "$@"
 	fi
 fi
 

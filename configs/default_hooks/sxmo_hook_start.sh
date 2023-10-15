@@ -19,6 +19,10 @@ done
 # Not dangerous if "locker" isn't an available state
 sxmo_state.sh set locker
 
+if [ -n "$SXMO_ROTATE_START" ]; then
+	sxmo_rotate.sh
+fi
+
 # Load our sound daemons
 
 if [ "$(command -v pulseaudio)" ]; then
