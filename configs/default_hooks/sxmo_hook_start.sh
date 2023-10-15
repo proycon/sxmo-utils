@@ -82,7 +82,7 @@ if [ ! -e "$XDG_CACHE_HOME"/sxmo/sxmo.nogesture ]; then
 	superctl start sxmo_hook_lisgd
 fi
 
-if [ "$(command -v ModemManager)" ]; then
+if [ -z "$SXMO_NO_MODEM" ] && command -v ModemManager > /dev/null; then
 	# Turn on the dbus-monitors for modem-related tasks
 	superctl start sxmo_modemmonitor
 
@@ -110,12 +110,14 @@ superctl start sxmo_soundmonitor
 #mpv --quiet --no-video ~/welcome.ogg &
 
 # mmsd and vvmd
-if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
-	superctl start mmsd-tng
-fi
+if [ -z "$SXMO_NO_MODEM" ]; then
+	if [ -f "${SXMO_MMS_BASE_DIR:-"$HOME"/.mms/modemmanager}/mms" ]; then
+		superctl start mmsd-tng
+	fi
 
-if [ -f "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" ]; then
-	superctl start vvmd
+	if [ -f "${SXMO_VVM_BASE_DIR:-"$HOME"/.vvm/modemmanager}/vvm" ]; then
+		superctl start vvmd
+	fi
 fi
 
 # add some warnings if things are not setup correctly

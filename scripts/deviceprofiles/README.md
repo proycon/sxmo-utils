@@ -41,6 +41,8 @@ Supported variables used by sxmo are:
 
 export SXMO_MODEM_GPIO_KEY_RI		| If the modem driver handle a gpio, sxmo have to know it to disable the events from this input source.
 
+export SXMO_NO_MODEM		| Disable modem related features
+
 ### Screen-related
 SXMO_ROTATION_POLL_TIME		| Polling time for rotate in seconds (decimals allowed e.g. .1) [default: 1]
 

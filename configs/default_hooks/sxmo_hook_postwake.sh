@@ -6,10 +6,12 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-MMCLI="$(mmcli -m any -J 2>/dev/null)"
-if [ -z "$MMCLI" ]; then
-	sxmo_notify_user.sh "Modem crashed! 30s recovery."
-	sxmo_wakelock.sh lock sxmo_modem_crashed 30s
+if [ -z "$SXMO_NO_MODEM" ]; then
+	MMCLI="$(mmcli -m any -J 2>/dev/null)"
+	if [ -z "$MMCLI" ]; then
+		sxmo_notify_user.sh "Modem crashed! 30s recovery."
+		sxmo_wakelock.sh lock sxmo_modem_crashed 30s
+	fi
 fi
 
 # Add here whatever you want to do

@@ -433,14 +433,18 @@ case "$1" in
 		;;
 	periodics|state_change) # 55 s loop and screenlock triggers
 		set_time
-		set_modem
+		if [ -z "$SXMO_NO_MODEM" ]; then
+			set_modem
+		fi
 		set_state
 		set_network wifi wlan0
 		;;
 	all)
 		sxmobar -r
 		set_time
-		set_modem
+		if [ -z "$SXMO_NO_MODEM" ]; then
+			set_modem
+		fi
 		set_volume
 		set_state
 		set_notifications

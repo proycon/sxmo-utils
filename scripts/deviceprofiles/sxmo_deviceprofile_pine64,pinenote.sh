@@ -21,3 +21,4 @@ export SXMO_SPEAKER="Master"
 export SXMO_SWAY_SCALE="2"
 export SXMO_STATES="unlock"
 export SXMO_SUSPENDABLE_STATES="unlock 120"
+export SXMO_NO_MODEM=1
