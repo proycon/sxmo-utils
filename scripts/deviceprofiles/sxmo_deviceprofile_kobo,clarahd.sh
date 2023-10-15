@@ -12,3 +12,4 @@ export SXMO_ROTATE_DIRECTION="left"
 export SXMO_ROTATE_START=1
 export SXMO_MIN_BRIGHTNESS=0 # to disable all backlight
 export SXMO_NO_MODEM=1
+export LISGD_EDGE_SIZE="2.0"
