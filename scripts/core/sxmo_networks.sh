@@ -24,6 +24,17 @@ menu() {
 	dmenu -i "$@"
 }
 
+notify_sucess() {
+	MSG="$1"
+	shift
+	if "$@"; then
+		sxmo_notify_user.sh "$MSG succeed"
+	else
+		sxmo_notify_user.sh "$MSG failure"
+		stderr "$*"
+	fi
+}
+
 connections() {
 	nmcli -c no -f device,type,name -t c show | \
 		sed "s/802-11-wireless:/$icon_wif /" | \
@@ -44,18 +55,18 @@ toggleconnection() {
 	CONNLINE="$1"
 	if echo "$CONNLINE" | grep -q "^$icon_don "; then
 		CONNNAME="$(echo "$CONNLINE" | cut -d' ' -f3-)"
-		RES="$(nofail nmcli c down "$CONNNAME" 2>&1)"
+		notify_sucess "Disabling connection" \
+			nmcli c down "$CONNNAME"
 	else
 		CONNNAME="$(echo "$CONNLINE" | cut -d' ' -f3-)"
 		rfkill list wifi | grep -q "yes" || WIFI_ENABLED=1
 		if [ "$(echo "$CONNLINE" | cut -d' ' -f2)" = "$icon_wif" ] && [ -z "$WIFI_ENABLED" ]; then
-			notify-send "Enabling wifi first."
+			sxmo_notify_user.sh "Enabling wifi first."
 			doas sxmo_wifitoggle.sh
 		fi
-		RES="$(nofail nmcli c up "$CONNNAME" 2>&1)"
+		notify_sucess "Enabling connection" \
+			nmcli c up "$CONNNAME"
 	fi
-	notify-send "$RES"
-	stderr "$RES"
 }
 
 deletenetworkmenu() {
@@ -66,17 +77,15 @@ deletenetworkmenu() {
 	[ -z "$CHOICE" ] && return
 	echo "$CHOICE" | grep -q "Close Menu" && return
 	CONNNAME="$(echo "$CHOICE" | cut -d' ' -f3-)"
-	RES="$(nofail nmcli c delete "$CONNNAME" 2>&1)"
-	notify-send "$RES"
-	stderr "$RES"
+	notify_sucess "Deleting connection" \
+		nmcli c delete "$CONNNAME"
 }
 
 getifname() {
 	IFTYPE="$1"
 	IFNAME="$(nmcli d | grep -m 1 "$IFTYPE" | cut -d' ' -f1)"
 	if [ -z "$IFNAME" ]; then
-		notify-send "No interface with type $IFTYPE found"
-		stderr "No interface with type $IFTYPE found"
+		sxmo_notify_user.sh "No interface with type $IFTYPE found"
 		IFNAME=lo
 	fi
 	echo "$IFNAME"
@@ -117,16 +126,10 @@ addnetworkgsmmenu() {
 			;;
 	esac
 
-	RES="$(nofail nmcli c add \
-		type gsm \
-		ifname "$(getifname gsm)" \
-		con-name "$CONNNAME" \
-		apn "$APN" \
-		${PASSWORD:+gsm.password "$PASSWORD"} \
-		${USERNAME:+gsm.username "$USERNAME"} \
-		2>&1)"
-	stderr "$RES"
-	notify-send "$RES"
+	notify_sucess "Adding connection" \
+		nmcli c add type gsm ifname "$(getifname gsm)" con-name "$CONNNAME" \
+		apn "$APN" ${PASSWORD:+gsm.password "$PASSWORD"} \
+		${USERNAME:+gsm.username "$USERNAME"}
 }
 
 addnetworkwpamenu() {
@@ -149,14 +152,9 @@ EOF
 	fi
 	echo "$PASSPHRASE" | grep -q "Close Menu" && return
 
-	RES="$(nofail nmcli c add \
-		type wifi \
-		ifname wlan0 \
-		con-name "$SSID" \
-		ssid "$SSID" \
-		${PASSPHRASE:+802-11-wireless-security.key-mgmt wpa-psk 802-11-wireless-security.psk "$PASSPHRASE"} 2>&1)"
-	stderr "$RES"
-	notify-send "$RES"
+	notify_sucess "Adding connection" \
+		nmcli c add type wifi ifname wlan0 con-name "$SSID" ssid "$SSID" \
+		${PASSPHRASE:+802-11-wireless-security.key-mgmt wpa-psk 802-11-wireless-security.psk "$PASSPHRASE"}
 }
 
 addhotspotusbmenu() {
@@ -168,13 +166,9 @@ addhotspotusbmenu() {
 	echo "$CONNNAME" | grep -q "Close Menu" && return
 
 	# TODO: restart udhcpd after disconnecting on postmarketOS
-	RES="$(nofail nmcli c add \
-		type ethernet \
-		ifname usb0 \
-		con-name "$CONNNAME" \
-		ipv4.method shared 2>&1)"
-	stderr "$RES"
-	notify-send "$RES"
+	notify_sucess "Adding hotspot" \
+		nmcli c add type ethernet ifname usb0 con-name "$CONNNAME" \
+		ipv4.method shared
 }
 
 addhotspotwifimenu() {
@@ -200,8 +194,7 @@ addhotspotwifimenu() {
 	echo "$key1" | grep -q "Close Menu" && return
 
 	if [ "$key" != "$key1" ]; then
-		notify-send "key mismatch"
-		stderr "key mismatch"
+		sxmo_notify_user.sh "key mismatch"
 		return
 	fi
 
@@ -209,12 +202,10 @@ addhotspotwifimenu() {
 	keylen=$( echo "$key" | tr -d '\n' | wc -c )
 	keylen=$(( keylen ))
 	if [ $keylen -lt 8 ]; then
-		notify-send "key too short ($keylen < 8)"
-		stderr "key too short ($keylen < 8)"
+		sxmo_notify_user.sh "key too short ($keylen < 8)"
 		return
 	elif [ $keylen -gt 63 ]; then
-		notify-send "key too long ($keylen > 63)"
-		stderr "key too long ($keylen > 63)"
+		sxmo_notify_user.sh "key too long ($keylen > 63)"
 		return
 	fi
 
@@ -224,13 +215,9 @@ addhotspotwifimenu() {
 	[ -z "$channel" ] && return
 	echo "$channel" | grep -q "Close Menu" && return
 
-	RES="$(nofail nmcli device wifi hotspot ifname wlan0 \
-		con-name "Hotspot $SSID" \
-		ssid "$SSID" \
-		channel "$channel" \
-		band bg password "$key")"
-	stderr "$RES"
-	notify-send "$RES"
+	notify_sucess "Adding hotspot wifi" \
+		nmcli device wifi hotspot ifname wlan0 con-name "Hotspot $SSID" \
+		ssid "$SSID" channel "$channel" band bg password "$key"
 }
 
 networksmenu() {
