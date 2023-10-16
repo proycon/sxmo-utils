@@ -445,7 +445,9 @@ case "$1" in
 		if [ -z "$SXMO_NO_MODEM" ]; then
 			set_modem
 		fi
-		set_volume
+		if [ -z "$SXMO_NO_AUDIO" ]; then
+			set_volume
+		fi
 		set_state
 		set_notifications
 		set_network wifi wlan0

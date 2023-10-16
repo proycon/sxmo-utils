@@ -25,12 +25,17 @@ fi
 
 # Load our sound daemons
 
-if [ "$(command -v pulseaudio)" ]; then
-	superctl start pulseaudio
-elif [ "$(command -v pipewire)" ]; then
-	# pipewire-pulse will start pipewire
-	superctl start pipewire-pulse
-	superctl start wireplumber
+if [ -z "$SXMO_NO_AUDIO" ]; then
+	if [ "$(command -v pulseaudio)" ]; then
+		superctl start pulseaudio
+	elif [ "$(command -v pipewire)" ]; then
+		# pipewire-pulse will start pipewire
+		superctl start pipewire-pulse
+		superctl start wireplumber
+	fi
+
+	# monitor for headphone for statusbar
+	superctl start sxmo_soundmonitor
 fi
 
 # Periodically update some status bar components
@@ -102,9 +107,6 @@ superctl start sxmo_networkmonitor
 
 # The daemon that display notifications popup messages
 superctl start sxmo_notificationmonitor
-
-# monitor for headphone for statusbar
-superctl start sxmo_soundmonitor
 
 # Play a funky startup tune if you want (disabled by default)
 #mpv --quiet --no-video ~/welcome.ogg &

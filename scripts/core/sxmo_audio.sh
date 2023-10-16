@@ -234,6 +234,11 @@ $(_ringmodesubmenu)
 EOF
 }
 
+if [ -n "$SXMO_NO_AUDIO" ]; then
+	sxmo_log "Audio is disabled."
+	exit
+fi
+
 if [ -z "$*" ]; then
 	set -- menu
 fi
