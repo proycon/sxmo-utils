@@ -30,7 +30,7 @@ menu() {
 		find "$zoneinfo_dir" -type f |
 		sed  "s#^${zoneinfo_dir}/##g" |
 		sort |
-		sxmo_dmenu_with_kb.sh -p Timezone -i
+		sxmo_dmenu.sh -p Timezone -i
 	)" || exit 0
 	sxmo_terminal.sh "$0" "$T"
 }

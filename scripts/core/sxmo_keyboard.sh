@@ -14,6 +14,9 @@ isopen() {
 }
 
 open() {
+	if [ -n "$SXMO_NO_KEYBOARD" ]; then
+		return
+	fi
 	if [ -n "$KEYBOARD" ]; then
 		#Note: KEYBOARD_ARGS is not quoted by design as it may includes a pipe and further tools
 		# shellcheck disable=SC2086

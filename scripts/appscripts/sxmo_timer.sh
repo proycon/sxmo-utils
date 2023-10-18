@@ -41,7 +41,7 @@ stopwatchrun() {
 }
 
 menu() {
-	TIMEINPUT="$(sxmo_dmenu_with_kb.sh -p Timer <<EOF
+	TIMEINPUT="$(sxmo_dmenu.sh -p Timer <<EOF
 Stopwatch
 1h
 10m

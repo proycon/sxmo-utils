@@ -615,7 +615,7 @@ case "$WMCLASS" in
 		;;
 	*vimb*)
 		CHOICES="
-			$icon_glb Navigate        ^ 0 ^ sxmo_type -k Escape o && sxmo_keyboard.sh open
+			$icon_glb Navigate        ^ 0 ^ sxmo_type -k Escape o
 			$icon_zmi Zoom            ^ 1 ^ sxmo_type -k Escape zi
 			$icon_zmo Zoom            ^ 1 ^ sxmo_type -k Escape zo
 			$icon_arl History         ^ 1 ^ sxmo_type -M Ctrl o
@@ -632,12 +632,12 @@ case "$WMCLASS" in
 			$icon_cls Close Tab          ^ 0 ^ sxmo_type -M Ctrl w
 			$icon_bok Open Bookmarks     ^ 0 ^ sxmo_type -M Ctrl b
 			$icon_pls Add Bookmark       ^ 0 ^ sxmo_type -M Ctrl d
-			$icon_edt Edit Bookmarks     ^ 0 ^ sxmo_keyboard.sh open && sxmo_terminal.sh $EDITOR ~/.local/share/geopard/bookmarks.gemini
+			$icon_edt Edit Bookmarks     ^ 0 ^ sxmo_terminal.sh $EDITOR ~/.local/share/geopard/bookmarks.gemini
 			$icon_zmi Increase Font Size ^ 1 ^ sxmo_type -M Ctrl -k plus
 			$icon_zmo Decrease Font Size ^ 1 ^ sxmo_type -M Ctrl -k minus
 			$icon_arl History Back       ^ 1 ^ sxmo_type -M Alt -k Left
 			$icon_arr History Forward    ^ 1 ^ sxmo_type -M Alt -k Right
-			$icon_fnd URL Bar            ^ 0 ^ sxmo_keyboard.sh open && sxmo_type -k F6
+			$icon_fnd URL Bar            ^ 0 ^ sxmo_type -k F6
 			$icon_rld Refresh            ^ 0 ^ sxmo_type -k F6 -k Return
 			"
 		WINNAME=Geopard
@@ -663,7 +663,7 @@ case "$WMCLASS" in
 		$icon_zmi Zoom in ^ 1 ^ sxmo_type -M ctrl =
 		$icon_zmo Zoom out ^ 1 ^ sxmo_type -M ctrl -k minus
 		$icon_fnd Explore POI ^ 0 ^ sxmo_type -M ctrl -M Shift F
-		$icon_fnd Search ^ 0 ^ sxmo_type -M ctrl f  && sxmo_keyboard.sh open
+		$icon_fnd Search ^ 0 ^ sxmo_type -M ctrl f
 		$icon_lst Show last results ^ 0 ^ sxmo_type -M ctrl r
 		$icon_map Toggle route planner ^ 0 ^ sxmo_type -M ctrl d
 		$icon_gps Show current location ^ 0 ^ sxmo_type -M ctrl l

@@ -61,7 +61,7 @@ EOF
 dial_menu() {
 	# Initial menu with recently contacted people
 	NUMBER="$(
-		grep . <<EOF | sxmo_dmenu_with_kb.sh -p Number -i
+		grep . <<EOF | sxmo_dmenu.sh -p Number -i
 Close Menu
 More contacts
 $(sxmo_contacts.sh --no-groups)
@@ -71,7 +71,7 @@ EOF
 	# Submenu with all contacts
 	if [ "$NUMBER" = "More contacts" ]; then
 		NUMBER="$(
-			grep . <<EOF | sxmo_dmenu_with_kb.sh -p Number -i
+			grep . <<EOF | sxmo_dmenu.sh -p Number -i
 Close Menu
 $(sxmo_contacts.sh --all --no-groups)
 EOF

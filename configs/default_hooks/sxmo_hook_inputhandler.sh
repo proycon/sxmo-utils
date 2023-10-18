@@ -318,7 +318,11 @@ case "$ACTION" in
 		exit 0
 		;;
 	"voldown_one")
-		sxmo_keyboard.sh toggle
+		if [ -n "$SXMO_NO_KEYBOARD" ]; then
+			sxmo_killwindow.sh
+		else
+			sxmo_keyboard.sh toggle
+		fi
 		exit
 		;;
 	"voldown_two")
@@ -374,11 +378,19 @@ case "$ACTION" in
 		exit 0
 		;;
 	"upbottomedge")
-		sxmo_keyboard.sh open
+		if [ -n "$SXMO_NO_KEYBOARD" ]; then
+			sxmo_terminal.sh
+		else
+			sxmo_keyboard.sh open
+		fi
 		exit 0
 		;;
 	"downbottomedge")
-		sxmo_keyboard.sh close
+		if [ -n "$SXMO_NO_KEYBOARD" ]; then
+			sxmo_killwindow.sh
+		else
+			sxmo_keyboard.sh close
+		fi
 		exit 0
 		;;
 	"downtopedge")

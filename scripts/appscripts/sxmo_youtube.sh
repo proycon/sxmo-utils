@@ -34,7 +34,7 @@ searchmenu() {
 				xargs -0 echo |
 				sed '/^[[:space:]]*$/d' |
 				awk '{$1=$1};1' |
-				sxmo_dmenu_with_kb.sh -p "Yt Search"
+				sxmo_dmenu.sh -p "Yt Search"
 		)" || exit 0
 
 		if [ "Close Menu" = "$ENTRY" ]; then

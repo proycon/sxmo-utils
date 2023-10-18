@@ -75,7 +75,5 @@ link_select() {
 		link_normalize "$(xprop -id "$SURF_WINDOW" _SURF_URI | cut -d '"' -f 2)"
 }
 
-sxmo_keyboard.sh open
 VAL="$(link_select)"
-sxmo_keyboard.sh close
 echo "$VAL"

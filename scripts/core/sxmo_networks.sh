@@ -94,14 +94,14 @@ getifname() {
 addnetworkgsmmenu() {
 	CONNNAME="$(
 		echo "$icon_cls Close Menu" |
-			sxmo_dmenu_with_kb.sh -p "Alias"
+			sxmo_dmenu.sh -p "Alias"
 	)"
 	[ -z "$CONNNAME" ] && return
 	echo "$CONNNAME" | grep -q "Close Menu" && return
 
 	APN="$(
 		echo "$icon_cls Close Menu" |
-			sxmo_dmenu_with_kb.sh -p "APN"
+			sxmo_dmenu.sh -p "APN"
 	)"
 	[ -z "$APN" ] && return
 	echo "$APN" | grep -q "Close Menu" && return
@@ -133,7 +133,7 @@ addnetworkgsmmenu() {
 }
 
 addnetworkwpamenu() {
-	SSID="$(cat <<EOF | sxmo_dmenu_with_kb.sh -p "SSID"
+	SSID="$(cat <<EOF | sxmo_dmenu.sh -p "SSID"
 $icon_cls Close Menu
 $(nmcli d wifi list | tail -n +2 | grep -v '^\*' | awk -F'  ' '{ print $6 }' | grep -v '\-\-')
 EOF
@@ -141,7 +141,7 @@ EOF
 	[ -z "$SSID" ] && return
 	echo "$SSID" | grep -q "Close Menu" && return
 
-	PASSPHRASE="$(cat <<EOF | sxmo_dmenu_with_kb.sh -p "Passphrase"
+	PASSPHRASE="$(cat <<EOF | sxmo_dmenu.sh -p "Passphrase"
 $icon_cls Close Menu
 None
 EOF
@@ -160,7 +160,7 @@ EOF
 addhotspotusbmenu() {
 	CONNNAME="$(
 		echo "$icon_cls Close Menu" |
-			sxmo_dmenu_with_kb.sh -p "Alias"
+			sxmo_dmenu.sh -p "Alias"
 	)"
 	[ -z "$CONNNAME" ] && return
 	echo "$CONNNAME" | grep -q "Close Menu" && return
@@ -174,21 +174,21 @@ addhotspotusbmenu() {
 addhotspotwifimenu() {
 	SSID="$(
 		echo "$icon_cls Close Menu" |
-			sxmo_dmenu_with_kb.sh -p "SSID"
+			sxmo_dmenu.sh -p "SSID"
 	)"
 	[ -z "$SSID" ] && return
 	echo "$SSID" | grep -q "Close Menu" && return
 
 	key="$(
 		echo "$icon_cls Close Menu" |
-			sxmo_dmenu_with_kb.sh -p "Passphrase"
+			sxmo_dmenu.sh -p "Passphrase"
 	)"
 	[ -z "$key" ] && return
 	echo "$key" | grep -q "Close Menu" && return
 
 	key1="$(
 		echo "$icon_cls Close Menu" |
-			sxmo_dmenu_with_kb.sh -p "Confirm"
+			sxmo_dmenu.sh -p "Confirm"
 	)"
 	[ -z "$key1" ] && return
 	echo "$key1" | grep -q "Close Menu" && return
@@ -210,7 +210,7 @@ addhotspotwifimenu() {
 	fi
 
 	channel="$(
-		printf "%s Close Menu\n11\n" "$icon_cls" | sxmo_dmenu_with_kb.sh -p "Channel"
+		printf "%s Close Menu\n11\n" "$icon_cls" | sxmo_dmenu.sh -p "Channel"
 	)"
 	[ -z "$channel" ] && return
 	echo "$channel" | grep -q "Close Menu" && return

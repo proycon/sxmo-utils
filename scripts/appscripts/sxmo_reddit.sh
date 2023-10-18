@@ -11,7 +11,7 @@
 menu() {
 	SUBREDDIT="$(
 		printf %b "Close Menu\n$(echo "$SXMO_SUBREDDITS" | tr " " '\n')" |
-		sxmo_dmenu_with_kb.sh -p "Subreddit:"
+		sxmo_dmenu.sh -p "Subreddit:"
 	)" || exit 0
 	[ "Close Menu" = "$SUBREDDIT" ] && exit 0
 

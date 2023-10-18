@@ -21,7 +21,7 @@ choosenumbermenu() {
 	NUMBER="$(
 		printf %b "\n$icon_cls Cancel\n$icon_grp More contacts\n$(sxmo_contacts.sh | grep -E "\+[0-9]+$")" |
 		awk NF |
-		sxmo_dmenu_with_kb.sh -p "Number" -i |
+		sxmo_dmenu.sh -p "Number" -i |
 		cut -d: -f2 |
 		tr -d -- '- '
 	)"
@@ -30,7 +30,7 @@ choosenumbermenu() {
 		NUMBER="$( #joined words without space is not a bug
 			printf %b "\nCancel\n$(sxmo_contacts.sh --all)" |
 				grep . |
-				sxmo_dmenu_with_kb.sh -p "Number" -i |
+				sxmo_dmenu.sh -p "Number" -i |
 				cut -d: -f2 |
 				tr -d -- '- '
 		)"
@@ -203,7 +203,7 @@ $icon_edt Send a Text
 $(sxmo_contacts.sh --texted)
 EOF
 	)"
-	PICKED="$(printf %b "$ENTRIES" | sxmo_dmenu_with_kb.sh -p "Texts" -i)" || exit
+	PICKED="$(printf %b "$ENTRIES" | sxmo_dmenu.sh -p "Texts" -i)" || exit
 
 	if echo "$PICKED" | grep "Close Menu"; then
 		exit 1

@@ -11,7 +11,7 @@ set -e
 
 # shellcheck disable=SC2120
 newcontact() {
-	name="$(printf "" | sxmo_dmenu_with_kb.sh -p "$icon_usr Name")"
+	name="$(printf "" | sxmo_dmenu.sh -p "$icon_usr Name")"
 
 	number="$1"
 	if [ -n "$number" ]; then
@@ -19,7 +19,7 @@ newcontact() {
 	fi
 
 	while [ -z "$number" ]; do
-		number="$(sxmo_contacts.sh --unknown | sxmo_dmenu_with_kb.sh -p "$icon_phl Number")"
+		number="$(sxmo_contacts.sh --unknown | sxmo_dmenu.sh -p "$icon_phl Number")"
 		number="$(sxmo_validnumber.sh "$number")" || continue
 	done
 
@@ -35,7 +35,7 @@ editcontactname() {
 	ENTRIES="$(printf %b "Old name: $oldname")"
 	PICKED="$(
 		printf %b "$ENTRIES" |
-		sxmo_dmenu_with_kb.sh -p "$icon_edt Edit Contact"
+		sxmo_dmenu.sh -p "$icon_edt Edit Contact"
 	)"
 
 	if ! printf %s "$PICKED" | grep -q "^Old name: "; then
@@ -56,7 +56,7 @@ editcontactnumber() {
 	while [ -z "$PICKED" ]; do
 		PICKED="$(
 			printf %b "$ENTRIES" |
-			sxmo_dmenu_with_kb.sh -p "$icon_edt Edit Contact"
+			sxmo_dmenu.sh -p "$icon_edt Edit Contact"
 		)"
 		if printf %s "$PICKED" | grep -q "(Old number)$"; then
 			editcontact "$1"
@@ -166,7 +166,7 @@ main() {
 
 		PICKED="$(
 			printf %b "$ENTRIES" |
-			sxmo_dmenu_with_kb.sh -i -p "$icon_lst Contacts"
+			sxmo_dmenu.sh -i -p "$icon_lst Contacts"
 		)"
 
 		case "$PICKED" in

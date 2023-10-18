@@ -61,21 +61,12 @@ if [ -n "$WAYLAND_DISPLAY" ]; then
 fi
 
 if [ -n "$DISPLAY" ]; then
-
 	# TODO: kill dmenu?
 
-	if sxmo_keyboard.sh isopen; then
-		# shellcheck disable=SC2086
-		exec dmenu $SXMO_DMENU_OPTS -l "$(sxmo_rotate.sh isrotated > /dev/null && \
-			printf %s "${SXMO_DMENU_WITH_KB_LANDSCAPE_LINES:-5}" || \
-			printf %s "${SXMO_DMENU_WITH_KB_PORTRAIT_LINES:-12}")" "$@"
-	else
-		# shellcheck disable=SC2086
-		exec dmenu $SXMO_DMENU_OPTS -l "$(sxmo_rotate.sh isrotated > /dev/null && \
-			printf %s "${SXMO_DMENU_LANDSCAPE_LINES:-7}" || \
-			printf %s "${SXMO_DMENU_PORTRAIT_LINES:-15}")" "$@"
-	fi
-	exit
+	# shellcheck disable=SC2086
+	exec dmenu $SXMO_DMENU_OPTS -l "$(sxmo_rotate.sh isrotated > /dev/null && \
+		printf %s "${SXMO_DMENU_LANDSCAPE_LINES:-5}" || \
+		printf %s "${SXMO_DMENU_PORTRAIT_LINES:-12}")" "$@"
 fi
 
 export BEMENU_BACKEND=curses
