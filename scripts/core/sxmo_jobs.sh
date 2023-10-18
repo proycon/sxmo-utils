@@ -9,7 +9,7 @@
 ROOT="$XDG_RUNTIME_DIR/sxmo_jobs"
 mkdir -p "$ROOT"
 
-exec 3<> "$ROOT/jobs.lock"
+exec 3<> "$XDG_RUNTIME_DIR/sxmo.jobs.lock"
 flock -x 3
 
 list() {
