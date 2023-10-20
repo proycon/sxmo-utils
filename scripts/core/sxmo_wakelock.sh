@@ -78,19 +78,6 @@ unlock() {
 	echo "$1" | doas tee -a /sys/power/wake_unlock > /dev/null 2>&1
 }
 
-debug() {
-	if ! isenabled; then
-		printf 'System does not support wake locks\n' >&2
-		exit # we swallow when the system doesn't support it
-	fi
-
-	if [ "$1" = "watch" ]; then
-		exec watch -n1 "$0" debug
-	fi
-
-	tr ' ' '\n' < /sys/power/wake_lock | grep .
-}
-
 isenabled() {
 	[ -f /sys/power/wake_lock ]
 }
@@ -101,7 +88,6 @@ case "$cmd" in
 	isenabled) isenabled "$@";;
 	lock) lock "$@";;
 	unlock) unlock "$@";;
-	debug) debug "$@";;
 	*)
 		sxmo_log "warning: sxmo_wakelock.sh $*"
 		usage; exit 1;;

@@ -30,6 +30,7 @@ delay() {
 wait_item() {
 	delay_time=1
 	while $1 > /dev/null 2>&1; do
+		sxmo_log "Blocking suspend for $1"
 		waited=1
 		${2:-delay}
 	done

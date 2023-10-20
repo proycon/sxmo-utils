@@ -103,7 +103,7 @@ case "$WMCLASS" in
 			$icon_sfl Migrate configuration      ^ 0 ^ sxmo_terminal.sh sxmo_migrate.sh
 			$icon_cfg Edit configuration         ^ 0 ^ sxmo_terminal.sh $EDITOR $XDG_CONFIG_HOME/sxmo/$(test "$SXMO_WM" = sway && printf sway || printf xinit)
 			$(command -v pmos-tweaks >/dev/null && echo "$icon_cfg PostmarketOS Tweaks	     ^ 0 ^ GDK_SCALE=1 pmos-tweaks")
-			$icon_cfg Suspend Blockers           ^ 0 ^ sxmo_terminal.sh sxmo_wakelock.sh debug watch
+			$icon_cfg Suspend Blockers           ^ 0 ^ sxmo_terminal.sh sxmo_debug_suspend.sh
 			$icon_inf Version                    ^ 0 ^ sxmo_terminal.sh sxmo_version.sh --block
 		"
 		WINNAME=Config
