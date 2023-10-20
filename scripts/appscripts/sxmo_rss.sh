@@ -46,7 +46,7 @@ prep_temp_folder_with_items() {
 list_items() {
 	cd "$FOLDER" || die "Couldn't cd to $FOLDER"
 	printf %b "Close Menu\nChange Timespan\n"
-	gawk -F'\t' '{print $1 " " substr(FILENAME, 3) " | " $2 ": " $3}' ./* |\
+	gawk -F'\t' '{print $1 " " substr(FILENAME, 3) " | " $2 ": " $3 " " $8}' ./* |\
 	grep -E '^[0-9]{5}' |\
 	sort -nk1 |\
 	sort -r |\
@@ -113,8 +113,21 @@ rssreadmenu() {
 				DMENUIDX=1
 				;;
 			*)
-				URL="$(echo "$PICKED" | awk -F " " '{print $NF}')"
-				sxmo_urlhandler.sh "$URL"
+				# Check for one http or 2, as there can be a link and enclosure
+				if [ "$(echo "$PICKED" | awk -F "http" '{print NF-1}')" = "1" ]; then
+					URL="$(echo "$PICKED" | awk -F " " '{print $NF}')"
+					sxmo_urlhandler.sh "$URL"
+				else
+					URL="$(echo "$PICKED" | grep "http" | awk -F ' ' '{print "Link " $(NF-1) "\nEnclosure " $NF}' | awk '($0){print} END{print "Close Menu"}' | sxmo_dmenu.sh)"
+					case "$URL" in
+						"Close Menu") return 0;;
+						*)
+							PLAY="$(echo "$URL" | awk -F " " '{print $NF}')"
+							sxmo_urlhandler.sh "$PLAY"
+							;;
+					esac
+				fi
+				;;
 		esac
 	done
 }
