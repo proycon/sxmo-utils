@@ -10,12 +10,19 @@ start() {
 	[ -f "$XDG_STATE_HOME"/sxmo.log ] && mv "$XDG_STATE_HOME"/sxmo.log "$XDG_STATE_HOME"/sxmo.log.old
 
 	if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
-		dbus-run-session -- "$0" "with_dbus"
+		dbus-run-session -- "$0" "with_dbus" &
 	else
 		# with_dbus calls exec because dbus-run-session starts it in a
 		# new shell, but we need to keep this shell; start a subshell
-		( with_dbus )
+		( with_dbus ) &
 	fi
+	wait
+}
+
+finish() {
+	cleanup
+	sxmo_hook_stop.sh
+	exit
 }
 
 init() {
@@ -33,9 +40,9 @@ init() {
 	. "$XDG_CONFIG_HOME/sxmo/profile"
 
 	cleanup
+
+	trap 'finish' INT TERM EXIT
 	start
-	cleanup
-	sxmo_hook_stop.sh
 }
 
 if [ -z "$1" ]; then
