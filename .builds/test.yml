@@ -5,15 +5,10 @@ packages:
   - shellspec
   - gojq
   - jq
+  - icu-dev
 sources:
   - https://git.sr.ht/~mil/sxmo-utils
 tasks:
-  - shellcheck: |
+  - test: |
       cd sxmo-utils
-      find . -type f -name '*.sh' -print0 | xargs -0 shellcheck -x --shell=sh
-  - shellspec: |
-      cd sxmo-utils
-      shellspec
-  - editorconfig-check: |
-      cd sxmo-utils
-      ec
+      make test
