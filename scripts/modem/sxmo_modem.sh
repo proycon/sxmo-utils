@@ -191,7 +191,7 @@ checkfornewtexts() {
 
 	# Loop each textid received and read out the data into appropriate logfile
 	for TEXTID in $TEXTIDS; do
-		TEXTDATA="$(mmcli -m any -s "$TEXTID" -K)"
+		TEXTDATA="$(mmcli -m any -s "$TEXTID" -J)"
 		# SMS with no TEXTID is an SMS WAP (I think). So skip.
 		if [ -z "$TEXTDATA" ]; then
 			stderr "Received an empty SMS (TEXTID: $TEXTID).  I will assume this is an MMS."
@@ -202,15 +202,11 @@ checkfornewtexts() {
 				stderr "WARNING: mmsdtng not found or unconfigured, treating as normal sms."
 			fi
 		fi
-		TEXT="$(printf %b "$TEXTDATA" | grep sms.content.text | sed -E 's/^sms\.content\.text\s+:\s+//')"
-		NUM="$(
-			echo "$TEXTDATA" |
-			grep sms.content.number |
-			sed -E 's/^sms\.content\.number\s+:\s+//'
-		)"
+		TEXT="$(printf %s "$TEXTDATA" | jq -r .sms.content.text)"
+		NUM="$(printf %s "$TEXTDATA" | jq -r .sms.content.number)"
 		NUM="$(cleanupnumber "$NUM")"
 
-		TIME="$(echo "$TEXTDATA" | grep sms.properties.timestamp | sed -E 's/^sms\.properties\.timestamp\s+:\s+//')"
+		TIME="$(printf %s "$TEXTDATA" | jq -r .sms.properties.timestamp)"
 		TIME="$(date +%FT%H:%M:%S%z -d "$TIME")"
 
 		# Note: this will *not* block MMS, since we have to unpack the phone numbers for an MMS
