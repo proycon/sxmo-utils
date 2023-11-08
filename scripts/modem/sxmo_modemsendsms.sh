@@ -71,14 +71,29 @@ if ! echo "$NUMBER" | grep -q '^+'; then
 	fi
 fi
 
+finish() {
+	if [ -n "$TMPFILE" ]; then
+		rm "$TMPFILE"
+	fi
+	exit
+}
+trap 'finish' INT TERM EXIT
+
 if [ "-" = "$2" ]; then
-	TEXT="$(cat)"
+	TMPFILE="$(mktemp)"
+	TEXTFILE="$TMPFILE"
+	cat > "$TEXTFILE"
+elif [ "-f" = "$2" ]; then
+	TEXTFILE="$3"
 else
 	shift
 	[ 0 -eq $# ] && usage
 
-	TEXT="$*"
+	TMPFILE="$(mktemp)"
+	TEXTFILE="$TMPFILE"
+	printf "%s" "$*" > "$TEXTFILE"
 fi
+TEXT="$(cat "$TEXTFILE")"
 
 # if multiple recipients or attachment, then send via mmsctl
 if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ] || [ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ]; then
@@ -89,15 +104,11 @@ if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ] || [ -f "$SXMO_LO
 	# ensure we use the correct LOGDIRNUM (e.g., if multiple recipients, sort numerically)
 	NUMBER="$(printf %s "$NUMBER" | xargs pnc find | sort -u | grep . | xargs printf %s)"
 
-	# generate mmsctl arguments
-	TMPFILE="$(mktemp)" # we remove this after we attempt run mmsctl
-	printf %s "$TEXT" > "$TMPFILE"
-
 	# -a 'filename' -c 'content/type' -a 'filename2' -c 'content/type'
 	[ -f "$SXMO_LOGDIR/$NUMBER/draft.attachments.txt" ] && ATTACHMENTS_ARG="$(make_attachments_arg "$NUMBER" | sed 's/^ //')"
 
 	# -a 'tmpfile' for message content
-	ATTACHMENTS_ARG="-a '$TMPFILE' $ATTACHMENTS_ARG"
+	ATTACHMENTS_ARG="-a '$TEXTFILE' $ATTACHMENTS_ARG"
 
 	# -r +123 -r +345
 	RECIPIENTS_ARG="$(printf %s "$NUMBER" | sed 's/+/ -r +/g' | sed 's/^ //')"
@@ -107,7 +118,6 @@ if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ] || [ -f "$SXMO_LO
 	info "mmsctl -S $RECIPIENTS_ARG $ATTACHMENTS_ARG"
 	MMSCTL_RES="$(eval mmsctl -S "$RECIPIENTS_ARG" "$ATTACHMENTS_ARG")"
 	MMSCTL_OK="$?"
-	rm "$TMPFILE"
 	[ "$MMSCTL_OK" -ne 0 ] && err "mmsctl failed with \"$MMSCTL_RES\""
 
 	# mmsd-tng should immediately add a message of status 'draft' and then
@@ -145,15 +155,10 @@ if [ "$(printf %s "$NUMBER" | xargs pnc find | wc -l)" -gt 1 ] || [ -f "$SXMO_LO
 
 # we are dealing with a normal sms, so use mmcli
 else
-
 	TEXTSIZE="${#TEXT}"
 
-	#mmcli doesn't appear to be able to interpret a proper escape
-	#mechanism, so we'll substitute double quotes for two single quotes
-	SAFE_TEXT=$(echo "$TEXT" | sed "s/\"/''/g")
-
 	SMSNO="$(
-		mmcli -m any --messaging-create-sms="text=\"$SAFE_TEXT\",number=$NUMBER" |
+		mmcli -m any --messaging-create-sms-with-text="$TEXTFILE" --messaging-create-sms="number=$NUMBER" |
 		grep -o "[0-9]*$"
 	)"
 
@@ -187,5 +192,3 @@ else
 	sxmo_hook_sendsms.sh "$CONTACTNAME" "$TEXT"
 	info "Sent sms text to $CONTACTNAME."
 fi
-
-

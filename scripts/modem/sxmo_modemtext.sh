@@ -94,7 +94,7 @@ sendtextmenu() {
 		CONFIRM="$(printf %b "$CHOICES" | dmenu -i -p "Confirm")"
 		case "$CONFIRM" in
 			*"Send"*)
-				if sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT"; then
+				if sxmo_modemsendsms.sh "$NUMBER" -f "$DRAFT"; then
 					rm "$DRAFT"
 					sxmo_log "Sent text to $NUMBER"
 					exit 0
@@ -190,7 +190,7 @@ conversationloop() {
 
 		# shellcheck disable=SC2086
 		$EDITOR "$DRAFT"
-		sxmo_modemsendsms.sh "$NUMBER" - < "$DRAFT" || continue
+		sxmo_modemsendsms.sh "$NUMBER" -f "$DRAFT" || continue
 		rm "$DRAFT"
 	done
 }
