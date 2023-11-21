@@ -20,6 +20,7 @@ write_line_app() {
 	fi
 }
 
+write_line_app gnome-2048 "$icon_gam 2048" "gnome-2048"
 write_line_app jami-qt "$icon_msg Jami" "jami-qt"
 write_line_app aerc "$icon_eml Aerc" "sxmo_terminal.sh aerc"
 write_line_app amberol "$icon_mus Amberol" "amberol $XDG_MUSIC_DIR"
