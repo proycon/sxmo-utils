@@ -697,6 +697,7 @@ case "$WMCLASS" in
 			$icon_net Networks                                           ^ 0 ^ sxmo_networks.sh
 			$icon_mus Audio                                              ^ 0 ^ sxmo_audio.sh
 			$icon_phn Modem                                              ^ 0 ^ sxmo_appmenu.sh modem
+			$icon_win Windows                                            ^ 0 ^ sxmo_wmmenu.sh
 			$icon_cfg Config                                             ^ 0 ^ sxmo_appmenu.sh config
 			$icon_pwr Power                                              ^ 0 ^ sxmo_appmenu.sh power
 		"
