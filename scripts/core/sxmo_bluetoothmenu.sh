@@ -72,7 +72,7 @@ sxmo_jobs.sh start bluetooth_scan bluetoothctl scan on
 sleep 5
 
 while : ; do
-	bluetoothctl --timeout 5 pair '$1'
+	timeout 5 bluetoothctl pair '$1'
 	if bluetoothctl info '$1'  | grep -q 'Paired: yes'; then
 		break
 	fi
@@ -82,7 +82,7 @@ sleep 1
 
 bluetoothctl trust '$1'
 while : ; do
-	bluetoothctl --timeout 7 connect '$1'
+	timeout 7 bluetoothctl connect '$1'
 	if bluetoothctl info '$1'  | grep -q 'Connected: yes'; then
 		break
 	fi
@@ -112,9 +112,9 @@ toggle_connection() {
 	MAC="$(printf "%s\n" "$DEVICE" | awk '{print $NF}')"
 
 	if printf "%s\n" "$PICK" | grep -q "$icon_a2x"; then
-		_can_fail sxmo_terminal.sh bluetoothctl --timeout 7 disconnect "$MAC"
+		_can_fail timeout 7 sxmo_terminal.sh bluetoothctl disconnect "$MAC"
 	else
-		_can_fail sxmo_terminal.sh bluetoothctl --timeout 7 connect "$MAC"
+		_can_fail timeout 7 sxmo_terminal.sh bluetoothctl connect "$MAC"
 	fi
 }
 
@@ -154,7 +154,7 @@ EOF
 				;;
 			"Paired $icon_tof")
 				INDEX=2
-				_can_fail sxmo_terminal.sh bluetoothctl --timeout 7 pair "$MAC"
+				_can_fail timeout 7 sxmo_terminal.sh bluetoothctl "$MAC"
 				;;
 			"Trusted $icon_ton")
 				INDEX=3
@@ -166,11 +166,11 @@ EOF
 				;;
 			"Connected $icon_ton")
 				INDEX=4
-				_can_fail sxmo_terminal.sh bluetoothctl --timeout 7 disconnect "$MAC"
+				_can_fail timeout 7 sxmo_terminal.sh bluetoothctl disconnect "$MAC"
 				;;
 			"Connected $icon_tof")
 				INDEX=4
-				_can_fail sxmo_terminal.sh bluetoothctl --timeout 7 connect "$MAC"
+				_can_fail timeout 7 sxmo_terminal.sh bluetoothctl "$MAC"
 				;;
 			"Blocked $icon_ton")
 				INDEX=5
