@@ -139,7 +139,7 @@ checkforincomingcalls() {
 	INCOMINGNUMBER="$(cleanupnumber "$INCOMINGNUMBER")"
 
 	TIME="$(date +%FT%H:%M:%S%z)"
-	if cut -f1 "$SXMO_BLOCKFILE" 2>/dev/null | grep -q "^$INCOMINGNUMBER$"; then
+	if sxmo_hook_block_call.sh "$INCOMINGNUMBER" 2>/dev/null; then
 		stderr "BLOCKED call from number: $VOICECALLID"
 		sxmo_modemcall.sh mute "$VOICECALLID"
 		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$SXMO_BLOCKDIR/modemlog.tsv"
