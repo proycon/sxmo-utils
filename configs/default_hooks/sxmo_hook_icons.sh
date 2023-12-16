@@ -65,6 +65,7 @@ icon_grd="󰀻"
 icon_grp="" #group
 icon_hdp="" #headphones
 icon_hom=""
+icon_hst="󰋎" #headset🗣️
 icon_img="󰏜"
 icon_inf="" #info
 icon_itm="" #item (default)

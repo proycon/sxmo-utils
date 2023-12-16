@@ -374,7 +374,14 @@ set_volume() {
 	if sxmo_audio.sh mic ismuted; then
 		VOLCMP="$icon_mmc"
 	else
-		VOLCMP="$icon_mic"
+		case "$(sxmo_audio.sh device getinput 2>/dev/null)" in
+			*Headset*)
+				VOLCMP="$icon_hst"
+				;;
+			*)
+				VOLCMP="$icon_mic"
+				;;
+		esac
 	fi
 
 	if sxmo_audio.sh vol ismuted; then
