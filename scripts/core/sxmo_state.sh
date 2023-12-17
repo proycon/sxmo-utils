@@ -68,7 +68,7 @@ transition() {
 	)
 }
 
-up() {
+click() {
 	count="${1:-1}"
 	# shellcheck disable=SC2086
 	set -- $SXMO_STATES
@@ -89,13 +89,13 @@ up() {
 		i=$((i+1))
 	done
 	if [ "$count" -gt 1 ]; then
-		up $((count-1))
+		click $((count-1))
 	else
 		transition
 	fi
 }
 
-down() {
+idle() {
 	count="${1:-1}"
 	# shellcheck disable=SC2086
 	set -- $SXMO_STATES
@@ -116,7 +116,7 @@ down() {
 		i=$((i+1))
 	done
 	if [ "$count" -gt 1 ]; then
-		down $((count-1))
+		idle $((count-1))
 	else
 		transition
 	fi
@@ -130,12 +130,7 @@ state="$(cat "$SXMO_STATE")"
 action="$1"
 shift
 case "$action" in
-	up)
-		up "$@"
-		;;
-	down)
-		down "$@"
-		;;
+	click|idle) "$action" "$@" ;;
 	set)
 		if printf "%b\n" "$SXMO_STATES" | tr ' ' '\n' | grep -xq "$1"; then
 			state="$1"

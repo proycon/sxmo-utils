@@ -16,7 +16,7 @@ sxmo_wm.sh inputevent touchscreen on
 sxmo_jobs.sh stop periodic_blink
 sxmo_jobs.sh stop periodic_wakelock_check
 
-# Go down after 120 seconds of inactivity
+# Go to the next idle state after 120 seconds of inactivity
 if [ -e "$XDG_CACHE_HOME/sxmo/sxmo.noidle" ]; then
 	sxmo_jobs.sh stop idle_locker
 else
@@ -25,12 +25,12 @@ else
 			sxmo_jobs.sh start idle_locker sxmo_idle.sh -w \
 				timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" 'sh -c "
 					swaymsg mode default;
-					exec sxmo_state.sh down
+					exec sxmo_state.sh idle
 				"'
 			;;
 		dwm)
 			sxmo_jobs.sh start idle_locker sxmo_idle.sh -w \
-				timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" "sxmo_state.sh down"
+				timeout "${SXMO_UNLOCK_IDLE_TIME:-120}" "sxmo_state.sh idle"
 			;;
 	esac
 fi
