@@ -34,4 +34,6 @@ case "$SXMO_WM" in
 		;;
 esac
 
+sxmo_jobs.sh stop idle_locker
+
 wait
