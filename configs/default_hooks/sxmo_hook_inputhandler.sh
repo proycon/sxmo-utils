@@ -44,11 +44,7 @@ if ! grep -q unlock "$SXMO_STATE"; then
 			sxmo_state.sh click 2
 			;;
 		"powerbutton_three")
-			if grep -q proximity "$SXMO_STATE"; then
-				stop_proximity_lock
-			else
-				sxmo_state.sh click 2
-			fi
+			sxmo_state.sh click 2
 			;;
 		"voldown_one")
 			sxmo_audio.sh vol down 5
@@ -318,11 +314,7 @@ case "$ACTION" in
 		exit 0
 		;;
 	"powerbutton_three")
-		if grep -q proximity "$SXMO_STATE"; then
-			stop_proximity_lock
-		else
-			sxmo_terminal.sh
-		fi
+		sxmo_terminal.sh
 		exit 0
 		;;
 	"voldown_one")
@@ -443,9 +435,6 @@ case "$ACTION" in
 		exit 0
 		;;
 	"bottomleftcorner")
-		if grep -q proximity "$SXMO_STATE"; then
-			exit
-		fi
 		sxmo_dmenu.sh close
 		sxmo_keyboard.sh close
 		if [ -n "$WMCLASS" ]; then
