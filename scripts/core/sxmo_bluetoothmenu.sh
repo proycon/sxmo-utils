@@ -26,8 +26,8 @@ _device_list() {
 				name=icon=mac=""
 			}
 			{ $1=$1 }
-			/Device/ && name { print_cached_device() }
-			/Device/ { mac=$2; paired=""; connected=""; linkedsep="" }
+			/^Device/ && name { print_cached_device() }
+			/^Device/ { mac=$2; paired=""; connected=""; linkedsep="" }
 			/Name:/ { $1="";$0=$0;$1=$1; name=$0 }
 			/Paired: yes/ { paired="'$icon_lnk'"; linkedsep=" " }
 			/Connected: yes/ { connected="'$icon_a2x'"; linkedsep=" " }
