@@ -46,6 +46,8 @@ transition_can_suspend() {
 }
 
 transition() {
+	state="$1"
+
 	# We don't transition if we stay with the same state
 	# shellcheck disable=SC2153
 	if [ "$state" = "$(cat "$SXMO_STATE")" ]; then
@@ -91,7 +93,7 @@ click() {
 	if [ "$count" -gt 1 ]; then
 		click $((count-1))
 	else
-		transition
+		transition "$state"
 	fi
 }
 
@@ -99,27 +101,19 @@ idle() {
 	count="${1:-1}"
 	# shellcheck disable=SC2086
 	set -- $SXMO_STATES
-	i=1
-	while [ $i -le $# ]; do
-		tmpstate=
-		nextstate=
-		eval "tmpstate=\$$i"
-		if [ "$tmpstate" = "$state" ]; then
-			if [ $i = $# ]; then
-				nextstate=$1
-			else
-				eval "nextstate=\$$((i+1))"
+	while [ $# -gt 1 ]; do
+		if [ "$1" = "$state" ]; then
+			if [ "$count" -ge "$#" ]; then
+				count=$(($# - 1))
 			fi
-			state="$nextstate"
-			break
+			shift "$count"
+			transition "$1"
+			return
 		fi
-		i=$((i+1))
+		shift
 	done
-	if [ "$count" -gt 1 ]; then
-		idle $((count-1))
-	else
-		transition
-	fi
+
+	sxmo_log "idle: not transitioning from $state"
 }
 
 exec 3<> "$SXMO_STATE.lock"
@@ -133,8 +127,7 @@ case "$action" in
 	click|idle) "$action" "$@" ;;
 	set)
 		if printf "%b\n" "$SXMO_STATES" | tr ' ' '\n' | grep -xq "$1"; then
-			state="$1"
-			transition
+			transition "$1"
 		fi
 		;;
 esac
