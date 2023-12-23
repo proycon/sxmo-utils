@@ -21,6 +21,7 @@ if [ "$1" = "enable" ]; then
 
 	# Add other things here, e.g., volume boosters
 
+	sxmo_modemaudio.sh is_disabled_speaker && sxmo_modemaudio.sh is_unmuted_mic
 # Phonecall ended
 elif [ "$1" = "disable" ]; then
 	sxmo_log "Attempting hack to get things just right."
@@ -30,4 +31,5 @@ elif [ "$1" = "disable" ]; then
 
 	# Add other things here, e.g., volume boosters
 
+	sxmo_modemaudio.sh is_enabled_speaker
 fi
