@@ -116,7 +116,6 @@ _sxmo_load_environments() {
 
 	PATH="\
 $XDG_CONFIG_HOME/sxmo/hooks/$SXMO_DEVICE_NAME:\
-$(xdg_data_path "sxmo/default_hooks/$SXMO_DEVICE_NAME" 0 ':'):\
 $XDG_CONFIG_HOME/sxmo/hooks:\
 $(xdg_data_path "sxmo/default_hooks" 0 ':'):\
 $PATH"
