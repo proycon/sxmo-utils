@@ -53,6 +53,7 @@ EOF
 	fi
 
 	sxmo_jobs.sh start proximity_lock sxmo_proximitylock.sh
+	sxmo_hook_statusbar.sh state &
 
 	sxmo_jobs.sh start incall_menu sxmo_modemcall.sh incall_menu
 }
