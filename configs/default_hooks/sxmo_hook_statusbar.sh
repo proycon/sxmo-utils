@@ -371,51 +371,41 @@ set_notifications() {
 set_volume() {
 	VOLCMP=""
 
-	if sxmo_modemaudio.sh is_call_audio_mode; then
-		if sxmo_modemaudio.sh is_muted_mic; then
-			VOLCMP="$icon_mmc"
-		else
-			VOLCMP="$icon_mic"
-		fi
-		if sxmo_modemaudio.sh is_enabled_speaker; then
-			VOLCMP="$VOLCMP $icon_spk"
-		else
-			VOLCMP="$VOLCMP $icon_ear"
-		fi
-		sxmobar -a -f green volume 50 "$VOLCMP"
-		return;
-	fi
-
 	if sxmo_audio.sh mic ismuted; then
 		VOLCMP="$icon_mmc"
 	else
 		VOLCMP="$icon_mic"
 	fi
 
-	case "$(sxmo_audio.sh device get 2>/dev/null)" in
-		Speaker|"")
-			# nothing for default or pulse devices
-			;;
-		Headphones|Headphone)
-			VOLCMP="$VOLCMP $icon_hdp"
-			;;
-		Earpiece)
-			VOLCMP="$VOLCMP $icon_ear"
-			;;
-	esac
-
-	VOL="$(sxmo_audio.sh vol get)"
-	if [ -z "$VOL" ] || [ "$VOL" = "muted" ]; then
+	if sxmo_audio.sh vol ismuted; then
 		VOLCMP="$VOLCMP $icon_mut"
-	elif [ "$VOL" -gt 66 ]; then
-		VOLCMP="$VOLCMP $icon_spk"
-	elif [ "$VOL" -gt 33 ]; then
-		VOLCMP="$VOLCMP $icon_spm"
-	elif [ "$VOL" -ge 0 ]; then
-		VOLCMP="$VOLCMP $icon_spl"
+	else
+		case "$(sxmo_audio.sh device get 2>/dev/null)" in
+			*Speaker*|"")
+				# nothing for default or pulse devices
+				;;
+			*Headphone*)
+				VOLCMP="$VOLCMP $icon_hdp"
+				;;
+			*Earpiece*)
+				VOLCMP="$VOLCMP $icon_ear"
+				;;
+		esac
+		VOL="$(sxmo_audio.sh vol get)"
+		if [ "$VOL" -gt 66 ]; then
+			VOLCMP="$VOLCMP $icon_spk"
+		elif [ "$VOL" -gt 33 ]; then
+			VOLCMP="$VOLCMP $icon_spm"
+		elif [ "$VOL" -ge 0 ]; then
+			VOLCMP="$VOLCMP $icon_spl"
+		fi
 	fi
 
-	sxmobar -a volume 50 "$VOLCMP"
+	if sxmo_modemaudio.sh is_call_audio_mode; then
+		sxmobar -a -f green volume 50 "$VOLCMP"
+	else
+		sxmobar -a volume 50 "$VOLCMP"
+	fi
 }
 
 sxmo_debug "$@"
