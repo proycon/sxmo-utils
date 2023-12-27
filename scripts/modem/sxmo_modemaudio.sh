@@ -27,7 +27,10 @@ reset_audio() {
 	if ! sxmo_hook_call_audio.sh "disable"; then
 		return 1
 	fi
-	disable_call_audio_mode
+	if ! disable_call_audio_mode; then
+		return 1
+	fi
+	sxmo_hook_call_audio.sh "disable"
 }
 
 toggle_speaker() {
