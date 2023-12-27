@@ -42,6 +42,11 @@ pickup() {
 	)"
 	case "$DIRECTION" in
 		outgoing)
+			if ! sxmo_modemaudio.sh setup_audio; then
+				sxmo_notify_user.sh --urgency=critical "We failed to setup call audio"
+				return 1
+			fi
+
 			if ! mmcli -m any -o "$CALLID" --start; then
 				sxmo_notify_user.sh --urgency=critical "We failed to start the call"
 				return 1
@@ -52,8 +57,13 @@ pickup() {
 			log_event "call_start" "$CALLID"
 			;;
 		incoming)
-			sxmo_log "Invoking pickup hook (async)"
-			sxmo_hook_pickup.sh &
+			sxmo_log "Invoking pickup hook"
+			sxmo_hook_pickup.sh
+
+			if ! sxmo_modemaudio.sh setup_audio; then
+				sxmo_notify_user.sh --urgency=critical "We failed to setup call audio"
+				return 1
+			fi
 
 			if ! mmcli -m any -o "$CALLID" --accept; then
 				sxmo_notify_user.sh --urgency=critical "We failed to accept the call"
@@ -88,15 +98,15 @@ hangup() {
 		touch "$XDG_RUNTIME_DIR/sxmo_calls/${CALLID}.hangedupcall"
 		log_event "call_hangup" "$CALLID"
 
-		sxmo_log "sxmo_modemcall: Invoking hangup hook (async)"
-		sxmo_hook_hangup.sh &
+		sxmo_log "sxmo_modemcall: Invoking hangup hook"
+		sxmo_hook_hangup.sh
 	else
 		#this call was never picked up and hung up immediately, so it is a discarded call
 		touch "$XDG_RUNTIME_DIR/sxmo_calls/${CALLID}.discardedcall"
 		log_event "call_discard" "$CALLID"
 
-		sxmo_log "sxmo_modemcall: Invoking discard hook (async)"
-		sxmo_hook_discard.sh &
+		sxmo_log "sxmo_modemcall: Invoking discard hook"
+		sxmo_hook_discard.sh
 	fi
 
 	if ! mmcli -m any -o "$CALLID" --hangup; then
@@ -188,8 +198,8 @@ mute() {
 
 	# this signals that we muted this ring
 	touch "$XDG_RUNTIME_DIR/sxmo_calls/${CALLID}.mutedring"
-	sxmo_log "Invoking mute_ring hook (async)"
-	sxmo_hook_mute_ring.sh &
+	sxmo_log "Invoking mute_ring hook"
+	sxmo_hook_mute_ring.sh
 	log_event "ring_mute" "$1"
 }
 
@@ -215,11 +225,6 @@ EOF
 
 		case "$PICKED" in
 			"$icon_phn Pickup")
-				if ! sxmo_modemaudio.sh setup_audio; then
-					sxmo_notify_user.sh --urgency=critical "We failed to setup call audio"
-					return 1
-				fi
-
 				if ! pickup "$1"; then
 					sxmo_notify_user.sh --urgency=critical "We failed to pickup the call"
 					sxmo_modemaudio.sh reset_audio
