@@ -135,7 +135,7 @@ checkforincomingcalls() {
 	else
 		stderr "Invoking ring hook (async)"
 		CONTACTNAME=$(sxmo_contacts.sh --name-or-number "$INCOMINGNUMBER")
-		sxmo_hook_ring.sh "$CONTACTNAME" &
+		sxmo_jobs.sh start ringing sxmo_hook_ring.sh "$CONTACTNAME"
 
 		mkdir -p "$SXMO_LOGDIR"
 		printf %b "$TIME\tcall_ring\t$INCOMINGNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"

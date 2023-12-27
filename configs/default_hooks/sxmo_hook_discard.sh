@@ -7,10 +7,6 @@
 # up the call).
 
 # kill existing ring playback
-if [ -e "$XDG_RUNTIME_DIR/sxmo.ring.pid" ]; then
-	MPVID="$(cat "$XDG_RUNTIME_DIR/sxmo.ring.pid")"
-	kill "$MPVID"
-	rm "$XDG_RUNTIME_DIR/sxmo.ring.pid"
-fi
+sxmo_jobs.sh stop ringing
 
 sxmo_playerctl.sh resume_all

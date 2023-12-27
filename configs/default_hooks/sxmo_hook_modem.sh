@@ -24,7 +24,6 @@ case "$newstate" in
 	"enabling")
 		sxmo_log "State is enabling. Clearing stale call files."
 		rm "$XDG_RUNTIME_DIR"/sxmo_calls/* 2>/dev/null
-		rm -f "$XDG_RUNTIME_DIR"/sxmo.ring.pid 2>/dev/null
 		rm -f "$SXMO_NOTIFDIR"/incomingcall* 2>/dev/null
 		;;
 	"registered")

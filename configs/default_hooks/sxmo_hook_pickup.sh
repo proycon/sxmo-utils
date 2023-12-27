@@ -5,10 +5,6 @@
 # This script is executed (asynchronously) when you pick up an incoming call
 
 # kill existing ring playback
-if [ -e "$XDG_RUNTIME_DIR/sxmo.ring.pid" ]; then
-	xargs -r kill < "$XDG_RUNTIME_DIR/sxmo.ring.pid"
-	rm "$XDG_RUNTIME_DIR/sxmo.ring.pid"
-fi
+sxmo_jobs.sh stop ringing
 
 sxmo_playerctl.sh pause_all
-

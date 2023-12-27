@@ -25,6 +25,28 @@ if ! sxmo_modemcall.sh list_active_calls \
 	exit
 fi
 
+finish() {
+	trap - INT TERM EXIT
+	jobs -p | xargs -r kill
+	exit
+}
+
+ring() {
+	mpv --no-resume-playback --quiet --no-video \
+		--loop="${SXMO_RINGNUMBER:-10}" "$SXMO_RINGTONE" >/dev/null &
+}
+
+vibrate() {
+	while : ; do
+		trap 'finish' INT TERM EXIT
+		sxmo_vibrate 1500 "${SXMO_VIBRATE_STRENGTH:-1}" &
+		wait "$!"
+
+		sleep 0.5 &
+		wait "$!"
+	done &
+}
+
 # RING & VIBRATE MODE (DEFAULT)
 if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.noring ] && [ ! -f "$XDG_CONFIG_HOME"/sxmo/.novibrate ]; then
 	sxmo_log "RING AND VIBRATE"
@@ -33,15 +55,8 @@ if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.noring ] && [ ! -f "$XDG_CONFIG_HOME"/sxmo/.n
 	# In order for this to work with mpv, you will need to install mpv-mdis.
 	sxmo_playerctl.sh pause_all
 
-	timeout "$SXMO_RINGTIME" mpv --no-resume-playback --quiet --no-video \
-		--loop="$SXMO_RINGNUMBER" "$SXMO_RINGTONE" >/dev/null &
-	MPVID=$!
-	echo "$MPVID" > "$XDG_RUNTIME_DIR/sxmo.ring.pid"
-	# vibrate while mpv is running
-	while kill -0 $MPVID; do
-		sxmo_vibrate 1500 "${SXMO_VIBRATE_STRENGTH:-1}"
-		sleep 0.5
-	done
+	ring
+	vibrate
 
 # RING-ONLY MODE
 elif [ ! -f "$XDG_CONFIG_HOME"/sxmo/.noring ] && [ -f "$XDG_CONFIG_HOME"/sxmo/.novibrate ]; then
@@ -51,16 +66,15 @@ elif [ ! -f "$XDG_CONFIG_HOME"/sxmo/.noring ] && [ -f "$XDG_CONFIG_HOME"/sxmo/.n
 	# In order for this to work with mpv, you will need to install mpv-mdis.
 	sxmo_playerctl.sh pause_all
 
-	timeout "$SXMO_RINGTIME" mpv --no-resume-playback --quiet --no-video \
-		--loop="$SXMO_RINGNUMBER" "$SXMO_RINGTONE" >/dev/null &
-	echo "$!" > "$XDG_RUNTIME_DIR/sxmo.ring.pid"
+	ring
 
 # VIBRATE-ONLY MODE
 elif [ ! -f "$XDG_CONFIG_HOME"/sxmo/.novibrate ] && [ -f "$XDG_CONFIG_HOME"/sxmo/.noring ]; then
 	smxo_log "VIBRATE ONLY"
-	for _ in $(seq 5); do
-		sxmo_vibrate 1500 "${SXMO_VIBRATE_STRENGTH:-1}"
-		sleep 0.5
-	done &
-	echo "$!" > "$XDG_RUNTIME_DIR/sxmo.ring.pid"
+
+	vibrate
 fi
+
+trap 'finish' INT TERM EXIT
+sleep "${SXMO_RINGTIME:-20}" &
+wait "$!"
