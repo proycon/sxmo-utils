@@ -100,8 +100,10 @@ checkforfinishedcalls() {
 			sxmo_jobs.sh stop proximity_lock
 			sxmo_hook_statusbar.sh state &
 
-			if ! sxmo_modemaudio.sh reset_audio; then
-				sxmo_notify_user.sh --urgency=critical "We failed to reset call audio"
+			if sxmo_modemaudio.sh is_call_audio_mode; then
+				if ! sxmo_modemaudio.sh reset_audio; then
+					sxmo_notify_user.sh --urgency=critical "We failed to reset call audio"
+				fi
 			fi
 
 			sxmo_hook_after_call.sh
