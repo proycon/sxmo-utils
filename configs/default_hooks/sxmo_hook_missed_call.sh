@@ -10,5 +10,3 @@
 
 # kill existing ring playback
 sxmo_jobs.sh stop ringing
-
-sxmo_playerctl.sh resume_all
