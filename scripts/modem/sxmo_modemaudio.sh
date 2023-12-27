@@ -17,6 +17,10 @@ ca_dbus_set_prop() {
 }
 
 setup_audio() {
+	if is_call_audio_mode; then
+		return
+	fi
+
 	if ! enable_call_audio_mode; then
 		return 1
 	fi
@@ -24,6 +28,10 @@ setup_audio() {
 }
 
 reset_audio() {
+	if is_default_audio_mode; then
+		return
+	fi
+
 	if ! sxmo_hook_call_audio.sh "disable"; then
 		return 1
 	fi
