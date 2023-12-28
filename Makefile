@@ -14,7 +14,7 @@ SCDOC=scdoc
 
 .PHONY: install test shellcheck shellspec test_legacy_nerdfont
 
-VERSION:=1.15.1
+VERSION:=1.15.2
 
 GITVERSION:=$(shell git describe --tags)
 
