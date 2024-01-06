@@ -19,7 +19,7 @@ _prompt() {
 _device_list() {
 	bluetoothctl devices | \
 		cut -d" " -f2 | \
-		xargs -n1 bluetoothctl info | \
+		xargs -rn1 bluetoothctl info | \
 		awk '
 			function print_cached_device() {
 				print icon linkedsep paired connected " " name " " mac
