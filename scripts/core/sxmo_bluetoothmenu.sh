@@ -67,25 +67,16 @@ _full_reconnection() {
 notify-send 'Make the device discoverable'
 
 bluetoothctl remove '$1'
-sxmo_jobs.sh start bluetooth_scan bluetoothctl scan on
+sxmo_jobs.sh start bluetooth_scan bluetoothctl --timeout 300 scan on
 
 sleep 5
 
-while : ; do
-	timeout 5 bluetoothctl pair '$1'
-	if bluetoothctl info '$1'  | grep -q 'Paired: yes'; then
-		break
-	fi
-done
-
-sleep 1
-
-bluetoothctl trust '$1'
 while : ; do
 	timeout 7 bluetoothctl connect '$1'
 	if bluetoothctl info '$1'  | grep -q 'Connected: yes'; then
 		break
 	fi
+	sleep 1
 done
 "
 	sxmo_jobs.sh stop bluetooth_scan
