@@ -6,6 +6,7 @@
 export SXMO_TOUCHSCREEN_ID="10"
 export SXMO_POWER_BUTTON="0:0:pm8941_pwrkey"
 export SXMO_VOLUME_BUTTON="1:1:GPIO_Buttons 0:0:pm8941_resin"
+export SXMO_VIBRATE_DEV="/dev/input/by-path/platform-200f000.spmi-platform-200f000.spmi:pmic@1:vibrator@c000-event"
 export SXMO_ROTATION_GRAVITY="500"
 export SXMO_ROTATION_THRESHOLD="60"
 export SXMO_SWAY_SCALE="2"
