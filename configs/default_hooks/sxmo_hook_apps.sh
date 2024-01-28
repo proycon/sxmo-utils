@@ -52,6 +52,7 @@ write_line_app foliate "$icon_bok Foliate" "foliate"
 ( [ "$SXMO_WM" = sway ] && command -v foot >/dev/null) && \
 	write_line "$icon_trm Foot" "foot $SHELL"
 write_line_app foxtrotgps "$icon_gps Foxtrotgps" "foxtrotgps"
+write_line_app fractal "$icon_msg Fractal" "fractal"
 write_line_app g4music "$icon_mus G4Music" "g4music"
 write_line_app geany "$icon_eml Geany" "geany"
 write_line_app geary "$icon_eml Geary" "geary"
