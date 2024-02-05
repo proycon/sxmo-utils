@@ -4,6 +4,7 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
+SXMO_STATE="${SXMO_STATE:-$XDG_RUNTIME_DIR/sxmo.state}"
 SXMO_STATES="${SXMO_STATES:-unlock lock screenoff}"
 SXMO_SUSPENDABLE_STATES="${SXMO_SUSPENDABLE_STATES:-screenoff 3}"
 
@@ -50,6 +51,8 @@ transition() {
 
 	sxmo_log "transitioning to stage $state"
 	printf %s "$state" > "$SXMO_STATE"
+
+	lock_shared
 
 	(
 		# We need a subshell so we can close the lock fd, without
@@ -111,15 +114,34 @@ idle() {
 }
 
 exec 3<> "$SXMO_STATE.lock"
-flock -x 3
 
-state="$(cat "$SXMO_STATE")"
+lock_exclusive() {
+	flock -x 3
+}
+
+lock_shared() {
+	flock -s 3
+}
+
+read_state() {
+	state="$(cat "$SXMO_STATE")"
+}
 
 action="$1"
 shift
 case "$action" in
-	click|idle) "$action" "$@" ;;
+	click|idle)
+		lock_exclusive
+		read_state
+		"$action" "$@" ;;
+	get)
+		lock_shared
+		read_state
+		printf %s "$state"
+		;;
 	set)
+		lock_exclusive
+		read_state
 		if printf "%b\n" "$SXMO_STATES" | tr ' ' '\n' | grep -xq "$1"; then
 			transition "$1"
 		fi

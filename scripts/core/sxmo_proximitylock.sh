@@ -30,7 +30,7 @@ finish() {
 
 near() {
 	if [ -z "$INITIALSTATE" ]; then
-		INITIALSTATE="$(cat "$SXMO_STATE")"
+		INITIALSTATE="$(sxmo_state.sh get)"
 	fi
 
 	sxmo_debug "near"
@@ -39,7 +39,7 @@ near() {
 
 far() {
 	if [ -z "$INITIALSTATE" ]; then
-		INITIALSTATE="$(cat "$SXMO_STATE")"
+		INITIALSTATE="$(sxmo_state.sh get)"
 	fi
 
 	sxmo_debug "far"

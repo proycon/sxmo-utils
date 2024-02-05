@@ -32,8 +32,7 @@ set_state() {
 		return
 	fi
 
-	STATE_LABEL="$(cat "$SXMO_STATE")"
-	case "$STATE_LABEL" in
+	case "$(sxmo_state.sh get)" in
 		screenoff)
 			sxmobar -a -e bold -f red state 90 "$icon_state_screenoff" # filled circle
 			;;

@@ -198,7 +198,7 @@ processmms() {
 				"$SENDER_NAME: $TEXT"
 		fi
 
-		if grep -q screenoff "$SXMO_STATE"; then
+		if sxmo_state.sh get | grep -q screenoff; then
 			sxmo_state.sh set lock
 		fi
 

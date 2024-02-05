@@ -43,7 +43,7 @@ case "$1" in
 esac
 
 if [ -n "$WAYLAND_DISPLAY" ]; then
-	if grep -q unlock "$SXMO_STATE"; then
+	if sxmo_state.sh get | grep -q unlock; then
 		swaymsg mode menu -q # disable default button inputs
 		cleanmode() {
 			swaymsg mode default -q

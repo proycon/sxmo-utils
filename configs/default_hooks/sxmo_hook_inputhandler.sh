@@ -19,9 +19,9 @@ XPROPOUT="$(sxmo_wm.sh focusedwindow)"
 WMCLASS="$(printf %s "$XPROPOUT" | grep app: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
 WMNAME="$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')"
 
-sxmo_debug "STATE: $(cat "$SXMO_STATE") ACTION: $ACTION WMCLASS: $WMCLASS WMNAME: $WMNAME"
+sxmo_debug "STATE: $(sxmo_state.sh get) ACTION: $ACTION WMCLASS: $WMCLASS WMNAME: $WMNAME"
 
-if ! grep -q unlock "$SXMO_STATE"; then
+if ! sxmo_state.sh get | grep -q unlock; then
 	case "$WMNAME" in # Handle programs
 		*"epy"*|*"epr"*)
 			case "$ACTION" in
