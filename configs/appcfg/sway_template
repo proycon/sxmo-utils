@@ -155,7 +155,7 @@ mode "menu" {
     bindsym $mod+a focus parent
 
     # Manual locker
-    bindsym $mod+g exec sxmo_hook_locker.sh
+    bindsym $mod+g exec sxmo_state.sh set locker
 
     # Shutdown
     bindsym $mod+t exec sxmo_appmenu.sh power
