@@ -48,12 +48,6 @@ transition_can_suspend() {
 transition() {
 	state="$1"
 
-	# We don't transition if we stay with the same state
-	# shellcheck disable=SC2153
-	if [ "$state" = "$(cat "$SXMO_STATE")" ]; then
-		return
-	fi
-
 	sxmo_log "transitioning to stage $state"
 	printf %s "$state" > "$SXMO_STATE"
 
