@@ -65,7 +65,7 @@ xdg_data_path() {
 				break
 			fi
 			if [ $instance -gt 0 ]; then
-				printf '%s' "${sep}"
+				printf '%b' "${sep}"
 			fi
 			printf '%s' "${dir}/${filepath}"
 			instance=$((instance+1))
