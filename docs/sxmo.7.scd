@@ -87,6 +87,7 @@ shell scripts that glue all these tools together. All these shell scripts comply
 to the pattern *sxmo_\*.sh* and most can be found in your */usr/bin/* directory.
 
 HOOKS: _sxmo_hook_start.sh_ (what executes on startup)
+_sxmo_hook_wallpaper.sh_ (give the displayed wallpaper file path)
 
 SEE ALSO: _tinydm_(1), _superd_(1), _sxmo_daemons.sh_(1)
 
