@@ -1,0 +1,7 @@
+[Unit]
+Description=A lightweight overlay volume/backlight/progress/anything bar for X11
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/sxmo_ob.sh xob

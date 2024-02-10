@@ -55,6 +55,7 @@ case "$SXMO_WM" in
 		;;
 	dwm)
 		superctl start dunst
+		superctl start sxmo_xob
 
 		# Auto hide cursor with touchscreen, Show it with a mouse
 		if command -v "unclutter-xfixes" > /dev/null; then

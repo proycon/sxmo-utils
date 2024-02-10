@@ -4,4 +4,4 @@ Description=A lightweight overlay volume/backlight/progress/anything bar for Way
 [Service]
 Type=simple
 Restart=always
-ExecStart=/usr/bin/sxmo_wob.sh
+ExecStart=/usr/bin/sxmo_ob.sh wob

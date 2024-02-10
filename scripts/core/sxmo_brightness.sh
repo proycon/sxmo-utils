@@ -10,7 +10,7 @@
 
 notify() {
 	if [ "$SXMO_WM" = "sway" ] && [ -z "$SXMO_WOB_DISABLE" ]; then
-		getvalue > "$XDG_RUNTIME_DIR"/sxmo.wobsock
+		getvalue > "$XDG_RUNTIME_DIR"/sxmo.obsock
 	else
 		getvalue | xargs dunstify -r 888 "$icon_brightness Brightness"
 	fi
