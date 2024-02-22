@@ -596,6 +596,23 @@ case "$WMCLASS" in
 		"
 		WINNAME=Firefox
 		;;
+	*krita*)
+		# Krita
+		CHOICES="
+			$icon_fnd Open                   ^ 0 ^ sxmo_type -M Ctrl o
+			$icon_sav Save                   ^ 0 ^ sxmo_type -M Ctrl s
+			$icon_pst Paste                  ^ 0 ^ sxmo_type -M Ctrl v
+			$icon_del Delete                 ^ 0 ^ sxmo_type -k Delete
+			$icon_win Select                 ^ 0 ^ sxmo_type -M Ctrl r
+			$icon_modem_disabled Deselect    ^ 0 ^ sxmo_type -M Ctrl -M Shift a
+			$icon_wn2 Crop                   ^ 0 ^ sxmo_type c
+			$icon_flt Fill                   ^ 0 ^ sxmo_type f
+			$icon_modem_connected Gradient   ^ 0 ^ sxmo_type g
+			$icon_dof HSV Adjust    	     ^ 0 ^ sxmo_type -M Ctrl u
+			$icon_cls Close Image        	 ^ 0 ^ sxmo_type -M Ctrl w
+		"
+		WINNAME=Krita
+		;;
 	*vimb*)
 		CHOICES="
 			$icon_glb Navigate        ^ 0 ^ sxmo_type -k Escape o && sxmo_keyboard.sh open
