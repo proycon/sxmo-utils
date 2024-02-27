@@ -9,7 +9,7 @@ envvars() {
 	export SXMO_WM=dwm
 	export XDG_CURRENT_DESKTOP=dwm
 	# shellcheck disable=SC2086
-	command -v $SXMO_TERMINAL "" >/dev/null || export SXMO_TERMINAL="st -e"
+	command -v $SXMO_TERMINAL "" >/dev/null || export SXMO_TERMINAL="st"
 	command -v "$KEYBOARD" >/dev/null || defaultkeyboard
 	[ -z "$MOZ_USE_XINPUT2" ] && export MOZ_USE_XINPUT2=1
 }
