@@ -28,11 +28,18 @@ down() {
 	# bugged https://github.com/Hummer12007/brightnessctl/issues/82
 	# brightnessctl --min-value "${SXMO_MIN_BRIGHTNESS:-5}" set 5%-
 
-	if [ "$(getvalue)" -gt "${SXMO_MIN_BRIGHTNESS:-5}" ]; then
-		brightnessctl -q set 5%-
-	else
-		brightnessctl -q set "${SXMO_MIN_BRIGHTNESS:-5}"%
+	value="$(getvalue)"
+
+	if [ "$value" -le "${SXMO_MIN_BRIGHTNESS:-5}" ]; then
+		return
 	fi
+
+	if [ "$((value-5))" -ge "${SXMO_MIN_BRIGHTNESS:-5}" ]; then
+		brightnessctl -q set 5%-
+		return
+	fi
+
+	brightnessctl -q set "${SXMO_MIN_BRIGHTNESS:-5}"%
 }
 
 getvalue() {
