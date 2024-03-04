@@ -17,7 +17,7 @@ open() {
 	if [ -n "$KEYBOARD" ]; then
 		#Note: KEYBOARD_ARGS is not quoted by design as it may includes a pipe and further tools
 		# shellcheck disable=SC2086
-		isopen || eval "$KEYBOARD" $KEYBOARD_ARGS &
+		isopen || eval "$KEYBOARD" $KEYBOARD_ARGS >> "${XDG_STATE_HOME:-$HOME}"/sxmo.log 2>&1 &
 	fi
 }
 
