@@ -69,6 +69,16 @@ toggleconnection() {
 	fi
 }
 
+togglegsm() {
+                        if nmcli radio wwan | grep -q "enabled"; then
+                                sxmo_notify_user.sh "Disabling GSM"
+                                nmcli radio wwan off 
+                        else
+                                sxmo_notify_user.sh "Enabling GSM"
+                                nmcli radio wwan on
+                        fi
+}
+
 deletenetworkmenu() {
 	CHOICE="$(
 		printf %b "$icon_cls Close Menu\n$(connections)" |
@@ -247,6 +257,13 @@ $(
 	fi
 )
 $icon_cfg Nmtui
+$(
+        if nmcli radio wwan | grep -q "enabled"; then
+                printf "%s Disable GSM\n" $icon_modem_disabled
+        else
+                printf "%s Enable GSM\n" $icon_modem_registered
+        fi
+)
 $icon_cfg Ifconfig
 $([ -z "$WIFI_ENABLED" ] || printf "%s Scan Wifi Networks\n" "$icon_wif")
 EOF
@@ -274,6 +291,9 @@ EOF
 			*"Nmtui" )
 				sxmo_terminal.sh nmtui || continue # Killeable
 				;;
+			*"Disable GSM"|*"Enable GSM" )
+                                togglegsm
+                                ;;
 			*"Ifconfig" )
 				sxmo_terminal.sh watch -n 2 ifconfig || continue # Killeable
 				;;
