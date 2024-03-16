@@ -23,6 +23,7 @@ OPENRC:=1
 CC ?= $(CROSS_COMPILE)gcc
 PROGRAMS = \
 	programs/sxmo_aligned_sleep \
+	programs/sxmo_sleep \
 	programs/sxmo_vibrate
 
 DOCS = \
@@ -51,7 +52,7 @@ programs/%: programs/%.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ $<
 
 clean:
-	rm -f programs/sxmo_aligned_sleep programs/sxmo_vibrate
+	rm -f programs/sxmo_aligned_sleep programs/sxmo_sleep programs/sxmo_vibrate
 
 install: install-sway install-dwm install-scripts install-docs
 
@@ -97,6 +98,8 @@ install-scripts: $(PROGRAMS)
 
 	install -D programs/sxmo_aligned_sleep $(DESTDIR)$(PREFIX)/bin/
 	install -D programs/sxmo_vibrate $(DESTDIR)$(PREFIX)/bin/
+	install -D programs/sxmo_sleep $(DESTDIR)$(PREFIX)/bin/
+	setcap 'cap_wake_alarm=ep' $(DESTDIR)$(PREFIX)/bin/sxmo_sleep
 
 	find $(DESTDIR)$(PREFIX)/share/sxmo/default_hooks/ -type f -exec ./setup_config_version.sh "{}" \;
 	find $(DESTDIR)$(PREFIX)/share/sxmo/appcfg/ -type f -exec ./setup_config_version.sh "{}" \;
