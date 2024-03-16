@@ -688,6 +688,25 @@ case "$WMCLASS" in
 		"
 		WINNAME=Maps
 		;;
+	*badwolf*)
+		# Badwolf Browser
+		CHOICES="
+			$icon_tab New Tab           ^ 0 ^ sxmo_type -M Ctrl -k t
+			$icon_cls Close Tab         ^ 0 ^ sxmo_type -M Alt -k d
+			$icon_fnd Reset Zoom^ 0 ^ sxmo_type -M Ctrl -k 0
+			$icon_arr History        ^ 1 ^ sxmo_type -M Ctrl ]
+			$icon_arl History        ^ 1 ^ sxmo_type -M Ctrl [
+			$icon_arr Next Tab          ^ 1 ^ sxmo_type -M Alt -k Right
+			$icon_arl Previous Tab      ^ 1 ^ sxmo_type -M Alt -k Left
+			$icon_rld Refresh     ^ 0 ^ sxmo_type -M Shift -M Ctrl -k r
+			$icon_fnd Search     ^ 0 ^ sxmo_type -M Shift -M Ctrl -k f
+			$icon_arr Next (Search)     ^ 0 ^ sxmo_type -M Shift -M Ctrl -k g
+			$icon_arl Previous (Search)     ^ 0 ^ sxmo_type -M Shift -M Ctrl -M Shift -k g
+			$icon_flt URL Bar     ^ 0 ^ sxmo_type -M Shift -M Ctrl l
+			$icon_fnd Open Web Inspector      ^ 0 ^ sxmo_type -k F12
+		"
+		WINNAME=Badwolf
+		;;
 	*)
 		# Default system menu (no matches)
 		CHOICES="
