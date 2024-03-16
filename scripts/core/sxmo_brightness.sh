@@ -9,7 +9,7 @@
 . sxmo_hook_icons.sh
 
 notify() {
-	if [ "$SXMO_WM" = "sway" ] && [ -z "$SXMO_WOB_DISABLE" ]; then
+	if [ -z "$SXMO_WOB_DISABLE" ]; then
 		getvalue > "$XDG_RUNTIME_DIR"/sxmo.obsock
 	else
 		getvalue | xargs notify-send -r 888 "$icon_brightness Brightness"

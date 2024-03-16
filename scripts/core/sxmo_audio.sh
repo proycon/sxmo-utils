@@ -16,7 +16,7 @@ notifyvol() {
 	if [ "muted" = "$vol" ]; then
 		vol=0
 	fi
-	if [ "$SXMO_WM" = "sway" ] && [ -z "$SXMO_WOB_DISABLE" ]; then
+	if [ -z "$SXMO_WOB_DISABLE" ]; then
 		printf "%s\n" "$vol" > "$XDG_RUNTIME_DIR"/sxmo.obsock
 	else
 		notify-send -r 999 "$icon_audio Volume $vol"
