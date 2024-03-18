@@ -22,7 +22,13 @@ case "$SXMO_TERMINAL" in
 		set -- ${SXMO_TERMINAL% --} --title "$TERMNAME" -- "$@"
 		;;
 	"alacritty"*)
-		set -- $SXMO_TERMINAL -T "$TERMNAME" -e "$@"
+		# Test if alacritty was called with shell or a program
+		# Even with dynamic_title = true in config title will be static with -T switch
+		if [ "$*" = "$SHELL" ]; then
+			set -- $SXMO_TERMINAL
+		else
+			set -- $SXMO_TERMINAL -T "$TERMNAME" -e "$@"
+		fi
 		;;
 	*)
 		printf "%s: '%s'\n" "Not implemented for SXMO_TERMINAL" "$SXMO_TERMINAL" >&2
