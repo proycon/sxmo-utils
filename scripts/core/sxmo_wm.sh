@@ -151,7 +151,7 @@ swayexec() {
 swayexecwait() {
 	PIDFILE="$(mktemp)"
 	printf '"%s" & printf %%s "$!" > "%s"' "$*" "$PIDFILE" \
-		| xargs -I{} swaymsg exec -- sh -c '{}'
+		| xargs -I{} swaymsg exec -- '{}'
 	while : ; do
 		sleep 0.5
 		kill -0 "$(cat "$PIDFILE")" 2> /dev/null || break
