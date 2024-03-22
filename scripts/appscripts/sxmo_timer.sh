@@ -37,7 +37,8 @@ timerrun() {
 	DATE1="$(($(date +%s) + TIME))";
 	while [ "$DATE1" -gt "$(date +%s)" ]; do
 		printf "%s\r" "$(date -u --date @$((DATE1 - $(date +%s))) +%H:%M:%S)";
-		sxmo_aligned_sleep 1
+		sxmo_aligned_sleep 1 &
+		wait $!
 	done
 	echo "Done with $*"
 
