@@ -48,6 +48,11 @@ _sxmo_find_runtime_dir() {
 		fi
 	done
 
+	if command -v mkrundir > /dev/null 2>&1; then
+		mkrundir
+		return
+	fi
+
 	# Fallback to a shared memory location
 	printf "/dev/shm/user/%s" "$(id -u)"
 }
