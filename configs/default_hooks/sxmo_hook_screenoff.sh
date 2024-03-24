@@ -23,7 +23,8 @@ sxmo_wm.sh dpms on
 sxmo_wm.sh inputevent touchscreen off
 
 if [ ! -e "$XDG_CACHE_HOME"/sxmo/sxmo.nosuspend ]; then
-	sxmo_jobs.sh start periodic_blink sxmo_run_periodically.sh - 2 sxmo_led.sh blink red blue
+	sxmo_jobs.sh start periodic_blink \
+		sxmo_run_periodically.sh -w 2 -- sxmo_led.sh blink red blue
 fi
 
 case "$SXMO_WM" in

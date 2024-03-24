@@ -2,13 +2,36 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
-if [ "$1" = "-" ]; then
-	waitfirst=1
-	shift
-fi
+usage() {
+	cat <<-EOF >&2
+		Usage: $(basename "$0") [-w] <timeout> [--] <cmd...>
+	EOF
+	exit 1
+}
 
-timeout="$1"
-shift
+while [ -n "$*" ]; do
+	case "$1" in
+		"--")
+			shift
+			break;
+			;;
+		"-w")
+			waitfirst=1
+			shift
+			;;
+		*)
+			if [ -n "$timeout" ]; then
+				break;
+			fi
+			timeout="$1"
+			shift
+			;;
+	esac
+done
+
+if [ -z "$timeout" ] || [ -z "$*" ]; then
+	usage
+fi
 
 finish() {
 	[ -n "$CMDPID" ] && kill "$CMDPID"
