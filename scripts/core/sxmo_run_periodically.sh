@@ -4,7 +4,7 @@
 
 usage() {
 	cat <<-EOF >&2
-		Usage: $(basename "$0") [-w] <timeout> [--] <cmd...>
+		Usage: $(basename "$0") [-w] [-c <clock-name>] <timeout> [--] <cmd...>
 	EOF
 	exit 1
 }
@@ -18,6 +18,10 @@ while [ -n "$*" ]; do
 		"-w")
 			waitfirst=1
 			shift
+			;;
+		"-c")
+			clockname="$2"
+			shift 2
 			;;
 		*)
 			if [ -n "$timeout" ]; then
@@ -42,7 +46,7 @@ finish() {
 trap 'finish' TERM INT
 
 if [ -n "$waitfirst" ]; then
-	sleep "$timeout" &
+	sxmo_sleep ${clockname:+-c $clockname} "$timeout" &
 	SLEEPPID="$!"
 	wait "$SLEEPPID"
 	unset SLEEPPID
@@ -54,7 +58,7 @@ while : ; do
 	wait "$CMDPID"
 	unset CMDPID
 
-	sleep "$timeout" &
+	sxmo_sleep ${clockname:+-c $clockname} "$timeout" &
 	SLEEPPID="$!"
 	wait "$SLEEPPID"
 	unset SLEEPPID
