@@ -11,6 +11,7 @@ Usage: $(basename "$0") ACTION
 	isenabled
 	lock <lock-name> <duration|nanosec|infinite>
 	unlock <lock-name>
+	run <cmd...>
 duration: <value><unit>
 value: integer
 unit: ms|s|mn|h (milisec, sec, minute, hour)
@@ -39,7 +40,6 @@ lock() {
 		infinite)
 			sxmo_debug "lock $1 infinite"
 			echo "$1" | doas tee -a /sys/power/wake_lock > /dev/null
-			exit
 			;;
 		*ms)
 			_validint "${2%ms}"
@@ -88,6 +88,30 @@ case "$cmd" in
 	isenabled) isenabled "$@";;
 	lock) lock "$@";;
 	unlock) unlock "$@";;
+	run)
+		finish() {
+			if [ -n "$cmdpid" ]; then
+				kill "$cmdpid" 2> /dev/null
+			fi
+			unlock "sxmo_wakelock_$$"
+			exit
+	}
+
+		if isenabled; then
+			lock "sxmo_wakelock_$$" infinite
+			trap finish INT TERM EXIT
+		else
+			cat <<-EOF >&2
+				Warning: we can't wakelock, we can't make sure no suspension will occurs...
+			EOF
+		fi
+
+		"$@" &
+		cmdpid=$!
+		wait "$cmdpid"
+
+		unset cmdpid
+		;;
 	*)
 		sxmo_log "warning: sxmo_wakelock.sh $*"
 		usage; exit 1;;
