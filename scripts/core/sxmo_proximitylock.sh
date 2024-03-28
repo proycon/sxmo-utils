@@ -10,28 +10,16 @@
 
 finish() {
 	sxmo_wakelock.sh unlock sxmo_proximity_lock_running
-
-	if [ -n "$INITIALSTATE" ]; then
-		sxmo_state.sh set "$INITIALSTATE"
-	fi
-
+	sxmo_state.sh restore "$storeid"
 	exit
 }
 
 near() {
-	if [ -z "$INITIALSTATE" ]; then
-		INITIALSTATE="$(sxmo_state.sh get)"
-	fi
-
 	sxmo_debug "near"
 	sxmo_state.sh set screenoff
 }
 
 far() {
-	if [ -z "$INITIALSTATE" ]; then
-		INITIALSTATE="$(sxmo_state.sh get)"
-	fi
-
 	sxmo_debug "far"
 	sxmo_state.sh set unlock
 }
@@ -46,6 +34,8 @@ if [ -z "$SXMO_PROX_RAW_BUS" ]; then
 else
 	prox_raw_bus="$SXMO_PROX_RAW_BUS"
 fi
+
+storeid="$(sxmo_state.sh store)"
 
 while : ; do
 	value="$(cat "$prox_raw_bus")"

@@ -92,6 +92,7 @@ click() {
 	else
 		transition "$state"
 	fi
+	flushstored
 }
 
 idle() {
@@ -111,6 +112,25 @@ idle() {
 	done
 
 	sxmo_log "idle: not transitioning from $state"
+}
+
+store() {
+	storeid="$(tr -dc 'a-zA-Z0-9' < /dev/urandom 2>/dev/null | head -c 10)"
+	printf %s "$state" > "$SXMO_STATE.stored.$storeid"
+	printf %s "$storeid"
+}
+
+flushstored() {
+	find "$(dirname "$SXMO_STATE")" -name 'sxmo.state.stored.*' -delete
+}
+
+restore() {
+	storeid="$1"
+	if [ -f "$SXMO_STATE.stored.$storeid" ]; then
+		state="$(cat "$SXMO_STATE.stored.$storeid")"
+		transition "$state"
+		flushstored
+	fi
 }
 
 exec 3<> "$SXMO_STATE.lock"
@@ -145,5 +165,18 @@ case "$action" in
 		if printf "%b\n" "$SXMO_STATES" | tr ' ' '\n' | grep -xq "$1"; then
 			transition "$1"
 		fi
+		;;
+	store)
+		lock_exclusive
+		read_state
+		store
+		;;
+	restore)
+		lock_exclusive
+		restore "$1"
+		;;
+	flushstored)
+		lock_exclusive
+		flushstored
 		;;
 esac
