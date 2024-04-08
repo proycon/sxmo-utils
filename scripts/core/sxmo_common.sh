@@ -15,7 +15,6 @@ command -v shopt > /dev/null && shopt -s expand_aliases
 
 alias dmenu="sxmo_dmenu.sh"
 alias bemenu="sxmo_dmenu.sh"
-alias jq="gojq" # better performances
 
 if ! command -v sxmobar > /dev/null; then
 	sxmobar() {

@@ -3,7 +3,6 @@ packages:
   - shellcheck
   - editorconfig-checker
   - shellspec
-  - gojq
   - jq
   - icu-dev
 sources:

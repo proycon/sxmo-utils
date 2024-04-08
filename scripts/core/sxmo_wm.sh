@@ -73,7 +73,7 @@ swayinputevent() {
 
 	# If we dont have any matching input
 	if ! swaymsg -t get_inputs \
-		| gojq -r ".[] | select(.type == \"$TOUCH_POINTER_ID\" )" \
+		| jq -r ".[] | select(.type == \"$TOUCH_POINTER_ID\" )" \
 		| grep -q .; then
 
 		if [ -z "$2" ]; then
