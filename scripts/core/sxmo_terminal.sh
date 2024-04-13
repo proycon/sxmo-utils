@@ -15,6 +15,9 @@ case "$SXMO_TERMINAL" in
 	"st"*)
 		set -- $SXMO_TERMINAL -T "$TERMNAME" -e "$@"
 		;;
+	"tilix"*)
+		set -- $SXMO_TERMINAL -t "$TERMNAME" -e "$@"
+		;;
 	"foot"*)
 		set -- $SXMO_TERMINAL -T "$TERMNAME" "$@"
 		;;
