@@ -723,10 +723,10 @@ case "$WMCLASS" in
 			)
 			$(command -v megapixels >/dev/null && echo "$icon_cam Camera ^ 0 ^ GDK_SCALE=2 megapixels")
 			$(
-				if [ -z "$SXMO_DISABLE_LEDS" ]; then
+				if brightness="$(brightnessctl -d "white:flash" get)"; then
 					printf "%s Flashlight " "$icon_fll"
-					sxmo_led.sh get white | grep -vq ^100$ &&
-						printf %b "$icon_tof" ||  printf %b "$icon_ton";
+					[ "$brightness" -gt 0 ] &&
+						printf %b "$icon_ton" ||  printf %b "$icon_tof";
 					printf %b "^ 1 ^ sxmo_flashtoggle.sh"
 				fi
 			)
