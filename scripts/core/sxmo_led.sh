@@ -15,8 +15,14 @@ get_led() {
 	[ $# -lt 1 ] && usage
 
 	# need brightnessctl release after 0.5.1 to have --percentage
-	value="$(brightnessctl -d "$color:*" get)"
-	max="$(brightnessctl -d "$color:*" max)"
+	if [ -n "$SXMO_LYSTI_LEDS" ]; then
+		c="$(printf %.1s "$color")"
+		value="$(brightnessctl -d "lp55*:$c" get)"
+		max="$(brightnessctl -d "lp55*:$c" max)"
+	else
+		value="$(brightnessctl -d "$color:*" get)"
+		max="$(brightnessctl -d "$color:*" max)"
+	fi
 	printf "scale=0; %s / %s * 100\n" "$value" "$max" | bc -l
 }
 
@@ -30,7 +36,12 @@ set_led() {
 	color="$1"
 	percent="$2"
 
-	brightnessctl -q -d "$color:*" set "$percent%"
+	if [ -n "$SXMO_LYSTI_LEDS" ]; then
+		c="$(printf %.1s "$color")"
+		brightnessctl -q -d "lp55*:$c" set "$percent%"
+	else
+		brightnessctl -q -d "$color:*" set "$percent%"
+	fi
 }
 
 set_leds() {

@@ -3,7 +3,7 @@
 # Copyright 2022 Sxmo Contributors
 
 export WLR_RENDERER=pixman
-export SXMO_DISABLE_LEDS=1 #disable for now although N900 has leds, but paths are different
+export SXMO_LYSTI_LEDS=1
 export SXMO_POWER_BUTTON="0:0:twl_pwrbutton"
 export SXMO_SWAY_SCALE="1.5"
 #on N900 these two are swaped
