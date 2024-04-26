@@ -5,25 +5,41 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
-ROTATION_GRAVITY="${SXMO_ROTATION_GRAVITY:-"16374"}"
-ROTATION_THRESHOLD="${SXMO_ROTATION_THRESHOLD:-"400"}"
-POLL_TIME="${SXMO_ROTATION_POLL_TIME:-1}"
-RIGHT_SIDE_UP="$(echo "$ROTATION_GRAVITY - $ROTATION_THRESHOLD" | bc)"
-UPSIDE_DOWN="$(echo "-$ROTATION_GRAVITY + $ROTATION_THRESHOLD" | bc)"
-FILE_Y="$(find /sys/bus/iio/devices/iio:device*/ -iname in_accel_y_raw)"
-FILE_X="$(find /sys/bus/iio/devices/iio:device*/ -iname in_accel_x_raw)"
+cleanly_quit() {
+	kill $BGPROC
+}
 
-while true; do
-	y_raw="$(cat "$FILE_Y")"
-	x_raw="$(cat "$FILE_X")"
-	if  [ "$x_raw" -ge "$RIGHT_SIDE_UP" ] && sxmo_rotate.sh isrotated ; then
-		sxmo_rotate.sh rotnormal
-	elif [ "$x_raw" -le "$UPSIDE_DOWN" ] && [ "$(sxmo_rotate.sh isrotated)" != "invert" ]; then
-		sxmo_rotate.sh rotinvert
-	elif [ "$y_raw" -le "$UPSIDE_DOWN" ] && [ "$(sxmo_rotate.sh isrotated)" != "right" ]; then
-		sxmo_rotate.sh rotright
-	elif [ "$y_raw" -ge "$RIGHT_SIDE_UP" ] && [ "$(sxmo_rotate.sh isrotated)" != "left" ]; then
-		sxmo_rotate.sh rotleft
-	fi
-	sleep "$POLL_TIME"
-done
+# check if iio-sensor-proxy found a proximity sensor
+gdbus call --system --dest net.hadess.SensorProxy \
+	   --object-path /net/hadess/SensorProxy \
+	   --method org.freedesktop.DBus.Properties.Get \
+	net.hadess.SensorProxy HasAccelerometer  | grep -q 'true' || exit
+
+trap 'cleanly_quit' INT TERM EXIT
+
+monitor-sensor --accel | while read -r line; do
+	# first line checks if iio-sensor-proxy is running
+	echo "$line" | grep -qi 'waiting' && continue
+	# second line confirms iio-sensor-proxy is running
+	echo "$line" | grep -qi 'appeared' && continue
+	# read orientation
+	orientation=$(echo "$line" | cut -d ':' -f 2)
+	case "$orientation" in
+		# on the very first sensor claim, the orientation might be
+		# reported as "undefined." assume "normal" in that case
+		*"undefined"*|*"normal"*)
+			sxmo_rotate.sh rotnormal
+			;;
+		*"bottom-up"*)
+			sxmo_rotate.sh rotinvert
+			;;
+		*"left-up"*)
+			sxmo_rotate.sh rotleft
+			;;
+		*"right-up"*)
+			sxmo_rotate.sh rotright
+			;;
+	esac
+done &
+BGPROC=$?
+wait

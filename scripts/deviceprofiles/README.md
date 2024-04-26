@@ -44,12 +44,6 @@ export SXMO_MODEM_GPIO_KEY_RI		| If the modem driver handle a gpio, sxmo have to
 export SXMO_NO_MODEM		| Disable modem related features
 
 ### Screen-related
-SXMO_ROTATION_POLL_TIME		| Polling time for rotate in seconds (decimals allowed e.g. .1) [default: 1]
-
-SXMO_ROTATION_GRAVITY		| Override gravity for calculating rotation [default: 500]
-
-SXMO_ROTATION_THRESHOLD		| Threshold for detecting rotation [default: 60]
-
 SXMO_MIN_BRIGHTNESS		| Minimum brightness level [default: 5]
 
 SXMO_SWAY_SCALE		| Screen scale for hidpi screens. Can be fractional [SWAY-ONLY].
