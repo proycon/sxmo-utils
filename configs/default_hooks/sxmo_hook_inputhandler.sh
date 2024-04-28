@@ -97,6 +97,18 @@ case "$WMCLASS" in
 				;;
 		esac
 		;;
+	*"acme"*)
+		case "$ACTION" in
+			"volup_one")
+				xdotool click 3
+				exit 0
+				;;
+			"voldown_one")
+				xdotool click 2
+				exit 0
+				;;
+		esac
+		;;
 	*"foot"*|*"st"*|*"vte"*|"terminal") # Terminals
 		case "$WMCLASS" in # Handle programs without touch support
 			*"st"*)

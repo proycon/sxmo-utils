@@ -725,6 +725,19 @@ case "$WMCLASS" in
 		"
 		WINNAME=Badwolf
 		;;
+	*acme*)
+		# Acme
+		CHOICES="
+			$icon_mse 2 (Right) [2s delay]  ^ 0 ^ sleep 2 && xdotool click 3
+			$icon_mse 3 (Middle) [2s delay]  ^ 0 ^ sleep 2 && xdotool click 2
+			$icon_itm Autocomplete            ^ 0 ^ sxmo_type.sh -M Ctrl -k f
+			$icon_exp Select Last Typed Text  ^ 0 ^ sxmo_type.sh -M Escape
+			$icon_del Delete To Start Of Line       ^ 0 ^ sxmo_type.sh -M Ctrl -k U
+			$icon_arl Move To Start Of Line   ^ 0 ^ sxmo_type.sh -M Ctrl -k A
+			$icon_arr Move To End Of Line      ^ 0 ^ sxmo_type.sh -M Ctrl -k E
+		"
+		WINNAME=Acme
+		;;
 	*)
 		# Default system menu (no matches)
 		CHOICES="
