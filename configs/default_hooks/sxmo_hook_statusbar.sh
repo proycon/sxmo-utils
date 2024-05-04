@@ -425,6 +425,12 @@ set_volume() {
 	fi
 }
 
+set_notch() {
+	if [ -n "$SXMO_NOTCH" ]; then
+		sxmobar -a notch "${SXMO_NOTCH_PRIO:-29}" "$SXMO_NOTCH"
+	fi
+}
+
 sxmo_debug "$@"
 case "$1" in
 	network)
@@ -435,7 +441,7 @@ case "$1" in
 		shift
 		set_battery "$@"
 		;;
-	time|modem|volume|state|notifications)
+	time|modem|volume|state|notifications|notch)
 		set_"$1"
 		;;
 	periodics|state_change) # 55 s loop and screenlock triggers
@@ -457,6 +463,7 @@ case "$1" in
 		fi
 		set_state
 		set_notifications
+		set_notch
 		set_network wifi wlan0
 		;;
 	*)
