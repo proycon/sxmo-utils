@@ -216,9 +216,18 @@ case "$WMCLASS" in
 		WINNAME=St
 		;;
 	*foot*|*st*|*terminal*|org.gnome.vte.application|*alacritty*)
-		# First we try to handle the app running inside the terminal:
 		WMNAME="${1:-$(printf %s "$XPROPOUT" | grep title: | cut -d" " -f2- | tr '[:upper:]' '[:lower:]')}"
-		if printf %s "$WMNAME" | grep -qi -E -w "(vi|vim|vis|nvim|neovim|kakoune)"; then
+
+		# These git commands only launch the editor.
+		case "$WMNAME" in
+			*"git add"*|*"git bugreport"*|*"git commit"*|*"git merge"*|*"git notes"*|*"git rebase"*|*"git replace"*|*"git send-email"*|*"git svn"*)
+				WMNAME="$WMCLASS $EDITOR"
+				;;
+		esac
+
+		# First we try to handle the app running inside the terminal:
+		case " $WMNAME " in
+		*" vi "*|*" vim "*|*" vis "*|*" nvim "*|*neovim*|*kakoune*)
 			#Vim in foot
 			CHOICES="
 				$icon_cls Save and Quit    ^ 0 ^ sxmo_type -k Escape -s 300 ':wq' -k Return
@@ -237,7 +246,8 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu    ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=Vim
-		elif printf %s "$WMNAME" | grep -qi -w "nano"; then
+			;;
+		*nano*)
 			#Nano in foot
 			CHOICES="
 				$icon_aru Scroll up       ^ 1 ^ sxmo_type -k Prior
@@ -252,7 +262,8 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=Nano
-		elif printf %s "$WMNAME" | grep -qi -w "micro"; then
+			;;
+		*micro*)
 			#Micro
 			CHOICES="
 				$icon_aru Scroll up       ^ 1 ^ sxmo_type -k Prior
@@ -270,7 +281,8 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=Micro
-		elif printf %s "$WMNAME" | grep -qi -w "tuir"; then
+			;;
+		*tuir*)
 			#tuir (reddit client) in foot
 			CHOICES="
 				$icon_aru Previous      ^ 1 ^ sxmo_type k
@@ -288,7 +300,8 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=tuir
-		elif printf %s "$WMNAME" | grep -qi -w "w3m"; then
+			;;
+		*w3m*)
 			#w3m
 			CHOICES="
 				$icon_arl Back          ^ 1 ^ sxmo_type b
@@ -304,7 +317,8 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=w3m
-		elif printf %s "$WMNAME" | grep -qi -w "ncmpcpp"; then
+			;;
+		*ncmpcpp*)
 			#ncmpcpp
 			CHOICES="
 				$icon_lst Playlist        ^ 0 ^ sxmo_type 1
@@ -320,7 +334,8 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=ncmpcpp
-		elif printf %s "$WMNAME" | grep -qi -w "aerc"; then
+			;;
+		*aerc*)
 			#aerc
 			CHOICES="
 				$icon_pau Archive	  ^ 1 ^ sxmo_type ':archive flat' -k Return
@@ -331,7 +346,8 @@ case "$WMCLASS" in
 				$icon_trm xdg-open Part	  ^ 0 ^ sxmo_type ':open' -k Return
 			"
 			WINNAME=aerc
-		elif printf %s "$WMNAME" | grep -qi -E -w "(less|mless)"; then
+			;;
+		*less*|*"git blame"*|*"git diff"*|*"git grep"*|*"git help"*|*"git log"*|*"git stash"*|*"git tag"*|*"git var"*)
 			#less
 			CHOICES="
 				$icon_arr Page next       ^ 1 ^ sxmo_type ':n' -k Return
@@ -344,13 +360,8 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=less
-		elif printf %s "$WMNAME" | grep -qi -w "git \(blame\|diff\|grep\|help\|log\|stash\|tag\|var\)"; then
-			# These git commands only launch the pager.
-			exec "$0" "$WMCLASS ${PAGER:-less}"
-		elif printf %s "$WMNAME" | grep -qi -w "git \(add\|bugreport\|commit\|merge\|notes\|rebase\|replace\|send-email\|svn\)"; then
-			# These git commands only launch the editor.
-			exec "$0" "$WMCLASS $EDITOR"
-		elif printf %s "$WMNAME" | grep -qi -w "git"; then
+			;;
+		*git*)
 			# git am, branch, config, tag (and other commands which launch both).
 			CHOICES="
 				$icon_fil ${PAGER:-less} menu ^ 0 ^ sxmo_appmenu.sh '$WMCLASS ${PAGER:-less}'
@@ -358,7 +369,8 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=git
-		elif printf %s "$WMNAME" | grep -qi -w "senpai"; then
+			;;
+		*senpai*)
 			CHOICES="
 				$icon_aru Scroll up       ^ 1 ^ sxmo_type -k Prior
 				$icon_ard Scroll down     ^ 1 ^ sxmo_type -k Next
@@ -368,7 +380,8 @@ case "$WMCLASS" in
 				$icon_usr Toggle Members  ^ 0 ^ sxmo_type -k F8
 			"
 			WINNAME=senpai
-		elif printf %s "$WMNAME" | grep -qi -w "weechat"; then
+			;;
+		*weechat*)
 			#weechat
 			CHOICES="
 				$icon_msg Hotlist Next            ^ 1 ^ sxmo_type -M Alt a
@@ -380,7 +393,8 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=weechat
-		elif printf %s "$WMNAME" | grep -qi -w "sms\|missed call"; then
+			;;
+		*" sms "*|*"missed call"*)
 			number="$(printf "%s\n" "$WMNAME" | xargs -0 pnc find | tr -d '\n')"
 			#sms
 			CHOICES="
@@ -405,7 +419,8 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=phone
-		elif printf %s "$WMNAME" | grep -qi -w "cmus"; then
+			;;
+		*cmus*)
 			# cmus
 			# requires `:set set_term_title=false` in cmus to match the application
 			CHOICES="
@@ -419,7 +434,8 @@ case "$WMCLASS" in
 				$icon_mnu Terminal menu   ^ 0 ^ sxmo_appmenu.sh $WMCLASS
 			"
 			WINNAME=cmus
-		elif printf %s "$WMNAME" | grep -qi -w "iamb"; then
+			;;
+		*iamb*)
 			CHOICES="
 				$icon_aru Page Up          ^ 1 ^ sxmo_type.sh -k Escape -M Ctrl -k b
 				$icon_tab Toggle Selection ^ 0 ^ sxmo_type.sh -k Escape -M Ctrl -k W m
@@ -437,7 +453,8 @@ case "$WMCLASS" in
 				$icon_sav Download         ^ 0 ^ sxmo_type.sh -k Escape :download -k Return
 			"
 			WINNAME=iamb
-		else
+			;;
+		*)
 			# Now we fallback to the default terminal menu
 			case "$WMCLASS" in
 				*st*)
@@ -499,8 +516,8 @@ case "$WMCLASS" in
 					WINNAME=Alacritty
 					;;
 			esac
-		fi
-	;;
+		esac
+		;;
 	*okular*)
 		# Okular
 		CHOICES="
