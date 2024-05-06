@@ -77,8 +77,8 @@ case "$WMCLASS" in
 			) ^ 1 ^ supertoggle_daemon 'sxmo_hook_lisgd' && (rm $XDG_CACHE_HOME/sxmo/sxmo.nogesture 2>/dev/null || touch $XDG_CACHE_HOME/sxmo/sxmo.nogesture)
 			$icon_cfg Toggle Bar ^ 0 ^ sxmo_wm.sh togglebar
 			$icon_bth Bluetooth $(
-				rfkill list bluetooth | grep -q "yes" &&
-				printf %b "$icon_tof" ||  printf %b "$icon_ton";
+				rfkill list bluetooth -no ID,SOFT,HARD | grep -vq " blocked" &&
+				printf %b "$icon_ton" ||  printf %b "$icon_tof";
 				printf %b "^ 1 ^ doas sxmo_bluetoothtoggle.sh && sxmo_hook_statusbar.sh bluetooth"
 			)
 			$(test "$SXMO_WM" = dwm && printf %b "$icon_cfg Invert Colors ^ 1 ^ xcalib -a -invert")
