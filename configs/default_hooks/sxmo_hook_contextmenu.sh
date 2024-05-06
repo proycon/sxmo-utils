@@ -767,7 +767,7 @@ case "$WMCLASS" in
 			$icon_msg Texts                                              ^ 0 ^ sxmo_modemtext.sh
 			$icon_usr Contacts                                           ^ 0 ^ sxmo_contactmenu.sh
 			$(
-				rfkill list bluetooth | grep -q "yes" ||
+				rfkill list bluetooth -no ID,SOFT,HARD | grep -vq " blocked" &&
 				printf %b "$icon_bth Bluetooth ^ 1 ^ sxmo_bluetoothmenu.sh"
 			)
 			$(command -v megapixels >/dev/null && echo "$icon_cam Camera ^ 0 ^ GDK_SCALE=2 megapixels")
