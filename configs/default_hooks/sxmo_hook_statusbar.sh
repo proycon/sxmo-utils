@@ -178,8 +178,10 @@ set_modem() {
 				;;
 		esac
 
-	sxmobar -a -f "$fgcolor" -b "$bgcolor" -t "$style" \
-		modem-tech 11 "$MODEMTECHCMP"
+   if [ "$MODEMSTATE" != failed ] && [ "$MODEMSTATE" != unknown ]; then
+        sxmobar -a -f "$fgcolor" -b "$bgcolor" -t "$style" \
+            modem-tech 11 "$MODEMTECHCMP"
+    fi
 
 	MODEMSIGNALCMP="$icon_modem_signal_0"
 	bgcolor=default
@@ -199,8 +201,10 @@ set_modem() {
 		;;
 	esac
 
-	sxmobar -a -f "$fgcolor" -b "$bgcolor" -t "$style" \
-		modem-signal 12 "$MODEMSIGNALCMP"
+   if [ "$MODEMSTATE" != failed ] && [ "$MODEMSTATE" != unknown ]; then
+        sxmobar -a -f "$fgcolor" -b "$bgcolor" -t "$style" \
+            modem-signal 12 "$MODEMSIGNALCMP"
+    fi
 }
 
 # $1 = type (wifi, tun)
