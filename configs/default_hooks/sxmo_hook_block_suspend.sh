@@ -68,8 +68,10 @@ active_mosh() {
 	command -v mosh-server && pgrep -f mosh-server
 }
 
-playing_mpc() {
-	command -v mpc && mpc status | grep -q '\[playing\]'
+active_mpc() {
+	if command -v mpc; then
+		mpc status | grep -q 'playing\|Updating'
+	fi
 }
 
 playing_mpris() {
@@ -91,7 +93,7 @@ while [ "$waited" != "0" ]; do
 	wait_item hotspot_active
 	wait_item ssh_connected
 	wait_item active_mosh
-	wait_item playing_mpc
+	wait_item active_mpc
 	wait_item playing_mpris
 	wait_item photos_processing
 done
