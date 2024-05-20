@@ -39,7 +39,7 @@ lock() {
 	case "$2" in
 		infinite)
 			sxmo_debug "lock $1 infinite"
-			echo "$1" | doas tee -a /sys/power/wake_lock > /dev/null
+			set "$1"
 			;;
 		*ms)
 			_validint "${2%ms}"
@@ -59,8 +59,13 @@ lock() {
 			;;
 	esac
 
-	sxmo_debug "lock $1 $2"
-	echo "$1 $2" | doas tee -a /sys/power/wake_lock > /dev/null
+	if [ -n "$2" ]; then
+		sxmo_debug "lock $1 $2"
+		echo "$1 $2" | doas tee -a /sys/power/wake_lock > /dev/null
+	else
+		sxmo_debug "lock $1 indefinitely"
+		echo "$1" | doas tee -a /sys/power/wake_lock > /dev/null
+	fi
 }
 
 unlock() {
