@@ -21,6 +21,14 @@ if sxmo_modemcall.sh list_active_calls | grep -q active; then
 	exit
 fi
 
+# do nothing if silent mode
+if [ -f "$XDG_CONFIG_HOME"/sxmo/.busy ]; then
+	end="$(cat "$XDG_CONFIG_HOME"/sxmo/.busy)"
+	if [ -z "$end" ] || [ "$(date +%s)" -lt "$end" ]; then
+		exit
+	fi
+fi
+
 if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.noring ]; then
 	mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND" >> /dev/null 2>&1 &
 fi

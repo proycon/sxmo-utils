@@ -195,6 +195,22 @@ _ringmodesubmenu() {
 	else
 		printf " %s Vibrate ^ touch \"$XDG_CONFIG_HOME\"/sxmo/.novibrate\n" "$icon_ton"
 	fi
+	if [ -f "$XDG_CONFIG_HOME"/sxmo/.busy ]; then
+		end="$(cat "$XDG_CONFIG_HOME"/sxmo/.busy)"
+		if [ -n "$end" ] && [ "$(date +%s)" -gt "$end" ]; then
+			rm "$XDG_CONFIG_HOME"/sxmo/.busy
+		fi
+	fi
+	if [ -f "$XDG_CONFIG_HOME"/sxmo/.busy ]; then
+		printf " %s Busy ^ rm -f \"$XDG_CONFIG_HOME\"/sxmo/.busy\n" "$icon_ton"
+	else
+		printf " %s Busy ^ touch \"$XDG_CONFIG_HOME\"/sxmo/.busy\n" "$icon_tof"
+		printf " %s Busy for 15 min ^ date '+%%s+15*60' | bc > \"$XDG_CONFIG_HOME\"/sxmo/.busy\n" "$icon_tmr"
+		printf " %s Busy for 30 min ^ date '+%%s+30*60' | bc > \"$XDG_CONFIG_HOME\"/sxmo/.busy\n" "$icon_tmr"
+		printf " %s Busy for 1 hour ^ date '+%%s+60*60' | bc > \"$XDG_CONFIG_HOME\"/sxmo/.busy\n" "$icon_tmr"
+		printf " %s Busy for 2 hour ^ date '+%%s+2*60*60' | bc > \"$XDG_CONFIG_HOME\"/sxmo/.busy\n" "$icon_tmr"
+		printf " %s Busy for 3 hour ^ date '+%%s+3*60*60' | bc > \"$XDG_CONFIG_HOME\"/sxmo/.busy\n" "$icon_tmr"
+	fi
 }
 
 menuchoices() {

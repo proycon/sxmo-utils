@@ -47,6 +47,14 @@ vibrate() {
 	done &
 }
 
+# SILENT MODE
+if [ -f "$XDG_CONFIG_HOME"/sxmo/.busy ]; then
+	end="$(cat "$XDG_CONFIG_HOME"/sxmo/.busy)"
+	if [ -z "$end" ] || [ "$(date +%s)" -lt "$end" ]; then
+		exit
+	fi
+fi
+
 # RING & VIBRATE MODE (DEFAULT)
 if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.noring ] && [ ! -f "$XDG_CONFIG_HOME"/sxmo/.novibrate ]; then
 	sxmo_log "RING AND VIBRATE"
