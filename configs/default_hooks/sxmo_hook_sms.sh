@@ -17,16 +17,16 @@
 . sxmo_common.sh
 
 # do nothing if active call
-if ! sxmo_modemcall.sh list_active_calls | grep -q active; then
-
-	if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.noring ]; then
-		mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND" >> /dev/null 2>&1 &
-	fi
-
-	if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.novibrate ]; then
-		sxmo_vibrate 500 "${SXMO_VIBRATE_STRENGTH:-1}" &
-	fi
-
-	wait
-
+if sxmo_modemcall.sh list_active_calls | grep -q active; then
+	exit
 fi
+
+if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.noring ]; then
+	mpv --no-resume-playback --quiet --no-video "$SXMO_TEXTSOUND" >> /dev/null 2>&1 &
+fi
+
+if [ ! -f "$XDG_CONFIG_HOME"/sxmo/.novibrate ]; then
+	sxmo_vibrate 500 "${SXMO_VIBRATE_STRENGTH:-1}" &
+fi
+
+wait
