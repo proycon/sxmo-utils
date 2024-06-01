@@ -69,9 +69,11 @@ active_mosh() {
 }
 
 active_mpc() {
-	if command -v mpc; then
-		mpc status | grep -q 'playing\|Updating'
+	if ! command -v mpc; then
+		return 1
 	fi
+
+	mpc status | grep -q '\[playing\]\|Updating'
 }
 
 playing_mpris() {
