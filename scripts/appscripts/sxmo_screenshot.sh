@@ -5,7 +5,6 @@
 # scrot refuses to work with double quotes
 # shellcheck disable=SC2016
 
-set -e
 
 exit_msg() {
 	printf "%s\n" "$1" > /dev/stderr
@@ -22,7 +21,18 @@ sway_screenshot() {
 	check_command slurp || exit_msg "slurp command must be available to make a selection."
 
 	area="$(slurp -o)"
-	grim -g "$area" "$1"
+	if [ -z "$area" ]; then
+		area="$(swaymsg -t get_outputs | jq -r '.[] |select (.focused) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')"
+	fi
+	wxh=$(echo "$area" | cut -d " " -f 2)
+	w=$(echo "$wxh" | cut -d "x" -f 1)
+	h=$(echo "$wxh" | cut -d "x" -f 2)
+	if [ -n "$wxh" ] && [ "$w" -gt 9 ] && [ "$h" -gt 9 ]; then
+		#we have a selection (bigger than 9x9)
+		grim -g "$area" "$1" || exit_msg "Screenshot failed"
+	else
+		exit_msg "Invalid screenshot selection (too small)"
+	fi
 }
 
 xorg_screenshot() {
@@ -67,4 +77,4 @@ screenshot "$FILENAME"
 yank "$FILENAME"
 printf %s "$FILENAME"
 
-notify-send --urgency=low "Screenshot taken"
+notify-send --urgency=low "Screenshot taken" "$FILENAME"
