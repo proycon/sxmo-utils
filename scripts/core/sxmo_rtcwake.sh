@@ -7,5 +7,7 @@
 
 . sxmo_common.sh
 
+sxmo_wakelock.sh unlock sxmo_waiting_cronjob
+
 sxmo_log "Running $*"
 exec "$@"
