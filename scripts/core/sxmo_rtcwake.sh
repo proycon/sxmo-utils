@@ -12,6 +12,9 @@ sxmo_wakelock.sh lock sxmo_executing_cronjob_$$ infinite
 sxmo_wakelock.sh unlock sxmo_waiting_cronjob
 
 finish() {
+	if [ -n "$cmdpid" ]; then
+		kill "$cmdpid" 2> /dev/null
+	fi
 	sxmo_wakelock.sh unlock sxmo_executing_cronjob_$$
 	exit 0
 }
@@ -19,4 +22,9 @@ finish() {
 trap 'finish' TERM INT EXIT
 
 sxmo_log "Running $*"
-"$@"
+
+"$@" &
+cmdpid=$!
+wait "$cmdpid"
+
+unset cmdpid
