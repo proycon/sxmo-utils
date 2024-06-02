@@ -100,7 +100,7 @@ case "$cmd" in
 			fi
 			unlock "sxmo_wakelock_$$"
 			exit
-	}
+		}
 
 		if isenabled; then
 			lock "sxmo_wakelock_$$" infinite
