@@ -14,9 +14,7 @@ SCDOC=scdoc
 
 .PHONY: install test shellcheck shellspec test_legacy_nerdfont
 
-VERSION:=1.16.2
-
-GITVERSION:=$(shell git describe --tags)
+GITVERSION:=$(shell git -c safe.directory="*" describe --tags)
 
 OPENRC:=1
 
@@ -72,7 +70,13 @@ install-scripts: $(PROGRAMS)
 	cd configs && find default_hooks -type f -exec install -D -m 0755 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 	cd configs && find default_hooks -type l -exec cp -R "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
-	[ -n "$(GITVERSION)" ] && echo "$(GITVERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version" || echo "$(VERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version"
+	if [ -n "$(VERSION)" ]; then \
+		echo "$(VERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version"; \
+	elif [ -n "$(GITVERSION)" ]; then \
+		echo "$(GITVERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version"; \
+	else \
+		echo "unknown version" > "$(DESTDIR)$(PREFIX)/share/sxmo/version"; \
+	fi
 
 	cd resources && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
