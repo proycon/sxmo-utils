@@ -14,7 +14,15 @@ SCDOC=scdoc
 
 .PHONY: install test shellcheck shellspec test_legacy_nerdfont
 
-GITVERSION:=$(shell git -c safe.directory="*" describe --tags)
+VERSION ?= unknown
+
+# git archive will expand $Format:true$ to just true, so we can use it to check
+# if we should use the version from the tarball, or to generate it now.
+ifeq "$Format:true$" "true"
+	VERSION := $Format:%(describe)$
+else
+	VERSION := $(shell git -c safe.directory="*" describe --tags)
+endif
 
 OPENRC:=1
 
@@ -70,13 +78,7 @@ install-scripts: $(PROGRAMS)
 	cd configs && find default_hooks -type f -exec install -D -m 0755 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 	cd configs && find default_hooks -type l -exec cp -R "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
-	if [ -n "$(VERSION)" ]; then \
-		echo "$(VERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version"; \
-	elif [ -n "$(GITVERSION)" ]; then \
-		echo "$(GITVERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version"; \
-	else \
-		echo "unknown version" > "$(DESTDIR)$(PREFIX)/share/sxmo/version"; \
-	fi
+	echo "$(VERSION)" > "$(DESTDIR)$(PREFIX)/share/sxmo/version"
 
 	cd resources && find . -type f -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
