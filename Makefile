@@ -19,7 +19,7 @@ VERSION ?= unknown
 # git archive will expand $Format:true$ to just true, so we can use it to check
 # if we should use the version from the tarball, or to generate it now.
 ifeq "$Format:true$" "true"
-	VERSION := $Format:%(describe)$
+	VERSION := $Format:%(describe:tags)$
 else
 	VERSION := $(shell git -c safe.directory="*" describe --tags)
 endif
