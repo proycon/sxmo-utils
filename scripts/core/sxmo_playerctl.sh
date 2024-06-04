@@ -24,11 +24,11 @@ resume_all() {
 }
 
 if ! command -v playerctl >/dev/null; then
-	return
+	exit
 fi
 
 if ! playerctl status >/dev/null 2>&1; then
-	return
+	exit
 fi
 
 case "$1" in
