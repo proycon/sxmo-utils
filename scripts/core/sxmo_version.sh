@@ -38,7 +38,7 @@ pactl info
 /usr/bin/mmcli --version | head -n 1
 uname -m
 . /etc/os-release
-printf "%s %s" "$NAME" "$VERSION"
+printf "%s %s\n" "$NAME" "$VERSION"
 
 # shellcheck disable=SC2034
 if [ "$1" = "--block" ]; then
