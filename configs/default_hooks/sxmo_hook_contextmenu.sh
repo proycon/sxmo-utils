@@ -757,6 +757,25 @@ case "$WMCLASS" in
 		"
 		WINNAME=Acme
 		;;
+	*mupdf*)
+		# Mupdf
+		CHOICES="
+			$icon_nxt Next Page           ^ 0 ^ sxmo_type -k Space
+			$icon_prv Previous Page         ^ 0 ^ sxmo_type -k b
+			$icon_chk Mark Page		^ 0 ^ sxmo_type -k m
+			$icon_ret Pop To Last Mark        ^ 0 ^ sxmo_type -k t
+			$icon_zmi Zoom In        ^ 1 ^ sxmo_type -k +
+			$icon_zmo Zoom Out          ^ 1 ^ sxmo_type -k -
+			$icon_fnd Fit Width      ^ 0 ^ sxmo_type -k W
+			$icon_fnd Fit Height     ^ 0 ^ sxmo_type -k H
+			$icon_fnd Zoom To Fit     ^ 0 ^ sxmo_type -k Z
+			$icon_fnd Reset Zoom     ^ 0 ^ sxmo_type -k z
+			$icon_rol Rotate Counterclockwise     ^ 0 ^ sxmo_type -k [
+			$icon_ror Rotate Clockwise     ^ 0 ^ sxmo_type -k ]
+			$icon_fnd Search     ^ 0 ^ sxmo_type -k /
+		"
+		WINNAME=Mupdf
+		;;
 	*)
 		# Default system menu (no matches)
 		CHOICES="
