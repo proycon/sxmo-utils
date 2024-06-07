@@ -452,6 +452,7 @@ case "$WMCLASS" in
 				$icon_grp Rooms            ^ 0 ^ sxmo_type.sh -k Escape :rooms -k Return
 				$icon_glb Spaces           ^ 0 ^ sxmo_type.sh -k Escape :spaces -k Return
 				$icon_sav Download         ^ 0 ^ sxmo_type.sh -k Escape :download -k Return
+				$icon_cls Close View/Quit  ^ 0 ^ sxmo_type.sh -k Escape :quit -k Return
 			"
 			WINNAME=iamb
 			;;
