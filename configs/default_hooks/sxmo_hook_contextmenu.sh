@@ -730,7 +730,7 @@ case "$WMCLASS" in
 		CHOICES="
 			$icon_tab New Tab           ^ 0 ^ sxmo_type -M Ctrl -k t
 			$icon_cls Close Tab         ^ 0 ^ sxmo_type -M Alt -k d
-			$icon_fnd Reset Zoom^ 0 ^ sxmo_type -M Ctrl -k 0
+			$icon_fnd Reset Zoom     ^ 0 ^ sxmo_type -M Ctrl -k 0
 			$icon_arr History        ^ 1 ^ sxmo_type -M Ctrl ]
 			$icon_arl History        ^ 1 ^ sxmo_type -M Ctrl [
 			$icon_arr Next Tab          ^ 1 ^ sxmo_type -M Alt -k Right
