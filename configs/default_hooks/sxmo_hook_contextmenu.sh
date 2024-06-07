@@ -776,6 +776,19 @@ case "$WMCLASS" in
 		"
 		WINNAME=Mupdf
 		;;
+	*tabbed*)
+		# Tabbed
+		CHOICES="
+			$icon_tab New Tab            ^ 0 ^ sxmo_type.sh -M Ctrl -M Shift -M Enter
+			$icon_arl Previous Tab       ^ 1 ^ sxmo_type.sh -M Ctrl -M Shift -k h
+			$icon_arr Next Tab           ^ 1 ^ sxmo_type.sh -M Ctrl -M Shift -k l
+			$icon_arl Move Tab Left      ^ 1 ^ sxmo_type.sh -M Ctrl -M Shift -k j
+			$icon_arr Move Tab Right     ^ 1 ^ sxmo_type.sh -M Ctrl -M Shift -k k
+			$icon_mnu Menu Prompt        ^ 0 ^ sxmo_type.sh -M Ctrl -k \`
+			$icon_cls Close Tab          ^ 0 ^ sxmo_type.sh -M Ctrl -k q
+		"
+		WINNAME=Tabbed
+		;;
 	*)
 		# Default system menu (no matches)
 		CHOICES="
