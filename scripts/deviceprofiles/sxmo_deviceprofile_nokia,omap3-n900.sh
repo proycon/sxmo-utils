@@ -13,5 +13,6 @@ export SXMO_ROTATE_DIRECTION="left"
 export SXMO_KEYBOARD_SLIDER_EVENT_DEVICE="/dev/input/by-path/platform-gpio_keys-event"
 export SXMO_KEYBOARD_SLIDER_CLOSE_EVENT="*code 10 (SW_KEYPAD_SLIDE), value 0*"
 export SXMO_KEYBOARD_SLIDER_OPEN_EVENT="*code 10 (SW_KEYPAD_SLIDE), value 1*"
+export SXMO_NO_VIRTUAL_KEYBOARD=1
 # modem is only supported via ofono, not modemmanager
 export SXMO_NO_MODEM=1
