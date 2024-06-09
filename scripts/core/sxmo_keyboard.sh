@@ -14,7 +14,7 @@ isopen() {
 }
 
 open() {
-	if [ -n "$SXMO_NO_KEYBOARD" ]; then
+	if [ -n "$SXMO_NO_VIRTUAL_KEYBOARD" ]; then
 		return
 	fi
 	if [ -n "$KEYBOARD" ]; then

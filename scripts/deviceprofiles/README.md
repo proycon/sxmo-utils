@@ -79,7 +79,7 @@ SXMO_DISABLE_KEYBINDS		| Disable most custom Sxmo binds on volume keys if set.
 
 SXMO_MONITOR		| Display "Output" from `swaymsg -t get_outputs`. Should be the same as the output from the `xrandr` command when running dwm.
 
-SXMO_NO_KEYBOARD		| Disable all virtual keyboard management, and change some related gesture behavior.
+SXMO_NO_VIRTUAL_KEYBOARD	| Disable all virtual keyboard management, and change some related gesture behavior.
 
 ### General / Misc.
 SXMO_VIBRATE_DEV		| Path to vibration device (see sxmo_vibrate.c and clickclack.c) [default: /dev/input/by-path/platform-vibrator-event]
