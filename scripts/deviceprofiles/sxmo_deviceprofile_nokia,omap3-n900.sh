@@ -5,6 +5,7 @@
 export WLR_RENDERER=pixman
 export SXMO_LYSTI_LEDS=1
 export SXMO_POWER_BUTTON="0:0:twl_pwrbutton"
+export SXMO_TOUCHSCREEN_ID="TSC2005 touchscreen"
 export SXMO_SWAY_SCALE="1.5"
 #on N900 these two are swaped
 export SXMO_BEMENU_LANDSCAPE_LINES="10"
