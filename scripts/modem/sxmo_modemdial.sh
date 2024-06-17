@@ -44,11 +44,13 @@ EOF
 
 	if ! sxmo_modemaudio.sh setup_audio; then
 		sxmo_notify_user.sh --urgency=critical "We failed to setup call audio"
+		mmcli -m any --voice-delete-call="$CALLID"
 		return 1
 	fi
 
 	if ! sxmo_modemcall.sh pickup "$CALLID"; then
 		sxmo_modemaudio.sh reset_audio
+		mmcli -m any --voice-delete-call="$CALLID"
 		return 1
 	fi
 
