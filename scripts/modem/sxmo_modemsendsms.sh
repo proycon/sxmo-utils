@@ -84,7 +84,9 @@ if [ "-" = "$2" ]; then
 	TEXTFILE="$TMPFILE"
 	cat > "$TEXTFILE"
 elif [ "-f" = "$2" ]; then
-	TEXTFILE="$3"
+	TMPFILE="$(mktemp)"
+	awk 'NR > 1 { print prev } { prev=$0 } END { ORS=""; print }' "$3" > "$TMPFILE"
+	TEXTFILE="$TMPFILE"
 else
 	shift
 	[ 0 -eq $# ] && usage
