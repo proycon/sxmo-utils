@@ -52,31 +52,37 @@ checkforfinishedcalls() {
 		mkdir -p "$SXMO_LOGDIR"
 		if [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.discardedcall" ]; then
 			#this call was discarded
+			STATE=discarded
 			sxmo_notify_user.sh "Call with $CONTACT terminated"
 			stderr "Discarded call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		elif [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.pickedupcall" ]; then
 			#this call was picked up
+			STATE=pickedup
 			sxmo_notify_user.sh "Call with $CONTACT terminated"
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		elif [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.hangedupcall" ]; then
 			#this call was hung up by the user
+			STATE=wehangedup
 			sxmo_notify_user.sh "Call with $CONTACT terminated"
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		elif [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.initiatedcall" ]; then
+			STATE=theyhangedup
 			#this call was hung up by the contact
 			sxmo_notify_user.sh "Call with $CONTACT terminated"
 			stderr "Finished call from $FINISHEDNUMBER"
 			printf %b "$TIME\tcall_finished\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		elif [ -f "$XDG_RUNTIME_DIR/sxmo_calls/${FINISHEDCALLID}.mutedring" ]; then
+			STATE=muted
 			#this ring was muted up
 			stderr "Muted ring from $FINISHEDNUMBER"
 			printf %b "$TIME\tring_muted\t$FINISHEDNUMBER\n" >> "$SXMO_LOGDIR/modemlog.tsv"
 		else
 			#this is a missed call
 			# Add a notification for every missed call
+			STATE=missed
 
 			NOTIFMSG="Missed call from $CONTACT ($FINISHEDNUMBER)"
 			stderr "$NOTIFMSG"
@@ -94,7 +100,9 @@ checkforfinishedcalls() {
 		# If it was the last call
 		if ! sxmo_modemcall.sh list_active_calls | grep -q .; then
 			# Cleanup
-			sxmo_vibrate 1000 "${SXMO_VIBRATE_STRENGTH:-1}" &
+			if [ "$STATE" != muted ]; then
+				sxmo_vibrate 1000 "${SXMO_VIBRATE_STRENGTH:-1}" &
+			fi
 			sxmo_jobs.sh stop incall_menu
 			sxmo_jobs.sh stop proximity_lock
 			sxmo_hook_statusbar.sh state &
