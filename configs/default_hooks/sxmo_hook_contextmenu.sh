@@ -784,7 +784,7 @@ case "$WMCLASS" in
 			$icon_arr Next Tab           ^ 1 ^ sxmo_type.sh -M Ctrl -M Shift -k l
 			$icon_arl Move Tab Left      ^ 1 ^ sxmo_type.sh -M Ctrl -M Shift -k j
 			$icon_arr Move Tab Right     ^ 1 ^ sxmo_type.sh -M Ctrl -M Shift -k k
-			$icon_mnu Menu Prompt        ^ 0 ^ sxmo_type.sh -M Ctrl -k \`
+			$icon_mnu Menu Prompt        ^ 0 ^ sxmo_type.sh -M Ctrl -k U0060
 			$icon_cls Close Tab          ^ 0 ^ sxmo_type.sh -M Ctrl -k q
 		"
 		WINNAME=Tabbed
