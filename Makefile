@@ -83,7 +83,7 @@ install-dwm:
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/xsessions/ configs/applications/sxmo.desktop
 
 install-scripts: $(PROGRAMS)
-	cd configs && find . -type f -not -name sxmo-setpermissions -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
+	cd configs && find . -type f -not -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
 
 	rm -rf "$(DESTDIR)$(PREFIX)/share/sxmo/default_hooks/"
 	cd configs && find default_hooks -type f -exec install -D -m 0755 "{}" "$(DESTDIR)$(PREFIX)/share/sxmo/{}" \; && cd ..
@@ -132,7 +132,5 @@ install-scripts: $(PROGRAMS)
 	fi
 
 	@echo "-------------------------------------------------------------------">&2
-	@echo "NOTICE 1: Do not forget to add sxmo-setpermissions to your init system, e.g. for openrc: rc-update add sxmo-setpermissions default && rc-service sxmo-setpermissions start" >&2
-	@echo "-------------------------------------------------------------------">&2
-	@echo "NOTICE 2: After an upgrade, it is recommended you reboot and when prompted run sxmo_migrate.sh to check and upgrade your configuration files and custom hooks against the defaults (it will not make any changes unless explicitly told to)" >&2
+	@echo "NOTICE: After an upgrade, it is recommended you reboot and when prompted run sxmo_migrate.sh to check and upgrade your configuration files and custom hooks against the defaults (it will not make any changes unless explicitly told to)" >&2
 	@echo "-------------------------------------------------------------------">&2
