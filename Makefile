@@ -30,23 +30,30 @@ CC ?= $(CROSS_COMPILE)gcc
 PROGRAMS = \
 	programs/sxmo_aligned_sleep \
 	programs/sxmo_sleep \
-	programs/sxmo_vibrate
+	programs/sxmo_vibrate \
+	programs/sxmo_status_led
 
 DOCS = \
 	docs/sxmo.7
+
+CFLAGS = -Wall -std=c99 -D_POSIX_C_SOURCE=200809L
 
 docs/%: docs/%.scd
 	$(SCDOC) <$< >$@
 
 all: $(PROGRAMS) $(DOCS)
 
-test: shellcheck shellspec test_legacy_nerdfont
+test: shellcheck shellspec test_legacy_nerdfont test_status_led
 
 shellcheck:
 	find . -type f -name '*.sh' -print0 | xargs -0 shellcheck -x --shell=sh
 
 shellspec:
 	shellspec
+
+test_status_led: programs/sxmo_status_led.c
+	$(CC) -Wall $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -lm -DTEST -o programs/sxmo_status_led.test $<
+	./programs/sxmo_status_led.test
 
 test_legacy_nerdfont: programs/test_legacy_nerdfont
 	programs/test_legacy_nerdfont < configs/default_hooks/sxmo_hook_icons.sh
@@ -55,10 +62,11 @@ programs/test_legacy_nerdfont: programs/test_legacy_nerdfont.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ $< $(shell pkg-config --cflags --libs icu-io)
 
 programs/%: programs/%.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ $<
+	# TODO: we only need -lm for sxmo_status_led
+	$(CC) -Wall $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -lm -o $@ $<
 
 clean:
-	rm -f programs/sxmo_aligned_sleep programs/sxmo_sleep programs/sxmo_vibrate
+	rm -f ${PROGRAMS}
 
 install: install-sway install-dwm install-scripts install-docs
 
@@ -102,9 +110,7 @@ install-scripts: $(PROGRAMS)
 	# Bin
 	install -D -t $(DESTDIR)$(PREFIX)/bin scripts/*/*.sh
 
-	install -D programs/sxmo_aligned_sleep $(DESTDIR)$(PREFIX)/bin/
-	install -D programs/sxmo_vibrate $(DESTDIR)$(PREFIX)/bin/
-	install -D programs/sxmo_sleep $(DESTDIR)$(PREFIX)/bin/
+	install -t $(DESTDIR)$(PREFIX)/bin/ ${PROGRAMS}
 	setcap 'cap_wake_alarm=ep' $(DESTDIR)$(PREFIX)/bin/sxmo_sleep
 
 	find $(DESTDIR)$(PREFIX)/share/sxmo/default_hooks/ -type f -exec ./setup_config_version.sh "{}" \;
