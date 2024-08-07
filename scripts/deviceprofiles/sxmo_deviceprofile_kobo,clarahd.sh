@@ -3,7 +3,6 @@
 # Copyright 2022 Sxmo Contributors
 
 export WLR_RENDERER=pixman
-export SXMO_DISABLE_LEDS=1
 export SXMO_SWAY_SCALE="2.5"
 export SXMO_POWER_BUTTON="1:1:gpio-keys"
 export SXMO_STATES="unlock"

@@ -25,6 +25,12 @@ finish() {
 	exit
 }
 
+shared_envvars() {
+	if ! sxmo_status_led check; then
+		export SXMO_DISABLE_LEDS="1"
+	fi
+}
+
 init() {
 	# shellcheck source=/dev/null
 	. /etc/profile.d/sxmo_init.sh
@@ -32,6 +38,7 @@ init() {
 	_sxmo_load_environments
 	_sxmo_prepare_dirs
 	envvars
+	shared_envvars
 	sxmo_migrate.sh sync
 
 	defaults

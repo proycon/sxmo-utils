@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2022 Sxmo Contributors
 
-export SXMO_DISABLE_LEDS="1"
 # TODO: change to output display
 export SXMO_MONITOR="0:0:generic_ft5x06_(8d)"
 export SXMO_POWER_BUTTON="0:0:pm8941_pwrkey"

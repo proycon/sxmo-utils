@@ -52,8 +52,6 @@ SXMO_ROTATION_THRESHOLD		| Threshold for detecting rotation [default: 60]
 
 SXMO_MIN_BRIGHTNESS		| Minimum brightness level [default: 5]
 
-SXMO_DISABLE_LEDS		| Disable leds (1 or 0) [default: 0]
-
 SXMO_SWAY_SCALE		| Screen scale for hidpi screens. Can be fractional [SWAY-ONLY].
 
 SXMO_ROTATE_DIRECTION		| The direction to rotate when using the gesture [default: right]

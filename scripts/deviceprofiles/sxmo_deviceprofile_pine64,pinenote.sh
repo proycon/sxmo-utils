@@ -10,7 +10,6 @@ export LIBGL_ALWAYS_SOFTWARE=true
 
 export SXMO_TOUCHSCREEN_ID="10"
 export SXMO_STYLUS_ID="12"
-export SXMO_DISABLE_LEDS="1"
 export SXMO_MIN_BRIGHTNESS="0" # we can set brightness all the way down
 export SXMO_BMENU_LANDSCAPE_LINES="15"
 export SXMO_MONITOR="Unknown-1"
