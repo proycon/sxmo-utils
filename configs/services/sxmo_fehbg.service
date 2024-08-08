@@ -1,0 +1,7 @@
+[Unit]
+Description=The feh bg as a service
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=feh --bg-fill "$SXMO_BG_IMG"

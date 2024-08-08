@@ -51,7 +51,7 @@ case "$SXMO_WM" in
 		superctl start sxmo_wob
 		superctl start sxmo_menumode_toggler
 		superctl start bonsaid
-		swaymsg output '*' bg "$SXMO_BG_IMG" fill
+		superctl start sxmo_swaybg
 		;;
 	dwm)
 		superctl start dunst
@@ -70,7 +70,7 @@ case "$SXMO_WM" in
 		superctl start sxmo-x11-status
 		superctl start bonsaid
 		[ -n "$SXMO_MONITOR" ] && xrandr --output "$SXMO_MONITOR" --primary
-		feh --bg-fill "$SXMO_BG_IMG"
+		superctl start sxmo_fehbg
 		;;
 esac
 
