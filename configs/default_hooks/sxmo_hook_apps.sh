@@ -56,6 +56,7 @@ write_line_app evince "$icon_bok Evince" "evince"
 write_line_app falkon "$icon_flk Falkon" "falkon"
 write_line_app firefox "$icon_ffx Firefox" "firefox"
 write_line_app firefox-esr "$icon_ffx Firefox ESR" "firefox-esr"
+write_line_app flare "$icon_msg Flare" "flare"
 write_line_app foliate "$icon_bok Foliate" "foliate"
 ( [ "$SXMO_WM" = sway ] && command -v foot >/dev/null) && \
 	write_line "$icon_trm Foot" "foot $SHELL"
