@@ -1,0 +1,1 @@
+export SXMO_NO_MODEM=1
