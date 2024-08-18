@@ -1,4 +1,4 @@
-# shellcheck disable=SC2137
+# shellcheck disable=SC2317
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright 2024 Sxmo Contributors
 
