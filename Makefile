@@ -4,6 +4,8 @@ SYSCONFDIR:=/etc
 SHAREDIR=$(PREFIX)/share
 MANDIR=$(SHAREDIR)/man
 
+CFLAGS := -Wall -std=c99 -D_POSIX_C_SOURCE=200809L $(CFLAGS)
+
 # use $(PREFIX)/lib/systemd/user for systemd integration
 SERVICEDIR:=$(PREFIX)/share/superd/services
 
@@ -36,8 +38,6 @@ PROGRAMS = \
 DOCS = \
 	docs/sxmo.7
 
-CFLAGS = -Wall -std=c99 -D_POSIX_C_SOURCE=200809L
-
 docs/%: docs/%.scd
 	$(SCDOC) <$< >$@
 
@@ -48,25 +48,28 @@ test: shellcheck shellspec test_legacy_nerdfont test_status_led
 shellcheck:
 	find . -type f -name '*.sh' -print0 | xargs -0 shellcheck -x --shell=sh
 
-shellspec:
+shellspec: ${PROGRAMS}
 	shellspec
 
-test_status_led: programs/sxmo_status_led.c
-	$(CC) -Wall $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -lm -DTEST -o programs/sxmo_status_led.test $<
+test_status_led: programs/sxmo_status_led.test
 	./programs/sxmo_status_led.test
 
 test_legacy_nerdfont: programs/test_legacy_nerdfont
 	programs/test_legacy_nerdfont < configs/default_hooks/sxmo_hook_icons.sh
 
-programs/test_legacy_nerdfont: programs/test_legacy_nerdfont.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ $< $(shell pkg-config --cflags --libs icu-io)
+programs/sxmo_status_led: LDLIBS := -lm
+programs/sxmo_status_led.test: LDLIBS := -lm
+programs/test_legacy_nerdfont: LDLIBS := $(shell pkg-config --cflags --libs icu-io)
 
 programs/%: programs/%.c
-	# TODO: we only need -lm for sxmo_status_led
-	$(CC) -Wall $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -lm -o $@ $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $< $(LOADLIBES) $(LDLIBS) -o $@ 
+
+# only used for sxmo_status_led
+programs/%.test: programs/%.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -DTEST $(LDFLAGS) $< $(LOADLIBES) $(LDLIBS) -o $@ 
 
 clean:
-	rm -f ${PROGRAMS}
+	rm -f ${PROGRAMS} programs/test_legacy_nerdfont programs/sxmo_status_led.test
 
 install: install-sway install-dwm install-scripts install-docs
 
