@@ -1,0 +1,7 @@
+[Unit]
+Description=The Sxmo wallpaper as a service
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=sxmo_bg.sh fill

@@ -1,7 +1,0 @@
-[Unit]
-Description=The swaybg as a service
-
-[Service]
-Type=simple
-Restart=always
-ExecStart=swaybg -i "$SXMO_BG_IMG" -m fill

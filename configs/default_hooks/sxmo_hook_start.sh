@@ -51,7 +51,6 @@ case "$SXMO_WM" in
 		superctl start sxmo_wob
 		superctl start sxmo_menumode_toggler
 		superctl start bonsaid
-		superctl start sxmo_swaybg
 		;;
 	dwm)
 		superctl start dunst
@@ -70,7 +69,6 @@ case "$SXMO_WM" in
 		superctl start sxmo-x11-status
 		superctl start bonsaid
 		[ -n "$SXMO_MONITOR" ] && xrandr --output "$SXMO_MONITOR" --primary
-		superctl start sxmo_fehbg
 		;;
 esac
 
@@ -96,6 +94,9 @@ if [ -z "$SXMO_NO_MODEM" ] && command -v ModemManager > /dev/null; then
 	# elogind/systemd would do this for us, but we don't use those.)
 	sxmo_wakelock.sh lock sxmo_modem_warming_up 120s
 fi
+
+# Start the desktop wallpaper
+superctl start sxmo_bg
 
 # Start the desktop widget (e.g. clock)
 superctl start sxmo_conky

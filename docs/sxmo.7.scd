@@ -761,7 +761,6 @@ You might also want to set various variables not listed above:
 - SXMO_TEXTSOUND: Sound to play when new message.
 - SXMO_RINGTIME: Number of times to play ring tone.
 - SXMO_DEFAULT_DRAFT: Default message when composing a message.
-- SXMO_BG_IMG: Background image.
 - SXMO_STATUS_DATE_FORMAT: the format of the date command in statusbar
 - SXMO_DEBUG: turn debugging on or off
 
