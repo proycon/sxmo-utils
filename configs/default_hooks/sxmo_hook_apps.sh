@@ -147,6 +147,8 @@ write_line_app snapshot "$icon_cam Snapshot" "snapshot"
 write_line_app surf "$icon_glb Surf" "surf"
 write_line_app syncthing "$icon_rld Syncthing" "syncthing"
 write_line_app syncthing-gtk "$icon_rld Syncthing GTK" "syncthing-gtk"
+([ "$SXMO_WM" = dwm ] && command -v tabbed >/dev/null) && \
+	write_line_app tabbed "$icon_grd Tabbed" "sxmo_tabbed.sh"
 write_line_app telegram-desktop "$icon_tgm Telegram" "telegram-desktop"
 write_line_app termite "$icon_trm Termite" "termite -e $SHELL"
 write_line_app thunar "$icon_dir Thunar" "sxmo_terminal.sh thunar"
