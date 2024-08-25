@@ -20,4 +20,9 @@ all_wallpapers() {
 	sxmo_wallpaper
 }
 
+if [ -n "$SXMO_BG_IMG" ]; then
+	printf "%s" "$SXMO_BG_IMG"
+	exit
+fi
+
 all_wallpapers | head -n1
