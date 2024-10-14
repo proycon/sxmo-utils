@@ -7,6 +7,7 @@ envvars() {
 	export MOZ_ENABLE_WAYLAND=1
 	export SDL_VIDEODRIVER=wayland
 	export XDG_CURRENT_DESKTOP=sway
+	[ -z "$SXMO_MENU" ] && export SXMO_MENU=bemenu
 	# shellcheck disable=SC2086
 	command -v $SXMO_TERMINAL "" >/dev/null || export SXMO_TERMINAL="foot"
 	command -v "$KEYBOARD" >/dev/null || export KEYBOARD=wvkbd-mobintl
@@ -24,7 +25,17 @@ with_dbus() {
 
 cleanup() {
 	sxmo_jobs.sh stop all
-	pkill bemenu
+	case "$SXMO_MENU" in
+		bemenu)
+			pkill bemenu
+			;;
+		wofi)
+			pkill wofi
+			;;
+		dmenu)
+			pkill dmenu
+			;;
+	esac
 	pkill wvkbd
 	pkill superd
 }

@@ -8,6 +8,7 @@
 envvars() {
 	export SXMO_WM=dwm
 	export XDG_CURRENT_DESKTOP=dwm
+	[ -z "$SXMO_MENU" ] && export SXMO_MENU=dmenu
 	# shellcheck disable=SC2086
 	command -v $SXMO_TERMINAL "" >/dev/null || export SXMO_TERMINAL="st"
 	command -v "$KEYBOARD" >/dev/null || defaultkeyboard
@@ -47,7 +48,14 @@ with_dbus() {
 cleanup() {
 	sxmo_jobs.sh stop all
 	pkill svkbd
-	pkill dmenu
+	case "$SXMO_MENU" in
+		dmenu)
+			pkill dmenu
+			;;
+		bemenu)
+			pkill bemenu
+			;;
+	esac
 	pkill superd
 }
 

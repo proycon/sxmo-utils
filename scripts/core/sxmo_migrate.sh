@@ -273,6 +273,8 @@ sway() {
 	defaultconfig "$(xdg_data_path sxmo/appcfg/bonsai_tree.json)" "$XDG_CONFIG_HOME/sxmo/bonsai_tree.json" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/wob.ini)" "$XDG_CONFIG_HOME/wob/wob.ini" 644
 	defaultconfig "$(xdg_data_path sxmo/appcfg/conky.conf)" "$XDG_CONFIG_HOME/sxmo/conky.conf" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/wofi.config)" "$XDG_CONFIG_HOME/wofi/config" 644
+	defaultconfig "$(xdg_data_path sxmo/appcfg/wofi.css)" "$XDG_CONFIG_HOME/wofi/style.css" 644
 }
 
 xorg() {

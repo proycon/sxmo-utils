@@ -208,15 +208,35 @@ incoming_call_menu() {
 	NUMBER="$(sxmo_modem.sh cleanupnumber "$NUMBER")"
 	CONTACTNAME="$(sxmo_contacts.sh --name-or-number "$NUMBER")"
 
+	MENU_OPTS=""
 	if [ "$SXMO_WM" = "sway" ]; then
-		pickup_height="40"
+		case "$SXMO_MENU" in
+			bemenu)
+				MENU_OPTS="-H 40 -l 3"
+				;;
+			wofi)
+				MENU_OPTS="-L 3"
+				;;
+			dmenu)
+				MENU_OPTS="-l 3"
+				;;
+		esac
 	else
-		pickup_height="100"
+		case "$SXMO_MENU" in
+			bemenu)
+				MENU_OPTS="-H 100 -l 3"
+				;;
+			dmenu)
+				MENU_OPTS="-l 3"
+				;;
+		esac
 	fi
 
 	(
+		# shellcheck disable=SC2086
+		#  (MENU_OPTS is not quoted because we want to split args here)
 		PICKED="$(
-			cat <<EOF | sxmo_dmenu.sh -i -H "$pickup_height" -p "$CONTACTNAME" -l 3
+			cat <<EOF | sxmo_dmenu.sh -i $MENU_OPTS -p "$CONTACTNAME"
 $icon_phn Pickup
 $icon_phx Hangup
 $icon_mut Ignore

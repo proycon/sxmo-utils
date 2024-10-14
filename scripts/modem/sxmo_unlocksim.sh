@@ -14,9 +14,23 @@ set -e
 # in dwm, close any dmenus.  We don't need to do this in sway.
 [ "$SXMO_WM" = "dwm" ] && (sxmo_dmenu.sh close || true)
 
+case "$SXMO_MENU" in
+	bemenu)
+		MENU_OPTS="-l 3"
+		;;
+	wofi)
+		MENU_OPTS="-L 3"
+		;;
+	dmenu)
+		MENU_OPTS="-l 3"
+		;;
+esac
+
 while : ; do
+	# shellcheck disable=SC2086
+	#  (MENU_OPTS is not quoted because we want to split args here)
 	PICKED="$(
-		cat <<EOF | sxmo_dmenu.sh -l 3 -p "PIN:"
+		cat <<EOF | sxmo_dmenu.sh $MENU_OPTS -p "PIN:"
 $icon_cls Cancel
 0000
 1234

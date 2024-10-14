@@ -31,7 +31,7 @@ mode "menu" {
     # to know the device names, so use it as a fallback so this functionality
     # keeps working if a deviceprofile doesn't exist.
     # TODO: the correct way to do this is to implement custom keybindings in
-    # bemenu
+    # bemenu & wofi
     bindsym XF86PowerOff exec wtype -k Return
     bindsym XF86AudioRaiseVolume exec wtype -k Up
     bindsym XF86AudioLowerVolume exec wtype -k Down

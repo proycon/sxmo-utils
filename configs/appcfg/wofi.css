@@ -1,0 +1,46 @@
+/* Space to setup configversion */
+window {
+    margin: 5px;
+    border: 3px solid #005577;
+    background-color: #222222;
+    font-family: Sxmo;
+	font-size: 14pt;
+}
+
+#input {
+    margin: 5px;
+    border: 2px solid #005577;
+    background-color: #444444;
+    color: white;
+}
+
+#inner-box {
+    margin: 5px;
+}
+
+#outer-box {
+    margin: 5px;
+}
+
+#scroll {
+    color: yellow;
+}
+
+#text {
+    margin: 5px;
+    color: white;
+} 
+
+
+#img {
+    padding-right: 25px;
+}
+#entry {
+    padding-top: 8px;
+}
+#entry:selected {
+    background-color: #005577;
+}
+#entry #entry {
+    background-color: #444444;
+}
