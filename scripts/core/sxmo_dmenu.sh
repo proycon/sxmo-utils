@@ -21,6 +21,16 @@ unalias bemenu
 unalias dmenu
 unalias wofi
 
+if [ -z "$SXMO_MENU" ]; then
+	case "$SXMO_WM" in
+		sway)
+			SXMO_MENU=bemenu
+			;;
+		dwm)
+			SXMO_MENU=dmenu
+			;;
+	esac
+fi
 
 case "$1" in
 	isopen)
