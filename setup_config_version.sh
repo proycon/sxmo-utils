@@ -24,6 +24,10 @@ case "$(busybox head -n1 "$1")" in
 		comment="/*"
 		commentend=" */"
 		;;
+	'<?'*)
+		comment="<!--"
+		commentend=" -->"
+		;;
 	*)
 		exit # we skip this file
 		;;
