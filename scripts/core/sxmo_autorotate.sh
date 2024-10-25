@@ -10,10 +10,9 @@ cleanly_quit() {
 }
 
 # check if iio-sensor-proxy found a proximity sensor
-gdbus call --system --dest net.hadess.SensorProxy \
-	   --object-path /net/hadess/SensorProxy \
-	   --method org.freedesktop.DBus.Properties.Get \
-	net.hadess.SensorProxy HasAccelerometer  | grep -q 'true' || exit
+dbus-send --system --dest=net.hadess.SensorProxy --print-reply=literal \
+          /net/hadess/SensorProxy org.freedesktop.DBus.Properties.Get \
+          string:net.hadess.SensorProxy string:HasAccelerometer | grep -q 'true' || exit
 
 trap 'cleanly_quit' INT TERM EXIT
 
