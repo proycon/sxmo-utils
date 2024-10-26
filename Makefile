@@ -97,6 +97,8 @@ install-scripts: $(PROGRAMS)
 
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ configs/xdg/mimeapps.list
 
+	install -D -m 0644 -t $(DESTDIR)$(SYSCONFDIR)/polkit-1/rules.d/ configs/polkit/01-sensor-claim.rules
+
 	install -D -m 0640 -t $(DESTDIR)$(SYSCONFDIR)/doas.d/ configs/doas/sxmo.conf
 
 	install -D -m 0644 -T configs/xorg/monitor.conf $(DESTDIR)$(PREFIX)/share/X11/xorg.conf.d/90-monitor.conf
