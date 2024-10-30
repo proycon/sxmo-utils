@@ -19,7 +19,6 @@
 #prevent infinite recursion:
 unalias bemenu
 unalias dmenu
-unalias wofi
 
 if [ -z "$SXMO_MENU" ]; then
 	case "$SXMO_WM" in
