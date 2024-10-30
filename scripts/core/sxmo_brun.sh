@@ -6,11 +6,24 @@
 # shellcheck source=scripts/core/sxmo_common.sh
 . sxmo_common.sh
 
+
+if [ -z "$SXMO_MENU" ]; then
+	case "$SXMO_WM" in
+		sway)
+			SXMO_MENU=bemenu
+			;;
+		dwm)
+			SXMO_MENU=dmenu
+			;;
+	esac
+fi
+
+
 case "$SXMO_MENU" in
 	dmenu)
 		exec dmenu_run "$@"
 		;;
-	bmenu)
+	bemenu)
 		exec bemenu-run "$@"
 		;;
 	wofi)
