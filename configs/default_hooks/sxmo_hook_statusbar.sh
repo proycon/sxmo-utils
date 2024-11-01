@@ -32,6 +32,13 @@ set_state() {
 		return
 	fi
 
+	if command -v peanutbutter 2> /dev/null; then
+		if [ "$SXMO_STATES" = "unlock screenoff"  ]; then
+			# no need for a state icon in this (default) scenario, the state will be obvious, either peanutbutter is on or it isn't
+			return
+		fi
+	fi
+
 	case "$(sxmo_state.sh get)" in
 		screenoff)
 			sxmobar -a -e bold -f red state 90 "$icon_state_screenoff" # filled circle

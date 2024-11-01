@@ -5,7 +5,12 @@
 . sxmo_common.sh
 
 SXMO_STATE="${SXMO_STATE:-$XDG_RUNTIME_DIR/sxmo.state}"
-SXMO_STATES="${SXMO_STATES:-unlock lock screenoff}"
+if command -v peanutbutter 2> /dev/null; then
+	#no separate lock stage needed when peanutbutter is used
+	SXMO_STATES="${SXMO_STATES:-unlock screenoff}"
+else
+	SXMO_STATES="${SXMO_STATES:-unlock lock screenoff}"
+fi
 SXMO_SUSPENDABLE_STATES="${SXMO_SUSPENDABLE_STATES:-screenoff 3}"
 
 transition_can_suspend() {

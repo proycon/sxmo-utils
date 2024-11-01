@@ -40,3 +40,9 @@ esac
 sxmo_jobs.sh stop idle_locker
 
 wait
+
+case "$SXMO_WM" in
+	sway)
+		command -v peanutbutter 2> /dev/null && peanutbutter --font Sxmo --statuscommand sxmo_hook_lockstatusbar.sh &
+		;;
+esac
