@@ -112,19 +112,11 @@ xorgfocusedwindow() {
 }
 
 swayfocusedwindow() {
-	swaymsg -t get_tree | jq -r '
-		recurse(.nodes[]) |
-		select(.focused == true) |
-		{
-			app_id: (if .app_id != null then
-					.app_id
-				else
-					.window_properties.class
-				end),
-			name: .name,
-		} |
-		select(.app_id != null and .name != null) |
-		"app: " + .app_id, "title: " + .name
+	lswt -j | jq -r '
+		.toplevels
+		| map(select(.activated))[0]
+		| select(."app-id" != null and .title != null)
+		| "app: \(."app-id")", "title: \(.title)"
 	'
 }
 
