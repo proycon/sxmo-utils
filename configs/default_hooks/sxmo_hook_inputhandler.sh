@@ -3,7 +3,8 @@
 # Copyright 2022 Sxmo Contributors
 
 # This script handles input actions, it is called by lisgd for gestures
-# and by dwm for button presses
+# and by dwm for button presses. Gestures are tied to actions in
+# sxmo_hook_lisgdstart.sh .
 
 ACTION="$1"
 

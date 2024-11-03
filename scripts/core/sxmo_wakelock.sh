@@ -107,7 +107,7 @@ case "$cmd" in
 			trap finish INT TERM EXIT
 		else
 			cat <<-EOF >&2
-				Warning: we can't wakelock, we can't make sure no suspension will occurs...
+				Warning: we can't wakelock, we can't make sure no suspension will occur...
 			EOF
 		fi
 

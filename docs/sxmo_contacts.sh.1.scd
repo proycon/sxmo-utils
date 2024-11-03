@@ -6,18 +6,18 @@ sxmo_contact.sh - a simple contacts manager
 
 # SYNOPSIS
 
-sxmo_contacts.sh allows you to store and lookup contacts in a variety of ways.
+*sxmo_contacts.sh* [options]
 
 # DESCRIPTION
 
-TODO
+Allows you to store and lookup contacts in a variety of ways.
 
 # OPTIONS
 
 _string_ (default)
 	If _string_ is given, search the contact book for _string_. The output
 	will be CONTACTNAME: PHONENUMBER for each hit. Note it uses grep so
-	multiple hits are possible.
+	multiple hits Are possible.
 	If no argument is given, then return *all* contacts from the contact
 	book and also every number that has ever texted or called you.
 	The output will be CONTACTNAME: PHONENUMBER (if in the contact book) or
@@ -46,19 +46,16 @@ _string_ (default)
 *--me*
 	Return the phonenumber associated with the *Me* entry in contact book.
 
-*--name-or-nuber* _phonenumber_
+*--name-or-number* _phonenumber_
 	Return the contact name (if present) or _phone number_ (if not).
 
 *--name* _phonenumber_
 	Return the contact name (if present) or *???* (if not)
 
-# EXIT STATUS
-
-# RETURN VALUE
-
-# ERRORS
-
 # ENVIRONMENT
+
+*SXMO_CONTACTFILE*
+	a TSV file containing contacts (~/.config/sxmo/contacts.tsv by default)
 
 # FILES
 
@@ -66,18 +63,12 @@ _string_ (default)
 number that has ever texted or called you.
 
 ~/.config/sxmo/contacts.tsv - a TSV file containing contacts in the format
-PHONENUMBER tab CONTACTNAME
-
-# NOTES
-
-# BUGS
-
-# EXAMPLES
-
-# AUTHORS
-
-# REPORTING BUGS
+PHONENUMBER tab CONTACTNAME 
 
 # COPYRIGHT
 
+GNU Affero General Public License v3
+
 # SEE ALSO
+
+_sxmo_(7), c.f. CONTACTS section

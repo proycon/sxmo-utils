@@ -13,8 +13,11 @@ SERVICEDIR:=$(PREFIX)/share/superd/services
 EXTERNAL_SERVICES:=1
 
 SCDOC=scdoc
+SCD2HTML=scd2html
+SCD2HTMLFLAGS =
 
-.PHONY: install test shellcheck shellspec test_legacy_nerdfont
+.PHONY: install test shellcheck shellspec test_legacy_nerdfont docs html-docs \
+	install-docs install-html-docs install-sway install-dwm install-scripts
 
 VERSION ?= unknown
 
@@ -36,12 +39,36 @@ PROGRAMS = \
 	programs/sxmo_status_led
 
 DOCS = \
-	docs/sxmo.7
+	docs/sxmo.7 \
+	docs/sxmo_wakelock.sh.1 \
+	docs/sxmo_migrate.sh.1 \
+	docs/sxmo_files.sh.1 \
+	docs/sxmo_contacts.sh.1 \
+
+HTMLDOCS := $(DOCS:%=%.html)
+
+
+all: $(PROGRAMS) $(DOCS)
+
+# We convert from SCDOC to HTML , the HTML conversion
+# we apply some postprocessing for better internal hyperlinks and styling.
+docs/%.html: docs/%.scd
+	$(SCD2HTML) $(SCD2HTMLFLAGS) < "$<" | \
+		sed -E -e 's/Georgia/Sans/g' \
+			-e 's/Menlo/FiraMono Nerd Font, Sxmo, Menlo/g' \
+			-e 's/See ([A-Z ]+)\./See <a href="#\1">\1<\/a>./g' \
+			-e 's/\(see ([A-Z ]+)\)/(see <a href="#\1">\1<\/a>)/g' \
+			-e 's/<u>sxmo_([a-z_\.]+)<\/u>\(([1-9])\)/<a href="sxmo_\1.\2.html"><u>sxmo_\1<\/u><\/a>(\2)/g' | \
+		sed -e ':loop' \
+    		-e 's/\(href="[^" ]*\) \([^"]*"\)/\1_\2/' \
+        	-e 't loop' > "$@" #this last sed statement replace spaces in href attributes with underscores
 
 docs/%: docs/%.scd
 	$(SCDOC) <$< >$@
 
-all: $(PROGRAMS) $(DOCS)
+docs: $(DOCS)
+
+html-docs: $(HTMLDOCS)
 
 test: shellcheck shellspec test_legacy_nerdfont test_status_led
 
@@ -69,12 +96,15 @@ programs/%.test: programs/%.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -DTEST $(LDFLAGS) $< $(LOADLIBES) $(LDLIBS) -o $@ 
 
 clean:
-	rm -f ${PROGRAMS} programs/test_legacy_nerdfont programs/sxmo_status_led.test
+	rm -f ${PROGRAMS} ${DOCS} ${HTMLDOCS} programs/test_legacy_nerdfont programs/sxmo_status_led.test
 
 install: install-sway install-dwm install-scripts install-docs
 
 install-docs: $(DOCS)
-	cd docs && find . -type f -name '*.7' -exec install -D -m 0644 "{}" "$(DESTDIR)$(MANDIR)/man7/{}" \; && cd ..
+	cd docs && find . -type f -name '*.7' -exec install -D -m 0644 "{}" "$(DESTDIR)$(MANDIR)/man7/{}" \; && find . -type f -name '*.1' -exec install -D -m 0644 "{}" "$(DESTDIR)$(MANDIR)/man1/{}" \; && cd ..
+
+install-html-docs: $(HTMLDOCS)
+	cd docs && find . -type f -name '*.html' -exec install -D -m 0644 "{}" "$(DESTDIR)$(PREFIX)/share/doc/sxmo/html/{}" \; && cd ..
 
 install-sway:
 	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/wayland-sessions/ configs/applications/swmo.desktop

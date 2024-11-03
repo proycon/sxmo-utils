@@ -818,6 +818,7 @@ case "$WMCLASS" in
 			$icon_phn Modem                                              ^ 0 ^ sxmo_appmenu.sh modem
 			$icon_win Windows                                            ^ 0 ^ sxmo_wmmenu.sh
 			$icon_cfg Config                                             ^ 0 ^ sxmo_appmenu.sh config
+			$icon_inf Help                                               ^ 0 ^ sxmo_terminal.sh man sxmo
 			$icon_pwr Power                                              ^ 0 ^ sxmo_appmenu.sh power
 		"
 		WINNAME=Sys
