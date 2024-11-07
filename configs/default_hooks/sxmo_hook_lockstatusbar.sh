@@ -7,4 +7,4 @@
 
 # obtain status output to pass to peanutbutter, using awk to remove the last
 # column (the time), which we don't need duplicated
-sxmo_status_watch.sh -o pango | awk 'NF{NF-=1};1'
+sxmo_status_watch.sh -o pango | tr -d "·" | awk 'NF{NF-=1};1'
