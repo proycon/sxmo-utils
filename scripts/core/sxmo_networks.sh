@@ -24,7 +24,7 @@ menu() {
 	dmenu -i "$@"
 }
 
-notify_sucess() {
+notify_success() {
 	MSG="$1"
 	shift
 	if "$@"; then
@@ -55,7 +55,7 @@ toggleconnection() {
 	CONNLINE="$1"
 	if echo "$CONNLINE" | grep -q "^$icon_don "; then
 		CONNNAME="$(echo "$CONNLINE" | cut -d' ' -f3-)"
-		notify_sucess "Disabling connection" \
+		notify_success "Disabling connection" \
 			nmcli c down "$CONNNAME"
 	else
 		CONNNAME="$(echo "$CONNLINE" | cut -d' ' -f3-)"
@@ -64,7 +64,7 @@ toggleconnection() {
 			sxmo_notify_user.sh "Enabling wifi first."
 			doas sxmo_wifitoggle.sh
 		fi
-		notify_sucess "Enabling connection" \
+		notify_success "Enabling connection" \
 			nmcli c up "$CONNNAME"
 	fi
 }
@@ -87,7 +87,7 @@ deletenetworkmenu() {
 	[ -z "$CHOICE" ] && return
 	echo "$CHOICE" | grep -q "Close Menu" && return
 	CONNNAME="$(echo "$CHOICE" | cut -d' ' -f3-)"
-	notify_sucess "Deleting connection" \
+	notify_success "Deleting connection" \
 		nmcli c delete "$CONNNAME"
 }
 
@@ -136,7 +136,7 @@ addnetworkgsmmenu() {
 			;;
 	esac
 
-	notify_sucess "Adding connection" \
+	notify_success "Adding connection" \
 		nmcli c add type gsm ifname "$(getifname gsm)" con-name "$CONNNAME" \
 		apn "$APN" ${PASSWORD:+gsm.password "$PASSWORD"} \
 		${USERNAME:+gsm.username "$USERNAME"}
@@ -162,7 +162,7 @@ EOF
 	fi
 	echo "$PASSPHRASE" | grep -q "Close Menu" && return
 
-	notify_sucess "Adding connection" \
+	notify_success "Adding connection" \
 		nmcli c add type wifi ifname wlan0 con-name "$SSID" ssid "$SSID" \
 		${PASSPHRASE:+802-11-wireless-security.key-mgmt wpa-psk 802-11-wireless-security.psk "$PASSPHRASE"}
 }
@@ -176,7 +176,7 @@ addhotspotusbmenu() {
 	echo "$CONNNAME" | grep -q "Close Menu" && return
 
 	# TODO: restart udhcpd after disconnecting on postmarketOS
-	notify_sucess "Adding hotspot" \
+	notify_success "Adding hotspot" \
 		nmcli c add type ethernet ifname usb0 con-name "$CONNNAME" \
 		ipv4.method shared
 }
@@ -225,7 +225,7 @@ addhotspotwifimenu() {
 	[ -z "$channel" ] && return
 	echo "$channel" | grep -q "Close Menu" && return
 
-	notify_sucess "Adding hotspot wifi" \
+	notify_success "Adding hotspot wifi" \
 		nmcli device wifi hotspot ifname wlan0 con-name "Hotspot $SSID" \
 		ssid "$SSID" channel "$channel" band bg password "$key"
 }
