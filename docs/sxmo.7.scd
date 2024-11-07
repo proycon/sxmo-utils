@@ -1218,6 +1218,12 @@ The default values for environment variables are set in
 	The menu program to use. This must be either _dmenu_(1), _bemenu_(1) or
 	_wofi_(1), you can not just specify an arbitrary binary here as Sxmo must
 	have internal support for it.
+*SXMO_NOTCH*
+	Set SXMO_NOTCH to a string to use for (under) the notch, the length of the
+	string determines the width, do *NOT* use spaces or tabs.
+*SXMO_NOTCH_PRIO*
+	Integer value determining where to place the notch in relation to other
+	sxmobar components. Value is trial and error (default is 29).
 *SXMO_NOTIFDIR*
 	The directory where notifications are stored (mediated by
 	_sxmo_notifs.sh_(1))
