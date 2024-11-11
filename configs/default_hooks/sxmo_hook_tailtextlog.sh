@@ -33,7 +33,7 @@ mkcontactssedcmd() {
 TODAY="$(date +%F)"
 YESTERDAY="$(date -d "- 1 day" +%F)"
 TWO_DAYS="$(date -d "- 2 day" +%F)"
-DATESEDCMD="s/at.*${TODAY}T/today at /; s/at.*${YESTERDAY}T/yesterday at /; s/at.*${TWO_DAYS}T/two days ago at /; s/[-+][0-9][0-9][0-9][0-9]://; s/\(-[0-9][0-9]\)T\([0-9][0-9]\)/\1 \2/;"
+DATESEDCMD="s/ at ${TODAY}T/today at /; s/ at ${YESTERDAY}T/yesterday at /; s/ at ${TWO_DAYS}T/two days ago at /; s/[-+][0-9][0-9][0-9][0-9]://; s/\(-[0-9][0-9]\)T\([0-9][0-9]\)/\1 \2/;"
 
 # TODO
 #ALIGNSEDCMD="s/^Sent/<right align>/;s/^Received/<left align>/;"
