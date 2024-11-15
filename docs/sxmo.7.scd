@@ -1051,9 +1051,9 @@ When adding a new device, there are three basic steps:
 
 - Determine the *$SXMO_DEVICE_NAME*
 - Add a *sxmo_deviceprofile_${SXMO_DEVICE_NAME}.sh* file to
-  *scripts/deviceprofiles/* in the source tree. Please send us the patch too.
+  *scripts/deviceprofiles/* in the sxmo-utils source tree. Please send us the patch too.
 - Add (or symlink to an existing) SXMO_DEVICE_NAME folder in
-  *configs/default_hooks/* in the source tree.
+  *configs/default_hooks/* in the sxmo-utils source tree.
 
 ## FINDING THE SXMO_DEVICE_NAME
 
@@ -1066,7 +1066,7 @@ tr -c '\0[:alnum:].,-' '_' < /proc/device-tree/compatible | tr '\0' '\n' | head 
 
 ## ADDING A DEVICEPROFILE FILE
 
-In the source tree navigate to *scripts/deviceprofiles/* and make a file called
+In the sxmo-utils source tree navigate to *scripts/deviceprofiles/* and make a file called
 *sxmo_deviceprofile_SXMO_DEVICE_NAME.sh*.  This file should contain various
 environment variables that define things unique to your device, e.g., input ids, etc.
 There is a *README.md* in the same directory that will help.
