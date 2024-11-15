@@ -120,6 +120,7 @@ write_line_app nvim "$icon_vim Neovim" "sxmo_terminal.sh nvim"
 write_line_app netsurf "$icon_glb Netsurf" "netsurf"
 write_line_app newsboat "$icon_rss Newsboat" "sxmo_terminal.sh newsboat"
 write_line_app com.gitlab.newsflash "$icon_rss Newsflash" com.gitlab.newsflash
+write_line_app newsraft "$icon_rss Newsraft" "sxmo_terminal.sh newsraft"
 write_line_app nnn "$icon_dir Nnn" "sxmo_terminal.sh nnn"
 write_line_app numberstation "$icon_clc Numberstation" "numberstation"
 write_line_app nyxt "$icon_glb Nyxt" "nyxt"
