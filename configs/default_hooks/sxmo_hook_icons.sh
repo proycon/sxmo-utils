@@ -83,6 +83,7 @@ icon_mod="" # modem
 icon_mov="󰁁"
 icon_mse="󰍽" # computer mouse (🖱️)
 icon_msg="󰍦" #text
+icon_mtr="󰟚" # metronome
 icon_mus="󰎈"
 icon_mut="" #mute
 icon_mvi="󰎁" #movie
